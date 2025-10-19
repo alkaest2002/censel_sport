@@ -3,11 +3,13 @@ from pathlib import Path
 from typing import Any
 
 import orjson
+import pandas as pd
 
-from lib.data_cleaner import clean_data
 from lib.data_loader import load_from_csv, load_from_synthetic
-from lib.data_saver import save_analysis_results
+from lib.data_mingler import clean_data
+from lib.data_writer import save_analysis_results
 from lib.percentiles_bootstrap import compute_bootstrap_percentiles
+from lib.utils import apply_standardization
 
 # Iterate over all metric configuration files in data_in folder
 for metric_config_path in Path("./data_in").glob("*.json"):
@@ -57,14 +59,12 @@ for metric_config_path in Path("./data_in").glob("*.json"):
         compute_bootstrap_percentiles(data_dict=data_dict)
     )
 
-
     #################################################################################
     # Save results
     #################################################################################
     print("5. Saving results...")
 
     save_analysis_results(
-        metric_config=metric_config,
         data_dict=data_dict,
         bootstrap_estimates=bootstrap_estimates,
     )
