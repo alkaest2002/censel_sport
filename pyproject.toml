@@ -1,0 +1,411 @@
+[project]
+name = "sporty"
+version = "0.1.0"
+description = "A sports tracking application"
+requires-python = ">=3.13"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.0",
+    "ty>=0.0.1a22",
+    "mypy>=1.0.0",
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[tool.ruff]
+# Set the maximum line length to 120 characters
+line-length = 120
+
+# Assume Python 3.13+
+target-version = "py313"
+
+# Enable auto-fixing for specified rules
+fix = true
+
+# Show fixes in output
+show-fixes = true
+
+# Exclude common directories
+exclude = [
+    "warehouse",
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "*.egg-info",
+]
+
+[tool.ruff.lint]
+# Enable comprehensive rule sets
+select = [
+    # Pyflakes
+    "F",
+    # pycodestyle errors
+    "E",
+    # pycodestyle warnings
+    "W",
+    # mccabe complexity
+    "C90",
+    # isort
+    "I",
+    # pep8-naming
+    "N",
+    # pydocstyle
+    "D",
+    # pyupgrade
+    "UP",
+    # flake8-2020
+    "YTT",
+    # flake8-annotations
+    "ANN",
+    # flake8-async
+    "ASYNC",
+    # flake8-bandit
+    "S",
+    # flake8-blind-except
+    "BLE",
+    # flake8-boolean-trap
+    "FBT",
+    # flake8-bugbear
+    "B",
+    # flake8-builtins
+    "A",
+    # flake8-commas
+    "COM",
+    # flake8-comprehensions
+    "C4",
+    # flake8-datetimez
+    "DTZ",
+    # flake8-debugger
+    "T10",
+    # flake8-django
+    "DJ",
+    # flake8-errmsg
+    "EM",
+    # flake8-executable
+    "EXE",
+    # flake8-future-annotations
+    "FA",
+    # flake8-implicit-str-concat
+    "ISC",
+    # flake8-import-conventions
+    "ICN",
+    # flake8-logging-format
+    "G",
+    # flake8-no-pep420
+    "INP",
+    # flake8-pie
+    "PIE",
+    # flake8-print
+    "T20",
+    # flake8-pyi
+    "PYI",
+    # flake8-pytest-style
+    "PT",
+    # flake8-quotes
+    "Q",
+    # flake8-raise
+    "RSE",
+    # flake8-return
+    "RET",
+    # flake8-self
+    "SLF",
+    # flake8-simplify
+    "SIM",
+    # flake8-tidy-imports
+    "TID",
+    # flake8-type-checking
+    "TCH",
+    # flake8-unused-arguments
+    "ARG",
+    # flake8-use-pathlib
+    "PTH",
+    # pandas-vet
+    "PD",
+    # pygrep-hooks
+    "PGH",
+    # Pylint
+    "PL",
+    # tryceratops
+    "TRY",
+    # flynt
+    "FLY",
+    # NumPy-specific rules
+    "NPY",
+    # Airflow
+    "AIR",
+    # Perflint
+    "PERF",
+    # Refurb
+    "FURB",
+    # flake8-logging
+    "LOG",
+    # Ruff-specific rules
+    "RUF",
+]
+
+# Ignore specific rules that might be too strict for scientific/data analysis code
+ignore = [
+    # Missing docstring in public module
+    "D100",
+    # Missing docstring in public class
+    "D101",
+    # Missing docstring in public method
+    "D102",
+    # Missing docstring in public function
+    "D103",
+    # Missing docstring in public package
+    "D104",
+    # Missing docstring in magic method
+    "D105",
+    # Missing docstring in public nested class
+    "D106",
+    # Missing docstring in __init__
+    "D107",
+    # One-line docstring should fit on one line
+    "D200",
+    # No blank lines allowed before function docstring
+    "D201",
+    # No blank lines allowed after function docstring
+    "D202",
+    # 1 blank line required before class docstring
+    "D203",
+    # 1 blank line required after class docstring
+    "D204",
+    # 1 blank line required between summary line and description
+    "D205",
+    # Docstring should fit on one line
+    "D212",
+    # Multi-line docstring summary should start at the second line
+    "D213",
+    # Boolean positional arg in function definition
+    "FBT001",
+    # Boolean default value in function definition
+    "FBT002",
+    # Boolean positional value in function call
+    "FBT003",
+    # Too many arguments to function call
+    "PLR0913",
+    # Too many local variables
+    "PLR0914",
+    # Too many branches
+    "PLR0912",
+    # Too many statements
+    "PLR0915",
+    # Magic value used in comparison
+    "PLR2004",
+    # Use of assert detected
+    "S101",
+    # Hardcoded password
+    "S105",
+    # Use of insecure MD2, MD4, MD5, or SHA1 hash function
+    "S324",
+    # subprocess call: check for execution of untrusted input
+    "S603",
+    # subprocess call with shell=True seems safe, but may be changed in the future
+    "S607",
+    # Mutable class attributes should be annotated with `typing.ClassVar`
+    "RUF012",
+    # Missing type annotation for `self` in method
+    "ANN101",
+    # Missing type annotation for `cls` in classmethod
+    "ANN102",
+    # Dynamically typed expressions (typing.Any) are disallowed
+    "ANN401",
+    # Found `print` statement
+    "T201",
+    # Exception must not use a string literal, assign to variable first
+    "EM101",
+    # Exception must not use an f-string literal, assign to variable first
+    "EM102",
+    # Long messages outside exception class
+    "TRY003",
+    # Prefer `next(iter(...))` over single element slice
+    "RUF015",
+]
+
+# Allow unfixable rules to be fixed
+unfixable = []
+
+# Allow unused variables when underscore-prefixed
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore specific rules for test files
+"**/tests/**/*.py" = [
+    # Allow assert statements in tests
+    "S101",
+    # Allow print statements in tests
+    "T201",
+    # Allow magic values in tests
+    "PLR2004",
+    # Allow many arguments in test functions
+    "PLR0913",
+    # Allow many local variables in tests
+    "PLR0914",
+    # Allow complex functions in tests
+    "PLR0912",
+    "PLR0915",
+]
+
+# Ignore docstring requirements for example/demo files
+"**/examples/**/*.py" = [
+    "D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107",
+]
+
+# Allow print statements in scripts
+"**/scripts/**/*.py" = ["T201"]
+
+# More lenient rules for Jupyter notebooks
+"*.ipynb" = [
+    "T201",    # print statements
+    "E402",    # module level import not at top
+    "F401",    # imported but unused
+    "PLR2004", # magic values
+    "D100",    # missing docstring
+]
+
+[tool.ruff.lint.mccabe]
+# Maximum cyclomatic complexity
+max-complexity = 15
+
+[tool.ruff.lint.pydocstyle]
+# Use Google docstring convention
+convention = "google"
+
+[tool.ruff.lint.pylint]
+# Maximum number of arguments for function/method
+max-args = 8
+# Maximum number of local variables
+max-locals = 20
+# Maximum number of branches
+max-branches = 15
+# Maximum number of statements
+max-statements = 60
+
+[tool.ruff.lint.isort]
+# Combine multiple imports from the same module
+combine-as-imports = true
+# Force imports to be sorted within their section
+force-sort-within-sections = true
+# Split imports on trailing commas
+split-on-trailing-comma = true
+# Known first-party modules (adjust based on your project structure)
+known-first-party = ["sporty"]
+# Known third-party modules for scientific computing
+known-third-party = [
+    "numpy",
+    "pandas",
+    "scipy",
+    "matplotlib",
+    "seaborn",
+    "sklearn",
+    "statsmodels",
+]
+
+[tool.ruff.lint.pyupgrade]
+# Keep runtime typing imports even when not needed for type checking
+keep-runtime-typing = true
+
+[tool.ruff.format]
+# Use double quotes for strings
+quote-style = "double"
+# Use spaces around operators
+indent-style = "space"
+# Respect magic trailing commas
+skip-magic-trailing-comma = false
+# Automatically detect line endings
+line-ending = "auto"
+# Format docstrings
+docstring-code-format = true
+# Indent docstring code blocks
+docstring-code-line-length = 72
+
+[tool.mypy]
+# Basic mypy configuration to complement Ruff
+python_version = "3.13"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+# Per-module options for third-party libraries without type stubs
+[[tool.mypy.overrides]]
+module = [
+    "scipy.*",
+    "sklearn.*",
+    "seaborn.*",
+    "statsmodels.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+# Basic pytest configuration
+minversion = "7.0"
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=sporty",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-report=xml",
+]
+testpaths = ["tests"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
+
+[tool.coverage.run]
+# Coverage configuration
+branch = true
+source = ["sporty"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/conftest.py",
+]
+
+[tool.coverage.report]
+# Coverage reporting
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+    "\\.\\.\\.",
+]
