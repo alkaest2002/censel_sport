@@ -128,12 +128,17 @@ def apply_standardization(data_to_standardize: np.array, cutoffs: list[tuple]) -
     # Convert data to pandas Series for easier manipulation
     data_series = pd.Series(data_to_standardize)
 
-    # Update data dictionary
+    # Add inclusive bounds to cutoffs
+    # First cutoff is inclusive on both sides, others only on the right
+    cutoffs_with_inclusive = zip(cutoffs, ["both", *["right"] * (len(cutoffs) - 1)], strict=True)
+
+    # Compute standardized data
     standardized_data = (
        data_series
             .case_when([
-                (lambda x, cutoff=cutoff: x.between(cutoff[0], cutoff[1], inclusive="left"), idx + 1)
-                for idx, cutoff in enumerate(cutoffs)
+                (lambda x, cutoffs=cutoffs, inclusive=inclusive:\
+                    x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), idx + 1)
+                for idx, (cutoffs, inclusive) in enumerate(cutoffs_with_inclusive)
             ])
     )
 
