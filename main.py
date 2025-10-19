@@ -8,7 +8,6 @@ from lib.data_cleaner import clean_data
 from lib.data_loader import load_from_csv, load_from_synthetic
 from lib.data_saver import save_analysis_results
 from lib.percentiles_bootstrap import compute_bootstrap_percentiles
-from lib.percentiles_cutoffs import compute_percentile_cutoffs
 
 # Iterate over all metric configuration files in data_in folder
 for metric_config_path in Path("./data_in").glob("*.json"):
@@ -38,6 +37,7 @@ for metric_config_path in Path("./data_in").glob("*.json"):
     else:
         raise NotImplementedError(f"Unknown source_type {source_type} in metric configuration.")
 
+
     #################################################################################
     # Clean data
     #################################################################################
@@ -53,30 +53,9 @@ for metric_config_path in Path("./data_in").glob("*.json"):
     print("3. Computing bootstrap percentiles...")
 
     # Compute bootstrap percentiles
-    bootstrap_percentiles, bootstrap_estimates = (
-        compute_bootstrap_percentiles(
-            data_dict["analysis_data"],
-            requested_percentiles=metric_config["requested_percentiles"],
-            n_replicates=metric_config["bootstrap_n_replicates"],
-            n_replicate_size=metric_config["bootstrap_n_replicate_size"],
-        )
+    data_dict, bootstrap_estimates = (
+        compute_bootstrap_percentiles(data_dict=data_dict)
     )
-
-
-    #################################################################################
-    # Create normative table
-    #################################################################################
-    print("4. Creating normative table...")
-
-    # Create normative table
-    percentile_cutoffs = compute_percentile_cutoffs(bootstrap_percentiles, metric_config.get("precision", 2))
-
-    # Store results in data dictionary
-    data_dict["normative_table"] = {
-        "requested_percentiles": metric_config["requested_percentiles"],
-        "bootstrap_percentiles": bootstrap_percentiles,
-        "computed_cutoffs": percentile_cutoffs,
-    }
 
 
     #################################################################################
