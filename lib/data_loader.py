@@ -6,9 +6,7 @@ import pandas as pd
 from lib.utils import generate_synthetic_data
 
 
-def load_from_csv(
-    metric_config: dict[str, Any],
-) -> dict[str, Any]:
+def load_from_csv(metric_config: dict[str, Any]) -> dict[str, Any]:
     """
     Load performance data from CSV file.
 
@@ -20,11 +18,6 @@ def load_from_csv(
     Returns:
     --------
     dict : Contains raw_data, metric_config, and metadata
-
-    Throws:
-    --------
-        - FileNotFoundError
-        - KeyError
     """
     # If file does not exist
     filepath = Path("./data_in") / metric_config["source_filename"]
@@ -63,26 +56,23 @@ def load_from_csv(
         }
 
 
-def load_from_synthetic(
-    metric_config: dict[str, Any],
-    n_samples: int = 500,
-) -> dict[str, Any]:
+def load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
     """
     Generate synthetic data for testing.
 
     Parameters:
     -----------
-    metric_type : str
-        Type of metric (e.g., '25m_swim', 'push_ups')
     metric_config : dict
         Configuration for the metric
-    n_samples : int
-        Number of samples to generate
 
     Returns:
     --------
     dict : Contains raw_data, metric_config, and metadata
     """
+    # Get number of samples to generate
+    n_samples = metric_config.get("synthetic_n_samples", 500)
+
+    # Generate synthetic data
     raw_data = generate_synthetic_data(metric_config["name"], n_samples)
 
     return {
