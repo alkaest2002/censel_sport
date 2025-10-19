@@ -6,5 +6,6 @@
     "requested_percentiles": [5, 25, 50, 75, 95],
     "bootstrap_n_replicates": 10000,
     "bootstrap_n_replicate_size": 300,
-    "source": "synthetic"
+    "source_type": "synthetic",
+    "source_filename": null
 }
