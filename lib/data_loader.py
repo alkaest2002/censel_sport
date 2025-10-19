@@ -27,7 +27,7 @@ def load_from_csv(
         - KeyError
     """
     # If file does not exist
-    filepath = Path(metric_config["source_filename"])
+    filepath = Path("./data_in") / metric_config["source_filename"]
 
     # Check if file exists
     if not filepath.exists():
