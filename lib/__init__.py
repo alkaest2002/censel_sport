@@ -1,0 +1,5 @@
+MT100 = "100mt_run"
+MT1000 = "1000mt_run"
+SWIM25 = "25mt_swim"
+PUSHUPS = "push_ups"
+SITUPS = "situps"
