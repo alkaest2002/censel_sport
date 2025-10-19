@@ -5,7 +5,7 @@ from typing import Any
 import orjson
 
 from lib.data_cleaner import clean_data
-from lib.data_loader import load_from_synthetic
+from lib.data_loader import load_from_csv, load_from_synthetic
 from lib.data_saver import save_analysis_results
 from lib.percentiles_bootstrap import compute_bootstrap_percentiles
 from lib.percentiles_table import create_normative_table
@@ -15,16 +15,33 @@ data_out = Path("./data_out")
 
 # Iterate over all metric configuration files in data_in folder
 for metric_config_path in data_in.glob("*.json"):
+
+    # Open metric configuration file
     with metric_config_path.open("r") as f:
-        metric_config = orjson.loads(f.read())
+
+        # Parse metric configuration
+        metric_config: dict[str, Any] = orjson.loads(f.read())
 
     #################################################################################
     # Load data
     ################################################################################
     print("1. Loading data...")
 
+    # Get source type and load data accordingly
+    source_type = metric_config.get("source_type")
+
+    # Load csv data
+    if source_type == "csv":
+        data_dict: dict[str, Any] = load_from_csv(
+            metric_config=metric_config,
+            data_in=data_in,
+        )
     # Load synthetic data
-    data_dict: dict[str, Any] = load_from_synthetic(metric_config=metric_config)
+    elif source_type == "synthetic":
+        data_dict: dict[str, Any] = load_from_synthetic(metric_config=metric_config)
+    # Unknown source type
+    else:
+        raise ValueError(f"Unknown source_type {source_type} in metric configuration.")
 
 
     #################################################################################
