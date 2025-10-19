@@ -5,12 +5,12 @@ from typing import Any, cast
 import numpy as np
 
 
-def compute_percentile_cutoffs(
+def _compute_percentile_cutoffs(
         bootstrap_percentiles: dict[str, Any],
         precision: int = 2,
     ) -> list[tuple[float, float]]:
     """
-    Create a normative table using bootstrap percentiles.
+    Create a normative table cutoffs using bootstrap percentiles.
 
     Parameters:
     -----------
@@ -30,8 +30,6 @@ def compute_percentile_cutoffs(
 
     return list(pairwise(corrected_percentiles_values))
 
-
-
 def compute_bootstrap_percentiles(
     data_dict: dict[str, Any],
 ) -> tuple[dict[str, Any], dict[str, list[float]]]:
@@ -48,13 +46,18 @@ def compute_bootstrap_percentiles(
     dict : Normative table with percentiles and confidence intervals
     dict : All bootstrap replicates for further analysis
     """
+    # Extract parameters from data dictionary
+    data = data_dict.get("analysis_data", [])
     requested_percentiles = data_dict.get("metric_config", {}).get("requested_percentiles", [5, 25, 50, 75, 95])
     n_replicates = data_dict.get("metric_config", {}).get("bootstrap_n_replicates", 10000)
-    n_replicate_size = data_dict.get("metric_config", {}).get("bootstrap_n_replicate_size", None)
+    n_replicate_size = data_dict.get("metric_config", {}).get("bootstrap_n_replicate_size", len(data))
     ci_level = data_dict.get("metric_config", {}).get("bootstrap_ci_level", 0.95)
-    data = data_dict["analysis_data"]
     random_state = data_dict.get("metric_config", {}).get("bootstrap_random_state", 42)
     precision = data_dict.get("metric_config", {}).get("precision", 2)
+
+    # If data is empty, raise error
+    if len(data) == 0:
+        raise ValueError("No valid data available for bootstrap sampling.")
 
     # Initialize random generator
     rng = np.random.default_rng(random_state)
@@ -90,7 +93,7 @@ def compute_bootstrap_percentiles(
             "std_error": np.std(estimates),
         })
 
-    percentile_cutoffs = compute_percentile_cutoffs(bootstrap_percentiles, precision=precision)
+    percentile_cutoffs = _compute_percentile_cutoffs(bootstrap_percentiles, precision=precision)
 
     # Store results in data dictionary
     data_dict["normative_table"] = {
