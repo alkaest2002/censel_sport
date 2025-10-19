@@ -1,0 +1,10 @@
+{
+    "name": "100mt_run",
+    "type": "time",
+    "precision": 2,
+    "higher_is_better": false,
+    "requested_percentiles": [5, 25, 50, 75, 95],
+    "bootstrap_n_replicates": 10000,
+    "bootstrap_n_replicate_size": 300,
+    "source": "synthetic"
+}
