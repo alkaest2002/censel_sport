@@ -46,7 +46,7 @@ def compute_bootstrap_percentiles(
     rng = np.random.default_rng(random_state)
 
     # Inittialize variables
-    results: list[dict[str, str | float]] = []
+    bootstrap_percentiles: list[dict[str, str | float]] = []
     bootstrap_estimates: dict[str, list[float]] = {f"p{p}": [] for p in requested_percentiles}
     alpha = 1 - ci_level
     lower_ci = (alpha / 2) * 100
@@ -67,7 +67,7 @@ def compute_bootstrap_percentiles(
         estimates = np.array(bootstrap_estimates[f"p{p}"])
 
         # Append results
-        results.append({
+        bootstrap_percentiles.append({
             "percentile": p,
             "value": np.median(estimates),
             "ci_level": ci_level,
@@ -76,7 +76,4 @@ def compute_bootstrap_percentiles(
             "std_error": np.std(estimates),
         })
 
-    return {
-        "computed_percentiles": results,
-        "n_replicates": n_replicates,
-    }, bootstrap_estimates
+    return bootstrap_percentiles, bootstrap_estimates

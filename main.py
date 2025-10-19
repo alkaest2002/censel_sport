@@ -8,7 +8,7 @@ from lib.data_cleaner import clean_data
 from lib.data_loader import load_from_csv, load_from_synthetic
 from lib.data_saver import save_analysis_results
 from lib.percentiles_bootstrap import compute_bootstrap_percentiles
-from lib.percentiles_table import create_normative_table
+from lib.percentiles_cutoffs import compute_percentile_cutoffs
 
 data_in = Path("./data_in")
 data_out = Path("./data_out")
@@ -75,13 +75,13 @@ for metric_config_path in data_in.glob("*.json"):
     print("4. Creating normative table...")
 
     # Create normative table
-    percentile_cutoffs = create_normative_table(bootstrap_percentiles)
+    percentile_cutoffs = compute_percentile_cutoffs(bootstrap_percentiles)
 
     # Store results in data dictionary
     data_dict["normative_table"] = {
         "requested_percentiles": metric_config["requested_percentiles"],
         "bootstrap_percentiles": bootstrap_percentiles,
-        "percentile_cutoffs": percentile_cutoffs,
+        "computed_cutoffs": percentile_cutoffs,
     }
 
 

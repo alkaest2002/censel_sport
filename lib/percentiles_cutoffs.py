@@ -6,7 +6,7 @@ from typing import Any
 import numpy as np
 
 
-def create_normative_table(
+def compute_percentile_cutoffs(
         bootstrap_percentiles: dict[str, Any],
     ) -> list[tuple[float, float]]:
     """
