@@ -2,6 +2,7 @@
 from typing import Any
 
 import numpy as np
+import pandas as pd
 
 from . import MT100, MT1000, PUSHUPS, SITUPS, SWIM25
 
@@ -106,3 +107,34 @@ def generate_synthetic_data(metric_type: str, n_samples: int=500) -> Any:
         data = np.round(data).astype(int)
 
     return data
+
+def apply_standardization(data_to_standardize: np.array, cutoffs: list[tuple]) -> np.array:
+    """
+    Standardize data with percentile cutoffs.
+
+    Parameters:
+    -----------
+    data_to_standardize : np.array
+        Data to be standardized
+
+    cutoffs : list of tuple
+        List of percentile cutoffs
+
+    Returns:
+    --------
+    np.array : Standardized data
+    """
+
+    # Convert data to pandas Series for easier manipulation
+    data_series = pd.Series(data_to_standardize)
+
+    # Update data dictionary
+    standardized_data = (
+       data_series
+            .case_when([
+                (lambda x, cutoff=cutoff: x.between(cutoff[0], cutoff[1], inclusive="left"), idx + 1)
+                for idx, cutoff in enumerate(cutoffs)
+            ])
+    )
+
+    return standardized_data.to_numpy()
