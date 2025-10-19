@@ -183,3 +183,4 @@ cython_debug/
 # Custom ignores
 .DS_Store
 .vscode/
+warehouse/
