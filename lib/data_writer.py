@@ -6,12 +6,29 @@ import orjson
 data_out = Path("./data_out")
 
 def save_analysis_results(
-    metric_config: dict,
     data_dict: dict,
     bootstrap_estimates: dict) -> None:
+    """
+    Save analysis results and bootstrap estimates to JSON files.
+
+    Parameters:
+    -----------
+    data_dict : dict
+        Dictionary containing data
+
+    bootstrap_estimates : dict
+        Dictionary containing bootstrap estimates
+
+    Returns:
+    --------
+    None
+    """
+
+    # Extract metric name from data dictionary
+    metric_name = data_dict.get("metric_config", {}).get("name", "unknown_metric")
 
     # Determine output folder
-    output_path = data_out / metric_config["name"]
+    output_path = data_out / metric_name
 
     # Make sure output folder exists or create it
     output_path.mkdir(parents=True, exist_ok=True)
