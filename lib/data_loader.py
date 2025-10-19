@@ -43,8 +43,8 @@ def load_from_csv(
     except Exception as e:  # noqa: BLE001
         print(e)
         return {
-            "raw_data": None,
             "metric_config": metric_config,
+            "raw_data": None,
             "metadata": {
                 "original_size": 0,
                 "valid_records": 0,
@@ -53,8 +53,8 @@ def load_from_csv(
         }
     else:
         return {
-            "raw_data": raw_data,
             "metric_config": metric_config,
+            "raw_data": raw_data,
             "metadata": {
                 "original_size": len(df),
                 "valid_records": len(raw_data),
@@ -86,8 +86,8 @@ def load_from_synthetic(
     raw_data = generate_synthetic_data(metric_config["name"], n_samples)
 
     return {
-        "raw_data": raw_data,
         "metric_config": metric_config,
+        "raw_data": raw_data,
         "metadata": {
             "original_size": len(raw_data),
             "valid_records": len(raw_data),
