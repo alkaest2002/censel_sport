@@ -4,12 +4,12 @@ from typing import Any
 
 import orjson
 
+from lib.bootstrap import compute_bootstrap_percentiles
 from lib.data_loader import load_data
 from lib.data_mingler import clean_data
 from lib.data_standardizer import compute_standard_scores
 from lib.data_writer import save_analysis_results
 from lib.distribution_fitter import DistributionFitter
-from lib.percentiles_bootstrap import compute_bootstrap_percentiles
 
 # Iterate over all metric configuration files in data_in folder
 for metric_config_path in Path("./data_in").glob("*.json"):
@@ -36,7 +36,7 @@ for metric_config_path in Path("./data_in").glob("*.json"):
     # Compute bootstrap percentiles
     #############################################################################################
     print("3. Computing bootstrap percentiles...")
-    data_dict, bootstrap_estimates = compute_bootstrap_percentiles(data_dict=data_dict)
+    data_dict, bootstrap_samples = compute_bootstrap_percentiles(data_dict=data_dict)
 
     ##############################################################################################
     # Apply standardization
@@ -57,5 +57,5 @@ for metric_config_path in Path("./data_in").glob("*.json"):
     print("6. Saving results...")
     save_analysis_results(
         data_dict=data_dict,
-        bootstrap_estimates=bootstrap_estimates,
+        bootstrap_samples=bootstrap_samples,
     )
