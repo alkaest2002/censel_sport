@@ -1,8 +1,10 @@
+# mypy: disable-error-code="operator"
+
 from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
-import numpy.typing as npt
+from numpy.typing import NDArray
 from scipy import stats
 
 from lib.distributions import get_distributions
@@ -11,8 +13,7 @@ from lib.distributions import get_distributions
 @dataclass
 class FitResult:
     """Results from distribution fitting."""
-    fitted_models: dict[str, dict[str, Any]]
-    fit_results: dict[str, dict[str, float | int | None]]
+    fitted_models: dict[str, Any]
     failed_fits: list[str]
     best_model: dict[str, Any]
 
@@ -33,7 +34,7 @@ class DistributionFitter:
         """
         self.data_dict = data_dict
 
-    def fit_distributions(self) -> FitResult:
+    def fit_distributions(self) -> dict[str, Any]:
         """
         Fit multiple distributions to data and compute goodness-of-fit metrics.
 
@@ -43,8 +44,8 @@ class DistributionFitter:
             Contains fitted models, goodness-of-fit metrics, and failed fits
         """
         # Extract data
-        data = self.data_dict.get("analysis_data")
-        metric_type = self.data_dict.get("metric_config").get("metric_type")
+        data: NDArray[np.floating[Any]] = self.data_dict.get("analysis_data", np.ndarray([]))
+        metric_type = self.data_dict.get("metric_config", {}).get("metric_type")
         distribution_best_criterion = self.data_dict.get("distribution_best_criterion", None)
 
         # Validate metric type
@@ -56,8 +57,7 @@ class DistributionFitter:
             raise ValueError(f"{self.MIN_SAMPLE_SIZE} data points to fit theoretical distributions, got {data.size}")
 
         # Initialize results
-        fitted_models: dict[str, dict[str, Any]] = {}
-        fit_results: dict[str, dict[str, float | int | None]] = {}
+        fitted_models: dict[str, Any] = {}
         failed_fits: list[str] = []
 
         # Get
@@ -76,8 +76,10 @@ class DistributionFitter:
 
                 # Handle case where fitting fails and returns empty params
                 if not params or len(params) == 0:
-                    fitted_models[dist_name] = {"parameters": None}
-                    fit_results[dist_name] = None
+                    fitted_models[dist_name] = {
+                        "parameters": None,
+                        "fit_results": None,
+                    }
                     continue
 
                 # Create distribution object
@@ -87,13 +89,17 @@ class DistributionFitter:
                 metrics = self._compute_metrics(dist_obj, data, sorted_data, n, metric_type)
 
                 # Store results of fitted distribution
-                fitted_models[dist_name] = {"parameters": params}
-                fit_results[dist_name] = metrics
+                fitted_models[dist_name] = {
+                    "parameters": params,
+                    "fit_results": metrics,
+                }
 
             # On fitting error
             except Exception as e:  # noqa: BLE001
-                fitted_models[dist_name] = {"parameters": None}
-                fit_results[dist_name] = None
+                fitted_models[dist_name] = {
+                    "parameters": None,
+                    "fit_results": None,
+                }
                 failed_fits.append(f"{dist_name}: {e!s}")
                 continue
 
@@ -102,12 +108,11 @@ class DistributionFitter:
             raise ValueError(f"All distributions failed to fit. Errors: {failed_fits}")
 
         # Determine best model
-        best_model = self._get_best_model(fitted_models, fit_results, distribution_best_criterion)
+        best_model = self._get_best_model(fitted_models, distribution_best_criterion)
 
         # Update data dict with fitted distributions
         self.data_dict["fitted_distribution"] = FitResult(
             fitted_models=fitted_models,
-            fit_results=fit_results,
             failed_fits=failed_fits,
             best_model=best_model,
         )
@@ -116,8 +121,7 @@ class DistributionFitter:
 
     def _get_best_model(
         self,
-        fitted_models: dict[str, dict[str, Any]],
-        fit_results: dict[str, dict[str, float | int | None]],
+        fitted_models: dict[str, Any],
         criterion: str | None,
     ) -> dict[str, Any]:
         """
@@ -142,10 +146,9 @@ class DistributionFitter:
         # Filter out distributions with invalid values for all criteria
         criteria = ["aic", "bic", "cramer_von_mises"]
         valid_models = {
-            name: results
-            for name, results in fit_results.items()
-            if (results is not None and
-                all(results[crit] is not None and np.isfinite(results[crit])
+            name: data
+            for name, data in fitted_models.items()
+            if (all(data["fit_results"][crit] is not None and np.isfinite(data["fit_results"][crit])
                     for crit in criteria))
         }
 
@@ -173,8 +176,8 @@ class DistributionFitter:
 
     def _majority_vote_selection(
         self,
-        fitted_models: dict[str, dict[str, Any]],
-        valid_models: dict[str, dict[str, float | int | None]],
+        fitted_models: dict[str, Any],
+        valid_models: dict[str, Any],
     ) -> dict[str, Any]:
         """
         Select best model using majority vote across criteria.
@@ -216,8 +219,8 @@ class DistributionFitter:
 
                 # Count model a wins for each criterion (lower is better)
                 a_wins = sum(
-                    1 for crit in criteria
-                    if valid_models[model_a][crit] < valid_models[model_b][crit]
+                    True for crit in criteria
+                    if valid_models[model_a]["fit_results"][crit] < valid_models[model_b]["fit_results"][crit]
                 )
 
                 # Award win to model with majority of criteria
@@ -239,7 +242,7 @@ class DistributionFitter:
     def _break_tie(
         self,
         tied_models: list[str],
-        valid_models: dict[str, dict[str, float | int | None]],
+        valid_models: dict[str, Any],
         criteria: list[str],
     ) -> str:
         """
@@ -261,15 +264,16 @@ class DistributionFitter:
         str
             Name of the best model after tie-breaking
         """
-        for criterion in criteria:
+        for crit in criteria:
             # Find best model for this criterion
-            best_for_criterion = min(tied_models, key=lambda x: valid_models[x][criterion])
+            best_for_criterion = min(tied_models, key=lambda x: valid_models[x]["fit_results"][crit])
 
             # Check if this model is uniquely best for this criterion
-            best_value = valid_models[best_for_criterion][criterion]
-            other_values = [valid_models[model][criterion] for model in tied_models
+            best_value = valid_models[best_for_criterion]["fit_results"][crit]
+            other_values = [valid_models[model]["fit_results"][crit] for model in tied_models
                 if model != best_for_criterion]
 
+            # If uniquely best, return it
             if all(best_value < other_val for other_val in other_values):
                 return best_for_criterion
 
@@ -279,8 +283,8 @@ class DistributionFitter:
     def _compute_metrics(
         self,
         dist_obj: Any,
-        data: npt.NDArray[np.floating],
-        sorted_data: npt.NDArray[np.floating],
+        data: NDArray[np.floating],
+        sorted_data: NDArray[np.floating],
         n: int,
         metric_type: str,
     ) -> dict[str, float | int | None]:
@@ -351,7 +355,7 @@ class DistributionFitter:
     def _compute_cramer_von_mises(
         self,
         dist_obj: Any,
-        sorted_data: npt.NDArray[np.floating],
+        sorted_data: NDArray[np.floating],
         n: int,
         metric_type: str,
     ) -> tuple[float, float | None]:
@@ -401,7 +405,7 @@ class DistributionFitter:
 
     def _try_scipy_cvm(
         self,
-        sorted_data: npt.NDArray[np.floating],
+        sorted_data: NDArray[np.floating],
         dist_obj: Any,
         metric_type: str,
     ) -> tuple[float | None, float | None]:
