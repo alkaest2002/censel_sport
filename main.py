@@ -20,6 +20,10 @@ for metric_config_path in Path("./data_in").glob("*.json"):
         # Parse metric configuration
         metric_config: dict[str, Any] = orjson.loads(f.read())
 
+        # Skip if included in analysis is set to False
+        if metric_config.get("include_in_analysis", False) is False:
+            continue
+
     #################################################################################
     # Load data
     ################################################################################
