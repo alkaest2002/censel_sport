@@ -26,7 +26,8 @@ def save_analysis_results(
     """
 
     # Extract metric name from data dictionary
-    metric_name = data_dict.get("metric_config", {}).get("name", "unknown_metric")
+    metric_config: dict[str, Any] = data_dict.get("metric_config", {})
+    metric_name = metric_config.get("name", "unknown_metric")
 
     # Determine output folder
     output_path = data_out / metric_name
