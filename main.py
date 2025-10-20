@@ -10,7 +10,6 @@ from lib.data_standardizer import compute_standard_scores
 from lib.data_writer import save_analysis_results
 from lib.distribution_fitter import DistributionFitter
 from lib.percentiles_bootstrap import compute_bootstrap_percentiles
-from lib.utils import apply_standardization
 
 # Iterate over all metric configuration files in data_in folder
 for metric_config_path in Path("./data_in").glob("*.json"):
@@ -70,15 +69,14 @@ for metric_config_path in Path("./data_in").glob("*.json"):
     print("5. Fitting theoretical distributions...")
 
     # Initialize fitter
-    #metric_type = metric_config.get("metric_type")
-    #fitter = DistributionFitter(metric_type)
-    #data_dict = fitter.fit_distributions(data_dict, metric_type=metric_type, best_criterion=None)
+    #fitter = DistributionFitter()
+    #data_dict = fitter.fit_distributions(data_dict)
 
 
     ##############################################################################################
     # Save results
     ##############################################################################################
-    print("5. Saving results...")
+    print("6. Saving results...")
 
     save_analysis_results(
         data_dict=data_dict,

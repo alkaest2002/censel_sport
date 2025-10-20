@@ -16,10 +16,12 @@ def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
     --------
     dict : Updated data dictionary with standardized scores
     """
+    # Extract data to standardize and cutoffs
     data_to_standardize = data_dict["analysis_data"]
     cutoffs = data_dict.get("normative_table", {}).get("computed_cutoffs", [])
 
-    data_dict["standardized"] = (apply_standardization(
+    # Compute standardized scores
+    data_dict["standardized_scores"] = (apply_standardization(
         data_to_standardize=data_to_standardize,
         cutoffs=cutoffs,
     ))

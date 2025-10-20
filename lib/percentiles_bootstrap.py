@@ -7,7 +7,7 @@ import numpy as np
 
 def _compute_percentile_cutoffs(
         bootstrap_percentiles: dict[str, Any],
-        precision: int = 2,
+        metric_precision: int = 2,
     ) -> list[tuple[float, float]]:
     """
     Create a normative table cutoffs using bootstrap percentiles.
@@ -17,7 +17,7 @@ def _compute_percentile_cutoffs(
     bootstrap_percentiles : dict
         Data dictionary with bootstrap percentile data
 
-    precision : int
+    metric_precision : int
         Decimal precision for rounding cutoffs
 
     Returns:
@@ -27,7 +27,7 @@ def _compute_percentile_cutoffs(
     percentiles_values = [percentile["value"] for percentile in bootstrap_percentiles]
 
     # Update percentile values with lowers and upper bounds, rounded to specified precision
-    corrected_percentiles_values = np.round([0, *percentiles_values, 1e10], precision)
+    corrected_percentiles_values = np.round([0, *percentiles_values, 1e10], metric_precision)
 
     # Compute cutoffs in the form of: [(lower_bound, upper_bound), ...]
     return list(pairwise(corrected_percentiles_values))
@@ -55,7 +55,7 @@ def compute_bootstrap_percentiles(
     n_replicate_size = data_dict.get("metric_config", {}).get("bootstrap_n_replicate_size", data.size)
     ci_level = data_dict.get("metric_config", {}).get("bootstrap_ci_level", 0.95)
     random_state = data_dict.get("metric_config", {}).get("bootstrap_random_state", 42)
-    precision = data_dict.get("metric_config", {}).get("precision", 2)
+    metric_precision = data_dict.get("metric_config", {}).get("metric_precision", 2)
 
     # If data is empty, raise error
     if data.size == 0:
@@ -99,7 +99,7 @@ def compute_bootstrap_percentiles(
             "std_error": np.std(estimates),
         })
 
-    percentile_cutoffs = _compute_percentile_cutoffs(bootstrap_percentiles, precision=precision)
+    percentile_cutoffs = _compute_percentile_cutoffs(bootstrap_percentiles, metric_precision=metric_precision)
 
     # Store results in data dictionary
     data_dict["normative_table"] = {
