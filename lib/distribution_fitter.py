@@ -1,7 +1,7 @@
 # mypy: disable-error-code="operator"
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -22,6 +22,7 @@ class DistributionFitter:
     """Fit and evaluate multiple probability distributions."""
 
     MIN_SAMPLE_SIZE: int = 50
+    DISTRIBUTION_CRITERIA: set[str] = {"aic", "bic", "cramer_von_mises"}
 
     def __init__(self, data_dict: dict[str, Any]) -> None:
         """
@@ -45,27 +46,35 @@ class DistributionFitter:
         """
         # Extract data
         data: NDArray[np.integer[Any] | np.floating[Any]] = self.data_dict.get("analysis_data", np.ndarray([]))
-        metric_type = self.data_dict.get("metric_config", {}).get("metric_type")
-        distribution_best_criterion = self.data_dict.get("distribution_best_criterion", None)
+        metric_type: Literal["count", "time"] = self.data_dict.get("metric_config", {}).get("metric_type")
+        distribution_best_criterion: Literal["aic", "bic", "cramer_von_mises"] | None =\
+            self.data_dict.get("distribution_best_criterion", None)
 
         # Validate metric type
         if metric_type not in {"count", "time"}:
             raise ValueError(f"metric_type must be 'count' or 'time', got '{self.data_dict.get('metric_type')}'")
 
+        # Validate distribution_best_criterion
+        if distribution_best_criterion is not None and \
+            distribution_best_criterion not in self.DISTRIBUTION_CRITERIA:
+            raise ValueError(f"distribution_best_criterion {distribution_best_criterion} is invalid")
+
         # Validate minimum sample size
         if data.size < self.MIN_SAMPLE_SIZE:
-            raise ValueError(f"{self.MIN_SAMPLE_SIZE} data points to fit theoretical distributions, got {data.size}")
+            raise ValueError(f"{self.MIN_SAMPLE_SIZE} measures are needed to fit distributions, got {data.size}")
 
         # Initialize results
         fitted_models: dict[str, Any] = {}
         failed_fits: list[str] = []
 
-        # Get
+        # Get distributions to fit
         distributions = get_distributions(metric_type)
 
         # Pre-sort data for efficiency
         sorted_data = np.sort(data)
-        n = len(data)
+
+        # Number of data points
+        n = data.size
 
         # Fit each distribution
         for dist_name, (dist_class, fit_func) in distributions.items():
@@ -144,12 +153,11 @@ class DistributionFitter:
             Best model information with 'name' and 'params' keys
         """
         # Filter out distributions with invalid values for all criteria
-        criteria = ["aic", "bic", "cramer_von_mises"]
         valid_models = {
             name: data
             for name, data in fitted_models.items()
             if (all(data["fit_results"][crit] is not None and np.isfinite(data["fit_results"][crit])
-                    for crit in criteria))
+                    for crit in self.DISTRIBUTION_CRITERIA))
         }
 
         # If there aare no valid models
@@ -160,8 +168,8 @@ class DistributionFitter:
         if criterion is not None:
 
             # Raise error if criterion is invalid
-            if criterion not in {"aic", "bic", "cramer_von_mises"}:
-                raise ValueError(f"criterion must be one of {'aic', 'bic', 'cramer_von_mises', 'None'}")
+            if criterion not in self.DISTRIBUTION_CRITERIA:
+                raise ValueError(f"criterion must be one of {self.DISTRIBUTION_CRITERIA}, got '{criterion}'")
 
             # Compute best model via selected criterion
             best_model_name = min(valid_models.keys(), key=lambda x: valid_models[x][criterion])
