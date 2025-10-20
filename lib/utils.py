@@ -4,7 +4,7 @@ from itertools import count
 from typing import Any
 
 import numpy as np
-import numpy.typing as npt
+from numpy.typing import NDArray
 import pandas as pd
 
 from . import MT100, MT1000, PUSHUPS, SITUPS, SWIM25
@@ -113,7 +113,7 @@ def generate_synthetic_data(metric_type: str, n_samples: int = 500) -> Any:
 
 
 def apply_standardization(
-        data_to_standardize: npt.NDArray[np.floating],
+        data_to_standardize: NDArray[np.integer[Any] | np.floating[Any]],
         cutoffs: list[tuple],
         higher_is_better: bool = False,
     ) -> list[dict[str, float]]:

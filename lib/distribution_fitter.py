@@ -44,7 +44,7 @@ class DistributionFitter:
             Contains fitted models, goodness-of-fit metrics, and failed fits
         """
         # Extract data
-        data: NDArray[np.floating[Any]] = self.data_dict.get("analysis_data", np.ndarray([]))
+        data: NDArray[np.integer[Any] | np.floating[Any]] = self.data_dict.get("analysis_data", np.ndarray([]))
         metric_type = self.data_dict.get("metric_config", {}).get("metric_type")
         distribution_best_criterion = self.data_dict.get("distribution_best_criterion", None)
 
@@ -283,8 +283,8 @@ class DistributionFitter:
     def _compute_metrics(
         self,
         dist_obj: Any,
-        data: NDArray[np.floating],
-        sorted_data: NDArray[np.floating],
+        data: NDArray[np.integer[Any] | np.floating[Any]],
+        sorted_data: NDArray[np.integer[Any] | np.floating[Any]],
         n: int,
         metric_type: str,
     ) -> dict[str, float | int | None]:
@@ -355,7 +355,7 @@ class DistributionFitter:
     def _compute_cramer_von_mises(
         self,
         dist_obj: Any,
-        sorted_data: NDArray[np.floating],
+        sorted_data: NDArray[np.integer[Any] | np.floating[Any]],
         n: int,
         metric_type: str,
     ) -> tuple[float, float | None]:
@@ -405,7 +405,7 @@ class DistributionFitter:
 
     def _try_scipy_cvm(
         self,
-        sorted_data: NDArray[np.floating],
+        sorted_data: NDArray[np.integer[Any] | np.floating[Any]],
         dist_obj: Any,
         metric_type: str,
     ) -> tuple[float | None, float | None]:
