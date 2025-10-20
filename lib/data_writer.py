@@ -39,13 +39,13 @@ def save_analysis_results(
             child.unlink()
 
     # Write results to JSON file
-    analysis_output_path = output_path / "analysis.json"
+    analysis_output_path = output_path / f"{metric_name}_analysis.json"
     with analysis_output_path.open("w") as f:
         orjson_options = orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2
         f.write(orjson.dumps(data_dict, option=orjson_options).decode("utf-8"))
 
     # Write bootstrap estimates to separate JSON file
-    bootstrap_output_path = output_path / "bootstrap_estimates.json"
+    bootstrap_output_path = output_path / f"{metric_name}_bootstrap_samples.json"
     with bootstrap_output_path.open("w") as f:
         orjson_options = orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2
         f.write(orjson.dumps(bootstrap_estimates, option=orjson_options).decode("utf-8"))
