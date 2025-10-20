@@ -1,4 +1,3 @@
-
 from typing import Any
 
 import numpy as np
@@ -7,7 +6,7 @@ import pandas as pd
 from . import MT100, MT1000, PUSHUPS, SITUPS, SWIM25
 
 
-def generate_synthetic_data(metric_type: str, n_samples: int=500) -> Any:
+def generate_synthetic_data(metric_type: str, n_samples: int = 500) -> Any:
     """
     Generate synthetic performance data for testing purposes.
 
@@ -22,16 +21,17 @@ def generate_synthetic_data(metric_type: str, n_samples: int=500) -> Any:
     --------
     np.array : Generated performance data
     """
-    base_configs = {
+    base_synthetic_data = {
         SWIM25: {
             "distributions": [
-                (np.random.normal, (11.5, 0.8), 0.05),  # Elite
-                (np.random.normal, (14.0, 1.0), 0.15),  # Good
-                (np.random.normal, (18.5, 2.5), 0.60),  # Average
-                (np.random.normal, (25.0, 3.0), 0.20),   # Poor
+                (np.random.normal, (11.5, 0.8), 0.05),
+                (np.random.normal, (14.0, 1.0), 0.15),
+                (np.random.normal, (18.5, 2.5), 0.60),
+                (np.random.normal, (25.0, 3.0), 0.20),
             ],
             "bounds": (8.0, 40.0),
             "discrete": False,
+            "unit": "seconds",
         },
         MT100: {
             "distributions": [
@@ -42,15 +42,16 @@ def generate_synthetic_data(metric_type: str, n_samples: int=500) -> Any:
             ],
             "bounds": (8.0, 25.0),
             "discrete": False,
+            "unit": "seconds",
         },
         MT1000: {
             "distributions": [
-                (np.random.normal, (2.5, 0.2), 0.05),
-                (np.random.normal, (3.2, 0.3), 0.15),
-                (np.random.normal, (4.5, 0.8), 0.60),
-                (np.random.normal, (6.5, 1.0), 0.20),
+                (np.random.normal, (150, 12), 0.05),  # ~2.5 minutes
+                (np.random.normal, (192, 18), 0.15),  # ~3.2 minutes
+                (np.random.normal, (270, 48), 0.60),  # ~4.5 minutes
+                (np.random.normal, (390, 60), 0.20),  # ~6.5 minutes
             ],
-            "bounds": (2.0, 10.0),
+            "bounds": (120, 600),  # 2-10 minutes
             "discrete": False,
         },
         SITUPS: {
@@ -62,6 +63,7 @@ def generate_synthetic_data(metric_type: str, n_samples: int=500) -> Any:
             ],
             "bounds": (0, None),
             "discrete": True,
+            "unit": "counts",
         },
         PUSHUPS: {
             "distributions": [
@@ -72,19 +74,16 @@ def generate_synthetic_data(metric_type: str, n_samples: int=500) -> Any:
             ],
             "bounds": (0, None),
             "discrete": True,
+            "unit": "counts",
         },
     }
 
-    # Default config
-    config: dict[str, Any] = {
-        "distributions": [(np.random.normal, (50, 15), 1.0)],
-        "bounds": (0, None),
-        "discrete": False,
-    }
+    # Check if metric type is known
+    if metric_type not in base_synthetic_data:
+        raise ValueError(f"Unknown metric_type {metric_type} for synthetic data generation.")
 
-    # Update config if metric_type is found
-    if metric_type in base_configs:
-        config = base_configs[metric_type]
+    # Get configuration for the specified metric type
+    config = base_synthetic_data[metric_type]
 
     # Generate data from multiple distributions
     data_parts = []
@@ -108,7 +107,8 @@ def generate_synthetic_data(metric_type: str, n_samples: int=500) -> Any:
 
     return data
 
-def apply_standardization(data_to_standardize: np.array, cutoffs: list[tuple]) -> np.array:
+
+def apply_standardization(data_to_standardize: np.array, cutoffs: list[tuple]) -> list[dict[str, Any]]:
     """
     Standardize data with percentile cutoffs.
 
@@ -122,7 +122,7 @@ def apply_standardization(data_to_standardize: np.array, cutoffs: list[tuple]) -
 
     Returns:
     --------
-    np.array : Standardized data
+    list[dict[str, Any]] : Standardized data
     """
 
     # Convert data to pandas Series for easier manipulation
@@ -133,13 +133,23 @@ def apply_standardization(data_to_standardize: np.array, cutoffs: list[tuple]) -
     cutoffs_with_inclusive = zip(cutoffs, ["both", *["right"] * (len(cutoffs) - 1)], strict=True)
 
     # Compute standardized data
-    standardized_data = (
-       data_series
-            .case_when([
-                (lambda x, cutoffs=cutoffs, inclusive=inclusive:\
-                    x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), idx + 1)
-                for idx, (cutoffs, inclusive) in enumerate(cutoffs_with_inclusive)
-            ])
+    standardized_data = data_series.case_when(
+        [
+            (
+                lambda x, cutoffs=cutoffs, inclusive=inclusive: x.between(cutoffs[0], cutoffs[1], inclusive=inclusive),
+                idx + 1,
+            )
+            for idx, (cutoffs, inclusive) in enumerate(cutoffs_with_inclusive)
+        ],
     )
 
-    return standardized_data.to_numpy()
+    # zip original values with standardized values
+    zipped_data = zip(data_series.tolist(), standardized_data.tolist(), strict=True)
+
+    return [
+        {
+            "original_value": original_value,
+            "standardized_value": standardized_value,
+        }
+        for original_value, standardized_value in zipped_data
+    ]
