@@ -63,6 +63,7 @@ def compute_bootstrap_percentiles(
     rng = np.random.default_rng(random_state)
 
     # Inittialize variables
+    boostrap_samples: list[float] = []
     bootstrap_percentiles: list[dict[str, str | float]] = []
     bootstrap_estimates: dict[str, list[float]] = {f"p{p}": [] for p in requested_percentiles}
     alpha = 1 - ci_level
@@ -73,6 +74,9 @@ def compute_bootstrap_percentiles(
     for _ in range(n_replicates):
         # Generate bootstrap sample with replacement
         resample = rng.choice(data, size=n_replicate_size, replace=True, shuffle=True)
+
+        # Store bootstrap sample
+        boostrap_samples.append(resample)
 
         # Compute percentiles for this bootstrap sample
         for p in requested_percentiles:
@@ -101,4 +105,4 @@ def compute_bootstrap_percentiles(
         "computed_cutoffs": percentile_cutoffs,
     }
 
-    return data_dict, bootstrap_estimates
+    return data_dict, boostrap_samples
