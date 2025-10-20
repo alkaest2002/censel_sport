@@ -43,7 +43,7 @@ for metric_config_path in Path("./data_in").glob("*.json"):
     data_dict, bootstrap_samples = compute_bootstrap_percentiles(data_dict=data_dict)
 
     ##############################################################################################
-    # Apply standardization
+    # Apply standardization to data
     ##############################################################################################
     print("4. Applying standardization...")
     data_dict = compute_standard_scores(data_dict)
@@ -55,10 +55,21 @@ for metric_config_path in Path("./data_in").glob("*.json"):
     fitter = DistributionFitter(data_dict)
     data_dict = fitter.fit_distributions()
 
+    ###############################################################################################
+    # Montecarlo simulation
+    ###############################################################################################
+    print("6. Performing Montecarlo simulation...")
+
+    ###############################################################################################
+    # Save plots
+    ###############################################################################################
+    print("7. Saving plots...")
+
+
     ##############################################################################################
     # Save results
     ##############################################################################################
-    print("6. Saving results...")
+    print("8. Saving results...")
     save_analysis_results(
         data_dict=data_dict,
         bootstrap_samples=bootstrap_samples,
