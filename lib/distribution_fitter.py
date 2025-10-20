@@ -14,7 +14,7 @@ from lib.distributions import get_distributions
 class FitResult:
     """Results from distribution fitting."""
     fitted_models: dict[str, Any]
-    failed_fits: list[str]
+    failed_models: list[str]
     best_model: dict[str, Any]
 
 
@@ -65,7 +65,7 @@ class DistributionFitter:
 
         # Initialize results
         fitted_models: dict[str, Any] = {}
-        failed_fits: list[str] = []
+        failed_models: list[str] = []
 
         # Get distributions to fit
         distributions = get_distributions(metric_type)
@@ -109,12 +109,12 @@ class DistributionFitter:
                     "parameters": None,
                     "fit_results": None,
                 }
-                failed_fits.append(f"{dist_name}: {e!s}")
+                failed_models.append(f"{dist_name}: {e!s}")
                 continue
 
         # Raise error if no distribution fitted successfully
-        if len(failed_fits) == len(distributions):
-            raise ValueError(f"All distributions failed to fit. Errors: {failed_fits}")
+        if len(failed_models) == len(distributions):
+            raise ValueError(f"All distributions failed to fit. Errors: {failed_models}")
 
         # Determine best model
         best_model = self._get_best_model(fitted_models, distribution_best_criterion)
@@ -122,7 +122,7 @@ class DistributionFitter:
         # Update data dict with fitted distributions
         self.data_dict["fitted_distribution"] = FitResult(
             fitted_models=fitted_models,
-            failed_fits=failed_fits,
+            failed_models=failed_models,
             best_model=best_model,
         )
 
