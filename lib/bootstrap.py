@@ -6,7 +6,7 @@ import numpy as np
 
 
 def _compute_percentile_cutoffs(
-        bootstrap_percentiles: dict[str, Any],
+        bootstrap_percentiles: list[dict[str, str | float]],
         metric_precision: int = 2,
     ) -> list[tuple[float, float]]:
     """
@@ -34,7 +34,7 @@ def _compute_percentile_cutoffs(
 
 def compute_bootstrap_percentiles(
     data_dict: dict[str, Any],
-) -> tuple[dict[str, Any], dict[str, list[float]]]:
+) -> tuple[dict[str, Any], list[float]]:
     """
     Compute percentile-based normative table using bootstrap with confidence intervals.
 
