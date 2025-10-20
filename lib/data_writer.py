@@ -1,13 +1,14 @@
 
 from pathlib import Path
+from typing import Any
 
 import orjson
 
 data_out = Path("./data_out")
 
 def save_analysis_results(
-    data_dict: dict,
-    bootstrap_estimates: dict) -> None:
+    data_dict: dict[str, Any],
+    bootstrap_samples: list[Any]) -> None:
     """
     Save analysis results and bootstrap estimates to JSON files.
 
@@ -16,7 +17,7 @@ def save_analysis_results(
     data_dict : dict
         Dictionary containing data
 
-    bootstrap_estimates : dict
+    bootstrap_samples : dict
         Dictionary containing bootstrap estimates
 
     Returns:
@@ -48,4 +49,4 @@ def save_analysis_results(
     bootstrap_output_path = output_path / f"{metric_name}_bootstrap_samples.json"
     with bootstrap_output_path.open("w") as f:
         orjson_options = orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2
-        f.write(orjson.dumps(bootstrap_estimates, option=orjson_options).decode("utf-8"))
+        f.write(orjson.dumps(bootstrap_samples, option=orjson_options).decode("utf-8"))
