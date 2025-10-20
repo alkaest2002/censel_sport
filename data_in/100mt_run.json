@@ -1,6 +1,6 @@
 {
     "name": "100mt_run",
-    "type": "time",
+    "metric_type": "time",
     "precision": 2,
     "higher_is_better": false,
     "remove_outliers": false,
