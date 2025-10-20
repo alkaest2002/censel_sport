@@ -122,7 +122,7 @@ def apply_standardization(
     data_to_standardize : np.array
         Data to be standardized
 
-    cutoffs : list of tuple
+    cutoffs : list of tuples
         List of tuples containing percentile cutoffs
 
     higher_is_better : bool

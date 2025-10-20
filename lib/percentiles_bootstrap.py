@@ -26,7 +26,7 @@ def _compute_percentile_cutoffs(
     # Extract percentile values
     percentiles_values = [percentile["value"] for percentile in bootstrap_percentiles]
 
-    # Updata percentile values with bounds
+    # Update percentile values with lowers and upper bounds, rounded to specified precision
     corrected_percentiles_values = np.round([0, *percentiles_values, 1e10], precision)
 
     # Compute cutoffs in the form of: [(lower_bound, upper_bound), ...]
@@ -45,7 +45,7 @@ def compute_bootstrap_percentiles(
 
     Returns:
     --------
-    dict : Normative table with percentiles and confidence intervals
+    dict : Dict with percentiles and confidence intervals
     dict : All bootstrap samples for further analysis
     """
     # Extract parameters from data dictionary
