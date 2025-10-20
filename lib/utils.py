@@ -1,7 +1,10 @@
+# mypy: disable-error-code="misc"
+
 from itertools import count
 from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 
 from . import MT100, MT1000, PUSHUPS, SITUPS, SWIM25
@@ -84,7 +87,7 @@ def generate_synthetic_data(metric_type: str, n_samples: int = 500) -> Any:
         raise ValueError(f"Unknown metric_type {metric_type} for synthetic data generation.")
 
     # Get configuration for the specified metric type
-    config = base_synthetic_data[metric_type]
+    config: dict[str, Any] = base_synthetic_data[metric_type]
 
     # Generate data from multiple distributions
     data_parts = []
@@ -110,7 +113,7 @@ def generate_synthetic_data(metric_type: str, n_samples: int = 500) -> Any:
 
 
 def apply_standardization(
-        data_to_standardize: np.array,
+        data_to_standardize: npt.NDArray[np.floating],
         cutoffs: list[tuple],
         higher_is_better: bool = False,
     ) -> list[dict[str, float]]:
@@ -146,7 +149,7 @@ def apply_standardization(
     # Compute standardized data
     standardized_data = data_series.case_when(
         [
-            (lambda x, cutoffs=cutoffs, inclusive=inclusive:\
+            (lambda x, cutoffs=cutoffs, inclusive=inclusive:
                 x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), next(counter))
             for (cutoffs, inclusive) in cutoffs_with_inclusive
         ],
