@@ -6,13 +6,14 @@ import orjson
 
 from lib.data_loader import load_from_csv, load_from_synthetic
 from lib.data_mingler import clean_data
+from lib.data_standardizer import compute_standard_scores
 from lib.data_writer import save_analysis_results
+from lib.distribution_fitter import DistributionFitter
 from lib.percentiles_bootstrap import compute_bootstrap_percentiles
 from lib.utils import apply_standardization
 
 # Iterate over all metric configuration files in data_in folder
 for metric_config_path in Path("./data_in").glob("*.json"):
-
 
     # Open metric configuration file
     with metric_config_path.open("r") as f:
@@ -39,37 +40,44 @@ for metric_config_path in Path("./data_in").glob("*.json"):
         raise NotImplementedError(f"Unknown source_type {source_type} in metric configuration.")
 
 
-    #################################################################################
+    ############################################################################################
     # Clean data
-    #################################################################################
+    ############################################################################################
     print("2. Cleaning data...")
 
     # Clean data
     data_dict = clean_data(data_dict)
 
 
-    #################################################################################
+    #############################################################################################
     # Compute bootstrap percentiles
-    #################################################################################
+    #############################################################################################
     print("3. Computing bootstrap percentiles...")
 
     # Compute bootstrap percentiles
-    data_dict, bootstrap_estimates = (
-        compute_bootstrap_percentiles(data_dict=data_dict)
-    )
+    data_dict, bootstrap_estimates = compute_bootstrap_percentiles(data_dict=data_dict)
 
-    #################################################################################
+    ##############################################################################################
     # Apply standardization
-    #################################################################################
+    ##############################################################################################
+    print("4. Applying standardization...")
 
-    data_dict["standardized"] = (apply_standardization(
-        data_to_standardize=data_dict["analysis_data"],
-        cutoffs=data_dict.get("normative_table", []).get("computed_cutoffs", []),
-    ))
+    data_dict = compute_standard_scores(data_dict)
 
-    #################################################################################
+    ###############################################################################################
+    # Fit theoretical distributions to data
+    ###############################################################################################
+    print("5. Fitting theoretical distributions...")
+
+    # Initialize fitter
+    #metric_type = metric_config.get("metric_type")
+    #fitter = DistributionFitter(metric_type)
+    #data_dict = fitter.fit_distributions(data_dict, metric_type=metric_type, best_criterion=None)
+
+
+    ##############################################################################################
     # Save results
-    #################################################################################
+    ##############################################################################################
     print("5. Saving results...")
 
     save_analysis_results(
