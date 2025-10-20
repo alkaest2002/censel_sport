@@ -3,6 +3,7 @@ from itertools import pairwise
 from typing import Any, cast
 
 import numpy as np
+from numpy.typing import NDArray
 
 
 def _compute_percentile_cutoffs(
@@ -34,7 +35,7 @@ def _compute_percentile_cutoffs(
 
 def compute_bootstrap_percentiles(
     data_dict: dict[str, Any],
-) -> tuple[dict[str, Any], list[float]]:
+) -> tuple[dict[str, Any], list[NDArray[np.integer[Any] | np.floating[Any]]]]:
     """
     Compute percentile-based normative table using bootstrap with confidence intervals.
 
@@ -49,13 +50,14 @@ def compute_bootstrap_percentiles(
     dict : All bootstrap samples for further analysis
     """
     # Extract parameters from data dictionary
-    data = data_dict.get("analysis_data", [])
-    requested_percentiles = data_dict.get("metric_config", {}).get("requested_percentiles", [5, 25, 50, 75, 95])
-    n_replicates = data_dict.get("metric_config", {}).get("bootstrap_n_replicates", 10000)
-    n_replicate_size = data_dict.get("metric_config", {}).get("bootstrap_n_replicate_size", data.size)
-    ci_level = data_dict.get("metric_config", {}).get("bootstrap_ci_level", 0.95)
-    random_state = data_dict.get("metric_config", {}).get("bootstrap_random_state", 42)
-    metric_precision = data_dict.get("metric_config", {}).get("metric_precision", 2)
+    data: NDArray[np.integer[Any] | np.floating[Any]] = data_dict.get("analysis_data", [])
+    metric_config: dict[str, Any] = data_dict.get("metric_config", {})
+    requested_percentiles: list[int | float] = metric_config.get("requested_percentiles", [5, 25, 50, 75, 95])
+    n_replicates: int = metric_config.get("bootstrap_n_replicates", 10000)
+    n_replicate_size: int = metric_config.get("bootstrap_n_replicate_size", data.size)
+    ci_level: float = metric_config.get("bootstrap_ci_level", 0.95)
+    random_state: int = metric_config.get("bootstrap_random_state", 42)
+    metric_precision: int = metric_config.get("metric_precision", 2)
 
     # If data is empty, raise error
     if data.size == 0:
@@ -65,7 +67,7 @@ def compute_bootstrap_percentiles(
     rng = np.random.default_rng(random_state)
 
     # Inittialize variables
-    boostrap_samples: list[float] = []
+    boostrap_samples: list[NDArray[np.integer[Any] | np.floating[Any]]] = []
     bootstrap_estimates: dict[str, list[float]] = {f"p{p}": [] for p in requested_percentiles}
     bootstrap_percentiles: list[dict[str, str | float]] = []
     alpha = 1 - ci_level
