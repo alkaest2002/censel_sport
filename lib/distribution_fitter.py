@@ -30,164 +30,8 @@ class DistributionFitter:
         ----------
         data_dict : dict
             Dictionary containing data
-
-        Returns:
-        ----------
-        None
         """
         self.data_dict = data_dict
-
-    def _get_parameter_names(self, dist_name: str, dist_class: Any) -> list[str]:
-        """
-        Get statistically meaningful parameter names for a distribution.
-
-        Parameters
-        ----------
-        dist_name : str
-            Name of the distribution
-        dist_class : Any
-            Distribution class from scipy.stats
-
-        Returns:
-        -------
-        list:
-            List of parameter names with statistical meaning
-        """
-        # Statistically meaningful parameter name mappings
-        param_mappings = {
-            # Continuous distributions
-            "norm": ["mean", "std_dev"],
-            "expon": ["location", "rate_inv"],  # rate_inv = 1/rate
-            "gamma": ["shape", "location", "scale"],
-            "beta": ["alpha", "beta", "location", "scale"],
-            "lognorm": ["sigma", "location", "scale"],  # sigma is shape parameter
-            "weibull_min": ["shape", "location", "scale"],
-            "uniform": ["lower_bound", "width"],
-            "chi2": ["degrees_freedom", "location", "scale"],
-            "f": ["dfn", "dfd", "location", "scale"],  # degrees of freedom numerator/denominator
-            "t": ["degrees_freedom", "location", "scale"],
-            "pareto": ["shape", "location", "scale"],
-            "rayleigh": ["location", "scale"],
-            "logistic": ["location", "scale"],
-            "laplace": ["location", "scale"],
-            "cauchy": ["location", "scale"],
-            "gumbel_r": ["location", "scale"],
-            "gumbel_l": ["location", "scale"],
-            "exponweib": ["alpha", "beta", "location", "scale"],  # alpha=shape1, beta=shape2
-            "genextreme": ["shape", "location", "scale"],
-            "genpareto": ["shape", "location", "scale"],
-            "invgamma": ["shape", "location", "scale"],
-            "invweibull": ["shape", "location", "scale"],
-            "kstwobign": [],  # No parameters for Kolmogorov-Smirnov
-            "levy": ["location", "scale"],
-            "levy_l": ["location", "scale"],
-            "maxwell": ["location", "scale"],
-            "nakagami": ["shape", "location", "scale"],
-            "pearson3": ["skewness", "location", "scale"],
-            "powerlaw": ["shape", "location", "scale"],
-            "reciprocal": ["lower_bound", "upper_bound", "location", "scale"],
-            "rice": ["shape", "location", "scale"],
-            "truncexpon": ["shape", "location", "scale"],
-            "truncnorm": ["lower_clip", "upper_clip", "location", "scale"],
-            "vonmises": ["concentration", "location", "scale"],
-
-            # Discrete distributions
-            "poisson": ["rate"],  # lambda parameter
-            "nbinom": ["failures", "success_prob"],  # n=number of failures, p=success probability
-            "binom": ["trials", "success_prob"],  # n=number of trials, p=success probability
-            "geom": ["success_prob"],  # p=success probability
-            "hypergeom": ["population", "success_states", "draws"],  # M, K, N
-            "randint": ["lower_bound", "upper_bound"],
-            "zipf": ["exponent"],  # a parameter
-            "planck": ["lambda"],  # lambda parameter
-            "boltzmann": ["lambda", "N"],  # lambda and N parameters
-            "dlaplace": ["shape"],  # a parameter
-            "logser": ["shape"],  # p parameter
-            "yulesimon": ["alpha"],  # alpha parameter
-        }
-
-        # Return known parameter names or try to infer from distribution
-        if dist_name in param_mappings:
-            return param_mappings[dist_name]
-
-        # Try to get parameter names from the distribution's shapes
-        if hasattr(dist_class, "shapes") and dist_class.shapes:
-            shape_names = dist_class.shapes.split(", ")
-            # Add location and scale for continuous distributions
-            if hasattr(dist_class, "pdf"):  # Continuous
-                return [*shape_names, "location", "scale"]
-            # Discrete
-            return shape_names
-
-        # Default fallback based on distribution type
-        if hasattr(dist_class, "pdf"):  # Continuous
-            return ["location", "scale"]
-        # Discrete
-        return ["parameter"]
-
-    def _format_parameters(self, dist_name: str, dist_class: Any, params: tuple) -> dict[str, dict[str, Any]]:
-        """
-        Format parameters as dictionary with meaningful names and values.
-
-        Parameters
-        ----------
-        dist_name : str
-            Name of the distribution
-
-        dist_class : Any
-            Distribution class from scipy.stats
-
-        params : tuple
-            Fitted parameter values
-
-        Returns:
-        -------
-        dict
-            Formatted parameters dictionary
-        """
-        if not params:
-            return {}
-
-        param_names = self._get_parameter_names(dist_name, dist_class)
-
-        # Ensure we have the right number of parameter names
-        if len(params) != len(param_names):
-            # Adjust parameter names if needed
-            if len(params) > len(param_names):
-                param_names.extend([f"parameter_{i}" for i in range(len(param_names), len(params))])
-            else:
-                param_names = param_names[:len(params)]
-
-        # Create formatted parameter dictionary
-        formatted_params = {}
-        for i, (name, value) in enumerate(zip(param_names, params, strict=False)):
-            formatted_params[f"param_{i}"] = {
-                "name": name,
-                "value": float(value),
-            }
-
-        return formatted_params
-
-    def _extract_parameter_values(self, formatted_params: dict[str, dict[str, Any]]) -> tuple:
-        """
-        Extract parameter values from formatted parameter dictionary.
-
-        Parameters
-        ----------
-        formatted_params : dict
-            Formatted parameters dictionary
-
-        Returns:
-        -------
-        tuple
-            Parameter values as tuple
-        """
-        if not formatted_params:
-            return ()
-
-        # Sort by parameter index to maintain order
-        sorted_params = sorted(formatted_params.items(), key=lambda x: int(x[0].split("_")[1]))
-        return tuple(param_info["value"] for _, param_info in sorted_params)
 
     def fit_distributions(self) -> FitResult:
         """
@@ -216,7 +60,7 @@ class DistributionFitter:
         fit_results: dict[str, dict[str, float | int | None]] = {}
         failed_fits: list[str] = []
 
-        # Get distributions
+        # Get
         distributions = get_distributions(metric_type)
 
         # Pre-sort data for efficiency
@@ -232,12 +76,9 @@ class DistributionFitter:
 
                 # Handle case where fitting fails and returns empty params
                 if not params or len(params) == 0:
-                    fitted_models[dist_name] = {"parameters": {}}
+                    fitted_models[dist_name] = {"parameters": None}
                     fit_results[dist_name] = None
                     continue
-
-                # Format parameters
-                formatted_params = self._format_parameters(dist_name, dist_class, params)
 
                 # Create distribution object
                 dist_obj = dist_class(*params)
@@ -246,12 +87,12 @@ class DistributionFitter:
                 metrics = self._compute_metrics(dist_obj, data, sorted_data, n, metric_type)
 
                 # Store results of fitted distribution
-                fitted_models[dist_name] = {"parameters": formatted_params}
+                fitted_models[dist_name] = {"parameters": params}
                 fit_results[dist_name] = metrics
 
             # On fitting error
             except Exception as e:  # noqa: BLE001
-                fitted_models[dist_name] = {"parameters": {}}
+                fitted_models[dist_name] = {"parameters": None}
                 fit_results[dist_name] = None
                 failed_fits.append(f"{dist_name}: {e!s}")
                 continue
@@ -308,9 +149,9 @@ class DistributionFitter:
                     for crit in criteria))
         }
 
-        # If there are no valid models
+        # If there aare no valid models
         if not valid_models:
-            return {"name": None, "params": {}}
+            return {"name": None, "params": None}
 
         # If specific criterion provided, use it
         if criterion is not None:
@@ -359,7 +200,7 @@ class DistributionFitter:
         # Order by importance for tie-breaking
         criteria = ["bic", "aic", "cramer_von_mises"]
 
-        # Get model names
+        # Get nodel names
         model_names = list(valid_models.keys())
 
         # Get number of valid models
