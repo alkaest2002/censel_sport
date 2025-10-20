@@ -46,7 +46,8 @@ class DistributionFitter:
         """
         # Extract data
         data: NDArray[np.integer[Any] | np.floating[Any]] = self.data_dict.get("analysis_data", np.ndarray([]))
-        metric_type: Literal["count", "time"] = self.data_dict.get("metric_config", {}).get("metric_type")
+        metric_config: dict[str, Any] = self.data_dict.get("metric_config", {})
+        metric_type: Literal["count", "time"] | None = metric_config.get("metric_type")
         distribution_best_criterion: Literal["aic", "bic", "cramer_von_mises"] | None =\
             self.data_dict.get("distribution_best_criterion", None)
 
