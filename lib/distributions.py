@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, Literal, cast
 
 import numpy as np
 from numpy.typing import NDArray
@@ -414,24 +414,28 @@ DistributionType = (
 )
 FitFunctionType = Callable[[NumberArray], tuple[float, ...]]
 
-BASE_DISTRIBUTIONS_DISCRETE: dict[str, tuple[DistributionType, FitFunctionType]] = {
-    "negative_binomial": (
-        StatsModelsNegativeBinomialDist,
-        lambda x: StatsModelsNegativeBinomialDist.fit_parameters(x),
-    ),
-    "poisson": (
-        StatsModelsPoissonDist,
-        lambda x: StatsModelsPoissonDist.fit_parameters(x),
-    ),
-    "zero_inflated_poisson": (
-        StatsModelsZeroInflatedPoissonDist,
-        lambda x: StatsModelsZeroInflatedPoissonDist.fit_parameters(x),
-    ),
-}
 
-BASE_DISTRIBUTIONS_CONTINUOUS: dict[str, tuple[DistributionType, FitFunctionType]] = {
-    "normal": (stats.norm, lambda x: stats.norm.fit(x)),
-    "lognormal": (stats.lognorm, lambda x: stats.lognorm.fit(x, floc=0)),
-    "gamma": (stats.gamma, lambda x: stats.gamma.fit(x, floc=0)),
-    "weibull": (stats.weibull_min, lambda x: stats.weibull_min.fit(x, floc=0)),
-}
+def get_distributions(metric_type: Literal["count", "time"]) -> dict[str, Any]:
+
+    if metric_type == "count":
+        return  {
+            "negative_binomial": (
+                StatsModelsNegativeBinomialDist,
+                lambda x: StatsModelsNegativeBinomialDist.fit_parameters(x),
+            ),
+            "poisson": (
+                StatsModelsPoissonDist,
+                lambda x: StatsModelsPoissonDist.fit_parameters(x),
+            ),
+            "zero_inflated_poisson": (
+                StatsModelsZeroInflatedPoissonDist,
+                lambda x: StatsModelsZeroInflatedPoissonDist.fit_parameters(x),
+            ),
+        }
+
+    return {
+        "normal": (stats.norm, lambda x: stats.norm.fit(x)),
+        "lognormal": (stats.lognorm, lambda x: stats.lognorm.fit(x, floc=0)),
+        "gamma": (stats.gamma, lambda x: stats.gamma.fit(x, floc=0)),
+        "weibull": (stats.weibull_min, lambda x: stats.weibull_min.fit(x, floc=0)),
+    }

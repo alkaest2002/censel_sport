@@ -24,49 +24,37 @@ for metric_config_path in Path("./data_in").glob("*.json"):
     # Load data
     ################################################################################
     print("1. Loading data...")
-
     data_dict: dict[str, Any] = load_data(metric_config=metric_config)
-
 
     ############################################################################################
     # Clean data
     ############################################################################################
     print("2. Cleaning data...")
-
-    # Clean data
     data_dict = clean_data(data_dict)
-
 
     #############################################################################################
     # Compute bootstrap percentiles
     #############################################################################################
     print("3. Computing bootstrap percentiles...")
-
-    # Compute bootstrap percentiles
     data_dict, bootstrap_estimates = compute_bootstrap_percentiles(data_dict=data_dict)
 
     ##############################################################################################
     # Apply standardization
     ##############################################################################################
     print("4. Applying standardization...")
-
     data_dict = compute_standard_scores(data_dict)
 
     ###############################################################################################
     # Fit theoretical distributions to data
     ###############################################################################################
     print("5. Fitting theoretical distributions...")
-
-    # Initialize fitter
-    #fitter = DistributionFitter()
-    #data_dict = fitter.fit_distributions(data_dict)
-
+    fitter = DistributionFitter(data_dict)
+    data_dict = fitter.fit_distributions()
 
     ##############################################################################################
     # Save results
     ##############################################################################################
     print("6. Saving results...")
-
     save_analysis_results(
         data_dict=data_dict,
         bootstrap_estimates=bootstrap_estimates,
