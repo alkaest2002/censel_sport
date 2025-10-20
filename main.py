@@ -4,7 +4,7 @@ from typing import Any
 
 import orjson
 
-from lib.data_loader import load_from_csv, load_from_synthetic
+from lib.data_loader import load_data
 from lib.data_mingler import clean_data
 from lib.data_standardizer import compute_standard_scores
 from lib.data_writer import save_analysis_results
@@ -25,18 +25,7 @@ for metric_config_path in Path("./data_in").glob("*.json"):
     ################################################################################
     print("1. Loading data...")
 
-    # Get source type and load data accordingly
-    source_type = metric_config.get("source_type")
-
-    # Load csv data
-    if source_type == "csv":
-        data_dict: dict[str, Any] = load_from_csv(metric_config=metric_config)
-    # Load synthetic data
-    elif source_type == "synthetic":
-        data_dict: dict[str, Any] = load_from_synthetic(metric_config=metric_config)
-    # Unknown source type
-    else:
-        raise NotImplementedError(f"Unknown source_type {source_type} in metric configuration.")
+    data_dict: dict[str, Any] = load_data(metric_config=metric_config)
 
 
     ############################################################################################

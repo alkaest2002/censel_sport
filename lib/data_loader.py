@@ -6,7 +6,7 @@ import pandas as pd
 from lib.utils import generate_synthetic_data
 
 
-def load_from_csv(metric_config: dict[str, Any]) -> dict[str, Any]:
+def _load_from_csv(metric_config: dict[str, Any]) -> dict[str, Any]:
     """
     Load performance data from CSV file.
 
@@ -56,7 +56,7 @@ def load_from_csv(metric_config: dict[str, Any]) -> dict[str, Any]:
         }
 
 
-def load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
+def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
     """
     Generate synthetic data for testing.
 
@@ -84,3 +84,27 @@ def load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
             "error": None,
         },
     }
+
+def load_data(metric_config: dict[str, Any]) -> dict[str, Any]:
+    """
+    Docstring for load_data.
+
+    Parameters:
+    -----------
+    metric_config : dict
+        Configuration for the metric
+
+    Returns:
+    --------
+    dict : Contains raw_data, metric_config, and metadata
+    """
+    # Determine source type and load data accordingly
+    source_type = metric_config.get("source_type")
+
+    if source_type not in ["csv", "synthetic"]:
+        raise NotImplementedError(f"Unknown source_type {source_type} in metric configuration.")
+
+    return (
+        _load_from_csv(metric_config) if source_type == "csv"
+        else _load_from_synthetic(metric_config)
+    )
