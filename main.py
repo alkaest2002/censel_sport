@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import Any
 
 import orjson
-import pandas as pd
 
 from lib.data_loader import load_from_csv, load_from_synthetic
 from lib.data_mingler import clean_data
@@ -58,6 +57,15 @@ for metric_config_path in Path("./data_in").glob("*.json"):
     data_dict, bootstrap_estimates = (
         compute_bootstrap_percentiles(data_dict=data_dict)
     )
+
+    #################################################################################
+    # Apply standardization
+    #################################################################################
+
+    data_dict["standardized"] = (apply_standardization(
+        data_to_standardize=data_dict["analysis_data"],
+        cutoffs=data_dict.get("normative_table", []).get("computed_cutoffs", []),
+    ))
 
     #################################################################################
     # Save results
