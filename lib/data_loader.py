@@ -30,7 +30,7 @@ def _load_from_csv(metric_config: dict[str, Any]) -> dict[str, Any]:
         df = pd.read_csv(filepath)
 
         # Enforce data to be numeric
-        raw_data = pd.to_numeric(df, downcast="integer").to_numpy()
+        raw_data = pd.to_numeric(df.iloc[:, 0], downcast="integer").to_numpy()
 
     # Catch exceptions
     except Exception as e:  # noqa: BLE001
