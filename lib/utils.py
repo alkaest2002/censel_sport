@@ -1,3 +1,4 @@
+from itertools import count
 from typing import Any
 
 import numpy as np
@@ -108,7 +109,11 @@ def generate_synthetic_data(metric_type: str, n_samples: int = 500) -> Any:
     return data
 
 
-def apply_standardization(data_to_standardize: np.array, cutoffs: list[tuple]) -> list[dict[str, Any]]:
+def apply_standardization(
+        data_to_standardize: np.array,
+        cutoffs: list[tuple],
+        higher_is_better: bool = False,
+    ) -> list[dict[str, float]]:
     """
     Standardize data with percentile cutoffs.
 
@@ -118,11 +123,14 @@ def apply_standardization(data_to_standardize: np.array, cutoffs: list[tuple]) -
         Data to be standardized
 
     cutoffs : list of tuple
-        List of percentile cutoffs
+        List of tuples containing percentile cutoffs
+
+    higher_is_better : bool
+        Whether higher values indicate better performance
 
     Returns:
     --------
-    list[dict[str, Any]] : Standardized data
+    list[dict[str, float]] : Original data and Standardized data
     """
 
     # Convert data to pandas Series for easier manipulation
@@ -132,14 +140,15 @@ def apply_standardization(data_to_standardize: np.array, cutoffs: list[tuple]) -
     # First cutoff is inclusive on both sides, others only on the right
     cutoffs_with_inclusive = zip(cutoffs, ["both", *["right"] * (len(cutoffs) - 1)], strict=True)
 
+    # initialize counter based on whether higher values denotes better performance
+    counter = count(start=1, step=1) if higher_is_better else count(start=len(cutoffs), step=-1)
+
     # Compute standardized data
     standardized_data = data_series.case_when(
         [
-            (
-                lambda x, cutoffs=cutoffs, inclusive=inclusive: x.between(cutoffs[0], cutoffs[1], inclusive=inclusive),
-                idx + 1,
-            )
-            for idx, (cutoffs, inclusive) in enumerate(cutoffs_with_inclusive)
+            (lambda x, cutoffs=cutoffs, inclusive=inclusive:\
+                x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), next(counter))
+            for (cutoffs, inclusive) in cutoffs_with_inclusive
         ],
     )
 
