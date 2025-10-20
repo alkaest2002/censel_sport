@@ -16,6 +16,7 @@ def _compute_percentile_cutoffs(
     -----------
     bootstrap_percentiles : dict
         Data dictionary with bootstrap percentile data
+
     precision : int
         Decimal precision for rounding cutoffs
 
@@ -25,9 +26,10 @@ def _compute_percentile_cutoffs(
     # Extract percentile values
     percentiles_values = [percentile["value"] for percentile in bootstrap_percentiles]
 
-    # Create normative table cutoffs
+    # Updata percentile values with bounds
     corrected_percentiles_values = np.round([0, *percentiles_values, 1e10], precision)
 
+    # Compute cutoffs in the form of: [(lower_bound, upper_bound), ...]
     return list(pairwise(corrected_percentiles_values))
 
 def compute_bootstrap_percentiles(
@@ -44,19 +46,19 @@ def compute_bootstrap_percentiles(
     Returns:
     --------
     dict : Normative table with percentiles and confidence intervals
-    dict : All bootstrap replicates for further analysis
+    dict : All bootstrap samples for further analysis
     """
     # Extract parameters from data dictionary
     data = data_dict.get("analysis_data", [])
     requested_percentiles = data_dict.get("metric_config", {}).get("requested_percentiles", [5, 25, 50, 75, 95])
     n_replicates = data_dict.get("metric_config", {}).get("bootstrap_n_replicates", 10000)
-    n_replicate_size = data_dict.get("metric_config", {}).get("bootstrap_n_replicate_size", len(data))
+    n_replicate_size = data_dict.get("metric_config", {}).get("bootstrap_n_replicate_size", data.size)
     ci_level = data_dict.get("metric_config", {}).get("bootstrap_ci_level", 0.95)
     random_state = data_dict.get("metric_config", {}).get("bootstrap_random_state", 42)
     precision = data_dict.get("metric_config", {}).get("precision", 2)
 
     # If data is empty, raise error
-    if len(data) == 0:
+    if data.size == 0:
         raise ValueError("No valid data available for bootstrap sampling.")
 
     # Initialize random generator
@@ -64,8 +66,8 @@ def compute_bootstrap_percentiles(
 
     # Inittialize variables
     boostrap_samples: list[float] = []
-    bootstrap_percentiles: list[dict[str, str | float]] = []
     bootstrap_estimates: dict[str, list[float]] = {f"p{p}": [] for p in requested_percentiles}
+    bootstrap_percentiles: list[dict[str, str | float]] = []
     alpha = 1 - ci_level
     lower_ci = (alpha / 2) * 100
     upper_ci = (1 - alpha / 2) * 100
@@ -73,7 +75,7 @@ def compute_bootstrap_percentiles(
     # Bootstrap resampling
     for _ in range(n_replicates):
         # Generate bootstrap sample with replacement
-        resample = rng.choice(data, size=n_replicate_size, replace=True, shuffle=True)
+        resample = rng.choice(data, size=n_replicate_size, replace=True)
 
         # Store bootstrap sample
         boostrap_samples.append(resample)
