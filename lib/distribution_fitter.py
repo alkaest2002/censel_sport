@@ -44,8 +44,9 @@ class DistributionFitter:
         FitResult
             Contains fitted models, goodness-of-fit metrics, and failed fits
         """
-        # Extract data
-        data: NDArray[np.integer[Any] | np.floating[Any]] = self.data_dict.get("analysis_data", np.ndarray([]))
+        # Extract from data_dict
+        clean: dict[str, Any] = self.data_dict.get("clean", {})
+        data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
         metric_config: dict[str, Any] = self.data_dict.get("metric_config", {})
         metric_type: Literal["count", "time"] | None = metric_config.get("metric_type")
         distribution_best_criterion: Literal["aic", "bic", "cramer_von_mises"] | None =\
@@ -88,7 +89,7 @@ class DistributionFitter:
                 if not params or len(params) == 0:
                     fitted_models[dist_name] = {
                         "parameters": None,
-                        "fit_results": None,
+                        "results": None,
                     }
                     continue
 
@@ -101,14 +102,14 @@ class DistributionFitter:
                 # Store results of fitted distribution
                 fitted_models[dist_name] = {
                     "parameters": params,
-                    "fit_results": metrics,
+                    "results": metrics,
                 }
 
             # On fitting error
             except Exception as e:  # noqa: BLE001
                 fitted_models[dist_name] = {
                     "parameters": None,
-                    "fit_results": None,
+                    "results": None,
                 }
                 failed_models.append(f"{dist_name}: {e!s}")
                 continue
@@ -121,7 +122,7 @@ class DistributionFitter:
         best_model = self._get_best_model(fitted_models, distribution_best_criterion)
 
         # Update data dict with fitted distributions
-        self.data_dict["fitted_distribution"] = FitResult(
+        self.data_dict["fit"] = FitResult(
             fitted_models=fitted_models,
             failed_models=failed_models,
             best_model=best_model,
@@ -142,7 +143,7 @@ class DistributionFitter:
         fitted_models : dict
             Dictionary of fitted distribution models
 
-        fit_results : dict
+        results : dict
             Dictionary of goodness-of-fit metrics for each model
 
         criterion : str or None
@@ -157,7 +158,7 @@ class DistributionFitter:
         valid_models = {
             name: data
             for name, data in fitted_models.items()
-            if (all(data["fit_results"][crit] is not None and np.isfinite(data["fit_results"][crit])
+            if (all(data["results"][crit] is not None and np.isfinite(data["results"][crit])
                     for crit in self.DISTRIBUTION_CRITERIA))
         }
 
@@ -229,7 +230,7 @@ class DistributionFitter:
                 # Count model a wins for each criterion (lower is better)
                 a_wins = sum(
                     True for crit in criteria
-                    if valid_models[model_a]["fit_results"][crit] < valid_models[model_b]["fit_results"][crit]
+                    if valid_models[model_a]["results"][crit] < valid_models[model_b]["results"][crit]
                 )
 
                 # Award win to model with majority of criteria
@@ -275,11 +276,11 @@ class DistributionFitter:
         """
         for crit in criteria:
             # Find best model for this criterion
-            best_for_criterion = min(tied_models, key=lambda x: valid_models[x]["fit_results"][crit])
+            best_for_criterion = min(tied_models, key=lambda x: valid_models[x]["results"][crit])
 
             # Check if this model is uniquely best for this criterion
-            best_value = valid_models[best_for_criterion]["fit_results"][crit]
-            other_values = [valid_models[model]["fit_results"][crit] for model in tied_models
+            best_value = valid_models[best_for_criterion]["results"][crit]
+            other_values = [valid_models[model]["results"][crit] for model in tied_models
                 if model != best_for_criterion]
 
             # If uniquely best, return it
