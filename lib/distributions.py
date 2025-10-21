@@ -104,6 +104,12 @@ class StatsModelsPoissonDist:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.poisson.cdf(k, self._lambda))
 
+    def ppf(self, q: NDArray[np.floating[Any]] | float) -> NDArray[np.integer[Any]] | int:
+        """Percent point function (quantile function)."""
+        if self._lambda is None:
+            raise ValueError("Distribution not fitted. Use .fit() first.")
+        return cast("NDArray[np.integer[Any]] | int", stats.poisson.ppf(q, self._lambda))
+
     def rvs(self, size: int | tuple[int, ...] = 1, random_state: int = 42) -> NDArray[np.integer[Any]]:
         """Generate random variates."""
         if self._lambda is None:
@@ -234,6 +240,11 @@ class StatsModelsNegativeBinomialDist:
         """Cumulative distribution function."""
         n, p = self._convert_to_scipy_params()
         return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.nbinom.cdf(k, n, p))
+
+    def ppf(self, q: NDArray[np.floating[Any]] | float) -> NDArray[np.integer[Any]] | int:
+        """Percent point function (quantile function)."""
+        n, p = self._convert_to_scipy_params()
+        return cast("NDArray[np.integer[Any]] | int", stats.nbinom.ppf(q, n, p))
 
     def rvs(self, size: int | tuple[int, ...] = 1, random_state: int = 42) -> NDArray[np.integer[Any]]:
         """Generate random variates."""
@@ -373,6 +384,50 @@ class StatsModelsZeroInflatedPoissonDist:
         for i, ki in enumerate(k_array):
             result[i] = float(np.sum(self.pmf(np.arange(0, int(ki) + 1))))
         return cast("NDArray[np.integer[Any] | np.floating[Any]]", result)
+
+    def ppf(self, q: NDArray[np.floating[Any]] | float) -> NDArray[np.integer[Any]] | int:
+        """
+        Percent point function (quantile function) for Zero-Inflated Poisson.
+
+        For discrete distributions, this finds the smallest integer k such that CDF(k) >= q.
+        """
+        if self.lambda_ is None or self.pi is None:
+            raise ValueError("Distribution not fitted. Use .fit() first.")
+
+        q_array = np.asarray(q, dtype=float)
+        is_scalar = q_array.ndim == 0
+
+        if is_scalar:
+            q_array = np.array([q_array])
+
+        result = np.zeros(len(q_array), dtype=int)
+
+        for i, qi in enumerate(q_array):
+            if qi < 0 or qi > 1:
+                result[i] = np.nan
+                continue
+
+            if qi == 0:
+                result[i] = 0
+                continue
+
+            # Start from 0 and find the first k where CDF(k) >= q
+            k = 0
+            max_k = max(100, int(self.lambda_ + 5 * np.sqrt(self.lambda_)))  # Reasonable upper bound
+
+            while k <= max_k:
+                cdf_val = float(self.cdf(np.array([k]))[0])
+                if cdf_val >= qi:
+                    result[i] = k
+                    break
+                k += 1
+            else:
+                # If we didn't find a solution within max_k, use max_k
+                result[i] = max_k
+
+        if is_scalar:
+            return int(result[0])
+        return cast("NDArray[np.integer[Any]]", result)
 
     def rvs(self, size: int | tuple[int, ...] = 1, random_state: int = 42) -> NDArray[np.integer[Any]]:
         """Generate random variates."""
