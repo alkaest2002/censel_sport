@@ -37,21 +37,25 @@ def _load_from_csv(metric_config: dict[str, Any]) -> dict[str, Any]:
         print(e)
         return {
             "metric_config": metric_config,
-            "raw_data": None,
-            "metadata": {
-                "original_size": 0,
-                "valid_records": 0,
-                "error": str(e),
+            "load": {
+                "data": None,
+                "metadata": {
+                    "original_size": 0,
+                    "valid_records": 0,
+                    "error": str(e),
+                },
             },
         }
     else:
         return {
             "metric_config": metric_config,
-            "raw_data": raw_data,
-            "metadata": {
-                "original_size": len(df),
-                "valid_records": len(raw_data),
-                "error": None,
+            "load": {
+                "data": raw_data,
+                "metadata": {
+                    "original_size": len(df),
+                    "valid_records": len(raw_data),
+                    "error": None,
+                },
             },
         }
 
@@ -77,11 +81,13 @@ def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
 
     return {
         "metric_config": metric_config,
-        "raw_data": raw_data,
-        "metadata": {
-            "original_size": len(raw_data),
-            "valid_records": len(raw_data),
-            "error": None,
+        "load": {
+            "data": raw_data,
+            "metadata": {
+                "original_size": len(raw_data),
+                "valid_records": len(raw_data),
+                "error": None,
+            },
         },
     }
 
