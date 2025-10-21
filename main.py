@@ -10,6 +10,7 @@ from lib.data_loader import load_data
 from lib.data_standardizer import compute_standard_scores
 from lib.data_writer import save_analysis_results
 from lib.distribution_fitter import DistributionFitter
+from lib.montecarlo import monte_carlo_validation
 
 # Iterate over all metric configuration files in data_in folder
 for metric_config_path in Path("./data_in").glob("*.json"):
@@ -59,6 +60,7 @@ for metric_config_path in Path("./data_in").glob("*.json"):
     # Montecarlo simulation
     ###############################################################################################
     print("6. Performing Montecarlo simulation...")
+    data_dict, simulation_samples = monte_carlo_validation(data_dict)
 
     ###############################################################################################
     # Save plots
@@ -73,4 +75,5 @@ for metric_config_path in Path("./data_in").glob("*.json"):
     save_analysis_results(
         data_dict=data_dict,
         bootstrap_samples=bootstrap_samples,
+        simulation_samples=simulation_samples,
     )
