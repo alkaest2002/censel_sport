@@ -21,7 +21,7 @@ def clean_data(
     --------
     dict : Updated data dictionary with cleaned data and cleaning statistics
     """
-    # Extract from data_dict
+    # Extract from data dictionary
     metric_config =  data_dict.get("metric_config", {})
     load: dict[str, Any] = data_dict.get("load", {})
     data: NDArray[np.integer[Any] | np.floating[Any]] = load.get("data", np.array([]))
