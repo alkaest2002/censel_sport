@@ -49,10 +49,7 @@ def compute_bootstrap_percentiles(
     dict : Dict with percentiles and confidence intervals
     dict : All bootstrap samples for further analysis
     """
-    # Initialize random generator
-    rng = np.random.default_rng(42)
-
-    # Extract from data_dict
+    # Extract from data dictionary
     clean: dict[str, Any] = data_dict.get("clean", {})
     data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
@@ -61,6 +58,11 @@ def compute_bootstrap_percentiles(
     n_replicate_size: int = metric_config.get("bootstrap_n_replicate_size", data.size)
     ci_level: float = metric_config.get("bootstrap_ci_level", 0.95)
     metric_precision: int = metric_config.get("metric_precision", 2)
+    random_state: int = metric_config.get("random_state", 42)
+
+    # Initialize random generator
+    rng = np.random.default_rng(random_state)
+
 
     # If data is empty, raise error
     if data.size == 0:
