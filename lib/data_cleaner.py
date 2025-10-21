@@ -19,7 +19,7 @@ def clean_data(
 
     Returns:
     --------
-    dict : Updated data dictionary with cleaned data and cleaning statistics
+    dict : Updated data dictionary
     """
     # Extract from data dictionary
     metric_config =  data_dict.get("metric_config", {})

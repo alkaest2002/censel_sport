@@ -17,7 +17,7 @@ def _load_from_csv(metric_config: dict[str, Any]) -> dict[str, Any]:
 
     Returns:
     --------
-    dict : Contains raw_data, metric_config, and metadata
+    dict : Contains metric_config and data
     """
     # If file does not exist
     filepath = Path("./data_in") / metric_config["source_filename"]

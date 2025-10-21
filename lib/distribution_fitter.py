@@ -23,6 +23,10 @@ class DistributionFitter:
         ----------
         data_dict : dict
             Dictionary containing data
+
+        Returns:
+        ---------
+        None
         """
         self.data_dict = data_dict
 
@@ -32,8 +36,7 @@ class DistributionFitter:
 
         Returns:
         -------
-        FitResult
-            Contains fitted models, goodness-of-fit metrics, and failed fits
+        dict: Updated data dictionary
         """
         # Extract from data dictionary
         clean: dict[str, Any] = self.data_dict.get("clean", {})
@@ -142,8 +145,7 @@ class DistributionFitter:
 
         Returns:
         -------
-        dict
-            Best model information with 'name' and 'params' keys
+        dict: Best model information with 'name' and 'params' keys
         """
         # Filter out distributions with invalid values for all criteria
         valid_models = {
@@ -193,8 +195,7 @@ class DistributionFitter:
 
         Returns:
         -------
-        dict
-            Best model information with 'name' and 'params' keys
+        dict: Best model information with 'name' and 'params' keys
         """
         # If there is just one model
         if len(valid_models) == 1:
@@ -262,8 +263,7 @@ class DistributionFitter:
 
         Returns:
         -------
-        str
-            Name of the best model after tie-breaking
+        str: Name of the best model after tie-breaking
         """
         for crit in criteria:
             # Find best model for this criterion
@@ -311,8 +311,7 @@ class DistributionFitter:
 
         Returns:
         -------
-        dict
-            Dictionary containing AIC, BIC, Cramér-von Mises and other fit statistics
+        dict: Dictionary containing AIC, BIC, Cramér-von Mises and other fit statistics
         """
         # Log-likelihood
         try:
@@ -379,8 +378,7 @@ class DistributionFitter:
 
         Returns:
         -------
-        tuple[float, float | None]
-            Cramér-von Mises statistic and p-value (if available)
+        tuple: Cramér-von Mises statistic and p-value (if available)
         """
         try:
             # Try scipy's built-in test first (if available)
@@ -426,8 +424,7 @@ class DistributionFitter:
 
         Returns:
         -------
-        tuple[float | None, float | None]
-            Cramér-von Mises statistic and p-value if successful, otherwise (None, None)
+        tuple: Cramér-von Mises statistic and p-value if successful, otherwise (None, None)
         """
         # Only try scipy for continuous distributions
         if metric_type != "time":

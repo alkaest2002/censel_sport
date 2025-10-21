@@ -133,7 +133,7 @@ def apply_standardization(
 
     Returns:
     --------
-    list[dict[str, float]] : Original data and Standardized data
+    list : Original data and Standardized data
     """
 
     # Convert data to pandas Series for easier manipulation

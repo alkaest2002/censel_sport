@@ -18,7 +18,7 @@ def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
 
     Returns:
     --------
-    dict : Updated data dictionary with standardized scores
+    dict : Updated data dictionary
     """
     # Extract from data dictionary
     clean: dict[str, Any] = data_dict.get("clean", {})
