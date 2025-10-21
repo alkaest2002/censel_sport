@@ -1,6 +1,6 @@
 # mypy: disable-error-code="operator"
 
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import numpy as np
 from numpy.typing import NDArray
@@ -69,9 +69,6 @@ class DistributionFitter:
         # Pre-sort data for efficiency
         sorted_data = np.sort(data)
 
-        # Number of data points
-        n = data.size
-
         # Fit each distribution
         for dist_name, (dist_class, fit_func) in distributions.items():
 
@@ -83,7 +80,8 @@ class DistributionFitter:
                 if not params or len(params) == 0:
                     fitted_models[dist_name] = {
                         "parameters": None,
-                        "results": None,
+                        "goodness_of_fit": None,
+                        "quantiles": None,
                     }
                     continue
 
@@ -91,19 +89,23 @@ class DistributionFitter:
                 dist_obj = dist_class(*params)
 
                 # Compute metrics
-                metrics = self._compute_metrics(dist_obj, data, sorted_data, n, metric_type)
+                metrics = self._compute_metrics(dist_obj, data, sorted_data, data.size, metric_type)
 
                 # Store results of fitted distribution
                 fitted_models[dist_name] = {
                     "parameters": params,
-                    "results": metrics,
+                    "goodness_of_fit": metrics,
+                    "quantiles": {
+                        f"q{int(round(q*100,0))}": dist_obj.ppf(cast("float",q)) for q in np.arange(0.01, 1., 0.01)
+                    },
                 }
 
             # On fitting error
             except Exception as e:  # noqa: BLE001
                 fitted_models[dist_name] = {
                     "parameters": None,
-                    "results": None,
+                    "goodness_of_fit": None,
+                    "quantiles": None,
                 }
                 failed_models.append(f"{dist_name}: {e!s}")
                 continue
@@ -151,7 +153,7 @@ class DistributionFitter:
         valid_models = {
             name: data
             for name, data in fitted_models.items()
-            if (all(data["results"][crit] is not None and np.isfinite(data["results"][crit])
+            if (all(data["goodness_of_fit"][crit] is not None and np.isfinite(data["goodness_of_fit"][crit])
                     for crit in self.DISTRIBUTION_CRITERIA))
         }
 
@@ -222,7 +224,7 @@ class DistributionFitter:
                 # Count model a wins for each criterion (lower is better)
                 a_wins = sum(
                     True for crit in criteria
-                    if valid_models[model_a]["results"][crit] < valid_models[model_b]["results"][crit]
+                    if valid_models[model_a]["goodness_of_fit"][crit] < valid_models[model_b]["goodness_of_fit"][crit]
                 )
 
                 # Award win to model with majority of criteria
@@ -267,11 +269,11 @@ class DistributionFitter:
         """
         for crit in criteria:
             # Find best model for this criterion
-            best_for_criterion = min(tied_models, key=lambda x: valid_models[x]["results"][crit])
+            best_for_criterion = min(tied_models, key=lambda x: valid_models[x]["goodness_of_fit"][crit])
 
             # Check if this model is uniquely best for this criterion
-            best_value = valid_models[best_for_criterion]["results"][crit]
-            other_values = [valid_models[model]["results"][crit] for model in tied_models
+            best_value = valid_models[best_for_criterion]["goodness_of_fit"][crit]
+            other_values = [valid_models[model]["goodness_of_fit"][crit] for model in tied_models
                 if model != best_for_criterion]
 
             # If uniquely best, return it
