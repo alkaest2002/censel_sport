@@ -1,6 +1,9 @@
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
+
+if TYPE_CHECKING:
+    from numpy.typing import NDArray
 
 
 def clean_data(
@@ -18,24 +21,25 @@ def clean_data(
     --------
     dict : Updated data dictionary with cleaned data and cleaning statistics
     """
-    # Get raw data
-    raw_data = data_dict.get("raw_data", np.array([]))
+    # Extract from data_dict
+    metric_config =  data_dict.get("metric_config", {})
+    load: dict[str, Any] = data_dict.get("load", {})
+    data: NDArray[np.integer[Any] | np.floating[Any]] = load.get("data", np.array([]))
 
     # Check if raw data is empty
-    if raw_data.size == 0:
+    if data.size == 0:
         raise ValueError("No raw data found in data dictionary.")
 
     # Get cleaning parameters
-    remove_outliers: bool = data_dict.get("remove_outliers", False)
-    outlier_method: str = "iqr"
-    outlier_factor: float = 1.5
+    remove_outliers: bool = metric_config.get("remove_outliers", False)
+    outlier_factor: float = metric_config.get("outlier_factor", 1.5)
 
     # Remove non-positive values and NaNs
-    valid_mask = (raw_data > 0) & np.isfinite(raw_data)
-    clean_data = raw_data[valid_mask]
+    valid_mask = (data > 0) & np.isfinite(data)
+    clean_data = data[valid_mask]
 
     # Count invalid
-    removed_invalid = len(raw_data) - len(clean_data)
+    removed_invalid = len(data) - len(clean_data)
 
     # Remove outliers if requested
     removed_outliers = 0
@@ -51,17 +55,15 @@ def clean_data(
         outlier_mask = np.ones(len(clean_data), dtype=bool)
 
     removed_outliers = len(clean_data) - np.sum(outlier_mask)
-    analysis_data = clean_data[outlier_mask]
+    final_data = clean_data[outlier_mask]
 
     # Update data dictionary
-    data_dict.update({
-        "analysis_data": analysis_data,
-        "cleaning_stats": {
-            "outlier_method": outlier_method if remove_outliers else None,
-            "outlier_factor": outlier_factor if remove_outliers else None,
+    data_dict["clean"] = ({
+        "data": final_data,
+        "metadata": {
             "removed_invalid": removed_invalid,
             "removed_outliers": removed_outliers,
-            "final_size": len(analysis_data),
+            "final_size": final_data.size,
         },
     })
 
