@@ -1,6 +1,10 @@
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from lib.utils import apply_standardization
+
+if TYPE_CHECKING:
+    import numpy as np
+    from numpy.typing import NDArray
 
 
 def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
@@ -16,14 +20,15 @@ def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
     --------
     dict : Updated data dictionary with standardized scores
     """
-    # Extract data to standardize and cutoffs
-    data_to_standardize = data_dict["analysis_data"]
-    cutoffs = data_dict.get("normative_table", {}).get("computed_cutoffs", [])
+    # Extract from data_dict
+    clean: dict[str, Any] = data_dict.get("clean", {})
+    data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", [])
+    boostrap: dict[str, Any] = data_dict["bootstrap"]
+    cutoffs = boostrap.get("cutoffs", [])
 
-    # Compute standardized scores
-    data_dict["standardized_scores"] = (apply_standardization(
-        data_to_standardize=data_to_standardize,
-        cutoffs=cutoffs,
-    ))
+    # Update data dict
+    data_dict["standardize"] = {
+        "data": apply_standardization(data_to_standardize=data, cutoffs=cutoffs),
+    }
 
     return data_dict
