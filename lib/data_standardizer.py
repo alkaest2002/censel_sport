@@ -20,7 +20,7 @@ def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
     --------
     dict : Updated data dictionary with standardized scores
     """
-    # Extract from data_dict
+    # Extract from data dictionary
     clean: dict[str, Any] = data_dict.get("clean", {})
     data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", [])
     boostrap: dict[str, Any] = data_dict["bootstrap"]
@@ -28,7 +28,7 @@ def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
 
     # Update data dict
     data_dict["standardize"] = {
-        "data": apply_standardization(data_to_standardize=data, cutoffs=cutoffs),
+        "scores": apply_standardization(data_to_standardize=data, cutoffs=cutoffs),
     }
 
     return data_dict
