@@ -104,11 +104,11 @@ class StatsModelsPoissonDist:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.poisson.cdf(k, self._lambda))
 
-    def rvs(self, size: int | tuple[int, ...] = 1) -> NDArray[np.integer[Any]]:
+    def rvs(self, size: int | tuple[int, ...] = 1, random_state: int = 42) -> NDArray[np.integer[Any]]:
         """Generate random variates."""
         if self._lambda is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
-        return cast("NDArray[np.integer[Any]]", stats.poisson.rvs(self._lambda, size=size, random_state=42))
+        return cast("NDArray[np.integer[Any]]", stats.poisson.rvs(self._lambda, size=size, random_state=random_state))
 
     def mean(self) -> float:
         """Mean of the distribution."""
@@ -235,10 +235,10 @@ class StatsModelsNegativeBinomialDist:
         n, p = self._convert_to_scipy_params()
         return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.nbinom.cdf(k, n, p))
 
-    def rvs(self, size: int | tuple[int, ...] = 1) -> NDArray[np.integer[Any]]:
+    def rvs(self, size: int | tuple[int, ...] = 1, random_state: int = 42) -> NDArray[np.integer[Any]]:
         """Generate random variates."""
         n, p = self._convert_to_scipy_params()
-        return cast("NDArray[np.integer[Any]]", stats.nbinom.rvs(n, p, size=size, random_state=42))
+        return cast("NDArray[np.integer[Any]]", stats.nbinom.rvs(n, p, size=size, random_state=random_state))
 
     def mean(self) -> float:
         """Mean of the distribution."""
@@ -374,12 +374,12 @@ class StatsModelsZeroInflatedPoissonDist:
             result[i] = float(np.sum(self.pmf(np.arange(0, int(ki) + 1))))
         return cast("NDArray[np.integer[Any] | np.floating[Any]]", result)
 
-    def rvs(self, size: int | tuple[int, ...] = 1) -> NDArray[np.integer[Any]]:
+    def rvs(self, size: int | tuple[int, ...] = 1, random_state: int = 42) -> NDArray[np.integer[Any]]:
         """Generate random variates."""
         if self.lambda_ is None or self.pi is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
 
-        rng = np.random.default_rng(42)
+        rng = np.random.default_rng(random_state)
         is_zero = rng.random(size) < self.pi
         poisson_draws = rng.poisson(self.lambda_, size)
         result = np.where(is_zero, 0, poisson_draws)
