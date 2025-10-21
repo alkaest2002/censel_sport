@@ -1,6 +1,5 @@
 # mypy: disable-error-code="operator"
 
-from dataclasses import dataclass
 from typing import Any, Literal
 
 import numpy as np
@@ -8,14 +7,6 @@ from numpy.typing import NDArray
 from scipy import stats
 
 from lib.distributions import get_distributions
-
-
-@dataclass
-class FitResult:
-    """Results from distribution fitting."""
-    fitted_models: dict[str, Any]
-    failed_models: list[str]
-    best_model: dict[str, Any]
 
 
 class DistributionFitter:
@@ -44,7 +35,7 @@ class DistributionFitter:
         FitResult
             Contains fitted models, goodness-of-fit metrics, and failed fits
         """
-        # Extract from data_dict
+        # Extract from data dictionary
         clean: dict[str, Any] = self.data_dict.get("clean", {})
         data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
         metric_config: dict[str, Any] = self.data_dict.get("metric_config", {})
@@ -122,11 +113,11 @@ class DistributionFitter:
         best_model = self._get_best_model(fitted_models, distribution_best_criterion)
 
         # Update data dict with fitted distributions
-        self.data_dict["fit"] = FitResult(
-            fitted_models=fitted_models,
-            failed_models=failed_models,
-            best_model=best_model,
-        )
+        self.data_dict["fit"] = {
+            "fitted_models": fitted_models,
+            "failed_models": failed_models,
+            "best_model": best_model,
+        }
 
         return self.data_dict
 
