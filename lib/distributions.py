@@ -108,7 +108,7 @@ class StatsModelsPoissonDist:
         """Generate random variates."""
         if self._lambda is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
-        return cast("NDArray[np.integer[Any]]", stats.poisson.rvs(self._lambda, size=size))
+        return cast("NDArray[np.integer[Any]]", stats.poisson.rvs(self._lambda, size=size, random_state=42))
 
     def mean(self) -> float:
         """Mean of the distribution."""
@@ -238,7 +238,7 @@ class StatsModelsNegativeBinomialDist:
     def rvs(self, size: int | tuple[int, ...] = 1) -> NDArray[np.integer[Any]]:
         """Generate random variates."""
         n, p = self._convert_to_scipy_params()
-        return cast("NDArray[np.integer[Any]]", stats.nbinom.rvs(n, p, size=size))
+        return cast("NDArray[np.integer[Any]]", stats.nbinom.rvs(n, p, size=size, random_state=42))
 
     def mean(self) -> float:
         """Mean of the distribution."""
@@ -379,7 +379,7 @@ class StatsModelsZeroInflatedPoissonDist:
         if self.lambda_ is None or self.pi is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
 
-        rng = np.random.default_rng()
+        rng = np.random.default_rng(42)
         is_zero = rng.random(size) < self.pi
         poisson_draws = rng.poisson(self.lambda_, size)
         result = np.where(is_zero, 0, poisson_draws)
@@ -410,7 +410,7 @@ DistributionType = (
 FitFunctionType = Callable[[NDArray[np.integer[Any] | np.floating[Any]]], tuple[float, ...]]
 
 
-def get_distributions(metric_type: Literal["count", "time"]) -> dict[str, Any]:
+def get_distributions(metric_type: Literal["count", "time"]) -> dict[str, tuple[DistributionType, FitFunctionType]]:
 
     if metric_type == "count":
         return  {
