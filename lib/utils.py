@@ -1,5 +1,6 @@
 # mypy: disable-error-code="misc"
 
+from collections.abc import Hashable
 from itertools import count
 from typing import Any
 
@@ -116,7 +117,7 @@ def apply_standardization(
         data_to_standardize: NDArray[np.integer[Any] | np.floating[Any]],
         cutoffs: list[tuple],
         higher_is_better: bool = False,
-    ) -> list[dict[str, float]]:
+    ) -> list[dict[Hashable, Any]]:
     """
     Standardize data with percentile cutoffs.
 
@@ -137,17 +138,17 @@ def apply_standardization(
     """
 
     # Convert data to pandas Series for easier manipulation
-    data_series = pd.Series(data_to_standardize)
+    data = pd.Series(data_to_standardize)
 
     # Add inclusive bounds to cutoffs
     # First cutoff is inclusive on both sides, others only on the right
-    cutoffs_with_inclusive = zip(cutoffs, ["both", *["right"] * (len(cutoffs) - 1)], strict=True)
+    cutoffs_with_inclusive = list(zip(cutoffs, ["both", *["right"] * (len(cutoffs) - 1)], strict=True))
 
     # initialize counter based on whether higher values denotes better performance
     counter = count(start=1, step=1) if higher_is_better else count(start=len(cutoffs), step=-1)
 
-    # Compute standardized data
-    standardized_data = data_series.case_when(
+    # Compute standardized scores
+    standardized_data = data.case_when(
         [
             (lambda x, cutoffs=cutoffs, inclusive=inclusive:
                 x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), next(counter))
@@ -155,16 +156,31 @@ def apply_standardization(
         ],
     )
 
-    # zip original values with standardized values
-    zipped_data = zip(data_series.tolist(), standardized_data.tolist(), strict=True)
+    # Compute standardized scores lower bounds for data
+    lower_bounds = data.case_when(
+        [
+            (lambda x, cutoffs=cutoffs, inclusive=inclusive:
+                x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), cutoffs[0])
+            for (cutoffs, inclusive) in cutoffs_with_inclusive
+        ],
+    )
 
-    return [
-        {
-            "original_value": original_value,
-            "standardized_value": standardized_value,
-        }
-        for original_value, standardized_value in zipped_data
-    ]
+    # Compute standardized scores upper bounds for data
+    upper_bounds = data.case_when(
+        [
+            (lambda x, cutoffs=cutoffs, inclusive=inclusive:
+                x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), cutoffs[1])
+            for (cutoffs, inclusive) in cutoffs_with_inclusive
+        ],
+    )
+
+    return pd.concat([
+        data,
+        standardized_data,
+        lower_bounds,
+        upper_bounds,
+
+    ], keys=["original_value","standardized_value", "lower_bound", "upper_bound"], axis=1).to_dict(orient="records")
 
 
 def is_falsy(value: Any) -> bool:
