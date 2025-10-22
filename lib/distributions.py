@@ -12,6 +12,18 @@ if TYPE_CHECKING:
 # ruff: noqa: BLE001
 # ruff: noqa: SLF001
 
+# Type for distribution classes
+DistributionType = (
+    type["stats.rv_continuous"] |
+    type["stats.rv_discrete"] |
+    type["StatsModelsPoissonDist"] |
+    type["StatsModelsNegativeBinomialDist"] |
+    type["StatsModelsZeroInflatedPoissonDist"]
+)
+
+# Type for fit functions
+FitFunctionType = Callable[[NDArray[np.integer[Any] | np.floating[Any]]], tuple[float, ...]]
+
 
 class StatsModelsPoissonDist:
     """Poisson distribution using statsmodels."""
@@ -110,7 +122,7 @@ class StatsModelsPoissonDist:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.integer[Any]] | int", stats.poisson.ppf(q, self._lambda))
 
-    def rvs(self, size: int | tuple[int, ...] = 1, random_state: int = 42) -> NDArray[np.integer[Any]]:
+    def rvs(self, size: int | tuple[int, ...] | None = 1, random_state: int | None = 42) -> NDArray[np.integer[Any]]:
         """Generate random variates."""
         if self._lambda is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
@@ -246,7 +258,7 @@ class StatsModelsNegativeBinomialDist:
         n, p = self._convert_to_scipy_params()
         return cast("NDArray[np.integer[Any]] | int", stats.nbinom.ppf(q, n, p))
 
-    def rvs(self, size: int | tuple[int, ...] = 1, random_state: int = 42) -> NDArray[np.integer[Any]]:
+    def rvs(self, size: int | tuple[int, ...] | None = 1, random_state: int | None = 42) -> NDArray[np.integer[Any]]:
         """Generate random variates."""
         n, p = self._convert_to_scipy_params()
         return cast("NDArray[np.integer[Any]]", stats.nbinom.rvs(n, p, size=size, random_state=random_state))
@@ -429,7 +441,7 @@ class StatsModelsZeroInflatedPoissonDist:
             return int(result[0])
         return cast("NDArray[np.integer[Any]]", result)
 
-    def rvs(self, size: int | tuple[int, ...] = 1, random_state: int = 42) -> NDArray[np.integer[Any]]:
+    def rvs(self, size: int | tuple[int, ...] | None = 1, random_state: int | None = 42) -> NDArray[np.integer[Any]]:
         """Generate random variates."""
         if self.lambda_ is None or self.pi is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
@@ -454,21 +466,27 @@ class StatsModelsZeroInflatedPoissonDist:
         return float(mean_val + self.pi * (1 - self.pi) * self.lambda_**2)
 
 
-# Type for distribution classes and fitting functions
-DistributionType = (
-    type[stats.rv_continuous] |
-    type[stats.rv_discrete] |
-    type[StatsModelsPoissonDist] |
-    type[StatsModelsNegativeBinomialDist] |
-    type[StatsModelsZeroInflatedPoissonDist]
-)
-FitFunctionType = Callable[[NDArray[np.integer[Any] | np.floating[Any]]], tuple[float, ...]]
+def get_distributions(
+        metric_type: Literal["count", "time"] | None,
+        distribution: str | None = None,
+    ) -> dict[str, tuple[DistributionType, FitFunctionType]]:
+    """
+    Fit Poisson distribution parameters to data.
 
+    Parameters:
+    -----------
+    metric_type : Literal["count", "time"]
 
-def get_distributions(metric_type: Literal["count", "time"]) -> dict[str, tuple[DistributionType, FitFunctionType]]:
+    distribution : str | None
+        Specific distribution to get (if None, return all for the metric type)
 
-    if metric_type == "count":
-        return  {
+    Returns:
+    --------
+    dict: dictionary mapping distribution names to (distribution class, fit function) tuples
+    """
+    # Mapping of distributions
+    distributions = {
+        "count": {
             "negative_binomial": (
                 StatsModelsNegativeBinomialDist,
                 lambda x: StatsModelsNegativeBinomialDist.fit_parameters(x),
@@ -481,11 +499,34 @@ def get_distributions(metric_type: Literal["count", "time"]) -> dict[str, tuple[
                 StatsModelsZeroInflatedPoissonDist,
                 lambda x: StatsModelsZeroInflatedPoissonDist.fit_parameters(x),
             ),
-        }
-
-    return {
-        "normal": (stats.norm, lambda x: stats.norm.fit(x)),
-        "lognormal": (stats.lognorm, lambda x: stats.lognorm.fit(x, floc=0)),
-        "gamma": (stats.gamma, lambda x: stats.gamma.fit(x, floc=0)),
-        "weibull": (stats.weibull_min, lambda x: stats.weibull_min.fit(x, floc=0)),
+        },
+        "time": {
+            "normal": (stats.norm, lambda x: stats.norm.fit(x)),
+            "lognormal": (stats.lognorm, lambda x: stats.lognorm.fit(x, floc=0)),
+            "gamma": (stats.gamma, lambda x: stats.gamma.fit(x, floc=0)),
+            "weibull": (stats.weibull_min, lambda x: stats.weibull_min.fit(x, floc=0)),
+        },
     }
+
+    # If metric type is invalid, raise error
+    if metric_type not in distributions:
+        raise ValueError(f"Unsupported metric type '{metric_type}'")
+
+    # If distribution is not valid, raise error
+    if distribution is not None and distribution not in [*distributions["count"].keys(), *distributions["time"].keys()]:
+            raise ValueError(f"Unsupported distribution '{distribution}'")
+
+    # Count distributions
+    if metric_type == "count":
+        if distribution is not None:
+            return {
+                distribution: distributions["count"][distribution],
+            }
+        return distributions["count"]
+
+    # Time distributions
+    if distribution is not None:
+        return {
+            distribution: distributions["time"][distribution],
+        }
+    return distributions["time"]
