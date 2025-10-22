@@ -1,6 +1,8 @@
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 import numpy as np
+
+from lib.utils import is_falsy
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
@@ -21,14 +23,13 @@ def clean_data(
     --------
     dict : Updated data dictionary
     """
-    # Extract from data dictionary
-    metric_config =  data_dict.get("metric_config", {})
+    # Extract data from dictionary
+    metric_config: dict[str, Any] =  data_dict.get("metric_config", {})
     load: dict[str, Any] = data_dict.get("load", {})
     data: NDArray[np.integer[Any] | np.floating[Any]] = load.get("data", np.array([]))
-
-    # Check if raw data is empty
-    if data.size == 0:
-        raise ValueError("No raw data found in data dictionary.")
+    # Raise error if something is missing
+    if any(map(is_falsy, (metric_config, load, data))):
+        raise ValueError("The data dictionary does not contain all required parts.")
 
     # Get cleaning parameters
     remove_outliers: bool = metric_config.get("remove_outliers", False)
@@ -60,6 +61,9 @@ def clean_data(
     # Update data dictionary
     data_dict["clean"] = ({
         "data": final_data,
+         "quantiles": {
+            f"q{int(q*100)}": cast("float", np.quantile(final_data, q)) for q in np.arange(0.01, 1., 0.01)
+        },
         "metadata": {
             "removed_invalid": removed_invalid,
             "removed_outliers": removed_outliers,
