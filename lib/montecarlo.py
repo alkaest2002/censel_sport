@@ -55,34 +55,35 @@ def monte_carlo_validation(
     )):
         raise ValueError("The data dictionary does not contain all required parts.")
 
-
     # Get distributions
     distributions: dict[str, tuple[DistributionType, FitFunctionType]] =\
         get_distributions(metric_type, best_model["name"])
+
+    # Get best model class
     model_class, _ = distributions[best_model["name"]]
 
-    # Istantiate best model
+    # Istantiate best model class with fitted params
     model = model_class(*best_model["params"])
 
-    # Store synthetic percentile estimates
-    simulation_samples: list[NDArray[np.integer[Any] | np.floating[Any]]] = []
-    simulation_estimates: dict[int | float, list[float]] = {p: [] for p in requested_percentiles}
-
-    # Run Monte Carlo simulations
-    for _ in range(montecarlo_n_samples):
-
-        # Generate synthetic dataset from fitted distribution
-        synthetic_data = model.rvs(size=montecarlo_n_size, random_state=random_state)
-
-        # Append sample to list
-        simulation_samples.append(synthetic_data)
-
-        # Compute percentiles
-        for p in requested_percentiles:
-            simulation_estimates[p].append(np.percentile(synthetic_data, p))
+    # Init lists to store montecarlo samples and synthetic percentile estimates
+    montecarlo_samples: list[NDArray[np.integer[Any] | np.floating[Any]]] = []
+    montecarlo_estimates: dict[int | float, list[float]] = {p: [] for p in requested_percentiles}
 
     # Compute validation metrics
     validation_results: list[dict[str, Any]] = []
+
+    # Run Monte Carlo simulations
+    for i in range(montecarlo_n_samples):
+
+        # Generate synthetic dataset from fitted distribution
+        synthetic_data = model.rvs(size=montecarlo_n_size, random_state=random_state + i)
+
+        # Append sample to list
+        montecarlo_samples.append(synthetic_data)
+
+        # Compute percentiles
+        for p in requested_percentiles:
+            montecarlo_estimates[p].append(np.percentile(synthetic_data, p))
 
     # For each percentile, compute bias, RMSE, coverage
     for p in requested_percentiles:
@@ -94,35 +95,35 @@ def monte_carlo_validation(
         bootstrap_ci_upper: float = bootstrap_percentile["ci_upper"]
 
         # Get synthetic values
-        simulation_values: NDArray[np.integer[Any] | np.floating[Any]] = np.array(simulation_estimates[p])
+        montecarlo_values: NDArray[np.integer[Any] | np.floating[Any]] = np.array(montecarlo_estimates[p])
 
         # Bias
-        bias = np.mean(simulation_values) - bootstrap_value
+        bias = np.mean(montecarlo_values) - bootstrap_value
 
         # Relative bias (as percentage)
         relative_bias = (bias / bootstrap_value) * 100 if bootstrap_value != 0 else 0
 
         # RMSE
-        rmse = np.sqrt(np.mean((simulation_values - bootstrap_value)**2))
+        rmse = np.sqrt(np.mean((montecarlo_values - bootstrap_value)**2))
 
         # Coverage: % of synthetic values within bootstrap CI
-        coverage = np.mean((simulation_values >= bootstrap_ci_lower) &
-                          (simulation_values <= bootstrap_ci_upper)) * 100
+        coverage = np.mean((montecarlo_values >= bootstrap_ci_lower) &
+                          (montecarlo_values <= bootstrap_ci_upper)) * 100
 
         validation_results.append({
             "percentile": f"{p}",
             "bootstrap_value": bootstrap_value,
-            "synthetic_mean": np.mean(simulation_values),
+            "montecarlo_value": np.mean(montecarlo_values),
+            "montecarlo_std": np.std(montecarlo_values),
             "bias": bias,
             "relative_bias_%": relative_bias,
             "rmse": rmse,
             "coverage_%": coverage,
-            "synthetic_std": np.std(simulation_values),
         })
 
     # Update data dictionary
-    data_dict["simulation"] = {
+    data_dict["montecarlo"] = {
         "results": validation_results,
     }
 
-    return data_dict, simulation_samples
+    return data_dict, montecarlo_samples
