@@ -5,6 +5,8 @@ from typing import Any, cast
 import numpy as np
 from numpy.typing import NDArray
 
+from lib.utils_generic import is_falsy
+
 
 def _compute_percentile_cutoffs(
         bootstrap_percentiles: list[dict[str, Any]],
@@ -49,10 +51,10 @@ def compute_bootstrap_percentiles(
     dict : Dict with percentiles and confidence intervals
     dict : All bootstrap samples for further analysis
     """
-    # Extract from data dictionary
+    # Extract data from dictionary
+    metric_config: dict[str, Any] = data_dict.get("metric_config", {})
     clean: dict[str, Any] = data_dict.get("clean", {})
     data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
-    metric_config: dict[str, Any] = data_dict.get("metric_config", {})
     requested_percentiles: list[int | float] = metric_config.get("requested_percentiles", [5, 25, 50, 75, 95])
     n_replicates: int = metric_config.get("bootstrap_n_replicates", 10000)
     n_replicate_size: int = metric_config.get("bootstrap_n_replicate_size", data.size)
@@ -60,13 +62,25 @@ def compute_bootstrap_percentiles(
     metric_precision: int = metric_config.get("metric_precision", 2)
     random_state: int = metric_config.get("random_state", 42)
 
+     # Raise error if something is missing
+    if any(map(is_falsy,
+               (
+                   metric_config,
+                   clean,
+                   data,
+                   requested_percentiles,
+                   n_replicates,
+                   n_replicate_size,
+                   ci_level,
+                   metric_precision,
+                   random_state,
+                ),
+            ),
+        ):
+        raise ValueError("---> The data dictionary does not contain all required parts.")
+
     # Initialize random generator
     rng = np.random.default_rng(random_state)
-
-
-    # If data is empty, raise error
-    if data.size == 0:
-        raise ValueError("No valid data available for bootstrap sampling.")
 
     # Inittialize variables
     boostrap_samples: list[NDArray[np.integer[Any] | np.floating[Any]]] = []
