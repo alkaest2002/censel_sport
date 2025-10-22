@@ -32,14 +32,14 @@ def save_analysis_results(
     None
     """
 
-    # Extract from data dictionary
+    # Extract data from dictionary
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
     plots: dict[str, str] = data_dict.get("plots", {})
     metric_name: str = metric_config.get("name", "")
 
     # Raise error if something is missing
     if any(map(is_falsy, (metric_config, plots, metric_name))):
-        raise ValueError("The data dictionary does not contain all required parts.")
+        raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Determine output folder
     output_path = data_out / metric_name
