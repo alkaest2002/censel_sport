@@ -53,7 +53,7 @@ def monte_carlo_validation(
             best_model,
         ),
     )):
-        raise ValueError("The data dictionary does not contain all required parts.")
+        raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Get distributions
     distributions: dict[str, tuple[DistributionType, FitFunctionType]] =\
