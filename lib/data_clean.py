@@ -30,7 +30,7 @@ def clean_data(
 
     # Raise error if something is missing
     if any(map(is_falsy, (metric_config, load, data))):
-        raise ValueError("The data dictionary does not contain all required parts.")
+        raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Get cleaning parameters
     remove_outliers: bool = metric_config.get("remove_outliers", False)
