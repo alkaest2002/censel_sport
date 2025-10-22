@@ -14,7 +14,7 @@ from lib.data_save import save_analysis_results
 from lib.data_standardize import compute_standard_scores
 
 try:
-        
+
     # Iterate over all metric configuration files in data_in folder
     for metric_config_path in Path("./data_in").glob("*.json"):
 
