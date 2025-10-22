@@ -9,6 +9,7 @@ from lib.data_clean import clean_data
 from lib.data_fit import DistributionFitter
 from lib.data_load import load_data
 from lib.data_montecarlo import monte_carlo_validation
+from lib.data_plot import create_plots
 from lib.data_save import save_analysis_results
 from lib.data_standardize import compute_standard_scores
 
@@ -66,7 +67,7 @@ for metric_config_path in Path("./data_in").glob("*.json"):
     # Save plots
     ###############################################################################################
     print("7. Saving plots...")
-
+    data_dict = create_plots(data_dict)
 
     ##############################################################################################
     # Save results
