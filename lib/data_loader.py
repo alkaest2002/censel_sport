@@ -1,6 +1,7 @@
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
+import numpy as np
 import pandas as pd
 
 from lib.utils import generate_synthetic_data
@@ -39,6 +40,7 @@ def _load_from_csv(metric_config: dict[str, Any]) -> dict[str, Any]:
             "metric_config": metric_config,
             "load": {
                 "data": None,
+                "quantiles": None,
                 "metadata": {
                     "original_size": 0,
                     "valid_records": 0,
@@ -51,6 +53,7 @@ def _load_from_csv(metric_config: dict[str, Any]) -> dict[str, Any]:
             "metric_config": metric_config,
             "load": {
                 "data": raw_data,
+                "quantiles": None,
                 "metadata": {
                     "original_size": len(df),
                     "valid_records": len(raw_data),
@@ -78,11 +81,13 @@ def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
 
     # Generate synthetic data
     raw_data = generate_synthetic_data(metric_config["name"], n_samples)
-
     return {
         "metric_config": metric_config,
         "load": {
             "data": raw_data,
+            "quantiles": {
+                f"q{int(q*100)}": cast("float", np.quantile(raw_data, q)) for q in np.arange(0.01, 1., 0.01)
+            },
             "metadata": {
                 "original_size": len(raw_data),
                 "valid_records": len(raw_data),
