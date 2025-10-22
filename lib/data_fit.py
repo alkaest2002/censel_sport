@@ -7,6 +7,7 @@ from numpy.typing import NDArray
 from scipy import stats
 
 from lib.utils_distributions import get_distributions
+from lib.utils_generic import is_falsy
 
 
 class DistributionFitter:
@@ -38,26 +39,30 @@ class DistributionFitter:
         -------
         dict: Updated data dictionary
         """
-        # Extract from data dictionary
+        # Extract data from dictionary
+        metric_config: dict[str, Any] = self.data_dict.get("metric_config", {})
         clean: dict[str, Any] = self.data_dict.get("clean", {})
         data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
-        metric_config: dict[str, Any] = self.data_dict.get("metric_config", {})
         metric_type: Literal["count", "time"] | None = metric_config.get("metric_type")
         distribution_best_criterion: Literal["aic", "bic", "cramer_von_mises"] | None =\
             self.data_dict.get("distribution_best_criterion", None)
 
+        # Raise error if something is missing
+        if any(map(is_falsy, (metric_config, clean, data, metric_type))):
+            raise ValueError("---> The data dictionary does not contain all required parts.")
+
         # Validate metric type
         if metric_type not in {"count", "time"}:
-            raise ValueError(f"metric_type must be 'count' or 'time', got '{self.data_dict.get('metric_type')}'")
+            raise ValueError(f"---> Metric_type must be 'count' or 'time', got '{metric_type}'")
 
         # Validate distribution_best_criterion
         if distribution_best_criterion is not None and \
             distribution_best_criterion not in self.DISTRIBUTION_CRITERIA:
-            raise ValueError(f"distribution_best_criterion {distribution_best_criterion} is invalid")
+            raise ValueError(f"---> Distribution_best_criterion {distribution_best_criterion} is invalid")
 
         # Validate minimum sample size
         if data.size < self.MIN_SAMPLE_SIZE:
-            raise ValueError(f"{self.MIN_SAMPLE_SIZE} measures are needed to fit distributions, got {data.size}")
+            raise ValueError(f"---> {self.MIN_SAMPLE_SIZE} measures are needed to fit distributions, got {data.size}")
 
         # Initialize results
         fitted_models: dict[str, Any] = {}
