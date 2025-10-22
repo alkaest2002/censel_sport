@@ -6,13 +6,17 @@ from typing import TYPE_CHECKING, Any, Literal
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.stats import norm
 
 from lib.utils_distributions import DistributionType, FitFunctionType, get_distributions
 from lib.utils_generic import is_falsy
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
+
+# Constants
+DEFAULT_FIGURE_SIZE = (8, 8)
+DEFAULT_PAD_INCHES = 0.05
+MIN_DATA_POINTS = 3
 
 def figure_to_svg_string(fig: Figure) -> str:
     """Convert a matplotlib figure to an SVG string ready for file saving.
@@ -82,6 +86,11 @@ def qq_plot(data_dict: dict[str, Any]) -> str:
     if any(map(is_falsy, (clean, data))):
         raise ValueError("The data dictionary does not contain all required parts.")
 
+    # Raise error if number of observations is lower than 3
+    if n := data.size < MIN_DATA_POINTS:
+        raise ValueError(f"Cannot create meaningful Q-Q plot: need at least 3 data points, got {data.size}")
+
+
     # Get distributions
     distributions: dict[str, tuple[DistributionType, FitFunctionType]] =\
         get_distributions(metric_type, best_model["name"])
@@ -90,7 +99,11 @@ def qq_plot(data_dict: dict[str, Any]) -> str:
     model_class, _ = distributions[best_model["name"]]
 
     # Instantiate best model class with fitted params
-    model = model_class(*best_model["params"])
+    try:
+        model = model_class(*best_model["params"])
+    except (TypeError, ValueError) as e:
+        raise ValueError(f"Failed to instantiate model {best_model['name']}: {e}") from e
+
 
     # Check for finite values
     finite_mask: NDArray[np.bool_] = np.isfinite(data)
@@ -105,42 +118,29 @@ def qq_plot(data_dict: dict[str, Any]) -> str:
     # Sort data in ascending order
     y: NDArray[np.floating[Any]] = np.sort(data)
 
-    # Compute sample mean and standard deviation
-    mean: float = float(np.mean(y))
-    std: float = float(np.std(y))
-
-    # Handle case where std is zero (all values are the same)
-    if std == 0:
-        print("Warning: All data values are identical. Q-Q plot may not be meaningful.")
-        std = 1.0  # Set to 1 to avoid division by zero
-
-    # Compute set of theoretical normal quantiles
-    ppf = norm(loc=mean, scale=std).ppf
-    n: int = len(y)
-
     # Generate probability points using i/(N+2) to avoid extreme quantiles
-    prob_points: list[float] = [i / (n + 2) for i in range(1, n + 1)]
-    x: list[float] = [ppf(p) for p in prob_points]
+    prob_points_array = np.linspace(1/(n+2), n/(n+2), n)
+    x: NDArray[np.floating[Any]] = np.array([model.ppf(p) for p in prob_points_array])
 
     # Create a new figure with specified size for better SVG output
-    figure, ax = plt.subplots(figsize=(8, 8))
+    figure, ax = plt.subplots(figsize=DEFAULT_FIGURE_SIZE)
 
     # Create the Q-Q scatter plot
-    ax.scatter(x, y, alpha=0.7, edgecolors="black", linewidths=0.5, s=50)
+    ax.scatter(x, y, alpha=.5, edgecolors="black", linewidths=0.5, s=50, label="Data points")
 
     # Plot diagonal reference line
     data_min: float = float(np.min([x, y]))
     data_max: float = float(np.max([x, y]))
     diag: NDArray[np.floating[Any]] = np.linspace(data_min, data_max, 1000)
-    ax.plot(diag, diag, color="red", linestyle="--", linewidth=2, label="Perfect normal fit")
+    ax.plot(diag, diag, color="red", linestyle="--", linewidth=2, label="Perfect fit line")
 
     # Set equal aspect ratio for better interpretation
     ax.set_aspect("equal")
 
     # Add labels and formatting
-    ax.set_xlabel("Theoretical Normal Quantiles", fontsize=12)
+    ax.set_xlabel("Theoretical Quantiles", fontsize=12)
     ax.set_ylabel("Sample Quantiles", fontsize=12)
-    ax.set_title("Q-Q Plot: Sample vs Normal Distribution", fontsize=14, fontweight="bold")
+    ax.set_title(f"Q-Q Plot: sample vs {best_model['name']} distribution", fontsize=14, fontweight="bold")
     ax.grid(True, alpha=0.3)
     ax.legend(fontsize=11)
 
