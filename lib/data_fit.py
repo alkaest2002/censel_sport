@@ -74,10 +74,10 @@ class DistributionFitter:
 
             try:
                 # Fit distribution
-                params = fit_func(data)
+                parameters = fit_func(data)
 
-                # Handle case where fitting fails and returns empty params
-                if not params or len(params) == 0:
+                # Handle case where fitting fails and returns empty parameters
+                if not parameters or len(parameters) == 0:
                     fitted_models[dist_name] = {
                         "parameters": None,
                         "goodness_of_fit": None,
@@ -86,14 +86,14 @@ class DistributionFitter:
                     continue
 
                 # Create distribution object
-                dist_obj = dist_class(*params)
+                dist_obj = dist_class(*parameters)
 
                 # Compute metrics
                 metrics = self._compute_metrics(dist_obj, data, sorted_data, data.size, metric_type)
 
                 # Store results of fitted distribution
                 fitted_models[dist_name] = {
-                    "parameters": params,
+                    "parameters": parameters,
                     "goodness_of_fit": metrics,
                     "quantiles": {
                         f"q{int(round(q*100,0))}": dist_obj.ppf(cast("float",q)) for q in np.arange(0.01, 1., 0.01)
@@ -147,7 +147,7 @@ class DistributionFitter:
 
         Returns:
         -------
-        dict: Best model information with 'name' and 'params' keys
+        dict: Best model information with 'name' and 'parameters' keys
         """
         # Filter out distributions with invalid values for all criteria
         valid_models = {
@@ -159,7 +159,7 @@ class DistributionFitter:
 
         # If there aare no valid models
         if not valid_models:
-            return {"name": None, "params": None}
+            return {"name": None, "parameters": None}
 
         # If specific criterion provided, use it
         if criterion is not None:
@@ -171,10 +171,10 @@ class DistributionFitter:
             # Compute best model via selected criterion
             best_model_name = min(valid_models.keys(), key=lambda x: valid_models[x][criterion])
 
-            # Get params of best model
-            best_params = fitted_models[best_model_name]["parameters"]
+            # Get parameters of best model
+            best_parameters = fitted_models[best_model_name]["parameters"]
 
-            return {"name": best_model_name, "params": best_params}
+            return {"name": best_model_name, "parameters": best_parameters}
 
         # Use majority vote across all criteria
         return self._majority_vote_selection(fitted_models, valid_models)
@@ -197,12 +197,12 @@ class DistributionFitter:
 
         Returns:
         -------
-        dict: Best model information with 'name' and 'params' keys
+        dict: Best model information with 'name' and 'parameters' keys
         """
         # If there is just one model
         if len(valid_models) == 1:
             name = next(iter(valid_models))
-            return {"name": name, "params": fitted_models[name]["parameters"]}
+            return {"name": name, "parameters": fitted_models[name]["parameters"]}
 
         # Order by importance for tie-breaking
         criteria = ["bic", "aic", "cramer_von_mises"]
@@ -241,7 +241,7 @@ class DistributionFitter:
         # Determine best model name
         best_model_name = winners[0] if len(winners) == 1 else self._break_tie(winners, valid_models, criteria)
 
-        return {"name": best_model_name, "params": fitted_models[best_model_name]["parameters"]}
+        return {"name": best_model_name, "parameters": fitted_models[best_model_name]["parameters"]}
 
     def _break_tie(
         self,

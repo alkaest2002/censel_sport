@@ -62,8 +62,8 @@ def monte_carlo_validation(
     # Get best model class
     model_class, _ = distributions[best_model["name"]]
 
-    # Istantiate best model class with fitted params
-    model = model_class(*best_model["params"])
+    # Istantiate best model class with fitted parameters
+    model = model_class(*best_model["parameters"])
 
     # Init lists to store montecarlo samples and synthetic percentile estimates
     montecarlo_samples: list[NDArray[np.integer[Any] | np.floating[Any]]] = []
