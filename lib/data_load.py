@@ -113,7 +113,7 @@ def load_data(metric_config: dict[str, Any]) -> dict[str, Any]:
     source_type = metric_config.get("source_type")
 
     if source_type not in ["csv", "synthetic"]:
-        raise NotImplementedError(f"Unknown source_type {source_type} in metric configuration.")
+        raise NotImplementedError(f"---> Unknown source_type {source_type} in metric configuration.")
 
     return (
         _load_from_csv(metric_config) if source_type == "csv"
