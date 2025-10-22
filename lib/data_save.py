@@ -64,7 +64,7 @@ def save_analysis_results(
         f.write(orjson.dumps(bootstrap_samples, option=orjson_options).decode("utf-8"))
 
     # Write montecarlo samples to JSON file
-    motnecarlo_output_path = output_path / f"{metric_name}_montecarlo_samples.json"
-    with motnecarlo_output_path.open("w") as f:
+    mtntecarlo_output_path = output_path / f"{metric_name}_montecarlo_samples.json"
+    with mtntecarlo_output_path.open("w") as f:
         orjson_options = orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2
         f.write(orjson.dumps(simulation_samples, option=orjson_options).decode("utf-8"))
