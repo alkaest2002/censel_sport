@@ -4,6 +4,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lib.distributions import DistributionType, FitFunctionType, get_distributions
+from lib.utils import is_falsy
 
 
 def monte_carlo_validation(
@@ -21,34 +22,44 @@ def monte_carlo_validation(
     --------
     dict : Updated data dictionary
     """
-    # Extract from data dictionary
+    # Extract data from dictionary
+    metric_config: dict[str, Any] = data_dict.get("metric_config", {})
     clean: dict[str, Any] = data_dict.get("clean", {})
     bootstrap: dict[str, Any] = data_dict.get("bootstrap", {})
-    data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", [])
-    metric_config: dict[str, Any] = data_dict.get("metric_config", {})
-    metric_type: Literal["time", "count"] | None = metric_config.get("metric_type")
-    requested_percentiles: list[int | float] = metric_config.get("requested_percentiles", [5, 25, 50, 75, 95])
-    bootstrap_percentiles: dict[str, Any] = bootstrap.get("percentiles", {})
-    n_simulations: int = metric_config.get("monte_carlo_n_simulations", 10000)
     fitted_distributions: dict[str, Any] = data_dict.get("fit", {})
-    best_model = fitted_distributions.get("best_model")
-    montecarlo_n_size = metric_config.get("montecarlo_n_size", data.size)
-    random_state: int = metric_config.get("random_state", 42)
+    metric_type: Literal["time", "count"] | None = metric_config.get("metric_type")
+    requested_percentiles: list[int | float] = metric_config.get("requested_percentiles", [])
+    montecarlo_n_samples: int = metric_config.get("montecarlo_n_samples", 0)
+    montecarlo_n_size: int = metric_config.get("montecarlo_n_size", 0)
+    random_state: int = metric_config.get("random_state", 0)
+    data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", [])
+    bootstrap_percentiles: dict[str, Any] = bootstrap.get("percentiles", {})
+    best_model: dict[str, Any] = fitted_distributions.get("best_model", {})
 
-    # If metric type is None, raise error
-    if metric_type is None:
-        raise ValueError("Metric type is not specified.")
+    # Raise error if something is missing
+    if any(map(is_falsy,
+        (
+            metric_config,
+            clean,
+            bootstrap,
+            fitted_distributions,
+            metric_type,
+            requested_percentiles,
+            montecarlo_n_samples,
+            montecarlo_n_size,
+            random_state,
+            data,
+            bootstrap_percentiles,
+            best_model,
+        ),
+    )):
+        raise ValueError("The data dictionary does not contain all required parts.")
 
-    # If no fitted distribution, raise error
-    if best_model is None:
-        raise ValueError("No fitted distribution available for Monte Carlo validation.")
 
     # Get distributions
-    distributions: dict[str, tuple[DistributionType, FitFunctionType]] = get_distributions(metric_type)
-
-    # Get best model
-    model_name: str = best_model["name"]
-    model_class, _= distributions[model_name]
+    distributions: dict[str, tuple[DistributionType, FitFunctionType]] =\
+        get_distributions(metric_type, best_model["name"])
+    model_class, _ = distributions[best_model["name"]]
 
     # Istantiate best model
     model = model_class(*best_model["params"])
@@ -58,7 +69,7 @@ def monte_carlo_validation(
     simulation_estimates: dict[int | float, list[float]] = {p: [] for p in requested_percentiles}
 
     # Run Monte Carlo simulations
-    for _ in range(n_simulations):
+    for _ in range(montecarlo_n_samples):
 
         # Generate synthetic dataset from fitted distribution
         synthetic_data = model.rvs(size=montecarlo_n_size, random_state=random_state)
