@@ -15,5 +15,5 @@
     "distribution_best_criterion": null,
     "montecarlo_n_samples": 10000,
     "montecarlo_n_size": 300,
-    "random_state": 42
+    "random_state": 50
 }
