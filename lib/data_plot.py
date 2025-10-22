@@ -54,7 +54,6 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
     except (TypeError, ValueError) as e:
         raise ValueError(f"Failed to instantiate model {best_model_name}: {e}") from e
 
-
     # Add plots
     if metric_type == "time":
         data_dict["plots"] = {
