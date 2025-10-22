@@ -4,6 +4,8 @@ from typing import Any
 
 import orjson
 
+from lib.utils import is_falsy
+
 data_out = Path("./data_out")
 
 def save_analysis_results(
@@ -32,7 +34,11 @@ def save_analysis_results(
 
     # Extract from data dictionary
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
-    metric_name = metric_config.get("name", "unknown_metric")
+    metric_name: str = metric_config.get("name", "")
+
+    # Raise error if something is missing
+    if any(map(is_falsy, (metric_config, metric_name))):
+        raise ValueError("The data dictionary does not contain all required parts.")
 
     # Determine output folder
     output_path = data_out / metric_name
