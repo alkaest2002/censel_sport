@@ -1,17 +1,12 @@
 """Plotting utilities for statistical analysis."""
 
 import io
-from typing import TYPE_CHECKING, Any, Literal
+from typing import Any
 
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import numpy as np
-
-from lib.utils_distributions import DistributionType, FitFunctionType, get_distributions
-from lib.utils_generic import is_falsy
-
-if TYPE_CHECKING:
-    from numpy.typing import NDArray
+from numpy.typing import NDArray
 
 # Constants
 DEFAULT_FIGURE_SIZE = (8, 8)
@@ -57,7 +52,11 @@ def figure_to_svg_string(fig: Figure) -> str:
 
     return svg_string
 
-def qq_plot(data_dict: dict[str, Any]) -> str:
+def plot_qq_plot(
+        data: NDArray[np.integer[Any] | np.floating[Any]],
+        model_name: str,
+        model: Any,
+    ) -> str:
     """
     Create a Q-Q (quantile-quantile) plot comparing sample data to a normal distribution.
 
@@ -67,43 +66,22 @@ def qq_plot(data_dict: dict[str, Any]) -> str:
 
     Parameters:
     -----------
-    data_dict : dict
-        Dictionary containing data
+    data : NDArray
+        Data to plot
+
+    fitted_model: dict
+        Dictionary containing the fitted model
 
     Returns:
     -------
     str: SVG string of the generated Q-Q plot.
     """
-    # Extract from dictionary
-    metric_config: dict[str, Any] = data_dict.get("metric_config", {})
-    metric_type: Literal["time", "count"] | None = metric_config.get("metric_type")
-    clean: dict[str, Any] = data_dict.get("clean", {})
-    fit: dict[str, Any] = data_dict.get("fit", {})
-    data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
-    best_model: dict[str, Any] = fit.get("best_model", {})
-
-    # Raise error if something is missing
-    if any(map(is_falsy, (clean, data))):
-        raise ValueError("The data dictionary does not contain all required parts.")
+    # Get the size of the data first
+    n = data.size
 
     # Raise error if number of observations is lower than 3
-    if n := data.size < MIN_DATA_POINTS:
-        raise ValueError(f"Cannot create meaningful Q-Q plot: need at least 3 data points, got {data.size}")
-
-
-    # Get distributions
-    distributions: dict[str, tuple[DistributionType, FitFunctionType]] =\
-        get_distributions(metric_type, best_model["name"])
-
-    # Get best model class
-    model_class, _ = distributions[best_model["name"]]
-
-    # Instantiate best model class with fitted params
-    try:
-        model = model_class(*best_model["params"])
-    except (TypeError, ValueError) as e:
-        raise ValueError(f"Failed to instantiate model {best_model['name']}: {e}") from e
-
+    if n < MIN_DATA_POINTS:
+        raise ValueError(f"Cannot create meaningful Q-Q plot: need at least 3 data points, got {n}")
 
     # Check for finite values
     finite_mask: NDArray[np.bool_] = np.isfinite(data)
@@ -113,6 +91,7 @@ def qq_plot(data_dict: dict[str, Any]) -> str:
     # Use only finite values and warn if some were removed
     if not np.all(finite_mask):
         data = data[finite_mask]
+        n = data.size  # Update n after filtering
         print(f"Warning: {np.sum(~finite_mask)} non-finite values were removed from the data")
 
     # Sort data in ascending order
@@ -140,7 +119,7 @@ def qq_plot(data_dict: dict[str, Any]) -> str:
     # Add labels and formatting
     ax.set_xlabel("Theoretical Quantiles", fontsize=12)
     ax.set_ylabel("Sample Quantiles", fontsize=12)
-    ax.set_title(f"Q-Q Plot: sample vs {best_model['name']} distribution", fontsize=14, fontweight="bold")
+    ax.set_title(f"Q-Q Plot: sample vs {model_name} distribution", fontsize=14, fontweight="bold")
     ax.grid(True, alpha=0.3)
     ax.legend(fontsize=11)
 
