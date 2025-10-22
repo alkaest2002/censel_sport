@@ -89,7 +89,8 @@ def monte_carlo_validation(
     for p in requested_percentiles:
 
         # Get bootstrap percentile info
-        bootstrap_percentile: dict[str, Any] = bootstrap_percentiles[f"p{p}"]
+        bootstrap_percentile: dict[str, Any] =\
+            next((x for x in bootstrap_percentiles if x["percentile"] == p), None) # type: ignore[arg-type, comparison-overlap, index, misc]
         bootstrap_value: float = bootstrap_percentile["value"]
         bootstrap_ci_lower: float = bootstrap_percentile["ci_lower"]
         bootstrap_ci_upper: float = bootstrap_percentile["ci_upper"]
@@ -113,8 +114,13 @@ def monte_carlo_validation(
         validation_results.append({
             "percentile": f"{p}",
             "bootstrap_value": bootstrap_value,
+            "bootstrap_ci_lower": bootstrap_ci_lower,
+            "bootstrap_ci_upper": bootstrap_ci_upper,
             "montecarlo_value": np.mean(montecarlo_values),
             "montecarlo_std": np.std(montecarlo_values),
+            "montecarlo_min": np.min(montecarlo_values),
+            "montecarlo_max": np.max(montecarlo_values),
+            "montecarlo_iqr": np.percentile(montecarlo_values, 75) - np.percentile(montecarlo_values, 25),
             "bias": bias,
             "relative_bias_%": relative_bias,
             "rmse": rmse,

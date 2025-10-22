@@ -7,7 +7,7 @@ from numpy.typing import NDArray
 
 
 def _compute_percentile_cutoffs(
-        bootstrap_percentiles: dict[str, Any],
+        bootstrap_percentiles: list[dict[str, Any]],
         metric_precision: int = 2,
     ) -> list[tuple[float, float]]:
     """
@@ -25,7 +25,7 @@ def _compute_percentile_cutoffs(
         list: A list containing the normative table cutoffs.
     """
     # Extract percentile values
-    percentiles_values: list[int | float] = [percentile["value"] for percentile in bootstrap_percentiles.values()]
+    percentiles_values: list[int | float] = [percentile["value"] for percentile in bootstrap_percentiles]
 
     # Update percentile values with lowers and upper bounds, rounded to specified precision
     corrected_percentiles_values = np.round([0, *percentiles_values, 1e10], metric_precision)
@@ -71,7 +71,7 @@ def compute_bootstrap_percentiles(
     # Inittialize variables
     boostrap_samples: list[NDArray[np.integer[Any] | np.floating[Any]]] = []
     bootstrap_estimates: dict[str, list[float]] = {f"p{p}": [] for p in requested_percentiles}
-    bootstrap_percentiles: dict[str, Any] = {}
+    bootstrap_percentiles: list[dict[str, Any]] = []
     alpha = 1 - ci_level
     lower_ci = (alpha / 2) * 100
     upper_ci = (1 - alpha / 2) * 100
@@ -94,14 +94,14 @@ def compute_bootstrap_percentiles(
         estimates = np.array(bootstrap_estimates[f"p{p}"])
 
         # Append results
-        bootstrap_percentiles[f"p{p}"] = {
+        bootstrap_percentiles.append({
             "percentile": p,
             "value": np.median(estimates),
             "ci_level": ci_level,
             "ci_lower": np.percentile(estimates, lower_ci),
             "ci_upper": np.percentile(estimates, upper_ci),
             "std_error": np.std(estimates),
-        }
+        })
 
     percentile_cutoffs = _compute_percentile_cutoffs(bootstrap_percentiles, metric_precision=metric_precision)
 
