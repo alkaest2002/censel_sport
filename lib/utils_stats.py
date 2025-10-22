@@ -148,7 +148,7 @@ def apply_standardization(
     counter = count(start=1, step=1) if higher_is_better else count(start=len(cutoffs), step=-1)
 
     # Compute standardized scores
-    standardized_data = data.case_when(
+    standardized_scores = data.case_when(
         [
             (lambda x, cutoffs=cutoffs, inclusive=inclusive:
                 x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), next(counter))
@@ -157,64 +157,21 @@ def apply_standardization(
     )
 
     # Compute standardized scores lower bounds for data
-    lower_bounds = data.case_when(
+    standardized_bounds = data.case_when(
         [
             (lambda x, cutoffs=cutoffs, inclusive=inclusive:
-                x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), cutoffs[0])
+                x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), f"{cutoffs[0]} - {cutoffs[1]}")
             for (cutoffs, inclusive) in cutoffs_with_inclusive
         ],
     )
 
-    # Compute standardized scores upper bounds for data
-    upper_bounds = data.case_when(
+    return pd.concat(
         [
-            (lambda x, cutoffs=cutoffs, inclusive=inclusive:
-                x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), cutoffs[1])
-            for (cutoffs, inclusive) in cutoffs_with_inclusive
+            data,
+            standardized_scores,
+            standardized_bounds,
         ],
-    )
+        keys=["original_value","standardized_value", "standardized_value_bounds"],
+        axis=1,
+    ).to_dict(orient="records")
 
-    return pd.concat([
-        data,
-        standardized_data,
-        lower_bounds,
-        upper_bounds,
-
-    ], keys=["original_value","standardized_value", "lower_bound", "upper_bound"], axis=1).to_dict(orient="records")
-
-
-def is_falsy(value: Any) -> bool:
-    """
-    Check if a value is falsy with support for numpy arrays and custom logic.
-
-    Parameters
-    ----------
-    value : Any
-        The value to check
-
-    Returns:
-    -------
-    bool
-        True if the value is falsy, False otherwise
-    """
-    # Handle None explicitly
-    if value is None:
-        return True
-
-    # Handle numpy arrays
-    if hasattr(value, "__len__") and hasattr(value, "size"):
-        try:
-            return value.size == 0 # type: ignore[no-any-return]
-        except (AttributeError, TypeError):
-            pass
-
-    # Handle strings specifically (including whitespace-only strings)
-    if isinstance(value, str):
-        return value == "" or value.isspace()
-
-    # Handle other containers and standard falsy values
-    try:
-        return len(value) == 0
-    except TypeError:
-        # For objects without __len__, use standard truthiness
-        return not bool(value)

@@ -6,7 +6,7 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy import stats
 
-from lib.distributions import get_distributions
+from lib.utils_distributions import get_distributions
 
 
 class DistributionFitter:

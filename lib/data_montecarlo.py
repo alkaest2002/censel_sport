@@ -3,8 +3,8 @@ from typing import Any, Literal
 import numpy as np
 from numpy.typing import NDArray
 
-from lib.distributions import DistributionType, FitFunctionType, get_distributions
-from lib.utils import is_falsy
+from lib.utils_distributions import DistributionType, FitFunctionType, get_distributions
+from lib.utils_generic import is_falsy
 
 
 def monte_carlo_validation(

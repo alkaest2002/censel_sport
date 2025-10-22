@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Any
 
-from lib.utils import apply_standardization, is_falsy
+from lib.utils_generic import is_falsy
+from lib.utils_stats import apply_standardization
 
 if TYPE_CHECKING:
     import numpy as np

@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Any, cast
 
 import numpy as np
 
-from lib.utils import is_falsy
+from lib.utils_generic import is_falsy
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
@@ -27,6 +27,7 @@ def clean_data(
     metric_config: dict[str, Any] =  data_dict.get("metric_config", {})
     load: dict[str, Any] = data_dict.get("load", {})
     data: NDArray[np.integer[Any] | np.floating[Any]] = load.get("data", np.array([]))
+
     # Raise error if something is missing
     if any(map(is_falsy, (metric_config, load, data))):
         raise ValueError("The data dictionary does not contain all required parts.")

@@ -4,13 +4,13 @@ from typing import Any
 
 import orjson
 
-from lib.bootstrap import compute_bootstrap_percentiles
-from lib.data_cleaner import clean_data
-from lib.data_loader import load_data
-from lib.data_standardizer import compute_standard_scores
-from lib.data_writer import save_analysis_results
-from lib.distribution_fitter import DistributionFitter
-from lib.montecarlo import monte_carlo_validation
+from lib.data_bootstrap import compute_bootstrap_percentiles
+from lib.data_clean import clean_data
+from lib.data_fit import DistributionFitter
+from lib.data_load import load_data
+from lib.data_montecarlo import monte_carlo_validation
+from lib.data_save import save_analysis_results
+from lib.data_standardize import compute_standard_scores
 
 # Iterate over all metric configuration files in data_in folder
 for metric_config_path in Path("./data_in").glob("*.json"):
