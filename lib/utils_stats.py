@@ -85,7 +85,7 @@ def generate_synthetic_data(metric_type: str, n_samples: int = 500) -> Any:
 
     # Check if metric type is known
     if metric_type not in base_synthetic_data:
-        raise ValueError(f"Unknown metric_type {metric_type} for synthetic data generation.")
+        raise ValueError(f"---> Unknown metric_type {metric_type} for synthetic data generation.")
 
     # Get configuration for the specified metric type
     config: dict[str, Any] = base_synthetic_data[metric_type]
