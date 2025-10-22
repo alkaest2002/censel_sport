@@ -81,18 +81,18 @@ def plot_qq_plot(
 
     # Raise error if number of observations is lower than 3
     if n < MIN_DATA_POINTS:
-        raise ValueError(f"Cannot create meaningful Q-Q plot: need at least 3 data points, got {n}")
+        raise ValueError(f"---> Cannot create meaningful Q-Q plot: need at least 3 data points, got {n}")
 
     # Check for finite values
     finite_mask: NDArray[np.bool_] = np.isfinite(data)
     if not np.any(finite_mask):
-        raise ValueError("Unable to compute Q-Q plot: data must contain at least one finite value")
+        raise ValueError("---> Unable to compute Q-Q plot: data must contain at least one finite value")
 
     # Use only finite values and warn if some were removed
     if not np.all(finite_mask):
         data = data[finite_mask]
         n = data.size  # Update n after filtering
-        print(f"Warning: {np.sum(~finite_mask)} non-finite values were removed from the data")
+        print(f"---> Warning: {np.sum(~finite_mask)} non-finite values were removed from the data")
 
     # Sort data in ascending order
     y: NDArray[np.floating[Any]] = np.sort(data)
