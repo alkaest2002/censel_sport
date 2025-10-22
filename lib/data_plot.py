@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
 
-    # Extract from dictionary
+    # Extract data from dictionary
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
     metric_type: Literal["time", "count"] | None = metric_config.get("metric_type")
     clean: dict[str, Any] = data_dict.get("clean", {})
@@ -39,7 +39,7 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
                 ),
             ),
         ):
-        raise ValueError("The data dictionary does not contain all required parts.")
+        raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Get distributions
     distributions: dict[str, tuple[DistributionType, FitFunctionType]] =\
@@ -52,7 +52,7 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
     try:
         model = model_class(*best_model_parameters)
     except (TypeError, ValueError) as e:
-        raise ValueError(f"Failed to instantiate model {best_model_name}: {e}") from e
+        raise ValueError(f"---> Failed to instantiate model {best_model_name}: {e}") from e
 
     # Add plots
     if metric_type == "time":
