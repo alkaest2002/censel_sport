@@ -29,7 +29,7 @@ def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
 
     # Raise error if something is missing
     if any(map(is_falsy, (clean, boostrap, data, cutoffs))):
-        raise ValueError("The data dictionary does not contain all required parts.")
+        raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Update data dict
     data_dict["standardize"] = {
