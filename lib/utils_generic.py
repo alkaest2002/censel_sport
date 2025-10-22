@@ -1,6 +1,6 @@
 # mypy: disable-error-code="misc"
 
-from typing import Any
+from typing import Any, cast
 
 
 def is_falsy(value: Any) -> bool:
@@ -24,7 +24,7 @@ def is_falsy(value: Any) -> bool:
     # Handle numpy arrays
     if hasattr(value, "__len__") and hasattr(value, "size"):
         try:
-            return value.size == 0 # type: ignore[no-any-return]
+            return cast("bool", value.__len__() == 0 or value.size == 0)
         except (AttributeError, TypeError):
             pass
 
