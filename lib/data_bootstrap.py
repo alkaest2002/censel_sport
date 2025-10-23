@@ -92,6 +92,7 @@ def compute_bootstrap_percentiles(
 
     # Bootstrap resampling
     for _ in range(n_replicates):
+
         # Generate bootstrap sample with replacement
         resample = rng.choice(data, size=n_replicate_size, replace=True)
 
