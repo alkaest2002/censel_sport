@@ -104,10 +104,6 @@ def plot_qq_plot(
     """
     Create a Q-Q (quantile-quantile) plot comparing sample data to a normal distribution.
 
-    This function generates a Q-Q plot to assess whether the given data follows a normal
-    distribution. Points that fall approximately along the diagonal line suggest the data
-    is normally distributed. The plot can be saved as an SVG file and/or displayed.
-
     Parameters:
     -----------
     data : NDArray
@@ -134,7 +130,7 @@ def plot_qq_plot(
     figure, ax = plt.subplots(figsize=DEFAULT_FIGURE_SIZE)
 
     # Create the Q-Q scatter plot
-    ax.scatter(x, y, alpha=.5, edgecolors="k", linewidths=0.5, s=50, label="Data points")
+    ax.scatter(x, y, alpha=.5, c="white", edgecolors="k", linewidths=0.5, s=50, label="Data points")
 
     # Plot diagonal reference line
     data_min: float = float(np.min([x, y]))
@@ -162,11 +158,6 @@ def plot_hanging_rootogram(
     ) -> str:
     """
     Create a hanging rootogram for discrete count data.
-
-    A hanging rootogram compares observed frequencies (square roots) to expected
-    frequencies from a fitted discrete distribution. Bars "hang" from the expected
-    values, with deviations from zero indicating poor fit. This visualization is
-    particularly useful for count data (Poisson, Negative Binomial, Zero-Inflated, etc.).
 
     Parameters:
     -----------
@@ -196,8 +187,8 @@ def plot_hanging_rootogram(
         data = data.astype(int)
 
     # Determine count range for analysis
-    data_max = int(np.max(data))
-    max_count = min(data_max + 2, 50) if max_count is None else min(max_count, data_max + 2)
+    data_max: int = np.max(data)
+    max_count = data_max + 2 if max_count is None else min(max_count, data_max + 2)
 
     # Create count range
     counts = np.arange(0, max_count + 1)
