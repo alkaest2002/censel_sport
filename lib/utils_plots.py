@@ -162,7 +162,7 @@ def plot_histogram_with_fitted_model(
 
         # Create bar plot for observed data
         bar_width = 0.8
-        ax.bar(unique_values, frequencies, width=bar_width, alpha=0.7,
+        ax.bar(unique_values, frequencies, width=bar_width, alpha=0.5,
             color="k", linewidth=0.5,
             label="Observed data")
 
@@ -196,7 +196,7 @@ def plot_histogram_with_fitted_model(
             data,
             bins=bins,
             density=density,
-            alpha=0.7, color="k",
+            alpha=0.5, color="k",
             edgecolor="black", linewidth=0.5,
             label="Observed data",
         )
@@ -234,7 +234,6 @@ def plot_histogram_with_fitted_model(
 
     return figure_to_svg_string(figure)
 
-
 def plot_qq_plot(
         data: NDArray[np.integer[Any] | np.floating[Any]],
         model_name: str,
@@ -269,7 +268,7 @@ def plot_qq_plot(
     figure, ax = plt.subplots(figsize=DEFAULT_FIGURE_SIZE)
 
     # Create the Q-Q scatter plot
-    ax.scatter(x, y, alpha=.5, c="white", edgecolors="k", linewidths=0.5, s=50, label="Data points")
+    ax.scatter(x, y, alpha=0.5, c="white", edgecolors="k", linewidths=0.5, s=50, label="Data points")
 
     # Plot diagonal reference line
     data_min: float = float(np.min([x, y]))
