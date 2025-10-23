@@ -11,6 +11,7 @@ from lib.utils_plots import (
     plot_bootstrap_percentile_with_ci,
     plot_hanging_rootogram,
     plot_histogram_with_fitted_model,
+    plot_montecarlo,
     plot_qq_plot,
 )
 
@@ -23,6 +24,7 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
     clean: dict[str, Any] = data_dict.get("clean", {})
     bootstrap: dict[str, Any] = data_dict.get("bootstrap", {})
+    montecarlo: dict[str, Any] = data_dict.get("montecarlo", {})
     fit: dict[str, Any] = data_dict.get("fit", {})
     metric_type: Literal["time", "count"] | None = metric_config.get("metric_type")
     data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
@@ -30,21 +32,24 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
     best_model: dict[str, Any] = fit.get("best_model", {})
     best_model_name: str = best_model.get("name", "")
     best_model_parameters: list[float] = best_model.get("parameters", [])
+    montecarlo_results: list[dict[str, Any]] = montecarlo.get("results", [])
 
     # Raise error if something is missing
     if any(map(is_falsy,
                (
-                   metric_config,
-                   clean,
-                   bootstrap,
-                   fit,
-                   data,
-                   metric_type,
-                   data,
-                   bootstrap_percentiles,
-                   best_model,
-                   best_model_name,
-                   best_model_parameters,
+                    metric_config,
+                    clean,
+                    bootstrap,
+                    montecarlo,
+                    fit,
+                    data,
+                    metric_type,
+                    data,
+                    bootstrap_percentiles,
+                    best_model,
+                    best_model_name,
+                    best_model_parameters,
+                    montecarlo_results,
                 ),
             ),
         ):
@@ -69,6 +74,8 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
             plot_histogram_with_fitted_model(data, best_model_name, model),
         "histogram_of_percentiles_with_ci":
             plot_bootstrap_percentile_with_ci(bootstrap_percentiles),
+        "monte_carlo_vs_bootstrap_percentiles":
+            plot_montecarlo(montecarlo_results),
     }
 
     if metric_type == "time":
