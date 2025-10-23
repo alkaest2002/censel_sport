@@ -1,13 +1,10 @@
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, Literal, cast
+from typing import Any, Literal, cast
 
 import numpy as np
 from numpy.typing import NDArray
 from scipy import stats
 import statsmodels.api as sm
-
-if TYPE_CHECKING:
-    from statsmodels.discrete.discrete_model import DiscreteResults
 
 # ruff: noqa: BLE001
 # ruff: noqa: SLF001
@@ -28,16 +25,8 @@ FitFunctionType = Callable[[NDArray[np.integer[Any] | np.floating[Any]]], tuple[
 class StatsModelsPoissonDist:
     """Poisson distribution using statsmodels."""
 
-    def __init__(self) -> None:
-        self.fitted_model: DiscreteResults | None = None
-        self._lambda: float | None = None
-
-    @classmethod
-    def create(cls, lambda_: float) -> "StatsModelsPoissonDist":
-        """Create a StatsModelsPoissonDist instance with given lambda parameter."""
-        instance = cls()
-        instance._lambda = lambda_
-        return instance
+    def __init__(self, lambda_: float | None = None) -> None:
+        self._lambda: float | None = lambda_
 
     @classmethod
     def fit(cls, data: NDArray[np.integer[Any] | np.floating[Any]]) -> "StatsModelsPoissonDist":
@@ -62,9 +51,9 @@ class StatsModelsPoissonDist:
 
         try:
             model = sm.Poisson(endog, exog)
-            instance.fitted_model = model.fit(disp=False, maxiter=1000)
+            fitted_model = model.fit(disp=False, maxiter=1000)
             # Extract lambda from the fitted intercept
-            instance._lambda = float(np.exp(instance.fitted_model.params[0]))
+            instance._lambda = float(np.exp(fitted_model.params[0]))
         except Exception:
             # Fall back to simple MLE (mean)
             instance._lambda = float(np.mean(data))
@@ -144,18 +133,9 @@ class StatsModelsPoissonDist:
 class StatsModelsNegativeBinomialDist:
     """Negative Binomial distribution using statsmodels."""
 
-    def __init__(self) -> None:
-        self.fitted_model: DiscreteResults | None = None
-        self.mu: float | None = None
-        self.alpha: float | None = None
-
-    @classmethod
-    def create(cls, mu: float, alpha: float) -> "StatsModelsNegativeBinomialDist":
-        """Create a StatsModelsNegativeBinomialDist instance with given parameters."""
-        instance = cls()
-        instance.mu = mu
-        instance.alpha = alpha
-        return instance
+    def __init__(self, mu: float | None = None, alpha: float | None = None) -> None:
+        self.mu: float | None = mu
+        self.alpha: float | None = alpha
 
     @classmethod
     def fit(cls, data: NDArray[np.integer[Any] | np.floating[Any]]) -> "StatsModelsNegativeBinomialDist":
@@ -179,10 +159,10 @@ class StatsModelsNegativeBinomialDist:
 
         try:
             model = sm.NegativeBinomial(endog, exog)
-            instance.fitted_model = model.fit(disp=False, maxiter=1000)
+            fitted_model = model.fit(disp=False, maxiter=1000)
             # Extract parameters
-            instance.mu = float(np.exp(instance.fitted_model.params[0]))
-            instance.alpha = float(instance.fitted_model.params[1])  # Dispersion parameter
+            instance.mu = float(np.exp(fitted_model.params[0]))
+            instance.alpha = float(fitted_model.params[1])  # Dispersion parameter
         except Exception:
             # Fall back to method of moments
             mean = float(np.mean(data))
@@ -279,18 +259,9 @@ class StatsModelsNegativeBinomialDist:
 class StatsModelsZeroInflatedPoissonDist:
     """Zero-Inflated Poisson distribution using statsmodels."""
 
-    def __init__(self) -> None:
-        self.fitted_model: DiscreteResults | None = None
-        self.lambda_: float | None = None
-        self.pi: float | None = None
-
-    @classmethod
-    def create(cls, lambda_: float, pi: float) -> "StatsModelsZeroInflatedPoissonDist":
-        """Create a StatsModelsZeroInflatedPoissonDist instance with given parameters."""
-        instance = cls()
-        instance.lambda_ = lambda_
-        instance.pi = pi
-        return instance
+    def __init__(self, lambda_: float | None = None, pi: float | None = None) -> None:
+        self.lambda_: float | None = lambda_
+        self.pi: float | None = pi
 
     @classmethod
     def fit(cls, data: NDArray[np.integer[Any] | np.floating[Any]]) -> "StatsModelsZeroInflatedPoissonDist":
@@ -314,12 +285,12 @@ class StatsModelsZeroInflatedPoissonDist:
 
         try:
             model = sm.ZeroInflatedPoisson(endog, exog)
-            instance.fitted_model = model.fit(disp=False, maxiter=1000)
+            fitted_model = model.fit(disp=False, maxiter=1000)
             # Extract parameters
-            instance.lambda_ = float(np.exp(instance.fitted_model.params[0]))
+            instance.lambda_ = float(np.exp(fitted_model.params[0]))
             # Zero-inflation probability is in the inflate params
-            if hasattr(instance.fitted_model, "params_inflate"):
-                logit_pi = instance.fitted_model.params_inflate[0]
+            if hasattr(fitted_model, "params_inflate"):
+                logit_pi = fitted_model.params_inflate[0]
                 instance.pi = float(1.0 / (1.0 + np.exp(-logit_pi)))  # Inverse logit
             else:
                 # Fallback estimation
