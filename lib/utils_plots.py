@@ -10,9 +10,8 @@ from numpy.typing import NDArray
 
 # Constants
 BASE_FIGURE_SIZE = (10, 8)
-BASE_PAD_INCHES = 0.05
 BASE_ALPHA = 0.5
-MIN_DATA_POINTS = 3
+MIN_DATA_POINTS = 50
 
 def _validate_data_points(
         data: NDArray[np.integer[Any] | np.floating[Any]],
@@ -503,5 +502,4 @@ def plot_hanging_rootogram(
     ax.set_xticks(counts[::max(1, len(counts)//10)])  # Show reasonable number of ticks
 
     return figure_to_svg_string(figure)
-
 
