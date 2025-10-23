@@ -7,7 +7,12 @@ import numpy as np
 
 from lib.utils_distributions import DistributionType, FitFunctionType, get_distributions
 from lib.utils_generic import is_falsy
-from lib.utils_plots import plot_hanging_rootogram, plot_histogram_with_fitted_model, plot_qq_plot
+from lib.utils_plots import (
+    plot_bootstrap_percentile_with_ci,
+    plot_hanging_rootogram,
+    plot_histogram_with_fitted_model,
+    plot_qq_plot,
+)
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
@@ -16,10 +21,12 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
 
     # Extract data from dictionary
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
-    metric_type: Literal["time", "count"] | None = metric_config.get("metric_type")
     clean: dict[str, Any] = data_dict.get("clean", {})
+    bootstrap: dict[str, Any] = data_dict.get("bootstrap", {})
     fit: dict[str, Any] = data_dict.get("fit", {})
+    metric_type: Literal["time", "count"] | None = metric_config.get("metric_type")
     data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
+    bootstrap_percentiles: list[dict[str, Any]] = bootstrap.get("percentiles", [])
     best_model: dict[str, Any] = fit.get("best_model", {})
     best_model_name: str = best_model.get("name", "")
     best_model_parameters: list[float] = best_model.get("parameters", [])
@@ -29,10 +36,12 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
                (
                    metric_config,
                    clean,
-                   data,
-                   metric_type,
+                   bootstrap,
                    fit,
                    data,
+                   metric_type,
+                   data,
+                   bootstrap_percentiles,
                    best_model,
                    best_model_name,
                    best_model_parameters,
@@ -56,8 +65,10 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
 
     # Add plots
     data_dict["plots"] = {
-        "histogram_with_fitted_distribution":
-        plot_histogram_with_fitted_model(data, best_model_name, model),
+        "histogram_of_data_with_fitted_distribution":
+            plot_histogram_with_fitted_model(data, best_model_name, model),
+        "histogram_of_percentiles_with_ci":
+            plot_bootstrap_percentile_with_ci(bootstrap_percentiles),
     }
 
     if metric_type == "time":
