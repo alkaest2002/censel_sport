@@ -96,6 +96,145 @@ def figure_to_svg_string(fig: Figure) -> str:
 
     return svg_string
 
+def plot_histogram_with_fitted_model(
+        data: NDArray[np.integer[Any] | np.floating[Any]],
+        model_name: str,
+        model: Any,
+        bins: int | str | None = None,
+        density: bool = True,
+    ) -> str:
+    """
+    Create a histogram of observed data overlaid with the fitted theoretical distribution.
+
+    For discrete data, creates a bar plot of observed frequencies with theoretical PMF.
+    For continuous data, creates a histogram with theoretical PDF overlay.
+
+    Parameters:
+    -----------
+    data : NDArray
+        Data to plot (integer for discrete, float for continuous)
+
+    model_name : str
+        Name of the fitted distribution for plot title
+
+    model : Any
+        Fitted statistical model with pdf()/pmf() method
+
+    bins : int, str, or None, optional
+        Number of histogram bins for continuous data or binning strategy.
+        Ignored for discrete data. Default uses 'auto' for continuous data.
+
+    density : bool, optional
+        If True, normalize histogram to show density (default).
+        If False, show raw counts.
+
+    Returns:
+    --------
+    str: SVG string of the generated histogram with fitted model
+    """
+    # Raise error if data size is insufficient
+    data, n = _validate_data_points(data, "Histogram with Fitted Model")
+
+    # Determine if data is discrete (integer) or continuous
+    is_discrete = np.issubdtype(data.dtype, np.integer) or np.allclose(data, np.round(data))
+
+    # Create the plot
+    figure, ax = plt.subplots(figsize=DEFAULT_FIGURE_SIZE)
+
+    # Handle discrete data
+    if is_discrete:
+
+        # Convert as int
+        data = data.astype(int)
+
+        # Get unique values and their counts
+        unique_values, counts = np.unique(data, return_counts=True)
+
+        # Calculate frequencies (normalized if density=True)
+        if density:
+            frequencies = counts / n
+            ylabel = "Probability"
+            theoretical_label = f"Theoretical PMF ({model_name})"
+        else:
+            frequencies = counts
+            ylabel = "Count"
+            theoretical_label = f"Theoretical PMF ({model_name})"
+
+        # Create bar plot for observed data
+        bar_width = 0.8
+        ax.bar(unique_values, frequencies, width=bar_width, alpha=0.7,
+            color="k", linewidth=0.5,
+            label="Observed data")
+
+        # Plot theoretical PMF
+        x_range = np.arange(max(0, np.min(unique_values) - 1),
+            np.max(unique_values) + 2)
+
+        try:
+            theoretical_probs = np.array([model.pmf(k) for k in x_range])
+            if not density:
+                theoretical_probs *= n
+
+            ax.plot(x_range, theoretical_probs, color="k", linewidth=2,
+                marker="o", markersize=6, label=theoretical_label)
+
+        except AttributeError as e:
+            raise AttributeError("---> Model must have pmf() method for discrete data") from e
+
+        # Set integer ticks on x-axis
+        ax.set_xticks(x_range[::max(1, len(x_range)//20)])
+
+    # Handle continuous data
+    else:
+
+        # Set default bins if not provided
+        if bins is None:
+            bins = "auto"
+
+        # Create histogram for observed data
+        _, bin_edges, _ = ax.hist(
+            data,
+            bins=bins,
+            density=density,
+            alpha=0.7, color="k",
+            edgecolor="black", linewidth=0.5,
+            label="Observed data",
+        )
+
+        # Determine ylabel based on density setting
+        ylabel = "Density" if density else "Count"
+        theoretical_label = f"Theoretical PDF ({model_name})"
+
+        # Plot theoretical PDF
+        x_min, x_max = np.min(data), np.max(data)
+        x_range_continuous = np.linspace(x_min - 0.1 * (x_max - x_min), x_max + 0.1 * (x_max - x_min), 1000)
+
+        try:
+            theoretical_density = np.array([model.pdf(x) for x in x_range_continuous])
+            if not density:
+                # Scale by sample size and bin width for count comparison
+                bin_width = bin_edges[1] - bin_edges[0]
+                theoretical_density *= n * bin_width
+
+            ax.plot(x_range_continuous, theoretical_density, color="k",
+                   linewidth=2, label=theoretical_label)
+
+        except AttributeError as e:
+            raise AttributeError("---> Model must have pdf() method for continuous data") from e
+
+    # Common formatting for both discrete and continuous
+    ax.set_xlabel("Values", fontsize=12)
+    ax.set_ylabel(ylabel, fontsize=12)
+    ax.set_title(f"Histogram with Fitted {model_name} Distribution", fontsize=14, fontweight="bold")
+    ax.grid(True, alpha=0.3, axis="y")
+    ax.legend(fontsize=11)
+
+    # Adjust layout to prevent clipping
+    plt.tight_layout()
+
+    return figure_to_svg_string(figure)
+
+
 def plot_qq_plot(
         data: NDArray[np.integer[Any] | np.floating[Any]],
         model_name: str,
