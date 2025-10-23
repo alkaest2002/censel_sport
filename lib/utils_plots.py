@@ -600,7 +600,7 @@ def plot_montecarlo(comparison_data: list[dict[str, Any]]) -> str:
         bootstrap_values, montecarlo_values,
         yerr=montecarlo_iqr / 2 * 1.5,
         fmt="o", markersize=6, markerfacecolor="white",
-        markeredgecolor="k", markeredgewidth=1,
+        markeredgecolor="k", markeredgewidth=2,
         ecolor="k", elinewidth=1.5, capsize=0, capthick=0,
         label="Monte Carlo vs Bootstrap",
     )
