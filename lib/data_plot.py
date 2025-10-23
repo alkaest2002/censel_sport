@@ -7,7 +7,7 @@ import numpy as np
 
 from lib.utils_distributions import DistributionType, FitFunctionType, get_distributions
 from lib.utils_generic import is_falsy
-from lib.utils_plots import plot_hanging_rootogram, plot_qq_plot
+from lib.utils_plots import plot_hanging_rootogram, plot_histogram_with_fitted_model, plot_qq_plot
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
@@ -55,14 +55,19 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
         raise ValueError(f"---> Failed to instantiate model {best_model_name}: {e}") from e
 
     # Add plots
+    data_dict["plots"] = {
+        "histogram_with_fitted_distribution":
+        plot_histogram_with_fitted_model(data, best_model_name, model),
+    }
+
     if metric_type == "time":
-        data_dict["plots"] = {
+        data_dict["plots"].update({
             "qq_plot": plot_qq_plot(data, best_model_name, model),
-        }
+        })
 
     if metric_type == "count":
-         data_dict["plots"] = {
+         data_dict["plots"].update({
             "rootgram": plot_hanging_rootogram(data, best_model_name, model),
-        }
+        })
 
     return data_dict
