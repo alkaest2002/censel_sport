@@ -184,6 +184,9 @@ def plot_hanging_rootogram(
     # Raise error data size is insufficient
     data, n = _validate_data_points(data, "Rootgram Plot")
 
+    # Humanize model name for display
+    model_name = model_name.replace("_", " ").title()
+
     # Validate integer data
     if not np.issubdtype(data.dtype, np.integer):
         if not np.allclose(data, np.round(data)):
@@ -242,7 +245,7 @@ def plot_hanging_rootogram(
 
     # Plot theoretical (expected) square root line - this is where bars hang from
     ax.plot(counts, expected_sqrt, color="black", linewidth=2,
-            marker="o", markersize=4, label=f"Theoretical √freq ({model_name})")
+            marker="o", markersize=4, label=f"Theoretical ({model_name})")
 
     # Add zero reference line (x-axis)
     ax.axhline(y=0, color="gray", linestyle="--", alpha=0.8, linewidth=1.5,
@@ -257,7 +260,7 @@ def plot_hanging_rootogram(
     ax.legend(fontsize=11)
 
     # Set integer ticks on x-axis
-    ax.set_xticks(counts[::max(1, len(counts)//20)])  # Show reasonable number of ticks
+    ax.set_xticks(counts[::max(1, len(counts)//10)])  # Show reasonable number of ticks
 
     return figure_to_svg_string(figure)
 
