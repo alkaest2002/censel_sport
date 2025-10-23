@@ -11,7 +11,7 @@ from numpy.typing import NDArray
 # Constants
 BASE_FIGURE_SIZE = (10, 8)
 BASE_ALPHA = 0.5
-MIN_DATA_POINTS = 50
+MIN_DATA_POINTS = 3
 
 def _validate_data_points(
         data: NDArray[np.integer[Any] | np.floating[Any]],
@@ -500,6 +500,130 @@ def plot_hanging_rootogram(
 
     # Set integer ticks on x-axis
     ax.set_xticks(counts[::max(1, len(counts)//10)])  # Show reasonable number of ticks
+
+    return figure_to_svg_string(figure)
+
+def plot_montecarlo(comparison_data: list[dict[str, Any]]) -> str:
+    """
+    Create a scatter plot comparing bootstrap and Monte Carlo percentile estimates.
+
+    Shows bootstrap values vs Monte Carlo values with Monte Carlo IQR as error bars.
+    Points should ideally lie on the main diagonal, indicating agreement between methods.
+
+    Parameters:
+    -----------
+    comparison_data : list[dict]
+        List of dictionaries, each containing:
+        - "percentile": percentile identifier (can be string or number)
+        - "bootstrap_value": bootstrap estimate
+        - "bootstrap_ci_lower": bootstrap CI lower bound
+        - "bootstrap_ci_upper": bootstrap CI upper bound
+        - "montecarlo_value": Monte Carlo estimate
+        - "montecarlo_std": Monte Carlo standard deviation
+        - "montecarlo_min": Monte Carlo minimum value
+        - "montecarlo_max": Monte Carlo maximum value
+        - "montecarlo_iqr": Monte Carlo interquartile range
+        - "bias": difference (montecarlo - bootstrap)
+        - "relative_bias_%": relative bias percentage
+        - "rmse": root mean square error
+        - "coverage_%": coverage percentage
+
+    Returns:
+    --------
+    str: SVG string of the generated Monte Carlo comparison plot
+    """
+    # Validate input data
+    if not comparison_data:
+        raise ValueError("---> Unable to plot Monte Carlo comparison: no data provided")
+
+    if len(comparison_data) < MIN_DATA_POINTS:
+        raise ValueError(
+            f"---> Unable to plot Monte Carlo comparison: at least {MIN_DATA_POINTS} points required",
+        )
+
+    # Extract data arrays
+    try:
+        percentiles = [item["percentile"] for item in comparison_data]
+        bootstrap_values = np.array([item["bootstrap_value"] for item in comparison_data])
+        montecarlo_values = np.array([item["montecarlo_value"] for item in comparison_data])
+        montecarlo_std = np.array([item["montecarlo_std"] for item in comparison_data])
+        montecarlo_iqr = np.array([item["montecarlo_iqr"] for item in comparison_data])
+        bias = np.array([item["bias"] for item in comparison_data])
+        relative_bias = np.array([item["relative_bias_%"] for item in comparison_data])
+        rmse = np.array([item["rmse"] for item in comparison_data])
+        coverage = np.array([item["coverage_%"] for item in comparison_data])
+
+    except KeyError as e:
+        raise KeyError(f"---> Missing required key in comparison data: {e}") from e
+
+    # Validate data consistency
+    n_points = len(bootstrap_values)
+    arrays_to_check = [
+        montecarlo_values, montecarlo_std, montecarlo_iqr, bias,
+        relative_bias, rmse, coverage,
+    ]
+
+    if not all(len(arr) == n_points for arr in arrays_to_check):
+        raise ValueError("---> All comparison data arrays must have the same length")
+
+    # Check for finite values in key arrays
+    for arr_name, arr in [
+        ("bootstrap_values", bootstrap_values),
+        ("montecarlo_values", montecarlo_values),
+        ("montecarlo_iqr", montecarlo_iqr),
+    ]:
+        if not np.all(np.isfinite(arr)):
+            raise ValueError(f"---> All {arr_name} must be finite")
+
+    # Check for non-negative IQR values
+    if np.any(montecarlo_iqr < 0):
+        raise ValueError("---> Monte Carlo IQR values must be non-negative")
+
+    # Create the plot
+    figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
+
+    # Add perfect agreement diagonal line
+    data_min = min(np.min(bootstrap_values), np.min(montecarlo_values))
+    data_max = max(np.max(bootstrap_values), np.max(montecarlo_values))
+
+    # Extend the diagonal line slightly beyond data range
+    margin = 0.05 * (data_max - data_min)
+    diag_min = data_min - margin
+    diag_max = data_max + margin
+
+    diagonal = np.linspace(diag_min, diag_max, 100)
+    ax.plot(diagonal, diagonal, c="#CCCCCC", linestyle="--", linewidth=2,
+            label="Perfect Agreement (y = x)")
+
+    # Create scatter plot with Monte Carlo IQR as error bars
+    _ = ax.errorbar(
+        bootstrap_values, montecarlo_values,
+        yerr=montecarlo_iqr / 2 * 1.5,
+        fmt="o", markersize=6, markerfacecolor="white",
+        markeredgecolor="k", markeredgewidth=1,
+        ecolor="k", elinewidth=1.5, capsize=0, capthick=0,
+        label="Monte Carlo vs Bootstrap",
+    )
+
+    # Add percentile labels to points
+    for (x, y, perc) in zip(bootstrap_values, montecarlo_values, percentiles, strict=False):
+        ax.annotate(f"{perc}", (x, y), xytext=(5, 5),
+                   textcoords="offset points", fontsize=8,
+                   alpha=0.8, ha="left", va="bottom")
+
+    # Set equal aspect ratio for better interpretation
+    ax.set_aspect("equal", adjustable="box")
+
+    # Formatting
+    ax.set_xlabel("Bootstrap Values", fontsize=12)
+    ax.set_ylabel("Monte Carlo Values", fontsize=12)
+    ax.set_title("Bootstrap vs Monte Carlo Percentile Estimates", fontsize=14, fontweight="bold")
+    ax.grid(True, alpha=0.3)
+    ax.legend(fontsize=11)
+
+    # Set axis limits with some padding
+    ax.set_xlim(diag_min, diag_max)
+    ax.set_ylim(diag_min, diag_max)
 
     return figure_to_svg_string(figure)
 
