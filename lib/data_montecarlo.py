@@ -109,7 +109,7 @@ def monte_carlo_validation(
 
         # Coverage: % of synthetic values within bootstrap CI
         coverage = np.mean((montecarlo_values >= bootstrap_ci_lower) &
-                          (montecarlo_values <= bootstrap_ci_upper)) * 100
+            (montecarlo_values <= bootstrap_ci_upper)) * 100
 
         validation_results.append({
             "percentile": f"{p}",
