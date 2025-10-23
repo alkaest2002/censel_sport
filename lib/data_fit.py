@@ -89,7 +89,6 @@ class DistributionFitter:
                         "quantiles": None,
                     }
                     continue
-
                 # Create distribution object
                 dist_obj = dist_class(*parameters)
 
