@@ -9,8 +9,9 @@ import numpy as np
 from numpy.typing import NDArray
 
 # Constants
-DEFAULT_FIGURE_SIZE = (8, 8)
-DEFAULT_PAD_INCHES = 0.05
+BASE_FIGURE_SIZE = (10, 8)
+BASE_PAD_INCHES = 0.05
+BASE_ALPHA = 0.5
 MIN_DATA_POINTS = 3
 
 def _validate_data_points(
@@ -101,7 +102,7 @@ def plot_histogram_with_fitted_model(
         model_name: str,
         model: Any,
         bins: int | str | None = None,
-        density: bool = True,
+        density: bool = False,
     ) -> str:
     """
     Create a histogram of observed data overlaid with the fitted theoretical distribution.
@@ -139,7 +140,7 @@ def plot_histogram_with_fitted_model(
     is_discrete = np.issubdtype(data.dtype, np.integer) or np.allclose(data, np.round(data))
 
     # Create the plot
-    figure, ax = plt.subplots(figsize=DEFAULT_FIGURE_SIZE)
+    figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
 
     # Handle discrete data
     if is_discrete:
@@ -162,7 +163,7 @@ def plot_histogram_with_fitted_model(
 
         # Create bar plot for observed data
         bar_width = 0.8
-        ax.bar(unique_values, frequencies, width=bar_width, alpha=0.5,
+        ax.bar(unique_values, frequencies, width=bar_width, alpha=BASE_ALPHA,
             color="k", linewidth=0.5,
             label="Observed data")
 
@@ -196,8 +197,10 @@ def plot_histogram_with_fitted_model(
             data,
             bins=bins,
             density=density,
-            alpha=0.5, color="k",
-            edgecolor="black", linewidth=0.5,
+            rwidth=0.9,
+            alpha=BASE_ALPHA, color="k",
+            edgecolor="black",
+            linewidth=0.5,
             label="Observed data",
         )
 
@@ -226,7 +229,7 @@ def plot_histogram_with_fitted_model(
     ax.set_xlabel("Values", fontsize=12)
     ax.set_ylabel(ylabel, fontsize=12)
     ax.set_title(f"Histogram with Fitted {model_name} Distribution", fontsize=14, fontweight="bold")
-    ax.grid(True, alpha=0.3, axis="y")
+    ax.grid(True, alpha=BASE_ALPHA//2, axis="y")
     ax.legend(fontsize=11)
 
     # Adjust layout to prevent clipping
@@ -285,7 +288,7 @@ def plot_bootstrap_percentile_with_ci(
         std_errors = std_errors[sort_idx]
 
     # Create the plot
-    figure, ax = plt.subplots(figsize=DEFAULT_FIGURE_SIZE)
+    figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
 
     # Plot confidence interval bands
     # Use the most common CI level for labeling
@@ -294,26 +297,26 @@ def plot_bootstrap_percentile_with_ci(
     ci_percentage = int(most_common_ci * 100)
 
     ax.fill_between(percentiles, ci_lower, ci_upper,
-                    alpha=0.3, color="gray",
-                    label=f"{ci_percentage}% Confidence Interval")
+        alpha=BASE_ALPHA, color="#DDDDDD",
+        label=f"{ci_percentage}% Confidence Interval")
 
     # Plot percentile estimates as points connected by lines
     ax.plot(percentiles, values, color="k", linewidth=2,
-            marker="o", markersize=6, markerfacecolor="white",
-            markeredgecolor="k", markeredgewidth=2,
-            label="Percentile Estimates")
+        marker="o", markersize=6, markerfacecolor="white",
+        markeredgecolor="k", markeredgewidth=2,
+        label="Percentile Estimates")
 
     # Add confidence interval bounds as dotted lines for clarity
     ax.plot(percentiles, ci_lower, color="darkgray", linewidth=1,
-            linestyle=":", alpha=0.8, label="CI Bounds")
+        linestyle=":", label="CI Bounds")
     ax.plot(percentiles, ci_upper, color="darkgray", linewidth=1,
-            linestyle=":", alpha=0.8)
+        linestyle=":")
 
     # Formatting
     ax.set_xlabel("Percentile", fontsize=12)
     ax.set_ylabel("Value", fontsize=12)
     ax.set_title("Bootstrap Percentiles with Confidence Intervals", fontsize=14, fontweight="bold")
-    ax.grid(True, alpha=0.3)
+    ax.grid(True, alpha=BASE_ALPHA//2)
     ax.legend(fontsize=11)
 
     # Set reasonable x-axis limits and ticks
@@ -332,7 +335,6 @@ def plot_bootstrap_percentile_with_ci(
     ax.set_xticks(x_ticks)
 
     return figure_to_svg_string(figure)
-
 
 def plot_qq_plot(
         data: NDArray[np.integer[Any] | np.floating[Any]],
@@ -365,10 +367,10 @@ def plot_qq_plot(
     x: NDArray[np.floating[Any]] = np.array([model.ppf(p) for p in prob_points_array])
 
     # Create a new figure with specified size for better SVG output
-    figure, ax = plt.subplots(figsize=DEFAULT_FIGURE_SIZE)
+    figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
 
     # Create the Q-Q scatter plot
-    ax.scatter(x, y, alpha=0.5, c="white", edgecolors="k", linewidths=0.5, s=50, label="Data points")
+    ax.scatter(x, y, alpha=BASE_ALPHA, c="white", edgecolors="k", linewidths=0.5, s=50, label="Data points")
 
     # Plot diagonal reference line
     data_min: float = float(np.min([x, y]))
@@ -383,7 +385,7 @@ def plot_qq_plot(
     ax.set_xlabel("Theoretical Quantiles", fontsize=12)
     ax.set_ylabel("Sample Quantiles", fontsize=12)
     ax.set_title(f"Q-Q Plot: sample vs {model_name} distribution", fontsize=14, fontweight="bold")
-    ax.grid(True, alpha=0.3)
+    ax.grid(True, alpha=BASE_ALPHA//2)
     ax.legend(fontsize=11)
 
     return figure_to_svg_string(figure)
@@ -462,7 +464,7 @@ def plot_hanging_rootogram(
     expected_sqrt = np.sqrt(expected_freq)
 
     # Create the plot
-    figure, ax = plt.subplots(figsize=DEFAULT_FIGURE_SIZE)
+    figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
 
     # Create bars hanging from the theoretical distribution
     bar_width = 0.1
@@ -478,7 +480,7 @@ def plot_hanging_rootogram(
 
     # Plot hanging bars
     _ = ax.bar(counts, bar_heights, bottom=bar_bottoms,
-                  width=bar_width, color=colors, alpha=0.7,
+                  width=bar_width, color=colors, alpha=BASE_ALPHA,
                   edgecolor="black", linewidth=0.5)
 
     # Plot theoretical (expected) square root line - this is where bars hang from
@@ -486,7 +488,7 @@ def plot_hanging_rootogram(
             marker="o", markersize=4, label=f"Theoretical ({model_name})")
 
     # Add zero reference line (x-axis)
-    ax.axhline(y=0, color="gray", linestyle="--", alpha=0.8, linewidth=1.5,
+    ax.axhline(y=0, color="gray", linestyle="--", alpha=BASE_ALPHA, linewidth=1.5,
                label="Reference line (x-axis)")
 
     # Formatting
@@ -494,7 +496,7 @@ def plot_hanging_rootogram(
     ax.set_ylabel("Square Root of Frequency", fontsize=12)
     ax.set_title(f"Hanging Rootogram: {model_name} Distribution Fit",
                  fontsize=14, fontweight="bold")
-    ax.grid(True, alpha=0.3, axis="y")
+    ax.grid(True, alpha=BASE_ALPHA//2, axis="y")
     ax.legend(fontsize=11)
 
     # Set integer ticks on x-axis

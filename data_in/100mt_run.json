@@ -1,5 +1,5 @@
 {
-    "include_in_analysis": false,
+    "include_in_analysis": true,
     "name": "100mt_run",
     "source_type": "synthetic",
     "source_filename": null,
