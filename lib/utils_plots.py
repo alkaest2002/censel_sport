@@ -159,6 +159,10 @@ def plot_hanging_rootogram(
     """
     Create a hanging rootogram for discrete count data.
 
+    Bars hang from the theoretical distribution line. If theoretical distribution
+    overestimates a count, the observed bar doesn't reach the x-axis. If it
+    underestimates, the observed bar crosses the x-axis (extends below zero).
+
     Parameters:
     -----------
     data : NDArray[np.integer]
@@ -216,28 +220,33 @@ def plot_hanging_rootogram(
     observed_sqrt = np.sqrt(observed_freq)
     expected_sqrt = np.sqrt(expected_freq)
 
-    # Calculate hanging values (deviations from expected)
-    hanging_values = observed_sqrt - expected_sqrt
-
     # Create the plot
     figure, ax = plt.subplots(figsize=DEFAULT_FIGURE_SIZE)
 
-    # Create bars hanging from the expected line
-    bar_width = 0.8
-    colors = ["red" if h < 0 else "steelblue" for h in hanging_values]
+    # Create bars hanging from the theoretical distribution
+    bar_width = 0.1
+
+    # For each count, create a bar that hangs from expected_sqrt down to
+    # expected_sqrt - observed_sqrt (which could be negative)
+    bar_bottoms = expected_sqrt - observed_sqrt  # Where bars end
+    bar_heights = observed_sqrt  # Height of each bar
+
+    # Color bars based on whether they cross the x-axis (theoretical underestimates)
+    # or don't reach it (theoretical overestimates)
+    colors = ["red" if bottom < 0 else "steelblue" for bottom in bar_bottoms]
 
     # Plot hanging bars
-    _ = ax.bar(counts, hanging_values, bottom=expected_sqrt,
+    _ = ax.bar(counts, bar_heights, bottom=bar_bottoms,
                   width=bar_width, color=colors, alpha=0.7,
                   edgecolor="black", linewidth=0.5)
 
-    # Plot expected square root line
+    # Plot theoretical (expected) square root line - this is where bars hang from
     ax.plot(counts, expected_sqrt, color="black", linewidth=2,
-            marker="o", markersize=4, label=f"Expected √freq ({model_name})")
+            marker="o", markersize=4, label=f"Theoretical √freq ({model_name})")
 
-    # Add zero reference line for hanging values
-    ax.axhline(y=0, color="gray", linestyle="--", alpha=0.5,
-               label="Perfect fit line")
+    # Add zero reference line (x-axis)
+    ax.axhline(y=0, color="gray", linestyle="--", alpha=0.8, linewidth=1.5,
+               label="Reference line (x-axis)")
 
     # Formatting
     ax.set_xlabel("Count Values", fontsize=12)
@@ -250,14 +259,6 @@ def plot_hanging_rootogram(
     # Set integer ticks on x-axis
     ax.set_xticks(counts[::max(1, len(counts)//20)])  # Show reasonable number of ticks
 
-    # Add text box with interpretation guide
-    textstr = "Bars above expected line: overestimated\nBars below expected line: underestimated"
-    props = { "boxstyle": "round", "facecolor": "wheat", "alpha": 0.8 }
-    ax.text(0.02, 0.98, textstr, transform=ax.transAxes, fontsize=10,
-            verticalalignment="top", bbox=props)
-
-    # Adjust layout to prevent clipping
-    plt.tight_layout()
-
     return figure_to_svg_string(figure)
+
 
