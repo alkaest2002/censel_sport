@@ -234,6 +234,106 @@ def plot_histogram_with_fitted_model(
 
     return figure_to_svg_string(figure)
 
+def plot_bootstrap_percentile_with_ci(
+        percentile_data: list[dict[str, Any]],
+    ) -> str:
+    """
+    Create a plot of bootstrap percentile estimates with confidence intervals.
+
+    Shows percentile values as points with confidence interval bands, useful for
+    visualizing the uncertainty in percentile estimates from bootstrap sampling.
+
+    Parameters:
+    -----------
+    percentile_data : list[dict]
+        List of dictionaries, each containing:
+        - "percentile": percentile value (0-100)
+        - "value": estimated percentile value
+        - "ci_level": confidence level (e.g., 0.95)
+        - "ci_lower": lower confidence bound
+        - "ci_upper": upper confidence bound
+        - "std_error": standard error (optional, for display)
+
+    Returns:
+    --------
+    str: SVG string of the generated percentile plot with confidence intervals
+    """
+    # Extract data arrays
+    try:
+        percentiles = np.array([item["percentile"] for item in percentile_data])
+        values = np.array([item["value"] for item in percentile_data])
+        ci_lower = np.array([item["ci_lower"] for item in percentile_data])
+        ci_upper = np.array([item["ci_upper"] for item in percentile_data])
+        ci_levels = np.array([item["ci_level"] for item in percentile_data])
+
+        # Optional: extract standard errors if available
+        std_errors = None
+        if all("std_error" in item for item in percentile_data):
+            std_errors = np.array([item["std_error"] for item in percentile_data])
+
+    except KeyError as e:
+        raise KeyError(f"---> Missing required key in percentile data: {e}") from e
+
+    # Sort data by percentile for proper plotting
+    sort_idx = np.argsort(percentiles)
+    percentiles = percentiles[sort_idx]
+    values = values[sort_idx]
+    ci_lower = ci_lower[sort_idx]
+    ci_upper = ci_upper[sort_idx]
+    ci_levels = ci_levels[sort_idx]
+    if std_errors is not None:
+        std_errors = std_errors[sort_idx]
+
+    # Create the plot
+    figure, ax = plt.subplots(figsize=DEFAULT_FIGURE_SIZE)
+
+    # Plot confidence interval bands
+    # Use the most common CI level for labeling
+    unique_ci_levels, counts = np.unique(ci_levels, return_counts=True)
+    most_common_ci = unique_ci_levels[np.argmax(counts)]
+    ci_percentage = int(most_common_ci * 100)
+
+    ax.fill_between(percentiles, ci_lower, ci_upper,
+                    alpha=0.3, color="gray",
+                    label=f"{ci_percentage}% Confidence Interval")
+
+    # Plot percentile estimates as points connected by lines
+    ax.plot(percentiles, values, color="k", linewidth=2,
+            marker="o", markersize=6, markerfacecolor="white",
+            markeredgecolor="k", markeredgewidth=2,
+            label="Percentile Estimates")
+
+    # Add confidence interval bounds as dotted lines for clarity
+    ax.plot(percentiles, ci_lower, color="darkgray", linewidth=1,
+            linestyle=":", alpha=0.8, label="CI Bounds")
+    ax.plot(percentiles, ci_upper, color="darkgray", linewidth=1,
+            linestyle=":", alpha=0.8)
+
+    # Formatting
+    ax.set_xlabel("Percentile", fontsize=12)
+    ax.set_ylabel("Value", fontsize=12)
+    ax.set_title("Bootstrap Percentiles with Confidence Intervals", fontsize=14, fontweight="bold")
+    ax.grid(True, alpha=0.3)
+    ax.legend(fontsize=11)
+
+    # Set reasonable x-axis limits and ticks
+    ax.set_xlim(max(0, np.min(percentiles) - 5), min(100, np.max(percentiles) + 5))
+
+    # Set x-axis ticks at meaningful percentile values
+    if np.max(percentiles) - np.min(percentiles) > 50:
+        tick_step = 10
+    elif np.max(percentiles) - np.min(percentiles) > 25:
+        tick_step = 5
+    else:
+        tick_step = max(1, int((np.max(percentiles) - np.min(percentiles)) / 10))
+
+    x_ticks = np.arange(0, 101, tick_step)
+    x_ticks = x_ticks[(x_ticks >= np.min(percentiles) - 5) & (x_ticks <= np.max(percentiles) + 5)]
+    ax.set_xticks(x_ticks)
+
+    return figure_to_svg_string(figure)
+
+
 def plot_qq_plot(
         data: NDArray[np.integer[Any] | np.floating[Any]],
         model_name: str,
