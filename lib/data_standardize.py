@@ -41,10 +41,15 @@ def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
     # Compute percentage of standardized scores
     value_counts_perc = (
         pd.Series([x["standardized_value"] for x in scores])
+            # Convert to int first
             .astype("int")
+            # Then to string since they will be used as keys in a JSON
             .astype("string")
+            # Compute value counts as percentage
             .value_counts(normalize=True, sort=False)
+            # Multiply by 100 to get percentage
             .mul(100)
+            # Convert to dictionary
             .to_dict()
     )
 
