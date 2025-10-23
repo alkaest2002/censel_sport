@@ -13,6 +13,50 @@ DEFAULT_FIGURE_SIZE = (8, 8)
 DEFAULT_PAD_INCHES = 0.05
 MIN_DATA_POINTS = 3
 
+def _validate_data_points(
+        data: NDArray[np.integer[Any] | np.floating[Any]],
+        plot_name: str,
+    ) -> tuple[NDArray[np.integer[Any] | np.floating[Any]], int]:
+    """
+        Checks minimum number of data-points.
+
+    Parameters:
+    ------------
+        data: NDArray
+            Data to plot
+
+        plot_name: str
+            Name of the plot
+
+    Returns:
+    -----------
+    Tuple: The filtered data array and its size.
+    """
+
+    # Raise error if number of observations is lower than 3
+    if data.size < MIN_DATA_POINTS:
+        raise ValueError(
+            f"---> Unable to plot {plot_name}: data points are not sufficient.",
+        )
+
+    # Raise error if any datapoint are below 0
+    if np.any(data < 0):
+        raise ValueError("---> Unable to plot {plot_name}: data must be non-negative.")
+
+    # Raise error if data contains no finite values
+    finite_mask: NDArray[np.bool_] = np.isfinite(data)
+    if not np.any(finite_mask):
+        raise ValueError(f"---> Unable to plot {plot_name}: data must contain at least one finite value")
+
+    # Filter out non-finite values with warning
+    if not np.all(finite_mask):
+        original_size = data.size
+        data = data[finite_mask]
+        n = data.size
+        print(f"---> Warning: {original_size - n} non-finite values were removed from the data")
+
+    return data, data.size
+
 def figure_to_svg_string(fig: Figure) -> str:
     """Convert a matplotlib figure to an SVG string ready for file saving.
 
@@ -76,23 +120,8 @@ def plot_qq_plot(
     -------
     str: SVG string of the generated Q-Q plot.
     """
-    # Get the size of the data first
-    n = data.size
-
-    # Raise error if number of observations is lower than 3
-    if n < MIN_DATA_POINTS:
-        raise ValueError(f"---> Cannot create meaningful Q-Q plot: need at least 3 data points, got {n}")
-
-    # Check for finite values
-    finite_mask: NDArray[np.bool_] = np.isfinite(data)
-    if not np.any(finite_mask):
-        raise ValueError("---> Unable to compute Q-Q plot: data must contain at least one finite value")
-
-    # Use only finite values and warn if some were removed
-    if not np.all(finite_mask):
-        data = data[finite_mask]
-        n = data.size  # Update n after filtering
-        print(f"---> Warning: {np.sum(~finite_mask)} non-finite values were removed from the data")
+    # Raise error data size is insufficient
+    data, n = _validate_data_points(data, "Q-Q Plot")
 
     # Sort data in ascending order
     y: NDArray[np.floating[Any]] = np.sort(data)
@@ -105,13 +134,13 @@ def plot_qq_plot(
     figure, ax = plt.subplots(figsize=DEFAULT_FIGURE_SIZE)
 
     # Create the Q-Q scatter plot
-    ax.scatter(x, y, alpha=.5, edgecolors="black", linewidths=0.5, s=50, label="Data points")
+    ax.scatter(x, y, alpha=.5, edgecolors="k", linewidths=0.5, s=50, label="Data points")
 
     # Plot diagonal reference line
     data_min: float = float(np.min([x, y]))
     data_max: float = float(np.max([x, y]))
     diag: NDArray[np.floating[Any]] = np.linspace(data_min, data_max, 1000)
-    ax.plot(diag, diag, color="red", linestyle="--", linewidth=2, label="Perfect fit line")
+    ax.plot(diag, diag, color="k", linestyle="--", linewidth=2, label="Fit line")
 
     # Set equal aspect ratio for better interpretation
     ax.set_aspect("equal")
@@ -126,7 +155,7 @@ def plot_qq_plot(
     return figure_to_svg_string(figure)
 
 def plot_hanging_rootogram(
-        data: NDArray[np.integer[Any]],
+        data: NDArray[np.integer[Any] | np.floating[Any]],
         model_name: str,
         model: Any,
         max_count: int | None = None,
@@ -155,37 +184,16 @@ def plot_hanging_rootogram(
 
     Returns:
     --------
-    str
-        SVG string of the generated hanging rootogram
+    str: SVG string of the generated hanging rootogram
     """
-    # Validate minimum data requirements
-    n = data.size
-    if n < MIN_DATA_POINTS:
-        raise ValueError(
-            f"---> Cannot create meaningful rootogram: need at least {MIN_DATA_POINTS} data points, got {n}",
-        )
-
-    # Check for finite integer values
-    finite_mask: NDArray[np.bool_] = np.isfinite(data)
-    if not np.any(finite_mask):
-        raise ValueError("---> Unable to compute rootogram: data must contain at least one finite value")
-
-    # Filter out non-finite values with warning
-    if not np.all(finite_mask):
-        original_size = data.size
-        data = data[finite_mask]
-        n = data.size
-        print(f"---> Warning: {original_size - n} non-finite values were removed from the data")
+    # Raise error data size is insufficient
+    data, n = _validate_data_points(data, "Rootgram Plot")
 
     # Validate integer data
     if not np.issubdtype(data.dtype, np.integer):
         if not np.allclose(data, np.round(data)):
             raise TypeError("---> Rootogram requires integer count data")
         data = data.astype(int)
-
-    # Ensure non-negative counts
-    if np.any(data < 0):
-        raise ValueError("---> Count data must be non-negative")
 
     # Determine count range for analysis
     data_max = int(np.max(data))
