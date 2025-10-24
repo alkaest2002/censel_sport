@@ -128,7 +128,6 @@ def main() -> int:
     # Validate the file path
     try:
         validated_path = _validate_file_path(args.filepath)
-        print(f"Processing file: {validated_path}")
     except (FileNotFoundError, ValueError) as e:
         print(f"Error: {e}")
         return 1
