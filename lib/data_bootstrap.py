@@ -102,7 +102,7 @@ def compute_bootstrap_percentiles(
         # Generate bootstrap sample
         if use_parametric_bootstrap and best_model:
             # Use parametric bootstrap with fitted distribution
-            resample = _generate_random_samples_from_model(best_model, n_replicate_size, rng)
+            resample = _generate_random_samples_from_model(best_model, False, n_replicate_size, rng)
         else:
             # Use non-parametric bootstrap with replacement from original data
             resample = rng.choice(data, size=n_replicate_size, replace=True)
