@@ -1,18 +1,26 @@
 {% extends "_base.html" %}
 
-{% block base_report_style %}
+{% block report_style %}
 <style>
     .plot {
         display: flex;
-        gap: 6px;
+        gap: 12px;
+    }
+    img {
+        width: 100%;
     }
 </style>
 {% endblock %}
 
 {% block body %}
-    <div class="page">
-        <section class="plot">
+<div class="page">
+    <div class="plot">
+        <div>
             <img src="{{ data.plots[0].svg }}" />
-        </section>
+        </div>
+        <div>
+            <img src="{{ data.plots[-1].svg }}" />
+        </div>
     </div>
+</div>
 {% endblock %}

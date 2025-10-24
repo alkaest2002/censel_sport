@@ -149,8 +149,14 @@ def main() -> int:
         data: dict[str, Any] = _load_data(validated_path)
         template = jinja_env.get_template("report.html")
         rendered_html: str = template.render(data=data)
-
         output_pdf = validated_path.with_suffix(".pdf")
+        output_html = validated_path.with_suffix(".html")
+
+        # Write html
+        with output_html.open("w") as fout:
+            fout.write(rendered_html)
+
+        # Write PDF
         HTML(string=rendered_html, base_url=str(templates_dir)).write_pdf(str(output_pdf))
         print(f"Report generated: {output_pdf}")
     except Exception as e:  # noqa: BLE001
