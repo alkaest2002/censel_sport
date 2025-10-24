@@ -377,7 +377,6 @@ def plot_qq_plot(
     ax.set_xlabel("Theoretical Quantiles", fontsize=12)
     ax.set_ylabel("Sample Quantiles", fontsize=12)
     ax.legend(fontsize=11, frameon=False)
-    ax.yaxis.tick_right()
     ax.yaxis.set_ticks_position("both")
 
     return figure_to_svg_string(figure)
@@ -490,7 +489,6 @@ def plot_hanging_rootogram(
 
     # Set integer ticks on x-axis
     ax.set_xticks(counts[::max(1, len(counts)//10)])  # Show reasonable number of ticks
-    ax.yaxis.tick_right()
     ax.yaxis.set_ticks_position("both")
 
     return figure_to_svg_string(figure)
@@ -611,7 +609,6 @@ def plot_montecarlo(comparison_data: list[dict[str, Any]]) -> str:
     # Set axis limits with some padding
     ax.set_xlim(diag_min, diag_max)
     ax.set_ylim(diag_min, diag_max)
-    ax.yaxis.tick_right()
     ax.yaxis.set_ticks_position("both")
 
     return figure_to_svg_string(figure)
