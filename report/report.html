@@ -19,39 +19,41 @@
 
 {% block body %}
 <div class="page">
-    <h1 class="mb-md">CAMPIONE DI RIFERIMENTO</h1>
+    <h1 class="mb-md">{{ data.metric_config.title | upper }}</h1>
     <div class="two-columns">
         <h2>Introduzione</h2>
-        <p>
-            L'obiettivo principale del presente lavoro è la costruzione di tabelle di conversione che trasformino
-            misurazioni grezze in
-            punteggi standard basati sulla distribuzione percentilica del campione di riferimento. Queste
-            tabelle permettono di interpretare un valore grezzo posizionandolo rispetto alla popolazione di riferimento
-            e, eventualmente, di convertirlo in punteggio standard.
-            La validità e l'utilità pratica di tali tabelle dipende dalla precisione e
-            stabilità delle stime percentiliche utilizzate come soglie di conversione: percentili instabili producono
-            tabelle poco affidabili nel tempo.
+        <p>In questa pagina vengono presentate le informazioni relative al campione di riferimento utilizzato per la
+            costruzione delle tavole normative percentiliche relative a: <span class="text-italic">{{
+                data.metric_config.title }}</span>. Tali tavole consentono la conversione dei punteggi grezzi in
+            punteggi standardizzati.</p>
 
-            La stabilità delle stime percentiliche richiede campioni di calibrazione con numerosità adeguata, poiché
-            l'errore di stima aumenta drasticamente nelle code della distribuzione dove la densità di osservazioni è
-            minore. Come linee guida operative: per percentili centrali e moderatamente estremi (10&mdash;90) sono
-            raccomandabili almeno ~500 osservazioni per ottenere stime ragionevolmente stabili; per percentili
-            semi-estremi (5&mdash;95) è preferibile disporre di ~2.000 casi; per percentili estremi (1&mdash;3 e 97&mdash;99)
-            sono spesso necessarie diverse migliaia di osservazioni (~5.000) per garantire soglie
-            affidabili, specialmente in presenza di distribuzioni con code pesanti dove la variabilità campionaria è
-            maggiore.
+        <p> Vale la pena di osservare che l'affidabilità delle tavole normative dipende dalla precisione dei percentili
+            usati come
+            soglie di conversione e la precisione di questi ultimi è funzione della numerosità campionaria. Per percentili
+            non estremi
+            (10°&mdash;&nbsp;90°) un numero di osservazioni nell'ordine delle centinaia garantisce errori standard accettabili; per
+            percentili
+            estremi
+            (1°&mdash;&nbsp;10°, 90°&mdash;&nbsp;99°) sono necessarie migliaia di
+            osservazioni, data la scarsità di valori nelle code della distribuzione.</p>
+
+        <p>Sempre in questa pagina, viene presentata la procedura di <span class="text-italic">fitting</span> di una
+            famiglia di distribuzioni teoriche {% if data.metric_config.metric_type == "time" %}(<span
+                class="text-italic">normale, log-normale, gamma, weibull</span>){% else %}(<span
+                class="text-italic">binomiale negativa, Poisson, Poisson con inflazione di zeri</span>){% endif %} ai
+            dati campionari.</p>
+
+        <p>Il modello con migliore adattamento (<span class="text-italic">fit</span>) sarà utilizzato per validare la
+            stabilità delle stime
+            percentiliche attraverso il metodo della simulazione Monte Carlo (descritto nella pagina
+            successiva).
         </p>
-        <p>Il fitting di una distribuzione teorica consiste nel processo di identificazione e stima dei parametri di un
-            modello probabilistico che meglio descrive un campione di dati osservati. Questo procedimento inizia con la
-            selezione di una famiglia di distribuzioni candidate {% if data.metric_config.metric_type == "time" %}(es.,
-            normale, lognormale, gamma, weibull){% else %}(es., binomiale negativa, poisson, poisson con inflazione di
-            zeri, ecc.){% endif %} basata sulla
-            natura dei dati e su considerazioni teoriche del fenomeno studiato. Successivamente, si procede alla stima
-            dei parametri caratteristici della distribuzione scelta utilizzando metodi statistici come la massima
-            verosimiglianza. La qualità del fit viene valutata attraverso indici di bontà di adattamento che confrontano
-            quanto bene il modello teorico riproduce le caratteristiche statistiche del campione osservato. Un buon
-            fitting permette di fare inferenze statistiche robuste, generare predizioni affidabili e comprendere meglio
-            la struttura probabilistica sottostante ai dati.</p>
+        <p>La bontà dell'adattamento viene qui valutata attraverso indici di <span
+                class="text-italic">adeguatezza</span> e analisi
+            grafica mediante {% if data.metric_config.metric_type == "time" %}Q-Q plot{% else %}Rootogram{% endif %} che
+            quantificano la capacità dei modelli di riprodurre le caratteristiche
+            distribuzionali del campione empirico.</p>
+
         <h2>Descrittive del campione</h2>
         <table class="table-bordered full-width">
             <thead>
@@ -68,7 +70,9 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="2"><span class="text-bold">Tabella 1.</span> COUNT = Frequenza, MEAN = media, STD = dev.ne standard, MIN = minimo, 25% = 25 percentile, 50% = mediana, 75% = 75 percentile, MAX = massimo.</td>
+                    <td colspan="2"><span class="text-bold">Tabella 1.</span> COUNT = Frequenza, MEAN = Media, STD =
+                        Dev.ne standard, MIN = Minimo, 25% = Primo quartile, 50% = Mediana, 75% = Terzo quartile, MAX =
+                        Massimo.</td>
                 </tr>
             </tfoot>
         </table>
@@ -97,7 +101,8 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="4"><span class="text-bold">Tabella 2.</span> AIC = Akaike Information Criterion, BIC = Bayesian Information Criterion, CVM = Cramér-von Mises statistic.</td>
+                    <td colspan="4"><span class="text-bold">Tabella 2.</span> AIC = Akaike Information Criterion, BIC =
+                        Bayesian Information Criterion, CVM = Cramér-von Mises statistic.</td>
                 </tr>
             </tfoot>
         </table>
