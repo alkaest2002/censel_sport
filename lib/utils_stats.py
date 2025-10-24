@@ -187,6 +187,7 @@ def apply_standardization(
 
 def _generate_random_samples_from_model(  # noqa: PLR0911
     best_model: dict[str, Any],
+    use_best_model: bool,
     size: int,
     rng: np.random.Generator,
 ) -> NDArray[np.floating[Any]]:
@@ -197,8 +198,13 @@ def _generate_random_samples_from_model(  # noqa: PLR0911
     -----------
     best_model : dict
         Dictionary containing model name and parameters
+
+    use_best_model : bool
+        Whether to use the best model or fallback to generic random samples
+
     size : int
         Number of samples to generate
+
     rng : np.random.Generator
         Random number generator instance
 
@@ -210,6 +216,10 @@ def _generate_random_samples_from_model(  # noqa: PLR0911
     # Extract model name and parameters
     model_name: str = best_model.get("name", "")
     parameters: list[float] = best_model.get("parameters", [])
+
+    if not use_best_model:
+        # Fallback to generic random samples
+        return rng.random(size=size)
 
     if not model_name or not parameters:
         raise ValueError("Invalid best_model dictionary: missing name or parameters")
