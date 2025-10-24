@@ -1,6 +1,6 @@
 {
-    "include_in_analysis": true,
-    "name": "100mt_run",
+    "id": "100mt_run_males",
+    "title": "Corso 100 metri piani - Maschi",
     "source_type": "synthetic",
     "source_filename": null,
     "metric_type": "time",
@@ -15,5 +15,6 @@
     "distribution_best_criterion": null,
     "montecarlo_n_samples": 10000,
     "montecarlo_n_size": 300,
-    "random_state": 50
+    "random_state": 50,
+    "include_in_analysis": true
 }
