@@ -1,0 +1,18 @@
+{% extends "_base.html" %}
+
+{% block base_report_style %}
+<style>
+    .plot {
+        display: flex;
+        gap: 6px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    <div class="page">
+        <section class="plot">
+            {{ data["metric_config"] }}
+        </section>
+    </div>
+{% endblock %}

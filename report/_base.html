@@ -9,10 +9,10 @@
             /* Base css */
 
             :root {
-                --ab-grid-sans-serif: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;
-                --ab-grid-serif: "Times New Roman", Times, serif;
-                --abgrid-white: #ffffff;
-                --abgrid-black: #000000;
+                --sans-serif: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;
+                --serif: "Times New Roman", Times, serif;
+                --white: #ffffff;
+                --black: #000000;
                 --base-font-color-light: #555555;
                 --base-border-color: #333333;
                 --base-background-color-light: #eeeeee;
@@ -22,7 +22,7 @@
             * {
                 padding: 0;
                 margin: 0;
-                font-family: var(--ab-grid-serif);
+                font-family: var(--serif);
                 font-size: 12pt;
                 line-height: 14pt;
                 box-sizing: border-box;
@@ -56,11 +56,11 @@
             }
 
             .serif * {
-                font-family: var(--ab-grid-serif);
+                font-family: var(--serif);
             }
 
             .sans-serif * {
-                font-family: var(--ab-grid-sans-serif);
+                font-family: var(--sans-serif);
             }
 
             .full-width {
@@ -88,12 +88,7 @@
                 color: var(--base-font-color-light);
             }
 
-            .text-small {
-                font-size: 8pt;
-                line-height: 10pt;
-            }
-
-            .text-small b {
+            .text-small, .text-small * {
                 font-size: 8pt;
                 line-height: 10pt;
             }
