@@ -1,4 +1,5 @@
 
+from base64 import b64decode
 from pathlib import Path
 from typing import Any
 
@@ -34,7 +35,7 @@ def save_analysis_results(
 
     # Extract data from dictionary
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
-    plots: dict[str, str] = data_dict.get("plots", {})
+    plots: list[dict[str, str]] = data_dict.get("plots", {})
     metric_id: str = metric_config.get("id", "")
 
     # Raise error if something is missing
@@ -53,10 +54,11 @@ def save_analysis_results(
             child.unlink()
 
     # Write plots to SVG files
-    for plot_name, svg_string in plots.items():
-        plot_output_path = output_path / f"{metric_id}_{plot_name}.svg"
+    for plot in plots:
+        plot_output_path = output_path / f"{metric_id}_{plot['name']}.svg"
         with plot_output_path.open("w") as f:
-            f.write(svg_string)
+            plot_str: str = plot["svg"][26:]
+            f.write(b64decode(plot_str).decode("utf-8"))
 
     # Write results to JSON file
     analysis_output_path = output_path / f"{metric_id}_analysis.json"
