@@ -87,11 +87,11 @@ def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
 
     # Generate synthetic data
     raw_data = generate_synthetic_data(metric_id, n_samples, random_state)
-
     return {
         "metric_config": metric_config,
         "load": {
             "data": raw_data,
+            "descriptive_stats": pd.DataFrame(raw_data).describe().squeeze().to_dict(), # type: ignore[union-attr]
             "quantiles": {
                 f"q{int(q*100)}": cast("float", np.quantile(raw_data, q)) for q in np.arange(0.01, 1., 0.01)
             },
