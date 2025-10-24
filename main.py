@@ -31,50 +31,59 @@ try:
         #################################################################################
         # Load data
         ################################################################################
-        print("1. Loading data...")
+        step_counter = 1
+        print(f"{step_counter}. Loading data for {metric_config.get('title')}...")
         data_dict: dict[str, Any] = load_data(metric_config=metric_config)
 
         ############################################################################################
         # Clean data
         ############################################################################################
-        print("2. Cleaning data...")
+        step_counter += 1
+        print(f"{step_counter}. Cleaning data...")
         data_dict = clean_data(data_dict)
+
+        ###############################################################################################
+        # Fit theoretical distributions to data
+        ###############################################################################################
+        step_counter += 1
+        print(f"{step_counter}. Fitting theoretical distributions...")
+        fitter = DistributionFitter(data_dict)
+        data_dict = fitter.fit_distributions()
+
 
         #############################################################################################
         # Compute bootstrap percentiles
         #############################################################################################
-        print("3. Computing bootstrap percentiles...")
+        step_counter += 1
+        print(f"{step_counter}. Computing bootstrap percentiles...")
         data_dict, bootstrap_samples = compute_bootstrap_percentiles(data_dict=data_dict)
 
         ##############################################################################################
         # Apply percentile-based standardization to data
         ##############################################################################################
-        print("4. Applying standardization...")
+        step_counter += 1
+        print(f"{step_counter}. Applying standardization...")
         data_dict = compute_standard_scores(data_dict)
-
-        ###############################################################################################
-        # Fit theoretical distributions to data
-        ###############################################################################################
-        print("5. Fitting theoretical distributions...")
-        fitter = DistributionFitter(data_dict)
-        data_dict = fitter.fit_distributions()
 
         ###############################################################################################
         # Perform Montecarlo simulation
         ###############################################################################################
-        print("6. Performing Montecarlo simulation...")
+        step_counter += 1
+        print(f"{step_counter}. Performing Montecarlo simulation...")
         data_dict, simulation_samples = monte_carlo_validation(data_dict)
 
         ###############################################################################################
         # Create plots
         ###############################################################################################
-        print("7. Saving plots...")
+        step_counter += 1
+        print(f"{step_counter}. Saving plots...")
         data_dict = create_plots(data_dict)
 
         ##############################################################################################
         # Save results
         ##############################################################################################
-        print("8. Saving results...")
+        step_counter += 1
+        print(f"{step_counter}. Saving results...")
         save_analysis_results(
             data_dict=data_dict,
             bootstrap_samples=bootstrap_samples,
