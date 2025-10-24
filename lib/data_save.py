@@ -52,17 +52,17 @@ def save_analysis_results(
         if child.is_file():
             child.unlink()
 
+    # Write plots to SVG files
+    for plot_name, svg_string in data_dict.pop("plots", {}).items():
+        plot_output_path = output_path / f"{metric_id}_{plot_name}.svg"
+        with plot_output_path.open("w") as f:
+            f.write(svg_string)
+
     # Write results to JSON file
     analysis_output_path = output_path / f"{metric_id}_analysis.json"
     with analysis_output_path.open("w") as f:
         orjson_options = orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2
         f.write(orjson.dumps(data_dict, option=orjson_options).decode("utf-8"))
-
-    # Write plots to SVG files
-    for plot_name, svg_string in plots.items():
-        plot_output_path = output_path / f"{metric_id}_{plot_name}.svg"
-        with plot_output_path.open("w") as f:
-            f.write(svg_string)
 
     # Write bootstrap samples to JSON file
     bootstrap_output_path = output_path / f"{metric_id}_bootstrap_samples.json"
