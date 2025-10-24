@@ -35,10 +35,6 @@
                 margin: 0;
                 padding: 1cm;
             }
-
-            table {
-                border-collapse: collapse;
-            }
             
             .page {
                 width: 210mm;
@@ -65,7 +61,6 @@
             h2 {
                 font-size: 1.2rem;
                 line-height: 1.4rem;
-                border-bottom: 1px solid var(--black);
                 padding-bottom: 6px;
             }
 
@@ -74,13 +69,25 @@
                 line-height: 1.2rem;
             }
 
-            table td, table th {
-                font-size: .8rem;
-                padding: 4px 6px;
+            table {
+                border-collapse: collapse;
             }
 
-            table td, table th {
+            table tbody td {
+                font-size: .8rem;
                 padding: 2px 6px;
+            }
+
+            table th {
+                font-size: .9rem;
+                padding: 6px 6px;
+                border-bottom: .5px solid var(--base-border-color);
+            }
+
+            table tfoot * {
+                font-size: .7rem;
+                line-height: .8rem;
+                padding: 6px 0px 0px 0px;
             }
 
             .serif * {
@@ -96,17 +103,26 @@
             }
 
             .table-bordered {
-                border-top: 1.2pt solid var(--base-border-color);
-                border-bottom: 1.2pt solid var(--base-border-color);
+                border-top: 1.5px solid var(--base-border-color);
             }
 
-             .table-striped th {
+            .table-bordered tbody tr:last-child {
+                border-bottom: 1.5px solid var(--base-border-color);
+            }
+
+            .table-striped th {
                 background-color: var(--base-background-color-dark);
                 color: var(--white);
              }
 
-            .table-striped tr:nth-child(even) td {
+            .table-striped tbody tr:nth-child(even) td {
                 background-color: var(--base-background-color-light);
+            }
+
+            .table-caption {
+                font-size: .6rem;
+                border-top: 1px solid var(--base-border-color);
+                padding-top: 6px;
             }
 
             .text-center {
