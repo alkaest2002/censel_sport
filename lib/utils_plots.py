@@ -228,12 +228,7 @@ def plot_histogram_with_fitted_model(
     # Common formatting for both discrete and continuous
     ax.set_xlabel("Values", fontsize=12)
     ax.set_ylabel(ylabel, fontsize=12)
-    ax.set_title(f"Histogram with Fitted {model_name} Distribution", fontsize=14, fontweight="bold")
-    ax.grid(True, alpha=BASE_ALPHA//2, axis="y")
-    ax.legend(fontsize=11)
-
-    # Adjust layout to prevent clipping
-    plt.tight_layout()
+    ax.legend(fontsize=11, frameon=False)
 
     return figure_to_svg_string(figure)
 
@@ -315,9 +310,7 @@ def plot_bootstrap_percentile_with_ci(
     # Formatting
     ax.set_xlabel("Percentile", fontsize=12)
     ax.set_ylabel("Value", fontsize=12)
-    ax.set_title("Bootstrap Percentiles with Confidence Intervals", fontsize=14, fontweight="bold")
-    ax.grid(True, alpha=BASE_ALPHA//2)
-    ax.legend(fontsize=11)
+    ax.legend(fontsize=11, frameon=False)
 
     # Set reasonable x-axis limits and ticks
     ax.set_xlim(max(0, np.min(percentiles) - 5), min(100, np.max(percentiles) + 5))
@@ -338,7 +331,7 @@ def plot_bootstrap_percentile_with_ci(
 
 def plot_qq_plot(
         data: NDArray[np.integer[Any] | np.floating[Any]],
-        model_name: str,
+        model_name: str,  # noqa: ARG001
         model: Any,
     ) -> str:
     """
@@ -378,15 +371,10 @@ def plot_qq_plot(
     diag: NDArray[np.floating[Any]] = np.linspace(data_min, data_max, 1000)
     ax.plot(diag, diag, color="k", linestyle="--", linewidth=2, label="Fit line")
 
-    # Set equal aspect ratio for better interpretation
-    ax.set_aspect("equal")
-
     # Add labels and formatting
     ax.set_xlabel("Theoretical Quantiles", fontsize=12)
     ax.set_ylabel("Sample Quantiles", fontsize=12)
-    ax.set_title(f"Q-Q Plot: sample vs {model_name} distribution", fontsize=14, fontweight="bold")
-    ax.grid(True, alpha=BASE_ALPHA//2)
-    ax.legend(fontsize=11)
+    ax.legend(fontsize=11, frameon=False)
 
     return figure_to_svg_string(figure)
 
@@ -494,10 +482,7 @@ def plot_hanging_rootogram(
     # Formatting
     ax.set_xlabel("Count Values", fontsize=12)
     ax.set_ylabel("Square Root of Frequency", fontsize=12)
-    ax.set_title(f"Hanging Rootogram: {model_name} Distribution Fit",
-                 fontsize=14, fontweight="bold")
-    ax.grid(True, alpha=BASE_ALPHA//2, axis="y")
-    ax.legend(fontsize=11)
+    ax.legend(fontsize=11, frameon=False)
 
     # Set integer ticks on x-axis
     ax.set_xticks(counts[::max(1, len(counts)//10)])  # Show reasonable number of ticks
@@ -612,15 +597,10 @@ def plot_montecarlo(comparison_data: list[dict[str, Any]]) -> str:
                    textcoords="offset points", fontsize=8,
                    alpha=0.8, ha="left", va="bottom")
 
-    # Set equal aspect ratio for better interpretation
-    ax.set_aspect("equal", adjustable="box")
-
     # Formatting
     ax.set_xlabel("Bootstrap Values", fontsize=12)
     ax.set_ylabel("Monte Carlo Values", fontsize=12)
-    ax.set_title("Bootstrap vs Monte Carlo Percentile Estimates", fontsize=14, fontweight="bold")
-    ax.grid(True, alpha=0.3)
-    ax.legend(fontsize=11)
+    ax.legend(fontsize=11, frameon=False)
 
     # Set axis limits with some padding
     ax.set_xlim(diag_min, diag_max)
