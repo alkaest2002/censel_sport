@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Any, cast
 
 import numpy as np
+import pandas as pd
 
 from lib.utils_generic import is_falsy
 
@@ -65,6 +66,7 @@ def clean_data(
          "quantiles": {
             f"q{int(q*100)}": cast("float", np.quantile(final_data, q)) for q in np.arange(0.01, 1., 0.01)
         },
+        "descriptive_stats": pd.DataFrame(final_data).describe().squeeze().to_dict(), # type: ignore[union-attr]
         "metadata": {
             "removed_invalid": removed_invalid,
             "removed_outliers": removed_outliers,
