@@ -53,7 +53,7 @@ def save_analysis_results(
             child.unlink()
 
     # Write plots to SVG files
-    for plot_name, svg_string in data_dict.pop("plots", {}).items():
+    for plot_name, svg_string in plots.items():
         plot_output_path = output_path / f"{metric_id}_{plot_name}.svg"
         with plot_output_path.open("w") as f:
             f.write(svg_string)
