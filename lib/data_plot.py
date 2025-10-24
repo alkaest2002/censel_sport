@@ -69,23 +69,31 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
         raise ValueError(f"---> Failed to instantiate model {best_model_name}: {e}") from e
 
     # Add plots
-    data_dict["plots"] = {
-        "histogram_of_data_with_fitted_distribution":
-            plot_histogram_with_fitted_model(data, best_model_name, model),
-        "histogram_of_percentiles_with_ci":
-            plot_bootstrap_percentile_with_ci(bootstrap_percentiles),
-        "monte_carlo_vs_bootstrap_percentiles":
-            plot_montecarlo(montecarlo_results),
-    }
+    data_dict["plots"] = [
+        {
+            "name": "histogram_of_data_with_fitted_distribution",
+            "svg": plot_histogram_with_fitted_model(data, best_model_name, model),
+        },
+        {
+            "name": "histogram_of_percentiles_with_ci",
+            "svg": plot_bootstrap_percentile_with_ci(bootstrap_percentiles),
+        },
+        {
+            "name": "monte_carlo_vs_bootstrap_percentiles",
+            "svg": plot_montecarlo(montecarlo_results),
+        },
+    ]
 
     if metric_type == "time":
-        data_dict["plots"].update({
-            "qq_plot": plot_qq_plot(data, best_model_name, model),
+        data_dict["plots"].append({
+            "name": "qq_plot",
+            "svg": plot_qq_plot(data, best_model_name, model),
         })
 
     if metric_type == "count":
-         data_dict["plots"].update({
-            "rootgram": plot_hanging_rootogram(data, best_model_name, model),
+         data_dict["plots"].append({
+            "name": "rootogram",
+            "svg": plot_hanging_rootogram(data, best_model_name, model),
         })
 
     return data_dict
