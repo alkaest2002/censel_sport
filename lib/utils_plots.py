@@ -229,6 +229,7 @@ def plot_histogram_with_fitted_model(
     ax.set_xlabel("Values", fontsize=12)
     ax.set_ylabel(ylabel, fontsize=12)
     ax.legend(fontsize=11, frameon=False)
+    ax.yaxis.set_ticks_position("both")
 
     return figure_to_svg_string(figure)
 
@@ -326,6 +327,7 @@ def plot_bootstrap_percentile_with_ci(
     x_ticks = np.arange(0, 101, tick_step)
     x_ticks = x_ticks[(x_ticks >= np.min(percentiles) - 5) & (x_ticks <= np.max(percentiles) + 5)]
     ax.set_xticks(x_ticks)
+    ax.yaxis.set_ticks_position("both")
 
     return figure_to_svg_string(figure)
 
@@ -375,6 +377,8 @@ def plot_qq_plot(
     ax.set_xlabel("Theoretical Quantiles", fontsize=12)
     ax.set_ylabel("Sample Quantiles", fontsize=12)
     ax.legend(fontsize=11, frameon=False)
+    ax.yaxis.tick_right()
+    ax.yaxis.set_ticks_position("both")
 
     return figure_to_svg_string(figure)
 
@@ -486,6 +490,8 @@ def plot_hanging_rootogram(
 
     # Set integer ticks on x-axis
     ax.set_xticks(counts[::max(1, len(counts)//10)])  # Show reasonable number of ticks
+    ax.yaxis.tick_right()
+    ax.yaxis.set_ticks_position("both")
 
     return figure_to_svg_string(figure)
 
@@ -605,6 +611,7 @@ def plot_montecarlo(comparison_data: list[dict[str, Any]]) -> str:
     # Set axis limits with some padding
     ax.set_xlim(diag_min, diag_max)
     ax.set_ylim(diag_min, diag_max)
+    ax.yaxis.tick_right()
+    ax.yaxis.set_ticks_position("both")
 
     return figure_to_svg_string(figure)
-
