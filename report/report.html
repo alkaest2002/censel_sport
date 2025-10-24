@@ -12,7 +12,7 @@
 {% block body %}
     <div class="page">
         <section class="plot">
-            {{ data["metric_config"] }}
+            <img src="{{ data.plots[0].svg }}" />
         </section>
     </div>
 {% endblock %}
