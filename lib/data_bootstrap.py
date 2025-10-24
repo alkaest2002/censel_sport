@@ -7,7 +7,7 @@ from numpy.typing import NDArray
 from lib.utils_generic import is_falsy
 
 
-def _compute_percentile_cutoffs(
+def _compute_cutoffs(
         bootstrap_percentiles: list[dict[str, Any]],
         metric_precision: int = 2,
     ) -> list[tuple[float, float]]:
@@ -28,11 +28,11 @@ def _compute_percentile_cutoffs(
     # Extract percentile values
     percentiles_values: list[int | float] = [percentile["value"] for percentile in bootstrap_percentiles]
 
-    # Update percentile values with lowers and upper bounds, rounded to specified precision
-    corrected_percentiles_values = np.round([0, *percentiles_values, 1e10], metric_precision)
+    # Define cutoffs array
+    cutoffs = np.round([0, *percentiles_values, 1e10], metric_precision)
 
-    # Compute cutoffs in the form of: [(lower_bound, upper_bound), ...]
-    return list(pairwise(corrected_percentiles_values))
+    # Compute final cutoffs in the form of: [(lower_bound, upper_bound), ...]
+    return list(pairwise(cutoffs))
 
 
 def compute_bootstrap_percentiles(
@@ -122,7 +122,7 @@ def compute_bootstrap_percentiles(
             "std_error": np.std(estimates),
         })
 
-    percentile_cutoffs = _compute_percentile_cutoffs(bootstrap_percentiles, metric_precision=metric_precision)
+    percentile_cutoffs = _compute_cutoffs(bootstrap_percentiles, metric_precision=metric_precision)
 
     # Store results in data dictionary
     data_dict["bootstrap"] = {
