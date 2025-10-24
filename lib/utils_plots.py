@@ -1,5 +1,6 @@
 """Plotting utilities for statistical analysis."""
 
+from base64 import b64encode
 import io
 from typing import Any
 
@@ -73,7 +74,7 @@ def figure_to_svg_string(fig: Figure) -> str:
     SVG string content ready to be written to a file.
     """
     # Initialize an in-memory text buffer for SVG content
-    buffer = io.StringIO()
+    buffer = io.BytesIO()
 
     # Save figure to the buffer in SVG format then close it
     fig.savefig(
@@ -89,12 +90,12 @@ def figure_to_svg_string(fig: Figure) -> str:
 
     # Get the SVG content as string and reset buffer position
     buffer.seek(0)
-    svg_string = buffer.getvalue()
 
-    # Close the buffer
-    buffer.close()
+    # Encode the buffer contents to a base64 string
+    base64_encoded_string = b64encode(buffer.getvalue()).decode()
 
-    return svg_string
+    return f"data:image/svg+xml;base64,{base64_encoded_string}"
+
 
 def plot_histogram_with_fitted_model(
         data: NDArray[np.integer[Any] | np.floating[Any]],
