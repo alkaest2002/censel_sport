@@ -1,4 +1,3 @@
-
 from itertools import pairwise
 from typing import Any, cast
 
@@ -6,6 +5,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lib.utils_generic import is_falsy
+from lib.utils_stats import _generate_random_samples_from_model
 
 
 def _compute_percentile_cutoffs(
@@ -35,6 +35,7 @@ def _compute_percentile_cutoffs(
     # Compute cutoffs in the form of: [(lower_bound, upper_bound), ...]
     return list(pairwise(corrected_percentiles_values))
 
+
 def compute_bootstrap_percentiles(
     data_dict: dict[str, Any],
 ) -> tuple[dict[str, Any], list[NDArray[np.integer[Any] | np.floating[Any]]]]:
@@ -55,12 +56,15 @@ def compute_bootstrap_percentiles(
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
     clean: dict[str, Any] = data_dict.get("clean", {})
     data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
+    fit: dict[str, Any] = data_dict.get("fit", {})
     requested_percentiles: list[int | float] = metric_config.get("requested_percentiles", [5, 25, 50, 75, 95])
     n_replicates: int = metric_config.get("bootstrap_n_replicates", 10000)
     n_replicate_size: int = metric_config.get("bootstrap_n_replicate_size", data.size)
     ci_level: float = metric_config.get("bootstrap_ci_level", 0.95)
     metric_precision: int = metric_config.get("metric_precision", 2)
+    best_model: dict[str, Any] = fit.get("best_model", {})
     random_state: int = metric_config.get("random_state", 42)
+    use_parametric_bootstrap: bool = metric_config.get("use_parametric_bootstrap", False)
 
      # Raise error if something is missing
     if any(map(is_falsy,
@@ -68,11 +72,13 @@ def compute_bootstrap_percentiles(
                    metric_config,
                    clean,
                    data,
+                   fit,
                    requested_percentiles,
                    n_replicates,
                    n_replicate_size,
                    ci_level,
                    metric_precision,
+                   best_model,
                    random_state,
                 ),
             ),
@@ -82,7 +88,7 @@ def compute_bootstrap_percentiles(
     # Initialize random generator
     rng = np.random.default_rng(random_state)
 
-    # Inittialize variables
+    # Initialize variables
     boostrap_samples: list[NDArray[np.integer[Any] | np.floating[Any]]] = []
     bootstrap_estimates: dict[str, list[float]] = {f"p{p}": [] for p in requested_percentiles}
     bootstrap_percentiles: list[dict[str, Any]] = []
@@ -93,8 +99,13 @@ def compute_bootstrap_percentiles(
     # Bootstrap resampling
     for _ in range(n_replicates):
 
-        # Generate bootstrap sample with replacement
-        resample = rng.choice(data, size=n_replicate_size, replace=True)
+        # Generate bootstrap sample
+        if use_parametric_bootstrap and best_model:
+            # Use parametric bootstrap with fitted distribution
+            resample = _generate_random_samples_from_model(best_model, n_replicate_size, rng)
+        else:
+            # Use non-parametric bootstrap with replacement from original data
+            resample = rng.choice(data, size=n_replicate_size, replace=True)
 
         # Store bootstrap sample
         boostrap_samples.append(resample)
