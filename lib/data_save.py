@@ -57,7 +57,9 @@ def save_analysis_results(
     for plot in plots:
         plot_output_path = output_path / f"{metric_id}_{plot['name']}.svg"
         with plot_output_path.open("w") as f:
+            # Strip 'data:image/svg+xml;base64,'
             plot_str: str = plot["svg"][26:]
+            # Write svg to file
             f.write(b64decode(plot_str).decode("utf-8"))
 
     # Write results to JSON file
