@@ -79,8 +79,15 @@ def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
     # Get number of samples to generate
     n_samples = metric_config.get("synthetic_n_samples", 500)
 
+    # Set random seed for reproducibility
+    random_state = metric_config.get("random_state", 0)
+
+    # Get metric id, Keep only first suffix (denoted by underscore)
+    metric_id = "_".join(metric_config["id"].split("_")[:2])
+
     # Generate synthetic data
-    raw_data = generate_synthetic_data(metric_config["name"], n_samples)
+    raw_data = generate_synthetic_data(metric_id, n_samples, random_state)
+
     return {
         "metric_config": metric_config,
         "load": {
