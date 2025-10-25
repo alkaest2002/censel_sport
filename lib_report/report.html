@@ -19,101 +19,128 @@
 
 {% block body %}
 <div class="page">
-    <h1 class="mb-md">{{ data.metric_config.title | upper }}</h1>
+
+    <div class="mb-xxl">
+        <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
+        <h2>Campione di riferimento</h2>
+    </div>
+    
+    
     <div class="two-columns">
-        <h2>Introduzione</h2>
-        <p>In questa pagina vengono presentate le informazioni relative al campione di riferimento utilizzato per la
-            costruzione delle tavole normative percentiliche relative a: <span class="text-italic">{{
-                data.metric_config.title }}</span>. Tali tavole consentono la conversione dei punteggi grezzi in
-            punteggi standardizzati.</p>
 
-        <p> Vale la pena di osservare che l'affidabilità delle tavole normative dipende dalla precisione dei percentili
-            usati come
-            soglie di conversione e la precisione di questi ultimi è funzione della numerosità campionaria. Per percentili
-            non estremi
-            (10°&mdash;&nbsp;90°) un numero di osservazioni nell'ordine delle centinaia garantisce errori standard accettabili; per
-            percentili
-            estremi
-            (1°&mdash;&nbsp;10°, 90°&mdash;&nbsp;99°) sono necessarie migliaia di
-            osservazioni, data la scarsità di valori nelle code della distribuzione.</p>
-
-        <p>Sempre in questa pagina, viene presentata la procedura di <span class="text-italic">fitting</span> di una
-            famiglia di distribuzioni teoriche {% if data.metric_config.metric_type == "time" %}(<span
-                class="text-italic">normale, log-normale, gamma, weibull</span>){% else %}(<span
-                class="text-italic">binomiale negativa, Poisson, Poisson con inflazione di zeri</span>){% endif %} ai
-            dati campionari.</p>
-
-        <p>Il modello con migliore adattamento (<span class="text-italic">fit</span>) sarà utilizzato per validare la
-            stabilità delle stime
-            percentiliche attraverso il metodo della simulazione Monte Carlo (descritto nella pagina
-            successiva).
-        </p>
-        <p>La bontà dell'adattamento viene qui valutata attraverso indici di <span
-                class="text-italic">adeguatezza</span> e analisi
-            grafica mediante {% if data.metric_config.metric_type == "time" %}Q-Q plot{% else %}Rootogram{% endif %} che
-            quantificano la capacità dei modelli di riprodurre le caratteristiche
-            distribuzionali del campione empirico.</p>
-
-        <h2>Descrittive del campione</h2>
-        <table class="table-bordered full-width">
-            <thead>
-                <th class="text-left">STATISTICA</th>
-                <th class="text-center">VALORE</th>
-            </thead>
-            <tbody>
-                {% for key, value in data.clean.descriptive_stats.items() %}
-                <tr>
-                    <td class="text-left">{{ key | upper }}</td>
-                    <td class="text-center">{{ "%.2f" | format(value) }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="2"><span class="text-bold">Tabella 1.</span> COUNT = Frequenza, MEAN = Media, STD =
-                        Dev.ne standard, MIN = Minimo, 25% = Primo quartile, 50% = Mediana, 75% = Terzo quartile, MAX =
-                        Massimo.</td>
-                </tr>
-            </tfoot>
-        </table>
-        <h2>Fitting distribuzione teoriche</h2>
-        <table class="table-bordered full-width">
-            <thead>
-                <tr>
-                    <th class="text-left">MODELLO</th>
-                    <th class="text-center">AIC</th>
-                    <th class="text-center">BIC</th>
-                    <th class="text-center">CVM</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for model_name, model_data in data.fit.fitted_models.items() %}
-                <tr>
-                    <td class="text-left">{{ model_name | upper }}</td>
-                    <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.aic) }}</td>
-                    <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.bic) }}</td>
-                    <td class="text-center">
-                        {{ "%.2f" | format(model_data.goodness_of_fit.cramer_von_mises) }} (p={{ "%.3f" |
-                        format(model_data.goodness_of_fit.cvm_pvalue) }})
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="4"><span class="text-bold">Tabella 2.</span> AIC = Akaike Information Criterion, BIC =
-                        Bayesian Information Criterion, CVM = Cramér-von Mises statistic.</td>
-                </tr>
-            </tfoot>
-        </table>
-        <h2>Grafici</h2>
-        <div>
-            <h3 class="text-center">ISTOGRAMMA DEL CAMPIONE</h3>
-            <img src="{{ data.plots[0].svg }}" />
+        <div class="mb-xl">
+            <h3 class="mb-lg">Note introduttive</h3>
+            <ul>
+                <li>
+                    <p>
+                        In questa pagina vengono presentate le informazioni relative al campione di riferimento utilizzato per la
+                        costruzione delle tavole normative percentiliche relative a: <span class="text-italic">{{
+                            data.metric_config.title }}</span>. Tali tavole consentono la conversione dei punteggi grezzi in
+                        punteggi standardizzati.
+                    </p>
+                    <p> Vale la pena di osservare che l'affidabilità delle tavole normative dipende dalla precisione dei percentili
+                        usati come
+                        soglie di conversione e la precisione di questi ultimi è funzione della numerosità campionaria. Per percentili
+                        non estremi
+                        (10°&mdash;&nbsp;90°) un numero di osservazioni nell'ordine delle centinaia garantisce errori standard accettabili; per
+                        percentili
+                        estremi
+                        (1°&mdash;&nbsp;10°, 90°&mdash;&nbsp;99°) sono necessarie migliaia di
+                        osservazioni, data la scarsità di valori nelle code della distribuzione.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        Sempre in questa pagina, viene presentata la procedura di <span class="text-italic">fitting</span> di una
+                        famiglia di distribuzioni teoriche {% if data.metric_config.metric_type == "time" %}(<span
+                            class="text-italic">normale, log-normale, gamma, weibull</span>){% else %}(<span
+                            class="text-italic">binomiale negativa, Poisson, Poisson con inflazione di zeri</span>){% endif %} ai
+                        dati campionari.</p>
+                    <p>
+                        Il modello con migliore adattamento (<span class="text-italic">fit</span>) sarà utilizzato per validare la
+                        stabilità delle stime
+                        percentiliche attraverso il metodo della simulazione Monte Carlo (descritto nella pagina
+                        successiva).
+                    </p>
+                    <p>
+                        La bontà dell'adattamento viene qui valutata attraverso indici di <span
+                            class="text-italic">adeguatezza</span> e analisi
+                        grafica mediante {% if data.metric_config.metric_type == "time" %}Q-Q plot{% else %}Rootogram{% endif %} che
+                        quantificano la capacità dei modelli di riprodurre le caratteristiche
+                        distribuzionali del campione empirico.
+                    </p>
+                </li>
+            </ul>
         </div>
-        <div>
-            <h3 class="text-center">Q-Q PLOT</h3>
-            <img src="{{ data.plots[-1].svg }}" />
+        
+        <div class="mb-xl">
+            <h3 class="mb-lg">Descrittive del campione</h3>
+            <table class="table-bordered full-width">
+                <thead>
+                    <th class="text-left">STATISTICA</th>
+                    <th class="text-center">VALORE</th>
+                </thead>
+                <tbody>
+                    {% for key, value in data.clean.descriptive_stats.items() %}
+                    <tr>
+                        <td class="text-left">{{ key | upper }}</td>
+                        <td class="text-center">{{ "%.2f" | format(value) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2"><span class="text-bold">Tabella 1.</span> COUNT = Frequenza, MEAN = Media, STD =
+                            Dev.ne standard, MIN = Minimo, 25% = Primo quartile, 50% = Mediana, 75% = Terzo quartile, MAX =
+                            Massimo.</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="mb-xl">
+            <h3 class="mb-lg">Fitting distribuzione teoriche</h3>
+            <table class="table-bordered full-width">
+                <thead>
+                    <tr>
+                        <th class="text-left">MODELLO</th>
+                        <th class="text-center">AIC</th>
+                        <th class="text-center">BIC</th>
+                        <th class="text-center">CVM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for model_name, model_data in data.fit.fitted_models.items() %}
+                    <tr>
+                        <td class="text-left">{{ model_name | upper }}</td>
+                        <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.aic) }}</td>
+                        <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.bic) }}</td>
+                        <td class="text-center">
+                            {{ "%.2f" | format(model_data.goodness_of_fit.cramer_von_mises) }} (p={{ "%.3f" |
+                            format(model_data.goodness_of_fit.cvm_pvalue) }})
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4"><span class="text-bold">Tabella 2.</span> AIC = Akaike Information Criterion, BIC =
+                            Bayesian Information Criterion, CVM = Cramér-von Mises statistic.</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        
+        <div class="mb-xl">
+            <h3 class="mb-lg">Grafici</h3>
+            <div>
+                <h4 class="text-center">ISTOGRAMMA DEL CAMPIONE</h4>
+                <img src="{{ data.plots[0].svg }}" />
+            </div>
+            <div>
+                <h3 class="text-center">Q-Q PLOT</h3>
+                <img src="{{ data.plots[-1].svg }}" />
+            </div>
         </div>
     </div>
 </div>
