@@ -39,7 +39,7 @@ def main() -> int:
         return 1
 
     # Init jinja environment
-    templates_dir = Path("./report").resolve()
+    templates_dir = Path("./lib_report").resolve()
     jinja_env: Environment = Environment(
         # Use FileSystemLoader to load templates from the 'report' directory
         loader=FileSystemLoader(str(templates_dir)),
