@@ -23,7 +23,8 @@ def get_base_parser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument(
-        "filepath",
+        "--filepath", "-f",
+        required=True,
         type=str,
         help="Path to the data file to analyze/report",
     )

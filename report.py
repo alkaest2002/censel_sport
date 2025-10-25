@@ -31,6 +31,15 @@ def main() -> int:
     """
     # Parse command line arguments
     parser = get_base_parser()
+
+    # Add parser argument numbering for report generation
+    parser.add_argument(
+        "--numbering", "-n",
+        required=False,
+        type=str,
+        help="Numbering style for report sections (e.g., '1.1', 'A.1'",
+    )
+
     args = parser.parse_args()
 
     # Validate the file path
@@ -55,10 +64,10 @@ def main() -> int:
     try:
         data: dict[str, Any] = load_configuration_data(validated_path)
         template = jinja_env.get_template("report.html")
-        rendered_html: str = template.render(data=data)
         output_pdf = validated_path.with_suffix(".pdf")
         output_html = validated_path.with_suffix(".html")
-
+        numbering = list(map(str.strip, args.numbering.split(","))) if len(args.numbering) > 0 else []
+        rendered_html: str = template.render(data=data, numbering=numbering)
         # Write html
         with output_html.open("w") as fout:
             fout.write(rendered_html)
