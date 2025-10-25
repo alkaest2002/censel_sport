@@ -1,8 +1,5 @@
-
-from pathlib import Path
+import sys
 from typing import Any
-
-import orjson
 
 from lib.data_bootstrap import compute_bootstrap_percentiles
 from lib.data_clean import clean_data
@@ -12,21 +9,26 @@ from lib.data_montecarlo import monte_carlo_validation
 from lib.data_plot import create_plots
 from lib.data_save import save_analysis_results
 from lib.data_standardize import compute_standard_scores
+from lib.utils_generic import load_configuration_data, parse_arguments, validate_file_path
 
-try:
 
-    # Iterate over all metric configuration files in data_in folder
-    for metric_config_path in Path("./data_in").glob("*.json"):
+def main() -> int:
 
-        # Open metric configuration file
-        with metric_config_path.open("r") as f:
+    # Parse command line arguments
+    args = parse_arguments()
 
-            # Parse metric configuration
-            metric_config: dict[str, Any] = orjson.loads(f.read())
+    try:
+        # Validate the file path
+        validated_path = validate_file_path(args.filepath, "analysis")
 
-            # Skip if included in analysis is set to False
-            if metric_config.get("include_in_analysis", False) is False:
-                continue
+    # Except block to catch file validation errors
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {e}")
+        return 1
+
+    try:
+        # Load metric configuration
+        metric_config: dict[str, Any] = load_configuration_data(validated_path)
 
         #################################################################################
         # Load data
@@ -49,7 +51,6 @@ try:
         print(f"{step_counter}. Fitting theoretical distributions...")
         fitter = DistributionFitter(data_dict)
         data_dict = fitter.fit_distributions()
-
 
         #############################################################################################
         # Compute bootstrap percentiles
@@ -89,5 +90,16 @@ try:
             bootstrap_samples=bootstrap_samples,
             simulation_samples=simulation_samples,
         )
-except Exception as e:  # noqa: BLE001
-    print(e)
+
+    # Catch-all for unexpected errors
+    except Exception as e:  # noqa: BLE001
+        print(e)
+        return 1
+
+    # If everything went well
+    else:
+        return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
