@@ -2,6 +2,10 @@
 
 {% block report_style %}
 <style>
+    img {
+        width: 100%;
+    }
+
     .two-columns {
         column-width: 50ch;
         column-gap: 5rem;
@@ -11,9 +15,14 @@
         break-inside: avoid;
     }
 
-    img {
-        width: 100%;
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #000;
+        padding-bottom: 0.5rem;
     }
+
 </style>
 {% endblock %}
 
@@ -21,13 +30,18 @@
 <div class="page">
 
     <div class="mb-xxl">
-        <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
-        <h2>Campione di riferimento</h2>
+        <div class="header">
+            <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
+            {% if numbering %}
+                <p>Allegato {{ numbering[0] }}</p>
+            {% endif %}
+        </div>
     </div>
     
     
+    <h2 class="mb-xl">Campione di riferimento</h2>
     <div class="two-columns">
-
+        
         <div class="mb-xl">
             <h3 class="mb-lg">Note introduttive</h3>
             <ul>
@@ -38,7 +52,7 @@
                             data.metric_config.title }}</span>. Tali tavole consentono la conversione dei punteggi grezzi in
                         punteggi standardizzati.
                     </p>
-                    <p> Vale la pena di osservare che l'affidabilità delle tavole normative dipende dalla precisione dei percentili
+                    <p> L'affidabilità delle tavole normative dipende dalla precisione dei percentili
                         usati come
                         soglie di conversione e la precisione di questi ultimi è funzione della numerosità campionaria. Per percentili
                         non estremi
@@ -59,8 +73,7 @@
                     <p>
                         Il modello con migliore adattamento (<span class="text-italic">fit</span>) sarà utilizzato per validare la
                         stabilità delle stime
-                        percentiliche attraverso il metodo della simulazione Monte Carlo (descritto nella pagina
-                        successiva).
+                        percentiliche attraverso il metodo della simulazione Monte Carlo {% if numbering %}(descritto nell'allegato {{ numbering[1] }}){% else %}(descritto nella pagina successiva){% endif %}.
                     </p>
                     <p>
                         La bontà dell'adattamento viene qui valutata attraverso indici di <span
@@ -74,7 +87,7 @@
         </div>
         
         <div class="mb-xl">
-            <h3 class="mb-lg">Descrittive del campione</h3>
+            <h3 class="mb-lg">Descrittive del campione di riferimento</h3>
             <table class="table-bordered full-width">
                 <thead>
                     <th class="text-left">STATISTICA</th>
@@ -99,7 +112,7 @@
         </div>
 
         <div class="mb-xl">
-            <h3 class="mb-lg">Fitting distribuzione teoriche</h3>
+            <h3 class="mb-lg">Fitting delle distribuzioni teoriche</h3>
             <table class="table-bordered full-width">
                 <thead>
                     <tr>
