@@ -15,7 +15,8 @@ from typing import Any
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
 from weasyprint import HTML  # type: ignore[import-untyped]
 
-from lib_analysis.utils_generic import load_configuration_data, parse_arguments, validate_file_path
+from lib_parser.parser import get_base_parser
+from lib_parser.utils_parser import load_configuration_data, validate_file_path
 
 
 def main() -> int:
@@ -29,7 +30,8 @@ def main() -> int:
         - 2: Rendering or PDF generation error
     """
     # Parse command line arguments
-    args = parse_arguments()
+    parser = get_base_parser()
+    args = parser.parse_args()
 
     # Validate the file path
     try:

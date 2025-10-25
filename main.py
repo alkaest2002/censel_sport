@@ -9,7 +9,8 @@ from lib_analysis.data_montecarlo import monte_carlo_validation
 from lib_analysis.data_plot import create_plots
 from lib_analysis.data_save import save_analysis_results
 from lib_analysis.data_standardize import compute_standard_scores
-from lib_analysis.utils_generic import load_configuration_data, parse_arguments, validate_file_path
+from lib_parser.parser import get_base_parser
+from lib_parser.utils_parser import load_configuration_data, validate_file_path
 
 
 def main() -> int:
@@ -24,7 +25,8 @@ def main() -> int:
         - 1: Error in file validation or loading
     """
     # Parse command line arguments
-    args = parse_arguments()
+    parser = get_base_parser()
+    args = parser.parse_args()
 
     try:
         # Validate the file path
