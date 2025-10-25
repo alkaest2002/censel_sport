@@ -2,8 +2,8 @@ from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 
-from lib.utils_generic import is_falsy
-from lib.utils_stats import apply_standardization
+from lib_analysis.utils_generic import is_falsy
+from lib_analysis.utils_stats import apply_standardization
 
 if TYPE_CHECKING:
     from collections.abc import Hashable

@@ -5,7 +5,7 @@ from typing import Any
 
 import orjson
 
-from lib.utils_generic import is_falsy
+from lib_analysis.utils_generic import is_falsy
 
 data_out = Path("./data_out")
 

@@ -5,9 +5,9 @@ from typing import TYPE_CHECKING, Any, Literal
 
 import numpy as np
 
-from lib.utils_distributions import DistributionType, FitFunctionType, get_distributions
-from lib.utils_generic import is_falsy
-from lib.utils_plots import (
+from lib_analysis.utils_distributions import DistributionType, FitFunctionType, get_distributions
+from lib_analysis.utils_generic import is_falsy
+from lib_analysis.utils_plots import (
     plot_bootstrap_percentile_with_ci,
     plot_hanging_rootogram,
     plot_histogram_with_fitted_model,

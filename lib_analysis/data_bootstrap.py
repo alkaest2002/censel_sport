@@ -4,7 +4,7 @@ from typing import Any, cast
 import numpy as np
 from numpy.typing import NDArray
 
-from lib.utils_generic import is_falsy
+from lib_analysis.utils_generic import is_falsy
 
 
 def _compute_cutoffs(

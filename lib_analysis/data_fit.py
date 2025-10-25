@@ -6,8 +6,8 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy import stats
 
-from lib.utils_distributions import get_distributions
-from lib.utils_generic import is_falsy
+from lib_analysis.utils_distributions import get_distributions
+from lib_analysis.utils_generic import is_falsy
 
 
 class DistributionFitter:

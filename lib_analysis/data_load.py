@@ -4,7 +4,7 @@ from typing import Any, cast
 import numpy as np
 import pandas as pd
 
-from lib.utils_stats import generate_synthetic_data
+from lib_analysis.utils_stats import generate_synthetic_data
 
 
 def _load_from_csv(metric_config: dict[str, Any]) -> dict[str, Any]:

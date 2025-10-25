@@ -1,15 +1,15 @@
 import sys
 from typing import Any
 
-from lib.data_bootstrap import compute_bootstrap_percentiles
-from lib.data_clean import clean_data
-from lib.data_fit import DistributionFitter
-from lib.data_load import load_data
-from lib.data_montecarlo import monte_carlo_validation
-from lib.data_plot import create_plots
-from lib.data_save import save_analysis_results
-from lib.data_standardize import compute_standard_scores
-from lib.utils_generic import load_configuration_data, parse_arguments, validate_file_path
+from lib_analysis.data_bootstrap import compute_bootstrap_percentiles
+from lib_analysis.data_clean import clean_data
+from lib_analysis.data_fit import DistributionFitter
+from lib_analysis.data_load import load_data
+from lib_analysis.data_montecarlo import monte_carlo_validation
+from lib_analysis.data_plot import create_plots
+from lib_analysis.data_save import save_analysis_results
+from lib_analysis.data_standardize import compute_standard_scores
+from lib_analysis.utils_generic import load_configuration_data, parse_arguments, validate_file_path
 
 
 def main() -> int:

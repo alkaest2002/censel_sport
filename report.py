@@ -13,9 +13,9 @@ import sys
 from typing import Any
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
-from weasyprint import HTML
+from weasyprint import HTML  # type: ignore[import-untyped]
 
-from lib.utils_generic import load_configuration_data, parse_arguments, validate_file_path
+from lib_analysis.utils_generic import load_configuration_data, parse_arguments, validate_file_path
 
 
 def main() -> int:

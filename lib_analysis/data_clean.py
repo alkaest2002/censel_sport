@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any, cast
 import numpy as np
 import pandas as pd
 
-from lib.utils_generic import is_falsy
+from lib_analysis.utils_generic import is_falsy
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
