@@ -28,34 +28,39 @@
 {% block body %}
 <div class="page">
 
+    <!-- Page Header -->
     <div class="mb-xxl">
         <div class="header">
             <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
             {% if numbering %}
-                <p>Allegato {{ numbering[0] }}</p>
+            <p>Allegato {{ numbering[0] }}</p>
             {% endif %}
         </div>
     </div>
-    
-    
+
+    <!-- Page Content -->
     <h2 class="mb-xl">Campione di riferimento</h2>
     <div class="two-columns">
-        
+
         <div class="mb-xl">
             <h3 class="mb-lg">Note introduttive</h3>
             <ul>
                 <li>
                     <p>
-                        In questa pagina vengono presentate le informazioni relative al campione di riferimento utilizzato per la
+                        In questa pagina vengono presentate le informazioni relative al campione di riferimento
+                        utilizzato per la
                         costruzione delle tavole normative percentiliche relative a: <span class="text-italic">{{
-                            data.metric_config.title }}</span>. Tali tavole consentono la conversione dei punteggi grezzi in
+                            data.metric_config.title }}</span>. Tali tavole consentono la conversione dei punteggi
+                        grezzi in
                         punteggi standardizzati.
                     </p>
                     <p> L'affidabilità delle tavole normative dipende dalla precisione dei percentili
                         usati come
-                        soglie di conversione e la precisione di questi ultimi è funzione della numerosità campionaria. Per percentili
+                        soglie di conversione e la precisione di questi ultimi è funzione della numerosità campionaria.
+                        Per percentili
                         non estremi
-                        (10°&mdash;&nbsp;90°) un numero di osservazioni nell'ordine delle centinaia garantisce errori standard accettabili; per
+                        (10°&mdash;&nbsp;90°) un numero di osservazioni nell'ordine delle centinaia garantisce errori
+                        standard accettabili; per
                         percentili
                         estremi
                         (1°&mdash;&nbsp;10°, 90°&mdash;&nbsp;99°) sono necessarie migliaia di
@@ -64,27 +69,32 @@
                 </li>
                 <li>
                     <p>
-                        Sempre in questa pagina, viene presentata la procedura di <span class="text-italic">fitting</span> di una
+                        Sempre in questa pagina, viene presentata la procedura di <span
+                            class="text-italic">fitting</span> di una
                         famiglia di distribuzioni teoriche {% if data.metric_config.metric_type == "time" %}(<span
                             class="text-italic">normale, log-normale, gamma, weibull</span>){% else %}(<span
-                            class="text-italic">binomiale negativa, Poisson, Poisson con inflazione di zeri</span>){% endif %} ai
+                            class="text-italic">binomiale negativa, Poisson, Poisson con inflazione di zeri</span>){%
+                        endif %} ai
                         dati campionari.</p>
                     <p>
-                        Il modello con migliore adattamento (<span class="text-italic">fit</span>) sarà utilizzato per validare la
+                        Il modello con migliore adattamento (<span class="text-italic">fit</span>) sarà utilizzato per
+                        validare la
                         stabilità delle stime
-                        percentiliche attraverso il metodo della simulazione Monte Carlo {% if numbering %}(descritto nell'allegato {{ numbering[1] }}){% else %}(descritto nella pagina successiva){% endif %}.
+                        percentiliche attraverso il metodo della simulazione Monte Carlo {% if numbering %}(descritto
+                        nell'allegato {{ numbering[1] }}){% else %}(descritto nella pagina successiva){% endif %}.
                     </p>
                     <p>
                         La bontà dell'adattamento viene qui valutata attraverso indici di <span
                             class="text-italic">adeguatezza</span> e analisi
-                        grafica mediante {% if data.metric_config.metric_type == "time" %}Q-Q plot{% else %}Rootogram{% endif %} che
+                        grafica mediante {% if data.metric_config.metric_type == "time" %}Q-Q plot{% else %}Rootogram{%
+                        endif %} che
                         quantificano la capacità dei modelli di riprodurre le caratteristiche
                         distribuzionali del campione empirico.
                     </p>
                 </li>
             </ul>
         </div>
-        
+
         <div class="mb-xl">
             <h3 class="mb-lg">Descrittive del campione di riferimento</h3>
             <table class="table-bordered full-width">
@@ -103,7 +113,8 @@
                 <tfoot>
                     <tr>
                         <td colspan="2"><span class="text-bold">Tabella 1.</span> COUNT = Frequenza, MEAN = Media, STD =
-                            Dev.ne standard, MIN = Minimo, 25% = Primo quartile, 50% = Mediana, 75% = Terzo quartile, MAX =
+                            Dev.ne standard, MIN = Minimo, 25% = Primo quartile, 50% = Mediana, 75% = Terzo quartile,
+                            MAX =
                             Massimo.</td>
                     </tr>
                 </tfoot>
@@ -136,24 +147,144 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="4"><span class="text-bold">Tabella 2.</span> AIC = Akaike Information Criterion, BIC =
+                        <td colspan="4"><span class="text-bold">Tabella 2.</span> AIC = Akaike Information Criterion,
+                            BIC =
                             Bayesian Information Criterion, CVM = Cramér-von Mises statistic.</td>
                     </tr>
                 </tfoot>
             </table>
         </div>
-        
+
         <div class="mb-xl">
             <h3 class="mb-lg">Grafici</h3>
             <div>
-                <h4 class="text-center">ISTOGRAMMA DEL CAMPIONE</h4>
+                <h4 class="text-center mb-md mt-lg">ISTOGRAMMA DEL CAMPIONE</h4>
                 <img src="{{ data.plots[0].svg }}" />
             </div>
             <div>
-                <h3 class="text-center">Q-Q PLOT</h3>
+                <h3 class="text-center mb-md mt-lg">Q-Q PLOT</h3>
                 <img src="{{ data.plots[-1].svg }}" />
             </div>
         </div>
     </div>
+</div>
+<div>
+    <!-- Page Header -->
+    <div class="mb-xxl">
+        <div class="header">
+            <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
+            {% if numbering %}
+            <p>Allegato {{ numbering[1] }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Page Content -->
+    <h2 class="mb-xl">Percentili bootstrap e validazione Montecarlo</h2>
+    <div class="two-columns">
+
+        <div class="mb-xl">
+            <h3 class="mb-lg">Note introduttive</h3>
+            <ul>
+                <li>
+                    <p>
+                        La generazione di percentili tramite replica bootstrap rappresenta un approccio non parametrico
+                        che consente di stimare la distribuzione campionaria dei percentili senza assumere una forma
+                        distribuzionale specifica per i dati. Il procedimento inizia con il ricampionamento del dataset
+                        originale mediante selezione casuale con rimpiazzo, generando tipicamente diverse migliaia di
+                        campioni bootstrap della stessa numerosità del campione originale.
+                    </p>
+                    <p>
+                        Per ciascun campione bootstrap vengono calcolati i percentili di interesse, ottenendo così una
+                        collezione di stime che costituisce la distribuzione empirica bootstrap del percentile. La stima
+                        finale del percentile è rappresentata dalla mediana o dalla media di queste repliche, mentre la
+                        variabilità delle stime bootstrap fornisce una misura dell'errore standard.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        La validazione dei percentili tramite simulazioni Monte Carlo costituisce un passaggio cruciale per verificare la coerenza tra le stime empiriche ottenute dal bootstrap e quelle derivanti da un modello teorico. Il processo inizia con l'identificazione della distribuzione probabilistica che meglio descrive i dati osservati, attraverso test di bontà di adattamento come Kolmogorov-Smirnov o Anderson-Darling e criteri informativi come AIC o BIC.
+                    </p>
+                    <p>
+                        Una volta selezionato il modello ottimale e stimati i suoi parametri, si procede alla generazione di numerosi campioni teorici mediante simulazione Monte Carlo, ciascuno della stessa dimensione del campione originale. Per ogni campione simulato vengono calcolati gli stessi percentili analizzati nel bootstrap, creando una distribuzione teorica di riferimento.
+                    </p>
+                    <p>
+                       Il confronto tra percentili bootstrap e percentili teorici avviene attraverso analisi statistiche che valutano differenze assolute e relative, test di equivalenza e rappresentazioni grafiche. Una buona concordanza tra le due metodologie indica che il modello teorico è appropriato e che le stime bootstrap sono affidabili.
+                    </p>
+                </li>
+            </ul>
+        </div>
+
+        <div class="mb-xl">
+            <h3 class="mb-lg">Descrittive percentili bootstrap</h3>
+            <table class="table-bordered full-width">
+                <thead>
+                    <th class="text-left">PERC.</th>
+                    <th class="text-center">VALORE</th>
+                    <th class="text-center">LOWER BOUND</th>
+                    <th class="text-center">UPPER BOUND</th>
+                </thead>
+                <tbody>
+                    {% for pct in data.bootstrap.percentiles %}
+                    <tr>
+                        <td class="text-left">{{ pct.percentile | upper }}</td>
+                        <td class="text-center">{{ "%.2f" | format(pct.value) }}</td>
+                        <td class="text-center">{{ "%.2f" | format(pct.ci_lower) }}</td>
+                        <td class="text-center">{{ "%.2f" | format(pct.ci_upper) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4"><span class="text-bold">Tabella 3.</span> Percentili bootstrap e intervalli di
+                            confidenza al {{ data.metric_config.bootstrap_ci_level * 100 | int }}%.</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="mb-xl">
+            <h3 class="mb-lg">Validazione Montecarlo</h3>
+            <table class="table-bordered full-width">
+                <thead>
+                    <th class="text-left">PERC.</th>
+                    <th class="text-center">BOOTSTRAP</th>
+                    <th class="text-center">MONTECARLO</th>
+                    <th class="text-center">BIAS</th>
+                    <th class="text-center">COVERAGE</th>
+                </thead>
+                <tbody>
+                    {% for pct in data.montecarlo.results %}
+                    <tr>
+                        <td class="text-left">{{ pct.percentile | upper }}</td>
+                        <td class="text-center">{{ "%.2f" | format(pct.bootstrap_value) }}</td>
+                        <td class="text-center">{{ "%.2f" | format(pct.montecarlo_value) }}</td>
+                        <td class="text-center">{{ "%.2f" | format(pct.bias) }}</td>
+                        <td class="text-center">{{ "%.2f" | format(pct['coverage_%']) }} %</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4"><span class="text-bold">Tabella 4.</span> Percentili bootstrap e intervalli di
+                            confidenza al {{ data.metric_config.bootstrap_ci_level * 100 | int }}%.</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="mb-xl">
+            <h3 class="mb-lg">Grafici</h3>
+            <div>
+                <h4 class="text-center mb-md mt-lg">PERCENTILI BOOTSTRAP</h4>
+                <img src="{{ data.plots[1].svg }}" />
+            </div>
+            <div>
+                <h3 class="text-center mb-md mt-lg">PERCENTILI BOOTSTRAP vs MONTECARLO</h3>
+                <img src="{{ data.plots[-2].svg }}" />
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
