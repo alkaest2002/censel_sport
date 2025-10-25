@@ -20,18 +20,12 @@ from lib.utils_generic import load_configuration_data, parse_arguments, validate
 
 def main() -> int:
     """
-    Entry point for report generation.
+    Generate report for given data analysis.
 
-    Parses arguments, validates the input file path, loads JSON data, renders
-    the 'report.html' Jinja2 template with that data, and writes a PDF using
-    WeasyPrint to the same directory as the input file (with a .pdf extension).
-
-    Returns:
-    --------
     int
         Process exit status code:
         - 0: Success
-        - 1: Invalid input path or validation error
+        - 1: Error in file validation or loading
         - 2: Rendering or PDF generation error
     """
     # Parse command line arguments

@@ -13,7 +13,16 @@ from lib.utils_generic import load_configuration_data, parse_arguments, validate
 
 
 def main() -> int:
+    """
+    Run the full data analysis pipeline.
 
+    Returns:
+    --------
+    int
+        Process exit status code:
+        - 0: Success
+        - 1: Error in file validation or loading
+    """
     # Parse command line arguments
     args = parse_arguments()
 
