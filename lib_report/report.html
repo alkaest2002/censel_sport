@@ -2,6 +2,7 @@
 
 {% block report_style %}
 <style>
+    
     img {
         width: 100%;
     }
@@ -40,6 +41,15 @@
         text-align: center;
         padding-top: 12px;
         border-top: 2px solid var(--base-border-color);
+    }
+
+    .normative-table th, .normative-table td {
+        padding: 8px 18px;
+    }
+
+    .normative-table th {
+        background-color: #fff;
+        color: var(--black);
     }
 </style>
 {% endblock %}
@@ -105,8 +115,7 @@
                                 validare la
                                 stabilità delle stime
                                 percentiliche attraverso il metodo della simulazione Monte Carlo {% if header_numbering
-                                %}(descritto
-                                nell'allegato {{ header_numbering[1] }}){% else %}(descritto nella pagina successiva){% endif %}.
+                                %}(cfr allegato {{ header_numbering[1] }}){% else %}(vedi pagina successiva){% endif %}.
                             </p>
                             <p>
                                 La bontà dell'adattamento viene qui valutata attraverso indici di <span
@@ -231,43 +240,22 @@
                     <ul>
                         <li>
                             <p>
-                                La generazione di percentili tramite replica bootstrap rappresenta un approccio non
-                                parametrico
-                                che consente di stimare la distribuzione campionaria dei percentili senza assumere una forma
-                                distribuzionale specifica per i dati. Il procedimento inizia con il ricampionamento del
-                                dataset
-                                originale mediante selezione casuale con rimpiazzo, generando tipicamente diverse migliaia
-                                di
-                                campioni bootstrap della stessa numerosità del campione originale (in questo caso {{ data.metric_config.bootstrap_n_replicates }}).
+                                La tecnica delle repliche bootstrap rappresenta un approccio non parametrico per stimare i percentili campionari senza assumere specifiche distribuzioni teoriche. Il procedimento usato genera {{ data.metric_config.bootstrap_n_replicates }} campioni bootstrap (N={{ "%.0f" | format(data.clean.descriptive_stats.count) }}) attraverso ricampionamento casuale con sostituzione del dataset originale.
                             </p>
                             <p>
-                                Per ciascun campione bootstrap vengono calcolati i percentili di interesse, ottenendo così
-                                una
-                                collezione di stime. La stima
-                                finale del percentile è rappresentata dalla mediana di queste repliche, mentre
-                                la variabilità delle stime bootstrap fornisce una misura dell'errore standard.
+                                Per ciascuna replica bootstrap vengono calcolati i percentili di interesse, ottenendo una collezione di stime. Il valore finale è rappresentato dalla loro mediana, mentre la variabilità fornisce una misura dell'errore standard.
                             </p>
                         </li>
                         <li>
                             <p>
-                                La validazione dei percentili tramite simulazione Monte Carlo costituisce un passaggio
-                                cruciale per verificare la coerenza tra le stime empiriche ottenute con le repliche bootstrap e quelle
-                                derivanti da un modello teorico. Il processo inizia con l'identificazione della
-                                distribuzione probabilistica che meglio descrive i dati osservati {% if header_numbering
-                                %}(descritto
-                                nell'allegato {{ header_numbering[0] }}){% else %}(descritto nella pagina precedente){% endif %}.
+                                La validazione dei percentili bootstrap tramite simulazione Monte Carlo costituisce un passaggio cruciale per verificare la coerenza tra le stime empiriche ottenute con la tecnica bootstrap e quelle del modello teorico. Il processo inizia identificando la distribuzione probabilistica che meglio descrive i dati osservati. {% if header_numbering
+                                %}(cfr allegato {{ header_numbering[0] }}){% else %}(vedi pagina precedente){% endif %}.
                             </p>
                             <p>
-                                Una volta selezionato il modello ottimale e stimati i suoi parametri, si procede alla
-                                generazione di numerosi campioni teorici mediante simulazione Monte Carlo, ciascuno della
-                                stessa dimensione del campione originale. Per ogni campione simulato vengono calcolati gli
-                                stessi percentili analizzati nel procedimento bootstrap, creando una distribuzione teorica di
-                                riferimento.
+                                Una volta selezionato il modello ottimale e stimati i parametri, si procede alla generazione di campioni teorici mediante simulazione Monte Carlo, ciascuno della stessa dimensione dell'originale. Per ogni campione simulato vengono calcolati gli stessi percentili del procedimento bootstrap, creando una distribuzione teorica di riferimento.
                             </p>
                             <p>
-                                Il confronto tra percentili bootstrap e percentili teorici avviene attraverso analisi
-                                statistiche che valutano differenze assolute e relative e
-                                rappresentazioni grafiche. Una buona concordanza tra le due metodologie indica che le stime bootstrap sono affidabili.
+                                Il confronto tra percentili bootstrap e teorici avviene attraverso analisi statistiche che valutano differenze assolute e relative, e rappresentazioni grafiche. Una buona concordanza indica che le stime bootstrap sono affidabili.
                             </p>
                         </li>
                     </ul>
@@ -366,7 +354,7 @@
             <!-- Page Content -->
             <h2 class="mb-xl">Tavole normative percentiliche</h2>
             <div class="mb-xl">
-                <table class="table-bordered table-striped full-width">
+                <table class="table-bordered table-striped normative-table">
                     <thead>
                         <th class="text-center">FASCIA</th>
                         <th class="text-center">LIMITE INFERIORE</th>
