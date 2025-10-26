@@ -32,6 +32,7 @@
                 position: relative;
                 width: 210mm;
                 height: 297mm;
+                max-height: 297mm;
                 margin: 0;
                 padding: 1cm;
             }
@@ -39,8 +40,10 @@
             .page {
                 width: 210mm;
                 height: 297mm;
+                max-height: 297mm;
                 margin: 0 auto;
                 page-break-after: always;
+                overflow-y: hidden;
             }
 
             .page:last-child {
@@ -222,8 +225,7 @@
             .pr-md  { padding-right: 9pt; }
             .pr-lg  { padding-right: 12pt; }
             .pr-xl  { padding-right: 18pt; }
-            .pr-xxl { padding-right: 24pt; }
-            
+            .pr-xxl { padding-right: 24pt; }            
         </style>
         
         {% block report_style %}
