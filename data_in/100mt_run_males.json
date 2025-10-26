@@ -5,6 +5,7 @@
     "synthetic_n_samples": 300,
     "source_filename": null,
     "metric_type": "time",
+    "metric_unit": "secondi",
     "metric_precision": 2,
     "higher_is_better": false,
     "remove_outliers": false,
