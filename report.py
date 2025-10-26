@@ -15,6 +15,7 @@ from typing import Any
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
 from weasyprint import HTML  # type: ignore[import-untyped]
 
+from lib_analysis.utils_generic import format_seconds
 from lib_parser.parser import get_base_parser
 from lib_parser.utils_parser import load_configuration_data, validate_file_path
 
@@ -66,6 +67,8 @@ def main() -> int:
         # Auto-escape HTML for security
         autoescape=select_autoescape(["html", "xml"]),
     )
+
+    jinja_env.filters["format_seconds"] = format_seconds
 
     # Load data and render template, then generate PDF
     try:

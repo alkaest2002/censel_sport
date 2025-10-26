@@ -135,15 +135,24 @@
                                 <td class="text-center">{{ "%.2f" | format(value) }}</td>
                             </tr>
                             {% endfor %}
+                            <tr>
+                                <td class="text-left">UNIT</td>
+                                <td class="text-center">{{ data.metric_config.metric_unit }}</td>
+                            </tr>
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="2"><span class="text-bold">Tabella 1.</span> COUNT = Frequenza, MEAN = Media,
-                                    STD =
-                                    Dev.ne standard, MIN = Minimo, 25% = Primo quartile, 50% = Mediana, 75% = Terzo
-                                    quartile,
-                                    MAX =
-                                    Massimo.</td>
+                                <td colspan="2"><span class="text-bold">Tabella 1.</span>
+                                    COUNT = Frequenza, 
+                                    MEAN = Media,
+                                    STD = Dev.ne standard, 
+                                    MIN = Minimo, 
+                                    25% = Primo quartile, 
+                                    50% = Mediana, 
+                                    75% = Terzo quartile,
+                                    MAX = Massimo
+                                    UNIT = Unità di misura.
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
@@ -275,19 +284,20 @@
                         </thead>
                         <tbody>
                             {% for pct in data.bootstrap.percentiles %}
-                            <tr>
-                                <td class="text-left">{{ pct.percentile | upper }}</td>
-                                <td class="text-center">{{ "%.2f" | format(pct.value) }}</td>
-                                <td class="text-center">{{ "%.2f" | format(pct.ci_lower) }}</td>
-                                <td class="text-center">{{ "%.2f" | format(pct.ci_upper) }}</td>
-                            </tr>
+                                <tr>
+                                    <td class="text-left">{{ pct.percentile | upper }}</td>
+                                    <td class="text-center">{{ "%.2f" | format(pct.value) }}</td>
+                                    <td class="text-center">{{ "%.2f" | format(pct.ci_lower) }}</td>
+                                    <td class="text-center">{{ "%.2f" | format(pct.ci_upper) }}</td>
+                                </tr>
                             {% endfor %}
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="4"><span class="text-bold">Tabella 3.</span> Intervallo
-                                    di
-                                    confidenza al {{ data.metric_config.bootstrap_ci_level * 100 | int }}%.</td>
+                                <td colspan="4"><span class="text-bold">Tabella 3.</span>
+                                    Intervallo di confidenza al {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}%,
+                                    Unità di misura: {{ data.metric_config.metric_unit }}.
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
@@ -316,9 +326,9 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="4"><span class="text-bold">Tabella 4.</span> Percentili bootstrap e intervalli
-                                    di
-                                    confidenza al {{ data.metric_config.bootstrap_ci_level * 100 | int }}%.</td>
+                                <td colspan="5"><span class="text-bold">Tabella 4.</span> Percentili bootstrap e intervalli
+                                    di confidenza al {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}%, 
+                                    Unità di misura: {{ data.metric_config.metric_unit }}.</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -373,14 +383,22 @@
                                 {% if loop.first %}
                                     &mdash;
                                 {% else %}
-                                    maggiore di {{ "%.2f" | format(cutoff[0]) }}
+                                    {% if data.metric_config.metric_type == "time" %}
+                                        maggiore di {{ cutoff[0] | format_seconds }}
+                                    {% else %}
+                                        maggiore di {{ "%.2f" | format(cutoff[0]) }}
+                                    {% endif %}
                                 {% endif %}
                             </td>
                             <td class="text-center">
                                 {% if loop.last %}
                                     &mdash;
                                 {% else %}
-                                    fino a {{ "%.2f" | format(cutoff[1]) }}
+                                    {% if data.metric_config.metric_type == "time" %}
+                                        fino a {{ cutoff[1] | format_seconds }}
+                                    {% else %}  
+                                        fino a {{ "%.2f" | format(cutoff[1]) }}
+                                    {% endif %}
                                 {% endif %}
                             </td>
                             <td class="text-center">
