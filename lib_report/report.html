@@ -185,8 +185,10 @@
                                 <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.aic) }}</td>
                                 <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.bic) }}</td>
                                 <td class="text-center">
-                                    {{ "%.2f" | format(model_data.goodness_of_fit.cramer_von_mises) }} (p={{ "%.3f" |
-                                    format(model_data.goodness_of_fit.cvm_pvalue) }})
+                                    {{ "%.2f" | format(model_data.goodness_of_fit.cramer_von_mises) }}
+                                    {% if model_data.goodness_of_fit.cvm_pvalue is not none %}
+                                        (p={{ "%.3f" | format(model_data.goodness_of_fit.cvm_pvalue) }})
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
@@ -209,7 +211,13 @@
                         <img src="{{ data.plots[0].svg }}" />
                     </div>
                     <div>
-                        <h3 class="text-center mb-md mt-lg">Q-Q PLOT</h3>
+                        <h3 class="text-center mb-md mt-lg">
+                            {% if data.metric_config.metric_type == "time" %}
+                                Q-Q PLOT
+                            {% else %}
+                                ROOTOGRAM
+                            {% endif %}
+                        </h3>
                         <img src="{{ data.plots[-1].svg }}" />
                     </div>
                 </div>
