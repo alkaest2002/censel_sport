@@ -34,10 +34,17 @@ def main() -> int:
 
     # Add parser argument numbering for report generation
     parser.add_argument(
-        "--numbering", "-n",
+        "--header-numbering", "-x",
         required=False,
         type=str,
-        help="Numbering style for report sections (e.g., '1.1', 'A.1'",
+        help="Numbering style for report header section (e.g., '1.1', 'A.1'",
+    )
+
+    parser.add_argument(
+        "--page-numbering-start", "-p",
+        required=False,
+        type=int,
+        help="Starting page number for report pages (e.g., 1)",
     )
 
     args = parser.parse_args()
@@ -66,8 +73,11 @@ def main() -> int:
         template = jinja_env.get_template("report.html")
         output_pdf = validated_path.with_suffix(".pdf")
         output_html = validated_path.with_suffix(".html")
-        numbering = list(map(str.strip, args.numbering.split(","))) if len(args.numbering) > 0 else []
-        rendered_html: str = template.render(data=data, numbering=numbering)
+        header_numbering = list(map(str.strip, args.header_numbering.split(","))) if args.header_numbering else []
+        page_numbering_start = args.page_numbering_start if args.page_numbering_start else 1
+        rendered_html: str =\
+            template.render(data=data, header_numbering=header_numbering, page_numbering_start=page_numbering_start)
+
         # Write html
         with output_html.open("w") as fout:
             fout.write(rendered_html)
@@ -75,6 +85,8 @@ def main() -> int:
         # Write PDF
         HTML(string=rendered_html, base_url=str(templates_dir)).write_pdf(str(output_pdf))
         print(f"Report generated: {output_pdf}")
+
+    # Handle exceptions
     except Exception as e:  # noqa: BLE001
         print(f"Error while generating report: {e}")
         return 2
