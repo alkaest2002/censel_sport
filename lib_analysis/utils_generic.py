@@ -38,3 +38,29 @@ def is_falsy(value: Any) -> bool:
     except TypeError:
         # For objects without __len__, use standard truthiness
         return not bool(value)
+
+
+def format_seconds(seconds: float) -> str:
+    """
+    Format seconds into a human-readable string (HH:MM:SS.sss).
+
+    Parameters
+    ----------
+    seconds : float
+        The time in seconds to format.
+
+    Returns:
+    -------
+    str
+        Formatted time string.
+    """
+    # Separate whole seconds and fractional part
+    whole_seconds = int(seconds)
+    fractional_part = seconds - whole_seconds
+
+    # Use divmod to get hours, minutes, and seconds
+    hours, remainder = divmod(whole_seconds, 3600)
+    minutes, secs = divmod(remainder, 60)
+
+    # Format with fractional seconds
+    return f"{hours:02d}:{minutes:02d}:{secs + fractional_part:05.2f}"
