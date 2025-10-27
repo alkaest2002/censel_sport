@@ -51,6 +51,11 @@
         background-color: #fff;
         color: var(--black);
     }
+
+    .caption {
+        display: inline-block;
+        margin-right: 3px;
+    }
 </style>
 {% endblock %}
 
@@ -102,13 +107,12 @@
                         <li>
                             <p>
                                 Sempre in questa pagina, viene presentata la procedura di <span
-                                    class="text-italic">fitting</span> di una
+                                    class="text-italic">fitting</span> ai dati campionari di una
                                 famiglia di distribuzioni teoriche {% if data.metric_config.metric_type == "time" %}(<span
-                                    class="text-italic">normale, log-normale, gamma, weibull</span>){% else %}(<span
-                                    class="text-italic">binomiale negativa, Poisson, Poisson con inflazione di
+                                    class="text-italic">Normale, Log-normale, Gamma, Weibull</span>){% else %}(<span
+                                    class="text-italic">Binomiale negativa, Poisson, Poisson con inflazione di
                                     zeri</span>){%
-                                endif %} ai
-                                dati campionari.</p>
+                                endif %}.</p>
                             <p>
                                 Il modello con migliore adattamento (<span class="text-italic">fit</span>) sarà utilizzato
                                 per
@@ -118,41 +122,61 @@
                                 %}(cfr allegato {{ header_numbering[1] }}){% else %}(vedi pagina successiva){% endif %}.
                             </p>
                             <p>
-                                La bontà dell'adattamento viene qui valutata attraverso indici di <span
-                                    class="text-italic">adeguatezza</span> e analisi
-                                grafica mediante {% if data.metric_config.metric_type == "time" %}Q-Q plot{% else
-                                %}Rootogram{%
-                                endif %} che
+                                La bontà dell'adattamento (<span class="text-italic">fit</span>) viene qui valutata attraverso indici di adeguatezza (AIC, BIC, CVM) e analisi grafica mediante <span class="text-italic">{% if data.metric_config.metric_type == "time" %}Q-Q plot{% else %}Rootogram{% endif %}</span> che
                                 quantificano la capacità dei modelli di riprodurre le caratteristiche
                                 distribuzionali del campione empirico.
                             </p>
                         </li>
                     </ul>
                 </div>
-    
                 <div class="mb-xl">
-                    <h3 class="mb-lg">Descrittive del campione di riferimento</h3>
+                    <h3 class="mb-lg">Caratteristiche dei dati</h3>
                     <table class="table-bordered full-width">
                         <thead>
-                            <th class="text-left">STATISTICA</th>
-                            <th class="text-center">VALORE</th>
+                            <th class="text-left" style="width: 60%;">FEATURE</th>
+                            <th class="text-center">VALUE</th>
                         </thead>
                         <tbody>
-                            {% for key, value in data.clean.descriptive_stats.items() %}
                             <tr>
-                                <td class="text-left">{{ key | upper }}</td>
-                                <td class="text-center">{{ "%.2f" | format(value) }}</td>
+                                <td class="text-left">SAMPLE SIZE</td>
+                                <td class="text-center">{{ data.clean.descriptive_stats.count }}</td>
                             </tr>
-                            {% endfor %}
                             <tr>
-                                <td class="text-left">UNIT</td>
+                                <td class="text-left">MEASUREMENT UNIT</td>
                                 <td class="text-center">{{ data.metric_config.metric_unit }}</td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="2"><span class="text-bold">Tabella 1.</span>
-                                    COUNT = Frequenza, 
+                                <td colspan="4">
+                                    <span class="caption text-bold">Tabella {{ header_numbering[0] }}.1</span> SAMPLE SIZE = Numerosità campionaria, MEASUREMENT UNIT = Unità di misura.
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+    
+                <div class="mb-xl">
+                    <h3 class="mb-lg">Statistiche descrittive</h3>
+                    <table class="table-bordered full-width">
+                        <thead>
+                            <th class="text-left" style="width: 60%;">STATISTICS</th>
+                            <th class="text-center">VALUE</th>
+                        </thead>
+                        <tbody>
+                            {% for key, value in data.clean.descriptive_stats.items() %}
+                                {% if loop.index0 > 0 %}
+                                    <tr>
+                                        <td class="text-left">{{ key | upper }}</td>
+                                        <td class="text-center">{{ "%.2f" | format(value) }}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2">
+                                    <span class="caption text-bold">Tabella {{ header_numbering[0] }}.2</span>
                                     MEAN = Media,
                                     STD = Dev.ne standard, 
                                     MIN = Minimo, 
@@ -160,7 +184,6 @@
                                     50% = Mediana, 
                                     75% = Terzo quartile,
                                     MAX = Massimo
-                                    UNIT = Unità di misura.
                                 </td>
                             </tr>
                         </tfoot>
@@ -172,7 +195,7 @@
                     <table class="table-bordered full-width">
                         <thead>
                             <tr>
-                                <th class="text-left">MODELLO</th>
+                                <th class="text-left">MODEL</th>
                                 <th class="text-center">AIC</th>
                                 <th class="text-center">BIC</th>
                                 <th class="text-center">CVM</th>
@@ -181,7 +204,7 @@
                         <tbody>
                             {% for model_name, model_data in data.fit.fitted_models.items() %}
                             <tr>
-                                <td class="text-left">{{ model_name | upper }}</td>
+                                <td class="text-left">{{ model_name | upper | replace("_", " ") }}</td>
                                 <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.aic) }}</td>
                                 <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.bic) }}</td>
                                 <td class="text-center">
@@ -195,10 +218,10 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="4"><span class="text-bold">Tabella 2.</span> AIC = Akaike Information
-                                    Criterion,
-                                    BIC =
-                                    Bayesian Information Criterion, CVM = Cramér-von Mises statistic.</td>
+                                <td colspan="4">
+                                    <span class="caption text-bold">Tabella {{ header_numbering[0] }}.3</span> MODEL = Modello, AIC = Akaike Information
+                                    Criterion, BIC = Bayesian Information Criterion, CVM = Cramér-von Mises statistic.
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
@@ -248,7 +271,7 @@
                     <ul>
                         <li>
                             <p>
-                                La tecnica delle repliche bootstrap rappresenta un approccio non parametrico per stimare i percentili campionari senza assumere specifiche distribuzioni teoriche. Il procedimento usato genera {{ data.metric_config.bootstrap_n_replicates }} campioni bootstrap (N={{ "%.0f" | format(data.clean.descriptive_stats.count) }}) attraverso ricampionamento casuale con sostituzione del dataset originale.
+                                La tecnica delle repliche bootstrap rappresenta un approccio non parametrico alla stima dei percentili campionari senza assumere specifiche distribuzioni teoriche. Il procedimento usato genera {{ data.metric_config.bootstrap_n_replicates }} repliche dal dataset originario (N={{ "%.0f" | format(data.clean.descriptive_stats.count) }}) attraverso ricampionamento casuale con sostituzione.
                             </p>
                             <p>
                                 Per ciascuna replica bootstrap vengono calcolati i percentili di interesse, ottenendo una collezione di stime. Il valore finale è rappresentato dalla loro mediana, mentre la variabilità fornisce una misura dell'errore standard.
@@ -256,14 +279,14 @@
                         </li>
                         <li>
                             <p>
-                                La validazione dei percentili bootstrap tramite simulazione Monte Carlo costituisce un passaggio cruciale per verificare la coerenza tra le stime empiriche ottenute con la tecnica bootstrap e quelle del modello teorico. Il processo inizia identificando la distribuzione probabilistica che meglio descrive i dati osservati. {% if header_numbering
+                                La validazione dei percentili bootstrap tramite simulazione Monte Carlo costituisce un ulteriore passaggio per verificare la generalizzabilità delle stime empiriche ottenute con la tecnica bootstrap. Il processo inizia identificando la distribuzione probabilistica che meglio descrive i dati osservati. {% if header_numbering
                                 %}(cfr allegato {{ header_numbering[0] }}){% else %}(vedi pagina precedente){% endif %}.
                             </p>
                             <p>
-                                Una volta selezionato il modello ottimale e stimati i parametri, si procede alla generazione di campioni teorici mediante simulazione Monte Carlo, ciascuno della stessa dimensione dell'originale. Per ogni campione simulato vengono calcolati gli stessi percentili del procedimento bootstrap, creando una distribuzione teorica di riferimento.
+                                Una volta selezionato il modello ottimale e stimati i parametri, si procede alla generazione di campioni teorici mediante simulazione Monte Carlo. Per ogni campione simulato vengono calcolati gli stessi percentili del procedimento bootstrap, creando una distribuzione teorica di riferimento.
                             </p>
                             <p>
-                                Il confronto tra percentili bootstrap e teorici avviene attraverso analisi statistiche che valutano differenze assolute e relative, e rappresentazioni grafiche. Una buona concordanza indica che le stime bootstrap sono affidabili.
+                                Il confronto tra percentili bootstrap e teorici avviene attraverso analisi statistiche che valutano differenze assolute e relative e rappresentazioni grafiche. Una buona concordanza indica che le stime bootstrap sono affidabili.
                             </p>
                         </li>
                     </ul>
@@ -274,7 +297,7 @@
                     <table class="table-bordered full-width">
                         <thead>
                             <th class="text-left">PERC.</th>
-                            <th class="text-center">VALORE</th>
+                            <th class="text-center">VALUE</th>
                             <th class="text-center">LOWER BOUND</th>
                             <th class="text-center">UPPER BOUND</th>
                         </thead>
@@ -290,7 +313,8 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="4"><span class="text-bold">Tabella 3.</span>
+                                <td colspan="4">
+                                    <span class="caption text-bold">Tabella {{ header_numbering[1] }}.1:</span>
                                     Intervallo di confidenza al {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}%,
                                     Unità di misura: {{ data.metric_config.metric_unit }}.
                                 </td>
@@ -322,7 +346,8 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="5"><span class="text-bold">Tabella 4.</span> Percentili bootstrap e intervalli
+                                <td colspan="5">
+                                    <span class="caption text-bold">Tabella {{ header_numbering[1] }}.2:</span> Percentili bootstrap e intervalli
                                     di confidenza al {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}%, 
                                     Unità di misura: {{ data.metric_config.metric_unit }}.</td>
                             </tr>
