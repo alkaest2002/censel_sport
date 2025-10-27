@@ -478,8 +478,16 @@ def plot_hanging_rootogram(
     ax.plot(counts, expected_sqrt, color="black", linewidth=2,
             marker="o", markersize=4, label=f"Theoretical ({model_name})")
 
-    # Add zero reference line (x-axis)
-    ax.axhline(y=0, color="gray", linestyle="--", alpha=BASE_ALPHA, linewidth=1.5,
+    # Add 1 reference line (x-axis)
+    ax.axhline(y=1, color="gray", linestyle="--", alpha=BASE_ALPHA, linewidth=1.5,
+               label="Reference line (x-axis)")
+
+    # Add 1 reference line (x-axis)
+    ax.axhline(y=0, color="gray", linestyle="-", alpha=BASE_ALPHA, linewidth=1.5,
+               label="Reference line (x-axis)")
+
+    # Add 1 reference line (x-axis)
+    ax.axhline(y=-1, color="gray", linestyle="--", alpha=BASE_ALPHA, linewidth=1.5,
                label="Reference line (x-axis)")
 
     # Formatting
