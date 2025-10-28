@@ -271,7 +271,7 @@
                     <ul>
                         <li>
                             <p>
-                                La tecnica delle repliche bootstrap rappresenta un approccio non parametrico alla stima dei percentili campionari senza assumere specifiche distribuzioni teoriche. Il procedimento usato genera {{ data.metric_config.bootstrap_n_replicates }} repliche dal dataset originario (N={{ "%.0f" | format(data.clean.descriptive_stats.count) }}) attraverso ricampionamento casuale con sostituzione.
+                                In questa pagina viene presentata la tecnica delle repliche bootstrap che rappresenta un approccio non parametrico alla stima dei percentili campionari senza assumere specifiche distribuzioni teoriche. Il procedimento genera {{ data.metric_config.bootstrap_n_replicates }} repliche dal dataset originario, attraverso ricampionamento casuale con sostituzione.
                             </p>
                             <p>
                                 Per ciascuna replica bootstrap vengono calcolati i percentili di interesse, ottenendo una collezione di stime. Il valore finale è rappresentato dalla loro mediana, mentre la variabilità fornisce una misura dell'errore standard.
@@ -286,7 +286,7 @@
                                 Una volta selezionato il modello ottimale e stimati i parametri, si procede alla generazione di campioni teorici mediante simulazione Monte Carlo. Per ogni campione simulato vengono calcolati gli stessi percentili del procedimento bootstrap, creando una distribuzione teorica di riferimento.
                             </p>
                             <p>
-                                Il confronto tra percentili bootstrap e teorici avviene attraverso analisi statistiche che valutano differenze assolute e relative e rappresentazioni grafiche. Una buona concordanza indica che le stime bootstrap sono affidabili.
+                                Il confronto tra percentili bootstrap e teorici avviene attraverso analisi statistiche che valutano differenze assolute e relative e rappresentazioni grafiche. Una buona concordanza indica che le stime bootstrap sono generalizzabili.
                             </p>
                         </li>
                     </ul>
