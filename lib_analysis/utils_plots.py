@@ -13,7 +13,7 @@ from numpy.typing import NDArray
 BASE_FIGURE_SIZE = (10, 8)
 BASE_ALPHA = 0.5
 MIN_DATA_POINTS = 3
-BASE_FONTSIZE = 14
+BASE_FONTSIZE = 16
 
 def _validate_data_points(
         data: NDArray[np.integer[Any] | np.floating[Any]],
@@ -531,10 +531,6 @@ def plot_montecarlo(comparison_data: list[dict[str, Any]]) -> str:
     --------
     str: SVG string of the generated Monte Carlo comparison plot
     """
-    # Validate input data
-    if not comparison_data:
-        raise ValueError("---> Unable to plot Monte Carlo comparison: no data provided")
-
     if len(comparison_data) < MIN_DATA_POINTS:
         raise ValueError(
             f"---> Unable to plot Monte Carlo comparison: at least {MIN_DATA_POINTS} points required",
@@ -545,38 +541,24 @@ def plot_montecarlo(comparison_data: list[dict[str, Any]]) -> str:
         percentiles = [item["percentile"] for item in comparison_data]
         bootstrap_values = np.array([item["bootstrap_value"] for item in comparison_data])
         montecarlo_values = np.array([item["montecarlo_value"] for item in comparison_data])
-        montecarlo_std = np.array([item["montecarlo_std"] for item in comparison_data])
         montecarlo_iqr = np.array([item["montecarlo_iqr"] for item in comparison_data])
-        bias = np.array([item["bias"] for item in comparison_data])
-        relative_bias = np.array([item["relative_bias_%"] for item in comparison_data])
-        rmse = np.array([item["rmse"] for item in comparison_data])
-        coverage = np.array([item["coverage_%"] for item in comparison_data])
 
     except KeyError as e:
         raise KeyError(f"---> Missing required key in comparison data: {e}") from e
 
-    # Validate data consistency
-    n_points = len(bootstrap_values)
-    arrays_to_check = [
-        montecarlo_values, montecarlo_std, montecarlo_iqr, bias,
-        relative_bias, rmse, coverage,
-    ]
-
-    if not all(len(arr) == n_points for arr in arrays_to_check):
-        raise ValueError("---> All comparison data arrays must have the same length")
-
-    # Check for finite values in key arrays
+    # Check for values
     for arr_name, arr in [
         ("bootstrap_values", bootstrap_values),
         ("montecarlo_values", montecarlo_values),
         ("montecarlo_iqr", montecarlo_iqr),
     ]:
+        # Raise error if not all finite
         if not np.all(np.isfinite(arr)):
             raise ValueError(f"---> All {arr_name} must be finite")
 
-    # Check for non-negative IQR values
-    if np.any(montecarlo_iqr < 0):
-        raise ValueError("---> Monte Carlo IQR values must be non-negative")
+        # Raise error if any negative values in IQR
+        if np.any(montecarlo_iqr < 0):
+            raise ValueError("---> Monte Carlo IQR values must be non-negative")
 
     # Create the plot
     figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
