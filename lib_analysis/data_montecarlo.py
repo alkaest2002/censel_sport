@@ -1,3 +1,4 @@
+# mypy: disable-error-code="call-overload"
 from typing import Any, Literal
 
 import numpy as np
@@ -72,6 +73,9 @@ def monte_carlo_validation(
     # Compute validation metrics
     validation_results: list[dict[str, Any]] = []
 
+    # Define percentile method based on metric_precision
+    percentile_method = "linear" if metric_type == "time" else "nearest"
+
     # Run Monte Carlo simulations
     for i in range(montecarlo_n_samples):
 
@@ -83,7 +87,7 @@ def monte_carlo_validation(
 
         # Compute percentiles
         for p in requested_percentiles:
-            montecarlo_estimates[p].append(np.percentile(synthetic_data, p))
+            montecarlo_estimates[p].append(np.percentile(synthetic_data, p, method=percentile_method))
 
     # For each percentile, compute bias, RMSE, coverage
     for p in requested_percentiles:
@@ -95,19 +99,19 @@ def monte_carlo_validation(
         bootstrap_ci_lower: float = bootstrap_percentile["ci_lower"]
         bootstrap_ci_upper: float = bootstrap_percentile["ci_upper"]
 
-        # Get synthetic values
+        # Get synthetic values and convert to numpy array for easier computation
         montecarlo_values: NDArray[np.integer[Any] | np.floating[Any]] = np.array(montecarlo_estimates[p])
 
-        # Bias
-        bias = np.mean(montecarlo_values) - bootstrap_value
-
-        # Relative bias (as percentage)
+        # Compute montecarlo values
+        montecarlo_value = float(np.median(montecarlo_values))\
+            if metric_type == "time" else int(np.median(montecarlo_values))
+        montecarlo_std = np.std(montecarlo_values)
+        montecarlo_min = np.min(montecarlo_values)
+        montecarlo_max = np.max(montecarlo_values)
+        montecarlo_iqr = np.percentile(montecarlo_values, 75, method=percentile_method)\
+            - np.percentile(montecarlo_values, 25, method=percentile_method)
+        bias = montecarlo_value - bootstrap_value
         relative_bias = (bias / bootstrap_value) * 100 if bootstrap_value != 0 else 0
-
-        # RMSE
-        rmse = np.sqrt(np.mean((montecarlo_values - bootstrap_value)**2))
-
-        # Coverage: % of synthetic values within bootstrap CI
         coverage = np.mean((montecarlo_values >= bootstrap_ci_lower) &
             (montecarlo_values <= bootstrap_ci_upper)) * 100
 
@@ -116,14 +120,13 @@ def monte_carlo_validation(
             "bootstrap_value": bootstrap_value,
             "bootstrap_ci_lower": bootstrap_ci_lower,
             "bootstrap_ci_upper": bootstrap_ci_upper,
-            "montecarlo_value": np.mean(montecarlo_values),
-            "montecarlo_std": np.std(montecarlo_values),
-            "montecarlo_min": np.min(montecarlo_values),
-            "montecarlo_max": np.max(montecarlo_values),
-            "montecarlo_iqr": np.percentile(montecarlo_values, 75) - np.percentile(montecarlo_values, 25),
+            "montecarlo_value":montecarlo_value,
+            "montecarlo_std_error": montecarlo_std,
+            "montecarlo_min": montecarlo_min,
+            "montecarlo_max": montecarlo_max,
+            "montecarlo_iqr": montecarlo_iqr,
             "bias": bias,
             "relative_bias_%": relative_bias,
-            "rmse": rmse,
             "coverage_%": coverage,
         })
 
