@@ -1,0 +1,22 @@
+{
+    "id": "1000mt_run_females",
+    "title": "corsa 1000 metri piani - genere femminile",
+    "source_type": "synthetic",
+    "synthetic_n_samples": 300,
+    "source_filename": null,
+    "metric_type": "time",
+    "metric_unit": "secondi",
+    "metric_precision": 2,
+    "higher_is_better": false,
+    "remove_outliers": false,
+    "outlier_factor": null,
+    "requested_percentiles": [5, 25, 50, 75, 95],
+    "awarded_scores": [1, 0.8, 0.6, 0.4, 0.2, 0],
+    "bootstrap_n_replicates": 10000,
+    "bootstrap_n_replicate_size": 100,
+    "bootstrap_ci_level": 0.95,
+    "distribution_best_criterion": null,
+    "montecarlo_n_samples": 10000,
+    "montecarlo_n_size": 300,
+    "random_state": 50
+}
