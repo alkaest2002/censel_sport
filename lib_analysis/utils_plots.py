@@ -13,6 +13,7 @@ from numpy.typing import NDArray
 BASE_FIGURE_SIZE = (10, 8)
 BASE_ALPHA = 0.5
 MIN_DATA_POINTS = 3
+BASE_FONTSIZE = 14
 
 def _validate_data_points(
         data: NDArray[np.integer[Any] | np.floating[Any]],
@@ -226,9 +227,9 @@ def plot_histogram_with_fitted_model(
             raise AttributeError("---> Model must have pdf() method for continuous data") from e
 
     # Common formatting for both discrete and continuous
-    ax.set_xlabel("Values", fontsize=12)
-    ax.set_ylabel(ylabel, fontsize=12)
-    ax.legend(fontsize=11, frameon=False)
+    ax.set_xlabel("Values", fontsize=BASE_FONTSIZE)
+    ax.set_ylabel(ylabel, fontsize=BASE_FONTSIZE)
+    ax.legend(fontsize=BASE_FONTSIZE - 2, frameon=False)
     ax.yaxis.set_ticks_position("both")
 
     return figure_to_svg_string(figure)
@@ -309,9 +310,9 @@ def plot_bootstrap_percentile_with_ci(
         linestyle=":")
 
     # Formatting
-    ax.set_xlabel("Percentile", fontsize=12)
-    ax.set_ylabel("Value", fontsize=12)
-    ax.legend(fontsize=11, frameon=False)
+    ax.set_xlabel("Percentile", fontsize=BASE_FONTSIZE)
+    ax.set_ylabel("Value", fontsize=BASE_FONTSIZE)
+    ax.legend(fontsize=BASE_FONTSIZE-2, frameon=False)
 
     # Set reasonable x-axis limits and ticks
     ax.set_xlim(max(0, np.min(percentiles) - 5), min(100, np.max(percentiles) + 5))
@@ -374,9 +375,9 @@ def plot_qq_plot(
     ax.plot(diag, diag, color="k", linestyle="--", linewidth=2, label="Fit line")
 
     # Add labels and formatting
-    ax.set_xlabel("Theoretical Quantiles", fontsize=12)
-    ax.set_ylabel("Sample Quantiles", fontsize=12)
-    ax.legend(fontsize=11, frameon=False)
+    ax.set_xlabel("Theoretical Quantiles", fontsize=BASE_FONTSIZE)
+    ax.set_ylabel("Sample Quantiles", fontsize=BASE_FONTSIZE)
+    ax.legend(fontsize=BASE_FONTSIZE-2, frameon=False)
     ax.yaxis.set_ticks_position("both")
 
     return figure_to_svg_string(figure)
@@ -491,9 +492,9 @@ def plot_hanging_rootogram(
                label="Reference line (x-axis)")
 
     # Formatting
-    ax.set_xlabel("Count Values", fontsize=12)
-    ax.set_ylabel("Square Root of Frequency", fontsize=12)
-    ax.legend(fontsize=11, frameon=False)
+    ax.set_xlabel("Count Values", fontsize=BASE_FONTSIZE)
+    ax.set_ylabel("Square Root of Frequency", fontsize=BASE_FONTSIZE)
+    ax.legend(fontsize=BASE_FONTSIZE-2, frameon=False)
 
     # Set integer ticks on x-axis
     ax.set_xticks(counts[::max(1, len(counts)//10)])  # Show reasonable number of ticks
@@ -606,13 +607,13 @@ def plot_montecarlo(comparison_data: list[dict[str, Any]]) -> str:
     # Add percentile labels to points
     for (x, y, perc) in zip(bootstrap_values, montecarlo_values, percentiles, strict=False):
         ax.annotate(f"{perc}", (x, y), xytext=(5, 5),
-                   textcoords="offset points", fontsize=8,
+                   textcoords="offset points", fontsize=BASE_FONTSIZE-2,
                    alpha=0.8, ha="left", va="bottom")
 
     # Formatting
-    ax.set_xlabel("Bootstrap Values", fontsize=12)
-    ax.set_ylabel("Monte Carlo Values", fontsize=12)
-    ax.legend(fontsize=11, frameon=False)
+    ax.set_xlabel("Bootstrap Values", fontsize=BASE_FONTSIZE)
+    ax.set_ylabel("Monte Carlo Values", fontsize=BASE_FONTSIZE)
+    ax.legend(fontsize=BASE_FONTSIZE-2, frameon=False)
 
     # Set axis limits with some padding
     ax.set_xlim(diag_min, diag_max)
