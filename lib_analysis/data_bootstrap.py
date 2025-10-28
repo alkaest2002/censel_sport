@@ -1,5 +1,6 @@
+# mypy: disable-error-code="call-overload"
 from itertools import pairwise
-from typing import Any, cast
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -59,24 +60,12 @@ def compute_bootstrap_percentiles(
     n_replicates: int = metric_config.get("bootstrap_n_replicates", 10000)
     n_replicate_size: int = metric_config.get("bootstrap_n_replicate_size", data.size)
     ci_level: float = metric_config.get("bootstrap_ci_level", 0.95)
+    metric_type: str | None = metric_config.get("metric_type")
     metric_precision: int = metric_config.get("metric_precision", 2)
     random_state: int = metric_config.get("random_state", 42)
 
-     # Raise error if something is missing
-    if any(map(is_falsy,
-               (
-                   metric_config,
-                   clean,
-                   data,
-                   requested_percentiles,
-                   n_replicates,
-                   n_replicate_size,
-                   ci_level,
-                   metric_precision,
-                   random_state,
-                ),
-            ),
-        ):
+    # Raise error if something crucial is missing
+    if any(map(is_falsy, ( metric_config, clean, data ))):
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Initialize random generator
@@ -90,36 +79,43 @@ def compute_bootstrap_percentiles(
     lower_ci = (alpha / 2) * 100
     upper_ci = (1 - alpha / 2) * 100
 
+    # Define percentile method based on metric_precision
+    percentile_method = "linear" if metric_type == "time" else "nearest"
+
     # Bootstrap resampling
     for _ in range(n_replicates):
 
         # Generate bootstrap sample
-        resample = rng.choice(
-            data,
-            size=n_replicate_size,
-            replace=True,
-        )
+        resample = rng.choice(data, size=n_replicate_size, replace=True)
 
         # Store bootstrap sample
         boostrap_samples.append(resample)
 
         # Compute percentiles for this bootstrap sample
         for p in requested_percentiles:
-            computed_percentile = cast("float", np.percentile(resample, p))
+            computed_percentile = np.percentile(resample, p, method=percentile_method)
             bootstrap_estimates[f"p{p}"].append(computed_percentile)
 
+    # For each requested percentile
     for p in requested_percentiles:
+
         # Convert to numpy array for easier calculations
         estimates = np.array(bootstrap_estimates[f"p{p}"])
+
+        # Compute bootstrap
+        bootstrap_value = float(np.median(estimates)) if metric_type == "time" else int(np.median(estimates))
+        bootstrap_ci_lower = np.percentile(estimates, lower_ci, method=percentile_method)
+        bootstrap_ci_upper = np.percentile(estimates, upper_ci, method=percentile_method)
+        bootstrap_std_error = np.std(estimates, ddof=1)
 
         # Append results
         bootstrap_percentiles.append({
             "percentile": p,
-            "value": np.median(estimates),
+            "value": bootstrap_value,
             "ci_level": ci_level,
-            "ci_lower": np.percentile(estimates, lower_ci),
-            "ci_upper": np.percentile(estimates, upper_ci),
-            "std_error": np.std(estimates),
+            "ci_lower": bootstrap_ci_lower,
+            "ci_upper": bootstrap_ci_upper,
+            "std_error": bootstrap_std_error,
         })
 
     percentile_cutoffs = _compute_cutoffs(bootstrap_percentiles, metric_precision=metric_precision)
