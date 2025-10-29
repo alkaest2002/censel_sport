@@ -60,6 +60,8 @@
 {% endblock %}
 
 {% block body %}
+{% set format_float_number = "%." + data.metric_config.metric_precision | string + "f" %}
+
 <!-- FIRST PAGE -->
 <div class="page">
     <div class="content">
@@ -82,16 +84,15 @@
                     <ul>
                         <li>
                             <p>
-                                In questa pagina vengono presentate le informazioni relative al campione di riferimento
+                                In questa pagina vengono presentate le informazioni relative al campione
                                 utilizzato per la
-                                costruzione delle tavole normative percentiliche relative a: <span class="text-italic">{{
-                                    data.metric_config.title }}</span>. Tali tavole consentono la conversione dei punteggi
-                                grezzi in
-                                punteggi standardizzati.
+                                costruzione della tabella percentilica relativa a: <span class="text-italic text-underline">{{
+                                    data.metric_config.title }}</span>. Tale tabella consente la conversione dei punteggi
+                                grezzi in punteggi standardizzati.
                             </p>
-                            <p> L'affidabilità delle tavole normative dipende dalla precisione dei percentili
+                            <p> L'affidabilità della tabella di conversione dipende dalla precisione dei percentili
                                 usati come
-                                soglie di conversione e la precisione di questi ultimi è funzione della numerosità
+                                soglie e la precisione di questi ultimi è funzione della numerosità
                                 campionaria.
                                 Per percentili
                                 non estremi
@@ -107,23 +108,22 @@
                         <li>
                             <p>
                                 Sempre in questa pagina, viene presentata la procedura di <span
-                                    class="text-italic">fitting</span> ai dati campionari di una
+                                    class="text-italic">fitting</span> dei dati campionari a una
                                 famiglia di distribuzioni teoriche {% if data.metric_config.metric_type == "continuous" %}(<span
                                     class="text-italic">Normale, Log-normale, Gamma, Weibull</span>){% else %}(<span
                                     class="text-italic">Binomiale negativa, Poisson, Poisson con inflazione di
                                     zeri</span>){%
                                 endif %}.</p>
                             <p>
-                                Il modello con migliore adattamento (<span class="text-italic">fit</span>) sarà utilizzato
-                                per
-                                validare la
-                                stabilità delle stime
-                                percentiliche attraverso il metodo della simulazione Monte Carlo {% if header_numbering
+                                La distribuzione con migliore adattamento (<span class="text-italic">fit</span>) sarà utilizzata
+                                per confermare l'affidabilità della tabella di conversione
+                                attraverso il metodo della simulazione Monte Carlo {% if header_numbering
                                 %}(cfr allegato {{ header_numbering[1] }}){% else %}(vedi pagina successiva){% endif %}.
                             </p>
                             <p>
-                                La bontà dell'adattamento (<span class="text-italic">fit</span>) viene qui valutata attraverso indici di adeguatezza (AIC, BIC, CVM) e analisi grafica mediante <span class="text-italic">{% if data.metric_config.metric_type == "continuous" %}Q-Q plot{% else %}Rootogram{% endif %}</span> che
-                                quantificano la capacità dei modelli di riprodurre le caratteristiche
+                                La bontà dell'adattamento (<span class="text-italic">fit</span>) viene qui valutata attraverso indici di adeguatezza (AIC, BIC, CVM) 
+                                e analisi grafica mediante <span class="text-italic">{% if data.metric_config.metric_type == "continuous" %}Q-Q plot{% else %}Rootogram{% endif %}</span> che
+                                quantificano la capacità delle distribuzioni teoriche di riprodurre le caratteristiche
                                 distribuzionali del campione empirico.
                             </p>
                         </li>
@@ -139,7 +139,7 @@
                         <tbody>
                             <tr>
                                 <td class="text-left">SAMPLE SIZE</td>
-                                <td class="text-center">{{ data.clean.descriptive_stats.count }}</td>
+                                <td class="text-center">{{ data.clean.descriptive_stats.count | int }}</td>
                             </tr>
                             <tr>
                                 <td class="text-left">MEASUREMENT UNIT</td>
@@ -168,7 +168,7 @@
                                 {% if loop.index0 > 0 %}
                                     <tr>
                                         <td class="text-left">{{ key | upper }}</td>
-                                        <td class="text-center">{{ "%.2f" | format(value) }}</td>
+                                        <td class="text-center">{{ format_float_number | format(value) }}</td>
                                     </tr>
                                 {% endif %}
                             {% endfor %}
@@ -283,10 +283,10 @@
                                 %}(cfr allegato {{ header_numbering[0] }}){% else %}(vedi pagina precedente){% endif %}.
                             </p>
                             <p>
-                                Una volta selezionato il modello ottimale e stimati i parametri, si procede alla generazione di campioni teorici mediante simulazione Monte Carlo. Per ogni campione simulato vengono calcolati gli stessi percentili del procedimento bootstrap, creando una distribuzione teorica di riferimento.
+                                Una volta selezionato il modello ottimale e stimati i parametri, si procede alla generazione di {{ data.metric_config.montecarlo_n_samples }} campioni teorici mediante simulazione Monte Carlo. Per ogni campione simulato vengono calcolati gli stessi percentili del procedimento bootstrap, creando una distribuzione teorica di riferimento.
                             </p>
                             <p>
-                                Il confronto tra percentili bootstrap e teorici avviene attraverso analisi statistiche che valutano differenze assolute e relative e rappresentazioni grafiche. Una buona concordanza indica che le stime bootstrap sono generalizzabili.
+                                Il confronto tra percentili bootstrap e teorici avviene attraverso analisi statistiche che valutano differenze assolute e relative e rappresentazioni grafiche. Una buona concordanza indica che le stime percentiliche sono generalizzabili.
                             </p>
                         </li>
                     </ul>
@@ -305,9 +305,9 @@
                             {% for pct in data.bootstrap.percentiles %}
                                 <tr>
                                     <td class="text-left">{{ pct.percentile | upper }}</td>
-                                    <td class="text-center">{{ "%.2f" | format(pct.value) }}</td>
-                                    <td class="text-center">{{ "%.2f" | format(pct.ci_lower) }}</td>
-                                    <td class="text-center">{{ "%.2f" | format(pct.ci_upper) }}</td>
+                                    <td class="text-center">{{ format_float_number | format(pct.value) }}</td>
+                                    <td class="text-center">{{ format_float_number | format(pct.ci_lower) }}</td>
+                                    <td class="text-center">{{ format_float_number | format(pct.ci_upper) }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -337,10 +337,10 @@
                             {% for pct in data.montecarlo.results %}
                             <tr>
                                 <td class="text-left">{{ pct.percentile | upper }}</td>
-                                <td class="text-center">{{ "%.2f" | format(pct.bootstrap_value) }}</td>
-                                <td class="text-center">{{ "%.2f" | format(pct.montecarlo_value) }}</td>
-                                <td class="text-center">{{ "%.2f" | format(pct.bias) }}</td>
-                                <td class="text-center">{{ "%.2f" | format(pct['coverage_%']) }} %</td>
+                                <td class="text-center">{{ format_float_number | format(pct.bootstrap_value) }}</td>
+                                <td class="text-center">{{ format_float_number | format(pct.montecarlo_value) }}</td>
+                                <td class="text-center">{{ format_float_number | format(pct.bias) }}</td>
+                                <td class="text-center">{{ format_float_number | format(pct['coverage_%']) }} %</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -405,9 +405,13 @@
                                     &mdash;
                                 {% else %}
                                     {% if data.metric_config.metric_type == "continuous" %}
-                                        maggiore di {{ cutoff[0] | format_seconds }}
+                                        {% if data.metric_config.metric_subtype == "time" %}
+                                            da {{ (cutoff[0] + (1  / (10 ** data.metric_config.metric_precision))) | format_seconds }}
+                                        {% else %}
+                                            da {{ format_float_number | format(cutoff[0]) }}
+                                        {% endif %}
                                     {% else %}
-                                        maggiore di {{ "%.2f" | format(cutoff[0]) }}
+                                        da {{ format_float_number | format(cutoff[0] + 1) }}
                                     {% endif %}
                                 {% endif %}
                             </td>
@@ -416,9 +420,13 @@
                                     &mdash;
                                 {% else %}
                                     {% if data.metric_config.metric_type == "continuous" %}
-                                        fino a {{ cutoff[1] | format_seconds }}
-                                    {% else %}  
-                                        fino a {{ "%.2f" | format(cutoff[1]) }}
+                                        {% if data.metric_config.metric_subtype == "time" %}
+                                            fino a {{ cutoff[1] | format_seconds }}
+                                        {% else %}
+                                            fino a {{ format_float_number | format(cutoff[1]) }}
+                                        {% endif %} 
+                                    {% else %}
+                                        fino a {{ format_float_number | format(cutoff[1]) }}
                                     {% endif %}
                                 {% endif %}
                             </td>
