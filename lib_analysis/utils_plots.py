@@ -97,7 +97,6 @@ def figure_to_svg_string(fig: Figure) -> str:
 
     return f"data:image/svg+xml;base64,{base64_encoded_string}"
 
-
 def plot_histogram_with_fitted_model(
         data: NDArray[np.integer[Any] | np.floating[Any]],
         model_name: str,
@@ -137,6 +136,9 @@ def plot_histogram_with_fitted_model(
     # Raise error if data size is insufficient
     data, n = _validate_data_points(data, "Histogram with Fitted Model")
 
+    # Humanize model name for display
+    model_name = model_name.replace("_", " ").title()
+
     # Determine if data is discrete (integer) or continuous
     is_discrete = np.issubdtype(data.dtype, np.integer) or np.allclose(data, np.round(data))
 
@@ -156,11 +158,11 @@ def plot_histogram_with_fitted_model(
         if density:
             frequencies = counts / n
             ylabel = "Probability"
-            theoretical_label = f"Theoretical PMF ({model_name})"
+            theoretical_label = model_name
         else:
             frequencies = counts
             ylabel = "Count"
-            theoretical_label = f"Theoretical PMF ({model_name})"
+            theoretical_label = model_name
 
         # Create bar plot for observed data
         bar_width = 0.8
@@ -207,7 +209,6 @@ def plot_histogram_with_fitted_model(
 
         # Determine ylabel based on density setting
         ylabel = "Density" if density else "Count"
-        theoretical_label = f"Theoretical PDF ({model_name})"
 
         # Plot theoretical PDF
         x_min, x_max = np.min(data), np.max(data)
@@ -220,8 +221,7 @@ def plot_histogram_with_fitted_model(
                 bin_width = bin_edges[1] - bin_edges[0]
                 theoretical_density *= n * bin_width
 
-            ax.plot(x_range_continuous, theoretical_density, color="k",
-                   linewidth=2, label=theoretical_label)
+            ax.plot(x_range_continuous, theoretical_density, color="k", linewidth=2, label=model_name)
 
         except AttributeError as e:
             raise AttributeError("---> Model must have pdf() method for continuous data") from e
@@ -334,7 +334,7 @@ def plot_bootstrap_percentile_with_ci(
 
 def plot_qq_plot(
         data: NDArray[np.integer[Any] | np.floating[Any]],
-        model_name: str,  # noqa: ARG001
+        model_name: str,
         model: Any,
     ) -> str:
     """
@@ -354,6 +354,9 @@ def plot_qq_plot(
     """
     # Raise error data size is insufficient
     data, n = _validate_data_points(data, "Q-Q Plot")
+
+    # Humanize model name for display
+    model_name = model_name.replace("_", " ").title()
 
     # Sort data in ascending order
     y: NDArray[np.floating[Any]] = np.sort(data)
@@ -477,19 +480,17 @@ def plot_hanging_rootogram(
 
     # Plot theoretical (expected) square root line - this is where bars hang from
     ax.plot(counts, expected_sqrt, color="black", linewidth=2,
-            marker="o", markersize=4, label=f"Theoretical ({model_name})")
+            marker="o", markersize=4, label=model_name)
 
     # Add 1 reference line (x-axis)
-    ax.axhline(y=1, color="gray", linestyle="--", alpha=BASE_ALPHA, linewidth=1.5,
-               label="Reference line (x-axis)")
+    ax.axhline(y=1, color="gray", linestyle="--", alpha=BASE_ALPHA, linewidth=1.5)
 
     # Add 1 reference line (x-axis)
     ax.axhline(y=0, color="gray", linestyle="-", alpha=BASE_ALPHA, linewidth=1.5,
                label="Reference line (x-axis)")
 
     # Add 1 reference line (x-axis)
-    ax.axhline(y=-1, color="gray", linestyle="--", alpha=BASE_ALPHA, linewidth=1.5,
-               label="Reference line (x-axis)")
+    ax.axhline(y=-1, color="gray", linestyle="--", alpha=BASE_ALPHA, linewidth=1.5)
 
     # Formatting
     ax.set_xlabel("Count Values", fontsize=BASE_FONTSIZE)
