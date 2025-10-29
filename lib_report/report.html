@@ -97,8 +97,7 @@
                                 Per percentili
                                 non estremi
                                 (10°&mdash;&nbsp;90°) un numero di osservazioni nell'ordine delle centinaia garantisce
-                                errori
-                                standard accettabili; per
+                                stime attendibili; per
                                 percentili
                                 estremi
                                 (1°&mdash;&nbsp;10°, 90°&mdash;&nbsp;99°) sono necessarie migliaia di
@@ -271,10 +270,11 @@
                     <ul>
                         <li>
                             <p>
-                                In questa pagina viene presentata la tecnica delle repliche bootstrap che rappresenta un approccio non parametrico alla stima dei percentili campionari senza assumere specifiche distribuzioni teoriche. Il procedimento genera {{ data.metric_config.bootstrap_n_replicates }} repliche dal dataset originario, attraverso ricampionamento casuale con sostituzione.
+                                In questa pagina viene presentata la tecnica di stima dei percentili campionari attraverso repliche bootstrap; tale tecnica rappresenta un approccio non parametrico e cioè libero da assunzioni teoriche  relative alla distribuzione dei dati.
                             </p>
                             <p>
-                                Per ciascuna replica bootstrap vengono calcolati i percentili di interesse, ottenendo una collezione di stime. Il valore finale è rappresentato dalla loro mediana, mentre la variabilità fornisce una misura dell'errore standard.
+                                Più precisamente, vengono generate {{ data.metric_config.bootstrap_n_replicates }} repliche bootstrap dal dataset originale attraverso ricampionamento casuale con reimmissione. Per ciascuna replica si calcolano i percentili di interesse, ottenendo una distribuzione di {{ data.metric_config.bootstrap_n_replicates }} valori per ogni percentile. La stima finale è rappresentata dalla mediana di questa distribuzione.
+
                             </p>
                         </li>
                         <li>
