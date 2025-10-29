@@ -43,7 +43,7 @@ class DistributionFitter:
         metric_config: dict[str, Any] = self.data_dict.get("metric_config", {})
         clean: dict[str, Any] = self.data_dict.get("clean", {})
         data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
-        metric_type: Literal["count", "time"] | None = metric_config.get("metric_type")
+        metric_type: Literal["discrete", "continuous"] | None = metric_config.get("metric_type")
         distribution_best_criterion: Literal["aic", "bic", "cramer_von_mises"] | None =\
             self.data_dict.get("distribution_best_criterion", None)
 
@@ -52,8 +52,8 @@ class DistributionFitter:
             raise ValueError("---> The data dictionary does not contain all required parts.")
 
         # Validate metric type
-        if metric_type not in {"count", "time"}:
-            raise ValueError(f"---> Metric_type must be 'count' or 'time', got '{metric_type}'")
+        if metric_type not in {"discrete", "continuous"}:
+            raise ValueError(f"---> Metric_type must be 'discrete' or 'continuous', got '{metric_type}'")
 
         # Validate distribution_best_criterion
         if distribution_best_criterion is not None and \
@@ -313,7 +313,7 @@ class DistributionFitter:
             Number of data points
 
         metric_type : str
-            Type of metric ('count' or 'time')
+            Type of metric ('discrete' or 'continuous')
 
         Returns:
         -------
@@ -321,7 +321,7 @@ class DistributionFitter:
         """
         # Log-likelihood
         try:
-            if metric_type == "count":
+            if metric_type == "discrete":
                 log_lik = float(np.sum(dist_obj.logpmf(data)))
             else:
                 log_lik = float(np.sum(dist_obj.logpdf(data)))
@@ -380,7 +380,7 @@ class DistributionFitter:
             Number of data points
 
         metric_type : str
-            Type of metric ('count' or 'time')
+            Type of metric ('discrete' or 'continuous')
 
         Returns:
         -------
@@ -426,14 +426,14 @@ class DistributionFitter:
             Fitted distribution object
 
         metric_type : str
-            Type of metric ('count' or 'time')
+            Type of metric ('discrete' or 'continuous')
 
         Returns:
         -------
         tuple: Cramér-von Mises statistic and p-value if successful, otherwise (None, None)
         """
         # Only try scipy for continuous distributions
-        if metric_type != "time":
+        if metric_type != "continuous":
             return None, None
 
         try:

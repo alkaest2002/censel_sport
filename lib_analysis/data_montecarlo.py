@@ -28,7 +28,7 @@ def monte_carlo_validation(
     clean: dict[str, Any] = data_dict.get("clean", {})
     bootstrap: dict[str, Any] = data_dict.get("bootstrap", {})
     fitted_distributions: dict[str, Any] = data_dict.get("fit", {})
-    metric_type: Literal["time", "count"] | None = metric_config.get("metric_type")
+    metric_type: Literal["continuous", "discrete"] | None = metric_config.get("metric_type")
     requested_percentiles: list[int | float] = metric_config.get("requested_percentiles", [])
     montecarlo_n_samples: int = metric_config.get("montecarlo_n_samples", 0)
     montecarlo_n_size: int = metric_config.get("montecarlo_n_size", 0)
@@ -74,7 +74,7 @@ def monte_carlo_validation(
     validation_results: list[dict[str, Any]] = []
 
     # Define percentile method based on metric_precision
-    percentile_method = "linear" if metric_type == "time" else "nearest"
+    percentile_method = "linear" if metric_type == "continuous" else "nearest"
 
     # Run Monte Carlo simulations
     for i in range(montecarlo_n_samples):
@@ -104,7 +104,7 @@ def monte_carlo_validation(
 
         # Compute montecarlo values
         montecarlo_value = float(np.median(montecarlo_values))\
-            if metric_type == "time" else int(np.median(montecarlo_values))
+            if metric_type == "continuous" else int(np.median(montecarlo_values))
         montecarlo_std = np.std(montecarlo_values)
         montecarlo_min = np.min(montecarlo_values)
         montecarlo_max = np.max(montecarlo_values)

@@ -80,7 +80,7 @@ def compute_bootstrap_percentiles(
     upper_ci = (1 - alpha / 2) * 100
 
     # Define percentile method based on metric_precision
-    percentile_method = "linear" if metric_type == "time" else "nearest"
+    percentile_method = "linear" if metric_type == "continuous" else "nearest"
 
     # Bootstrap resampling
     for _ in range(n_replicates):
@@ -103,7 +103,7 @@ def compute_bootstrap_percentiles(
         estimates = np.array(bootstrap_estimates[f"p{p}"])
 
         # Compute bootstrap
-        bootstrap_value = float(np.median(estimates)) if metric_type == "time" else int(np.median(estimates))
+        bootstrap_value = float(np.median(estimates)) if metric_type == "continuous" else int(np.median(estimates))
         bootstrap_ci_lower = np.percentile(estimates, lower_ci, method=percentile_method)
         bootstrap_ci_upper = np.percentile(estimates, upper_ci, method=percentile_method)
         bootstrap_std_error = np.std(estimates, ddof=1)

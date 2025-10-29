@@ -26,7 +26,7 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
     bootstrap: dict[str, Any] = data_dict.get("bootstrap", {})
     montecarlo: dict[str, Any] = data_dict.get("montecarlo", {})
     fit: dict[str, Any] = data_dict.get("fit", {})
-    metric_type: Literal["time", "count"] | None = metric_config.get("metric_type")
+    metric_type: Literal["continuous", "discrete"] | None = metric_config.get("metric_type")
     data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
     bootstrap_percentiles: list[dict[str, Any]] = bootstrap.get("percentiles", [])
     best_model: dict[str, Any] = fit.get("best_model", {})
@@ -84,13 +84,13 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
         },
     ]
 
-    if metric_type == "time":
+    if metric_type == "continuous":
         data_dict["plots"].append({
             "name": "qq_plot",
             "svg": plot_qq_plot(data, best_model_name, model),
         })
 
-    if metric_type == "count":
+    if metric_type == "discrete":
          data_dict["plots"].append({
             "name": "rootogram",
             "svg": plot_hanging_rootogram(data, best_model_name, model),

@@ -438,7 +438,7 @@ class StatsModelsZeroInflatedPoissonDist:
 
 
 def get_distributions(
-        metric_type: Literal["count", "time"] | None,
+        metric_type: Literal["discrete", "continuous"] | None,
         distribution: str | None = None,
     ) -> dict[str, tuple[DistributionType, FitFunctionType]]:
     """
@@ -446,7 +446,7 @@ def get_distributions(
 
     Parameters:
     -----------
-    metric_type : Literal["count", "time"]
+    metric_type : Literal["discrete", "continuous"]
 
     distribution : str | None
         Specific distribution to get (if None, return all for the metric type)
@@ -457,7 +457,7 @@ def get_distributions(
     """
     # Mapping of distributions
     distributions = {
-        "count": {
+        "discrete": {
             "negative_binomial": (
                 StatsModelsNegativeBinomialDist,
                 lambda x: StatsModelsNegativeBinomialDist.fit_parameters(x),
@@ -471,7 +471,7 @@ def get_distributions(
                 lambda x: StatsModelsZeroInflatedPoissonDist.fit_parameters(x),
             ),
         },
-        "time": {
+        "continuous": {
             "normal": (stats.norm, lambda x: stats.norm.fit(x)),
             "lognormal": (stats.lognorm, lambda x: stats.lognorm.fit(x, floc=0)),
             "gamma": (stats.gamma, lambda x: stats.gamma.fit(x, floc=0)),
@@ -484,20 +484,21 @@ def get_distributions(
         raise ValueError(f"Unsupported metric type '{metric_type}'")
 
     # If distribution is not valid, raise error
-    if distribution is not None and distribution not in [*distributions["count"].keys(), *distributions["time"].keys()]:
+    if distribution is not None and distribution not in\
+        [*distributions["discrete"].keys(), *distributions["continuous"].keys()]:
             raise ValueError(f"Unsupported distribution '{distribution}'")
 
     # Count distributions
-    if metric_type == "count":
+    if metric_type == "discrete":
         if distribution is not None:
             return {
-                distribution: distributions["count"][distribution],
+                distribution: distributions["discrete"][distribution],
             }
-        return distributions["count"]
+        return distributions["discrete"]
 
-    # Time distributions
+    # Continuous distributions
     if distribution is not None:
         return {
-            distribution: distributions["time"][distribution],
+            distribution: distributions["continuous"][distribution],
         }
-    return distributions["time"]
+    return distributions["continuous"]

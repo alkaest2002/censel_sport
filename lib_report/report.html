@@ -108,7 +108,7 @@
                             <p>
                                 Sempre in questa pagina, viene presentata la procedura di <span
                                     class="text-italic">fitting</span> ai dati campionari di una
-                                famiglia di distribuzioni teoriche {% if data.metric_config.metric_type == "time" %}(<span
+                                famiglia di distribuzioni teoriche {% if data.metric_config.metric_type == "continuous" %}(<span
                                     class="text-italic">Normale, Log-normale, Gamma, Weibull</span>){% else %}(<span
                                     class="text-italic">Binomiale negativa, Poisson, Poisson con inflazione di
                                     zeri</span>){%
@@ -122,7 +122,7 @@
                                 %}(cfr allegato {{ header_numbering[1] }}){% else %}(vedi pagina successiva){% endif %}.
                             </p>
                             <p>
-                                La bontà dell'adattamento (<span class="text-italic">fit</span>) viene qui valutata attraverso indici di adeguatezza (AIC, BIC, CVM) e analisi grafica mediante <span class="text-italic">{% if data.metric_config.metric_type == "time" %}Q-Q plot{% else %}Rootogram{% endif %}</span> che
+                                La bontà dell'adattamento (<span class="text-italic">fit</span>) viene qui valutata attraverso indici di adeguatezza (AIC, BIC, CVM) e analisi grafica mediante <span class="text-italic">{% if data.metric_config.metric_type == "continuous" %}Q-Q plot{% else %}Rootogram{% endif %}</span> che
                                 quantificano la capacità dei modelli di riprodurre le caratteristiche
                                 distribuzionali del campione empirico.
                             </p>
@@ -235,7 +235,7 @@
                     </div>
                     <div>
                         <h3 class="text-center mb-md mt-lg">
-                            {% if data.metric_config.metric_type == "time" %}
+                            {% if data.metric_config.metric_type == "continuous" %}
                                 Q-Q PLOT
                             {% else %}
                                 ROOTOGRAM
@@ -404,7 +404,7 @@
                                 {% if loop.first %}
                                     &mdash;
                                 {% else %}
-                                    {% if data.metric_config.metric_type == "time" %}
+                                    {% if data.metric_config.metric_type == "continuous" %}
                                         maggiore di {{ cutoff[0] | format_seconds }}
                                     {% else %}
                                         maggiore di {{ "%.2f" | format(cutoff[0]) }}
@@ -415,7 +415,7 @@
                                 {% if loop.last %}
                                     &mdash;
                                 {% else %}
-                                    {% if data.metric_config.metric_type == "time" %}
+                                    {% if data.metric_config.metric_type == "continuous" %}
                                         fino a {{ cutoff[1] | format_seconds }}
                                     {% else %}  
                                         fino a {{ "%.2f" | format(cutoff[1]) }}

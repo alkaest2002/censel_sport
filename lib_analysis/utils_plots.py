@@ -389,7 +389,7 @@ def plot_hanging_rootogram(
         max_count: int | None = None,
     ) -> str:
     """
-    Create a hanging rootogram for discrete count data.
+    Create a hanging rootogram for discrete discrete data.
 
     Bars hang from the theoretical distribution line. If theoretical distribution
     overestimates a count, the observed bar doesn't reach the x-axis. If it
@@ -398,7 +398,7 @@ def plot_hanging_rootogram(
     Parameters:
     -----------
     data : NDArray[np.integer]
-        Integer count data to analyze
+        Integer discrete data to analyze
 
     model_name : str
         Name of the fitted distribution for plot title
