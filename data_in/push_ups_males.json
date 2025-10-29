@@ -5,6 +5,7 @@
     "synthetic_n_samples": 300,
     "source_filename": null,
     "metric_type": "discrete",
+    "metric_subtype": "count",
     "metric_unit": "numero di ripetizioni",
     "metric_precision": 0,
     "higher_is_better": true,
