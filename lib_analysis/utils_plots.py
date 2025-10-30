@@ -378,7 +378,7 @@ def plot_qq_plot(
     ax.plot(diag, diag, color="k", linestyle="--", linewidth=2, label="Fit line")
 
     # Add labels and formatting
-    ax.set_xlabel("Theoretical Quantiles", fontsize=BASE_FONTSIZE)
+    ax.set_xlabel(f"{model_name} Quantiles", fontsize=BASE_FONTSIZE)
     ax.set_ylabel("Sample Quantiles", fontsize=BASE_FONTSIZE)
     ax.legend(fontsize=BASE_FONTSIZE-2, frameon=False)
     ax.yaxis.set_ticks_position("both")
