@@ -262,7 +262,7 @@
                 </div>
             </div>
             <!-- Page Content -->
-            <h2 class="mb-xl">Percentili bootstrap e validazione Montecarlo</h2>
+            <h2 class="mb-xl">Percentili bootstrap e validazione Monte Carlo</h2>
             <div class="two-columns">
     
                 <div class="mb-xl">
@@ -270,23 +270,23 @@
                     <ul>
                         <li>
                             <p>
-                                In questa pagina viene presentata la tecnica di stima dei percentili campionari attraverso repliche bootstrap; tale tecnica rappresenta un approccio non parametrico e cioè libero da assunzioni teoriche  relative alla distribuzione dei dati.
+                                In questa pagina viene presentata la tecnica di stima dei percentili campionari attraverso repliche <span class="text-italic">bootstrap</span>; tale tecnica rappresenta un approccio non parametrico e cioè libero da assunzioni teoriche  relative alla distribuzione dei dati.
                             </p>
                             <p>
-                                Più precisamente, vengono generate {{ data.metric_config.bootstrap_n_replicates }} repliche bootstrap dal dataset originale attraverso ricampionamento casuale con reimmissione. Per ciascuna replica si calcolano i percentili di interesse, ottenendo una distribuzione di {{ data.metric_config.bootstrap_n_replicates }} valori per ogni percentile. La stima finale è rappresentata dalla mediana di questa distribuzione.
+                                Più precisamente, vengono generate {{ data.metric_config.bootstrap_n_replicates }} repliche dal <span class="text-italic">dataset</span> originale attraverso ricampionamento casuale con reimmissione. Per ciascuna replica si calcolano i percentili di interesse, ottenendo una distribuzione di {{ data.metric_config.bootstrap_n_replicates }} valori. La stima finale dei percentili è rappresentata dalla mediana delle relative distribuzioni.
 
                             </p>
                         </li>
                         <li>
                             <p>
-                                La validazione dei percentili bootstrap tramite simulazione Monte Carlo costituisce un ulteriore passaggio per verificare la generalizzabilità delle stime empiriche ottenute con la tecnica bootstrap. Il processo inizia identificando la distribuzione probabilistica che meglio descrive i dati osservati. {% if header_numbering
-                                %}(cfr allegato {{ header_numbering[0] }}){% else %}(vedi pagina precedente){% endif %}.
+                                La validazione dei percentili <span class="text-italic">bootstrap</span> tramite simulazione Monte Carlo costituisce un ulteriore passaggio per verificare la generalizzabilità delle stime empiriche.
                             </p>
                             <p>
-                                Una volta selezionato il modello ottimale e stimati i parametri, si procede alla generazione di {{ data.metric_config.montecarlo_n_samples }} campioni teorici mediante simulazione Monte Carlo. Per ogni campione simulato vengono calcolati gli stessi percentili del procedimento bootstrap, creando una distribuzione teorica di riferimento.
+                                Il processo inizia identificando la distribuzione probabilistica che meglio descrive i dati osservati. {% if header_numbering %}(cfr allegato {{ header_numbering[0] }}){% else %}(vedi pagina precedente){% endif %}.
+                                Una volta selezionato il modello ottimale e stimati i parametri, si procede alla generazione di {{ data.metric_config.montecarlo_n_samples }} campioni teorici mediante simulazione Monte Carlo. Per ogni campione simulato vengono calcolati gli stessi percentili della tecnica <span class="text-italic">bootstrap</span>, creando una distribuzione teorica di riferimento.
                             </p>
                             <p>
-                                Il confronto tra percentili bootstrap e teorici avviene attraverso analisi statistiche che valutano differenze assolute e relative e rappresentazioni grafiche. Una buona concordanza indica che le stime percentiliche sono generalizzabili.
+                                Il confronto tra percentili <span class="text-italic">bootstrap</span> e quelli teorici avviene attraverso analisi statistiche che valutano differenze assolute e relative e rappresentazioni grafiche. Una buona concordanza indica che le stime percentiliche ottenute con la tecnica <span class="text-italic">bootstrap</span> sono generalizzabili.
                             </p>
                         </li>
                     </ul>
@@ -324,12 +324,12 @@
                 </div>
     
                 <div class="mb-xl">
-                    <h3 class="mb-lg">Validazione Montecarlo</h3>
+                    <h3 class="mb-lg">Validazione Monte Carlo</h3>
                     <table class="table-bordered full-width">
                         <thead>
                             <th class="text-left">PERC.</th>
                             <th class="text-center">BOOTSTRAP</th>
-                            <th class="text-center">MONTECARLO</th>
+                            <th class="text-center">MONTE CARLO</th>
                             <th class="text-center">BIAS</th>
                             <th class="text-center">COVERAGE</th>
                         </thead>
