@@ -1,11 +1,17 @@
 # mypy: disable-error-code="call-overload"
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 import numpy as np
 from numpy.typing import NDArray
 
-from lib_analysis.utils_distributions import DistributionType, FitFunctionType, get_distributions
+from lib_analysis.utils_distributions_continuous import get_continuous_distributions
+from lib_analysis.utils_distributions_discrete import get_discrete_distributions
 from lib_analysis.utils_generic import is_falsy
+
+if TYPE_CHECKING:
+    from scipy import stats
+
+    from lib_analysis.data_fit import FitFunctionType
 
 
 def monte_carlo_validation(
@@ -57,8 +63,8 @@ def monte_carlo_validation(
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Get distributions
-    distributions: dict[str, tuple[DistributionType, FitFunctionType]] =\
-        get_distributions(metric_type, best_model["name"])
+    distributions: dict[str, tuple[stats.rv_discrete | stats.rv_continuous, FitFunctionType]] =\
+        get_continuous_distributions() if metric_type == "continuous" else get_discrete_distributions()
 
     # Get best model class
     model_class, _ = distributions[best_model["name"]]

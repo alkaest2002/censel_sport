@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING, Any, Literal
 
 import numpy as np
 
-from lib_analysis.utils_distributions import DistributionType, FitFunctionType, get_distributions
+from lib_analysis.utils_distributions_continuous import get_continuous_distributions
+from lib_analysis.utils_distributions_discrete import get_discrete_distributions
 from lib_analysis.utils_generic import is_falsy
 from lib_analysis.utils_plots import (
     plot_bootstrap_percentile_with_ci,
@@ -17,6 +18,9 @@ from lib_analysis.utils_plots import (
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
+    from scipy import stats
+
+    from lib_analysis.data_fit import FitFunctionType
 
 def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
 
@@ -56,8 +60,8 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Get distributions
-    distributions: dict[str, tuple[DistributionType, FitFunctionType]] =\
-        get_distributions(metric_type, best_model_name)
+    distributions: dict[str, tuple[stats.rv_discrete | stats.rv_continuous, FitFunctionType]] =\
+        get_continuous_distributions() if metric_type == "continuous" else get_discrete_distributions()
 
     # Get best model class
     model_class, _ = distributions[best_model_name]

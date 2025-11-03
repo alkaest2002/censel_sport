@@ -1,13 +1,17 @@
 # mypy: disable-error-code="operator"
 
+from collections.abc import Callable
 from typing import Any, Literal, cast
 
 import numpy as np
 from numpy.typing import NDArray
 from scipy import stats
 
-from lib_analysis.utils_distributions import get_distributions
+from lib_analysis.utils_distributions_continuous import get_continuous_distributions
+from lib_analysis.utils_distributions_discrete import get_discrete_distributions
 from lib_analysis.utils_generic import is_falsy
+
+FitFunctionType = Callable[[NDArray[np.integer[Any] | np.floating[Any]]], tuple[float, ...]]
 
 
 class DistributionFitter:
@@ -68,8 +72,9 @@ class DistributionFitter:
         fitted_models: dict[str, Any] = {}
         failed_models: list[str] = []
 
-        # Get distributions to fit
-        distributions = get_distributions(metric_type)
+        # Get distributions
+        distributions: dict[str, tuple[stats.rv_discrete | stats.rv_continuous, FitFunctionType]] =\
+            get_continuous_distributions() if metric_type == "continuous" else get_discrete_distributions()
 
         # Pre-sort data for efficiency
         sorted_data = np.sort(data)
