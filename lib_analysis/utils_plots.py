@@ -575,16 +575,16 @@ def plot_montecarlo(comparison_data: list[dict[str, Any]]) -> str:
 
     diagonal = np.linspace(diag_min, diag_max, 100)
     ax.plot(diagonal, diagonal, c="#CCCCCC", linestyle="--", linewidth=2,
-            label="Perfect Agreement (y = x)")
+            label="Perfect Agreement")
 
     # Create scatter plot with Monte Carlo IQR as error bars
     _ = ax.errorbar(
         bootstrap_values, montecarlo_values,
-        yerr=montecarlo_iqr / 2 * 1.5,
+        yerr=montecarlo_iqr * 1.5 / 2,  # IQR * 1.5 divided by 2 for symmetric error bars
         fmt="o", markersize=6, markerfacecolor="white",
         markeredgecolor="k", markeredgewidth=2,
         ecolor="k", elinewidth=1.5, capsize=0, capthick=0,
-        label="Monte Carlo vs Bootstrap",
+        label="Monte Carlo values, error-bars = IQR * 1.5",
     )
 
     # Add percentile labels to points
