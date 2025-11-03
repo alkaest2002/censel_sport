@@ -70,7 +70,6 @@ def main() -> int:
         print(f"{step_counter}. Computing bootstrap percentiles...")
         data_dict, bootstrap_samples = compute_bootstrap_percentiles(data_dict=data_dict)
 
-
         ###############################################################################################
         # Perform Montecarlo simulation
         ###############################################################################################
