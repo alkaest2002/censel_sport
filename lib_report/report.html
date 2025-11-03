@@ -137,11 +137,11 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="text-left">SAMPLE SIZE</td>
+                                <td class="text-left">Sample size</td>
                                 <td class="text-center">{{ data.clean.descriptive_stats.count | int }}</td>
                             </tr>
                             <tr>
-                                <td class="text-left">UNIT</td>
+                                <td class="text-left">Unit</td>
                                 <td class="text-center">{{ data.metric_config.metric_unit }}</td>
                             </tr>
                         </tbody>
@@ -166,7 +166,7 @@
                             {% for key, value in data.clean.descriptive_stats.items() %}
                                 {% if loop.index0 > 0 %}
                                     <tr>
-                                        <td class="text-left">{{ key | upper }}</td>
+                                        <td class="text-left">{{ key | title }}</td>
                                         <td class="text-center">{{ format_float_number | format(value) }}</td>
                                     </tr>
                                 {% endif %}
@@ -176,13 +176,13 @@
                             <tr>
                                 <td colspan="2">
                                     <span class="caption text-bold">Tabella {{ header_numbering[0] }}.2</span>
-                                    MEAN = Media,
-                                    STD = Dev.ne standard, 
-                                    MIN = Minimo, 
+                                    Mean = Media,
+                                    Std = Dev.ne standard, 
+                                    Min = Minimo, 
                                     25% = Primo quartile, 
                                     50% = Mediana, 
                                     75% = Terzo quartile,
-                                    MAX = Massimo
+                                    Max = Massimo
                                 </td>
                             </tr>
                         </tfoot>
@@ -203,7 +203,7 @@
                         <tbody>
                             {% for model_name, model_data in data.fit.fitted_models.items() %}
                             <tr>
-                                <td class="text-left">{{ model_name | upper | replace("_", " ") }}</td>
+                                <td class="text-left">{{ model_name | title | replace("_", " ") }}</td>
                                 <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.aic) }}</td>
                                 <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.bic) }}</td>
                                 <td class="text-center">
@@ -303,7 +303,7 @@
                         <tbody>
                             {% for pct in data.bootstrap.percentiles %}
                                 <tr>
-                                    <td class="text-left">{{ pct.percentile | upper }}</td>
+                                    <td class="text-left">{{ pct.percentile | title }}</td>
                                     <td class="text-center">{{ format_float_number | format(pct.value) }}</td>
                                     <td class="text-center">{{ format_float_number | format(pct.ci_lower) }}</td>
                                     <td class="text-center">{{ format_float_number | format(pct.ci_upper) }}</td>
@@ -335,7 +335,7 @@
                         <tbody>
                             {% for pct in data.montecarlo.results %}
                             <tr>
-                                <td class="text-left">{{ pct.percentile | upper }}</td>
+                                <td class="text-left">{{ pct.percentile | title }}</td>
                                 <td class="text-center">{{ format_float_number | format(pct.montecarlo_value) }}</td>
                                 <td class="text-center">
                                     {{ format_float_number | format(pct.bootstrap_value) }}
