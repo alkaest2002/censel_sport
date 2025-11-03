@@ -670,7 +670,6 @@ def get_discrete_distributions(
     --------
     dict: Mapping of distribution names to distribution classes
     """
-    # Mapping of distributions
     return {
         "geometric": StatsModelsGeometricDist,
         "binomial": StatsModelsBinomialDist,

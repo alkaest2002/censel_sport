@@ -144,7 +144,7 @@ class DistributionFitter:
         criterion: str | None,
     ) -> dict[str, Any]:
         """
-        Determine the best fitting model based on specified criterion.
+        Get the best fitting model based on specified criterion.
 
         Parameters
         ----------
@@ -197,7 +197,7 @@ class DistributionFitter:
         valid_models: dict[str, Any],
     ) -> dict[str, Any]:
         """
-        Select best model using majority vote across criteria.
+        Select the best model using majority vote across criteria.
 
         Parameters
         ----------

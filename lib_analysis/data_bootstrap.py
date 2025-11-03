@@ -13,7 +13,7 @@ def _compute_cutoffs(
         metric_precision: int = 2,
     ) -> list[tuple[float, float]]:
     """
-    Create a normative table cutoffs using bootstrap percentiles.
+    Compute normative table cutoffs based on bootstrap percentiles.
 
     Parameters:
     -----------
@@ -40,7 +40,7 @@ def compute_bootstrap_percentiles(
     data_dict: dict[str, Any],
 ) -> tuple[dict[str, Any], list[NDArray[np.integer[Any] | np.floating[Any]]]]:
     """
-    Compute percentile-based normative table using bootstrap with confidence intervals.
+    Compute bootstrap percentiles and confidence intervals.
 
     Parameters:
     -----------

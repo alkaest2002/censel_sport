@@ -21,6 +21,17 @@ if TYPE_CHECKING:
     from scipy import stats
 
 def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
+    """Create plots for the analysis results.
+
+    Parameters:
+    -----------
+    data_dict : dict
+        Dictionary containing data
+
+    Returns:
+    --------
+    dict : Updated data dictionary
+    """
 
     # Extract data from dictionary
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})

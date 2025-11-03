@@ -9,7 +9,7 @@ from lib_analysis.utils_stats import generate_synthetic_data
 
 def _load_from_csv(metric_config: dict[str, Any]) -> dict[str, Any]:
     """
-    Load performance data from CSV file.
+    Load performance data from a CSV file.
 
     Parameters:
     -----------
@@ -65,7 +65,7 @@ def _load_from_csv(metric_config: dict[str, Any]) -> dict[str, Any]:
 
 def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
     """
-    Generate synthetic data for testing.
+    Load performance data from synthetic sources.
 
     Parameters:
     -----------
@@ -105,7 +105,7 @@ def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
 
 def load_data(metric_config: dict[str, Any]) -> dict[str, Any]:
     """
-    Docstring for load_data.
+    Load performance data based on the metric configuration.
 
     Parameters:
     -----------

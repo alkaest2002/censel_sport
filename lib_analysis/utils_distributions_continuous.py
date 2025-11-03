@@ -10,7 +10,6 @@ def get_continuous_distributions(
     --------
     dict: Mapping of distribution names to distribution classes
     """
-    # Mapping of distributions
     return {
         "exponential": stats.expon,
         "skew_normal": stats.skewnorm,
