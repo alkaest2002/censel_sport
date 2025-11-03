@@ -156,29 +156,29 @@ def plot_histogram_with_fitted_model(
         if density:
             frequencies = counts / n
             ylabel = "Probability"
-            theoretical_label = model_name
         else:
             frequencies = counts
             ylabel = "Count"
-            theoretical_label = model_name
 
         # Create bar plot for observed data
-        bar_width = 0.8
-        ax.bar(unique_values, frequencies, width=bar_width, alpha=BASE_ALPHA,
+        ax.bar(unique_values, frequencies, width=0.8, alpha=BASE_ALPHA,
             color="k", linewidth=0.5,
             label="Observed data")
 
-        # Plot theoretical PMF
-        x_range = np.arange(max(0, np.min(unique_values) - 1),
-            np.max(unique_values) + 2)
+        # Create x range for theoretical PMF
+        x_range = np.arange(max(0, np.min(unique_values) - 1), np.max(unique_values) + 2)
 
         try:
+            # Calculate theoretical PMF
             theoretical_probs = np.array([model.pmf(k) for k in x_range])
+
+            # Scale by sample size if showing counts
             if not density:
                 theoretical_probs *= n
 
+            # Plot theoretical PMF
             ax.plot(x_range, theoretical_probs, color="k", linewidth=2,
-                marker="o", markersize=6, label=theoretical_label)
+                marker="o", markersize=6, label=model_name)
 
         except AttributeError as e:
             raise AttributeError("---> Model must have pmf() method for discrete data") from e
@@ -190,8 +190,7 @@ def plot_histogram_with_fitted_model(
     else:
 
         # Set default bins if not provided
-        if bins is None:
-            bins = "auto"
+        bins = bins or "auto"
 
         # Create histogram for observed data
         _, bin_edges, _ = ax.hist(
@@ -208,17 +207,20 @@ def plot_histogram_with_fitted_model(
         # Determine ylabel based on density setting
         ylabel = "Density" if density else "Count"
 
-        # Plot theoretical PDF
+        # Compute x range for theoretical PDF
         x_min, x_max = np.min(data), np.max(data)
         x_range_continuous = np.linspace(x_min - 0.1 * (x_max - x_min), x_max + 0.1 * (x_max - x_min), 1000)
 
         try:
+            # Calculate theoretical PDF
             theoretical_density = np.array([model.pdf(x) for x in x_range_continuous])
+
+            # Scale by sample size and bin width if showing counts
             if not density:
-                # Scale by sample size and bin width for count comparison
                 bin_width = bin_edges[1] - bin_edges[0]
                 theoretical_density *= n * bin_width
 
+            # Plot theoretical PDF
             ax.plot(x_range_continuous, theoretical_density, color="k", linewidth=2, label=model_name)
 
         except AttributeError as e:
