@@ -406,7 +406,7 @@
                                         {% if data.metric_config.metric_subtype == "time" %}
                                             da {{ (cutoff[0] + (1  / (10 ** data.metric_config.metric_precision))) | format_seconds }}
                                         {% else %}
-                                            da {{ format_float_number | format(cutoff[0]) }}
+                                            da {{ (cutoff[0] + (1  / (10 ** data.metric_config.metric_precision))) }}
                                         {% endif %}
                                     {% else %}
                                         da {{ format_float_number | format(cutoff[0] + 1) }}
