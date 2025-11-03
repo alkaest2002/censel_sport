@@ -53,7 +53,7 @@ def clean_data(
         lower_bound = q1 - outlier_factor * iqr
         upper_bound = q3 + outlier_factor * iqr
         outlier_mask = (clean_data >= lower_bound) & (clean_data <= upper_bound)
-    # No outlier method, return everything
+    # No outlier method, keep everything
     else:
         outlier_mask = np.ones(len(clean_data), dtype=bool)
 
