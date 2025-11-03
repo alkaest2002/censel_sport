@@ -36,9 +36,9 @@ def main() -> int:
     # Add parser argument numbering for report generation
     parser.add_argument(
         "--header-numbering", "-x",
-        required=False,
+        required=True,
         type=str,
-        help="Numbering style for report header section (e.g., '1.1', 'A.1'",
+        help="Numbering style for report header section (e.g., 'A1', 'A2')",
     )
 
     parser.add_argument(
