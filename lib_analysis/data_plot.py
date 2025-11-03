@@ -78,6 +78,7 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
     # Instantiate best model class with fitted params
     try:
         model = model_class(*best_model_parameters)
+    # Raise error if instantiation fails
     except (TypeError, ValueError) as e:
         raise ValueError(f"---> Failed to instantiate model {best_model_name}: {e}") from e
 
