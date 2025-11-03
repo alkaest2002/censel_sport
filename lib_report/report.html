@@ -114,11 +114,7 @@
                             <p>
                                 Sempre in questa pagina, viene presentata la procedura di <span
                                     class="text-italic">fitting</span> dei dati campionari a una
-                                famiglia di distribuzioni teoriche {% if data.metric_config.metric_type == "continuous"
-                                %}(<span class="text-italic">Exponential, Skew normal, Log normal, Gamma,
-                                    Weibull</span>){% else %}(<span class="text-italic">Geometric, Binomial, Negative
-                                    Binomial, Poisson, Zero-inflated Poisson</span>){%
-                                endif %}.</p>
+                                famiglia di distribuzioni teoriche (<span class="text-italic">{% for model in data.fit.fitted_models.keys() %}{{ model | replace("_", " ") | title }}{% if not loop.last %}, {% endif %}{% endfor %}</span>).</p>
                             <p>
                                 La distribuzione con migliore adattamento (<span class="text-italic">fit</span>) sarà
                                 utilizzata
@@ -231,7 +227,7 @@
                         <tbody>
                             {% for model_name, model_data in data.fit.fitted_models.items() %}
                             <tr>
-                                <td class="text-left">{{ model_name | title | replace("_", " ") }}</td>
+                                <td class="text-left">{{ model_name | replace("_", " ") | title }}</td>
                                 <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.aic) }}</td>
                                 <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.bic) }}</td>
                                 <td class="text-center">
@@ -409,10 +405,10 @@
                                     <div class="caption">
                                         <span>Tabella {{ header_numbering[1] }}.2:</span>
                                         <span>
-                                            MONTE CARLO = Percentile calcolato tramite simulazione Monte Carlo,
+                                            MONTE CARLO = Percentile calcolato con simulazione Monte Carlo,
                                             BOOTSTRAP = Percentile stimato con tecnica bootstrap, COVERAGE = Percentuale
-                                            di casi in cui il valore del percentile calcolato tramite simulazione Monte
-                                            Carlo è contenuto nell'intervallo di confidenza stimato con la tecnica
+                                            di casi in cui il valore del percentile calcolato con simulazione Monte
+                                            Carlo è contenuto nell'intervallo di confidenza stimato con tecnica
                                             bootstrap.
                                 </td>
                                 </span>
