@@ -8,6 +8,7 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
+import pandas as pd
 
 # Constants
 BASE_FIGURE_SIZE = (10, 8)
@@ -537,36 +538,15 @@ def plot_montecarlo(comparison_data: list[dict[str, Any]]) -> str:
             f"---> Unable to plot Monte Carlo comparison: at least {MIN_DATA_POINTS} points required",
         )
 
-    # Extract data arrays
-    try:
-        percentiles = [item["percentile"] for item in comparison_data]
-        bootstrap_values = np.array([item["bootstrap_value"] for item in comparison_data])
-        montecarlo_values = np.array([item["montecarlo_value"] for item in comparison_data])
-        montecarlo_iqr = np.array([item["montecarlo_iqr"] for item in comparison_data])
-
-    except KeyError as e:
-        raise KeyError(f"---> Missing required key in comparison data: {e}") from e
-
-    # Check for values
-    for arr_name, arr in [
-        ("bootstrap_values", bootstrap_values),
-        ("montecarlo_values", montecarlo_values),
-        ("montecarlo_iqr", montecarlo_iqr),
-    ]:
-        # Raise error if not all finite
-        if not np.all(np.isfinite(arr)):
-            raise ValueError(f"---> All {arr_name} must be finite")
-
-        # Raise error if any negative values in IQR
-        if np.any(montecarlo_iqr < 0):
-            raise ValueError("---> Monte Carlo IQR values must be non-negative")
+    # Convert data into DataFrame
+    data: pd.DataFrame = pd.DataFrame(comparison_data)
 
     # Create the plot
     figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
 
     # Add perfect agreement diagonal line
-    data_min = min(np.min(bootstrap_values), np.min(montecarlo_values))
-    data_max = max(np.max(bootstrap_values), np.max(montecarlo_values))
+    data_min = data.loc[:, ["bootstrap_value", "montecarlo_value"]].min().min()
+    data_max = data.loc[:, ["bootstrap_value", "montecarlo_value"]].max().max()
 
     # Extend the diagonal line slightly beyond data range
     margin = 0.05 * (data_max - data_min)
@@ -575,12 +555,12 @@ def plot_montecarlo(comparison_data: list[dict[str, Any]]) -> str:
 
     diagonal = np.linspace(diag_min, diag_max, 100)
     ax.plot(diagonal, diagonal, c="#CCCCCC", linestyle="--", linewidth=2,
-            label="Perfect Agreement")
+        label="Perfect Agreement")
 
     # Create scatter plot with Monte Carlo IQR as error bars
     _ = ax.errorbar(
-        bootstrap_values, montecarlo_values,
-        yerr=montecarlo_iqr * 1.5 / 2,  # IQR * 1.5 divided by 2 for symmetric error bars
+        data["bootstrap_value"], data["montecarlo_value"],
+        yerr=data["montecarlo_iqr"].mul(1.5).div(2),  # IQR * 1.5 divided by 2 for symmetric error bars
         fmt="o", markersize=6, markerfacecolor="white",
         markeredgecolor="k", markeredgewidth=2,
         ecolor="k", elinewidth=1.5, capsize=0, capthick=0,
@@ -588,10 +568,15 @@ def plot_montecarlo(comparison_data: list[dict[str, Any]]) -> str:
     )
 
     # Add percentile labels to points
-    for (x, y, perc) in zip(bootstrap_values, montecarlo_values, percentiles, strict=False):
-        ax.annotate(f"{perc}", (x, y), xytext=(5, 5),
-                   textcoords="offset points", fontsize=BASE_FONTSIZE-2,
-                   alpha=0.8, ha="left", va="bottom")
+    for _, row in data.iterrows():
+        ax.annotate(f"{row['percentile']}",
+            (row["bootstrap_value"], row["montecarlo_value"]),
+            xytext=(5, 5),
+            textcoords="offset points",
+            fontsize=BASE_FONTSIZE-2,
+            alpha=0.8,
+            ha="left",
+            va="bottom")
 
     # Formatting
     ax.set_xlabel("Bootstrap Values", fontsize=BASE_FONTSIZE)
