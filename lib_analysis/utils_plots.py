@@ -165,7 +165,7 @@ def plot_histogram_with_fitted_model(
             color="k", linewidth=0.5,
             label="Observed data")
 
-        # Create x range for theoretical PMF
+        # Create x range for theoretical PMF with some padding
         x_range = np.arange(max(0, np.min(unique_values) - 1), np.max(unique_values) + 2)
 
         try:
