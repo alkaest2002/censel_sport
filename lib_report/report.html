@@ -2,7 +2,6 @@
 
 {% block report_style %}
 <style>
-    
     img {
         width: 100%;
     }
@@ -35,15 +34,8 @@
         padding-bottom: 0.5rem;
     }
 
-    .footer {
-        font-size: .7rem;
-        line-height: .9rem;
-        text-align: center;
-        padding-top: 12px;
-        border-top: 2px solid var(--base-border-color);
-    }
-
-    .normative-table th, .normative-table td {
+    .normative-table th,
+    .normative-table td {
         padding: 8px 18px;
     }
 
@@ -53,7 +45,17 @@
     }
 
     .caption {
-        display: inline-block;
+        text-align: left;
+    }
+
+    .caption span {
+        padding-top: 3px;
+        font-size: .7rem;
+        font-style: italic;
+    }
+
+    .caption span:first-child {
+        font-weight: bold;
         margin-right: 3px;
     }
 </style>
@@ -71,14 +73,14 @@
                 <div class="header">
                     <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
                     {% if header_numbering %}
-                        <p>Allegato {{ header_numbering[0] }}</p>
+                    <p>Allegato {{ header_numbering[0] }}</p>
                     {% endif %}
                 </div>
             </div>
             <!-- Page Content -->
             <h2 class="mb-xl">Campione di riferimento</h2>
             <div class="two-columns">
-    
+
                 <div class="mb-xl">
                     <h3 class="mb-lg background">NOTE INTRODUTTIVE</h3>
                     <ul>
@@ -86,14 +88,18 @@
                             <p>
                                 In questa pagina vengono presentate le informazioni relative al campione
                                 utilizzato per la
-                                costruzione della tabella percentilica relativa a: <span class="text-italic text-underline">{{
-                                    data.metric_config.title }}</span>. Tale tabella consente la conversione dei punteggi
+                                costruzione della tavola di conversione relativa a: <span
+                                    class="text-italic text-underline">{{
+                                    data.metric_config.title }}</span>. Tale tavola consente la trasformazione dei
+                                punteggi
                                 grezzi in punteggi standardizzati.
                             </p>
-                            <p> L'affidabilità della tabella di conversione dipende dalla precisione dei percentili
+                            <p> L'affidabilità della tavola di conversione dipende dalla precisione dei percentili
                                 usati come
                                 soglie e la precisione di questi ultimi è funzione della numerosità
                                 campionaria.
+                            </p>
+                            <p>
                                 Per percentili
                                 non estremi
                                 (10°&mdash;&nbsp;90°) un numero di osservazioni nell'ordine delle centinaia garantisce
@@ -108,20 +114,22 @@
                             <p>
                                 Sempre in questa pagina, viene presentata la procedura di <span
                                     class="text-italic">fitting</span> dei dati campionari a una
-                                famiglia di distribuzioni teoriche {% if data.metric_config.metric_type == "continuous" %}(<span
-                                    class="text-italic">Normale, Log-normale, Gamma, Weibull</span>){% else %}(<span
-                                    class="text-italic">Binomiale negativa, Poisson, Poisson con inflazione di
-                                    zeri</span>){%
+                                famiglia di distribuzioni teoriche {% if data.metric_config.metric_type == "continuous"
+                                %}(<span class="text-italic">Exponential, Skew normal, Log normal, Gamma,
+                                    Weibull</span>){% else %}(<span class="text-italic">Geometric, Binomial, Negative
+                                    Binomial, Poisson, Zero-inflated Poisson</span>){%
                                 endif %}.</p>
                             <p>
-                                La distribuzione con migliore adattamento (<span class="text-italic">fit</span>) sarà utilizzata
-                                per confermare l'affidabilità della tabella di conversione
+                                La distribuzione con migliore adattamento (<span class="text-italic">fit</span>) sarà
+                                utilizzata
+                                per confermare l'affidabilità della tavola di conversione
                                 attraverso il metodo della simulazione Monte Carlo {% if header_numbering
                                 %}(cfr allegato {{ header_numbering[1] }}){% else %}(vedi pagina successiva){% endif %}.
                             </p>
                             <p>
-                                La bontà dell'adattamento (<span class="text-italic">fit</span>) viene qui valutata attraverso indici di adeguatezza (AIC, BIC, CVM) 
-                                e analisi grafica mediante <span class="text-italic">{% if data.metric_config.metric_type == "continuous" %}Q-Q plot{% else %}Rootogram{% endif %}</span> che
+                                La bontà dell'adattamento (<span class="text-italic">fit</span>) delle distribuzioni
+                                viene qui valutata attraverso indici di adeguatezza (AIC, BIC, CVM)
+                                e grafici che
                                 quantificano la capacità delle distribuzioni teoriche di riprodurre le caratteristiche
                                 distribuzionali del campione empirico.
                             </p>
@@ -137,24 +145,40 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="text-left">Sample size</td>
-                                <td class="text-center">{{ data.clean.descriptive_stats.count | int }}</td>
+                                <td class="text-left">Type of metric</td>
+                                <td class="text-center">
+                                    {% if data.metric_config.metric_type == "continuous" %}
+                                    continua
+                                    {% else %}
+                                    discreta
+                                    {% endif %}
+                                </td>
                             </tr>
                             <tr>
-                                <td class="text-left">Unit</td>
+                                <td class="text-left">Measurement unit</td>
                                 <td class="text-center">{{ data.metric_config.metric_unit }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Sample size</td>
+                                <td class="text-center">{{ data.clean.descriptive_stats.count | int }}</td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="4">
-                                    <span class="caption text-bold">Tabella {{ header_numbering[0] }}.1</span> SAMPLE SIZE = Num.tà campionaria, UNIT = Unità di misura.
+                                    <div class="caption">
+                                        <span>Tabella {{ header_numbering[0] }}.1</span>
+                                        <span>
+                                            Type of metric = Tipo di metrica, Measurement unit = Unità di misura, Sample
+                                            Size = Numerosità campionaria.
+                                        </span>
+                                    </div>
                                 </td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
-    
+
                 <div class="mb-xl">
                     <h3 class="mb-lg background">STATISTICHE DESCRITTIVE</h3>
                     <table class="table-bordered full-width">
@@ -164,31 +188,35 @@
                         </thead>
                         <tbody>
                             {% for key, value in data.clean.descriptive_stats.items() %}
-                                {% if loop.index0 > 0 %}
-                                    <tr>
-                                        <td class="text-left">{{ key | title }}</td>
-                                        <td class="text-center">{{ format_float_number | format(value) }}</td>
-                                    </tr>
-                                {% endif %}
+                            {% if loop.index0 > 0 %}
+                            <tr>
+                                <td class="text-left">{{ key | title }}</td>
+                                <td class="text-center">{{ format_float_number | format(value) }}</td>
+                            </tr>
+                            {% endif %}
                             {% endfor %}
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="2">
-                                    <span class="caption text-bold">Tabella {{ header_numbering[0] }}.2</span>
-                                    Mean = Media,
-                                    Std = Dev.ne standard, 
-                                    Min = Minimo, 
-                                    25% = Primo quartile, 
-                                    50% = Mediana, 
-                                    75% = Terzo quartile,
-                                    Max = Massimo
+                                    <div class="caption">
+                                        <span>Tabella {{ header_numbering[0] }}.2</span>
+                                        <span>
+                                            Mean = Media,
+                                            Std = Deviazione standard,
+                                            Min = Minimo,
+                                            25% = Primo quartile,
+                                            50% = Mediana,
+                                            75% = Terzo quartile,
+                                            Max = Massimo.
+                                        </span>
+                                    </div>
                                 </td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
-    
+
                 <div class="mb-xl">
                     <h3 class="mb-lg background">FITTING DISTRIBUZIONI TEORICHE</h3>
                     <table class="table-bordered full-width">
@@ -209,7 +237,7 @@
                                 <td class="text-center">
                                     {{ "%.2f" | format(model_data.goodness_of_fit.cramer_von_mises) }}
                                     {% if model_data.goodness_of_fit.cvm_pvalue is not none %}
-                                        (p={{ "%.3f" | format(model_data.goodness_of_fit.cvm_pvalue) }})
+                                    (p={{ "%.3f" | format(model_data.goodness_of_fit.cvm_pvalue) }})
                                     {% endif %}
                                 </td>
                             </tr>
@@ -218,25 +246,29 @@
                         <tfoot>
                             <tr>
                                 <td colspan="4">
-                                    <span class="caption text-bold">Tabella {{ header_numbering[0] }}.3</span> AIC = Akaike Information Criterion, BIC = Bayesian Information Criterion, CVM = Cramér-von Mises statistic.
+                                    <div class="caption">
+                                        <span>Tabella {{ header_numbering[0] }}.3</span>
+                                        <span>AIC = Akaike Information Crit., BIC = Bayesian Information Crit.,
+                                            CVM = Cramér-von Mises statistic.</span>
+                                    </div>
                                 </td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
-    
+
                 <div class="mb-xl">
                     <h3 class="mb-lg background">GRAFICI</h3>
                     <div>
-                        <h4 class="text-center mb-md mt-lg">Istogramma campione di riferimento</h4>
+                        <h4 class="text-center mb-md mt-lg">Istogramma</h4>
                         <img src="{{ data.plots[0].svg }}" />
                     </div>
                     <div>
                         <h3 class="text-center mb-md mt-lg">
                             {% if data.metric_config.metric_type == "continuous" %}
-                                Plot Q-Q
+                            Q-Q Plot
                             {% else %}
-                                Rootogram
+                            Rootogram
                             {% endif %}
                         </h3>
                         <img src="{{ data.plots[-1].svg }}" />
@@ -256,73 +288,100 @@
                 <div class="header">
                     <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
                     {% if header_numbering %}
-                        <p>Allegato {{ header_numbering[1] }}</p>
+                    <p>Allegato {{ header_numbering[1] }}</p>
                     {% endif %}
                 </div>
             </div>
             <!-- Page Content -->
             <h2 class="mb-xl">Percentili bootstrap e validazione Monte Carlo</h2>
             <div class="two-columns">
-    
+
                 <div class="mb-xl">
                     <h3 class="mb-lg background">NOTE INTRODUTTIVE</h3>
                     <ul>
                         <li>
                             <p>
-                                In questa pagina viene presentata la tecnica di stima dei percentili campionari attraverso repliche <span class="text-italic">bootstrap</span>; tale tecnica rappresenta un approccio non parametrico e cioè libero da assunzioni teoriche  relative alla distribuzione dei dati.
+                                In questa pagina viene presentata la tecnica di stima dei percentili campionari
+                                attraverso repliche <span class="text-italic">bootstrap</span>; tale tecnica rappresenta
+                                un approccio non parametrico e cioè libero da assunzioni teoriche relative alla
+                                distribuzione dei dati.
                             </p>
                             <p>
-                                Più precisamente, vengono generate {{ data.metric_config.bootstrap_n_replicates }} repliche dal <span class="text-italic">dataset</span> originale attraverso ricampionamento casuale con reimmissione. Per ciascuna replica si calcolano i percentili di interesse, ottenendo una distribuzione di {{ data.metric_config.bootstrap_n_replicates }} valori. La stima finale dei percentili è rappresentata dalla mediana delle relative distribuzioni.
+                                Più precisamente, vengono generate {{ data.metric_config.bootstrap_n_replicates }}
+                                repliche dal <span class="text-italic">dataset</span> originale attraverso
+                                ricampionamento casuale con reimmissione. Per ciascuna replica si calcolano i percentili
+                                di interesse, ottenendo una distribuzione di {{
+                                data.metric_config.bootstrap_n_replicates }} valori. La stima finale dei percentili è
+                                rappresentata dalla mediana delle relative distribuzioni.
 
                             </p>
                         </li>
                         <li>
                             <p>
-                                La validazione dei percentili <span class="text-italic">bootstrap</span> tramite simulazione Monte Carlo costituisce un ulteriore passaggio per verificare la generalizzabilità delle stime empiriche.
+                                La validazione dei percentili <span class="text-italic">bootstrap</span> tramite
+                                simulazione Monte Carlo costituisce un ulteriore passaggio per verificare la
+                                generalizzabilità delle stime empiriche.
                             </p>
                             <p>
-                                Il processo inizia identificando la distribuzione probabilistica che meglio descrive i dati osservati. {% if header_numbering %}(cfr allegato {{ header_numbering[0] }}){% else %}(vedi pagina precedente){% endif %}.
-                                Una volta selezionato il modello ottimale e stimati i parametri, si procede alla generazione di {{ data.metric_config.montecarlo_n_samples }} campioni teorici mediante simulazione Monte Carlo. Per ogni campione simulato vengono calcolati gli stessi percentili della tecnica <span class="text-italic">bootstrap</span>, creando una distribuzione teorica di riferimento.
+                                Il processo inizia identificando la distribuzione probabilistica che meglio descrive i
+                                dati osservati. {% if header_numbering %}(cfr allegato {{ header_numbering[0] }}){% else
+                                %}(vedi pagina precedente){% endif %}.
+                                Una volta selezionato il modello ottimale e stimati i parametri, si procede alla
+                                generazione di {{ data.metric_config.montecarlo_n_samples }} campioni teorici mediante
+                                simulazione Monte Carlo. Per ogni campione simulato vengono calcolati gli stessi
+                                percentili della tecnica <span class="text-italic">bootstrap</span>, creando una
+                                distribuzione teorica di riferimento.
                             </p>
                             <p>
-                                Il confronto tra percentili <span class="text-italic">bootstrap</span> e quelli teorici avviene attraverso analisi statistiche che valutano differenze assolute e relative e rappresentazioni grafiche. Una buona concordanza indica che le stime percentiliche ottenute con la tecnica <span class="text-italic">bootstrap</span> sono generalizzabili.
+                                Il confronto tra percentili <span class="text-italic">bootstrap</span> e quelli teorici
+                                avviene attraverso analisi statistiche che valutano differenze assolute e relative e
+                                rappresentazioni grafiche. Una buona concordanza indica che le stime percentiliche
+                                ottenute con la tecnica <span class="text-italic">bootstrap</span> sono generalizzabili.
                             </p>
                         </li>
                     </ul>
                 </div>
-    
+
                 <div class="mb-xl">
-                    <h3 class="mb-lg background">PERCENTILI BOOSTRAP</h3>
+                    <h3 class="mb-lg background">PERCENTILI BOOTSTRAP</h3>
                     <table class="table-bordered full-width">
                         <thead>
                             <th class="text-left">PERC.LE</th>
                             <th class="text-center">BOOTSTRAP VALUE</th>
-                            <th class="text-center">{{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% LB</th>
-                            <th class="text-center">{{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% UB</th>
+                            <th class="text-center">{{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}%
+                                LB</th>
+                            <th class="text-center">{{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}%
+                                UB</th>
                         </thead>
                         <tbody>
                             {% for pct in data.bootstrap.percentiles %}
-                                <tr>
-                                    <td class="text-left">{{ pct.percentile | title }}</td>
-                                    <td class="text-center">{{ format_float_number | format(pct.value) }}</td>
-                                    <td class="text-center">{{ format_float_number | format(pct.ci_lower) }}</td>
-                                    <td class="text-center">{{ format_float_number | format(pct.ci_upper) }}</td>
-                                </tr>
+                            <tr>
+                                <td class="text-left">{{ pct.percentile | title }}</td>
+                                <td class="text-center">{{ format_float_number | format(pct.value) }}</td>
+                                <td class="text-center">{{ format_float_number | format(pct.ci_lower) }}</td>
+                                <td class="text-center">{{ format_float_number | format(pct.ci_upper) }}</td>
+                            </tr>
                             {% endfor %}
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="4">
-                                    <span class="caption text-bold">Tabella {{ header_numbering[1] }}.1:</span>
-                                    BOOTSTRAP VALUE = stima Bootstrap del percentile, 
-                                    {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% LB = Limite di confidenza inferiore,
-                                    {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% UB = Limite di confidenza superiore.
+                                    <div class="caption">
+                                        <span>Tabella {{ header_numbering[1] }}.1:</span>
+                                        <span>
+                                            BOOTSTRAP VALUE = stima Bootstrap del percentile,
+                                            {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% LB =
+                                            Limite di confidenza inferiore,
+                                            {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% UB =
+                                            Limite di confidenza superiore.
+                                        </span>
+                                    </div>
                                 </td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
-    
+
                 <div class="mb-xl">
                     <h3 class="mb-lg background">VALIDAZIONE MONTECARLO</h3>
                     <table class="table-bordered full-width">
@@ -340,37 +399,47 @@
                                 <td class="text-center">
                                     {{ format_float_number | format(pct.bootstrap_value) }}
                                 </td>
-                                <td class="text-center">{{ format_float_number | format(pct['coverage_%']) }} %</td>
+                                <td class="text-center">{{ format_float_number | format(pct['coverage_%']) }}%</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="5">
-                                    <span class="caption text-bold">Tabella {{ header_numbering[1] }}.2:</span> MONTE CARLO = Percentile calcolato tramite simulazione Monte Carlo, BOOTSTRAP = Percentile stimato con tecnica bootstrap, COVERAGE = Percentuale di casi in cui il valore del percentile calcolato tramite simulazione Monte Carlo è contenuto nell'intervallo di confidenza stimato con la tecnica bootstrap.</td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                                    <div class="caption">
+                                        <span>Tabella {{ header_numbering[1] }}.2:</span>
+                                        <span>
+                                            MONTE CARLO = Percentile calcolato tramite simulazione Monte Carlo,
+                                            BOOTSTRAP = Percentile stimato con tecnica bootstrap, COVERAGE = Percentuale
+                                            di casi in cui il valore del percentile calcolato tramite simulazione Monte
+                                            Carlo è contenuto nell'intervallo di confidenza stimato con la tecnica
+                                            bootstrap.
+                                </td>
+                                </span>
                 </div>
-    
-                <div class="mb-xl">
-                    <h3 class="mb-lg background">GRAFICI</h3>
-                    <div>
-                        <h4 class="text-center mb-md mt-lg">Percentili Boostrap</h4>
-                        <img src="{{ data.plots[1].svg }}" />
-                    </div>
-                    <div>
-                        <h3 class="text-center mb-md mt-lg">Perc.li Bootstrap vs Per.li Monte Carlo</h3>
-                        <img src="{{ data.plots[-2].svg }}" />
-                    </div>
+                </tr>
+                </tfoot>
+                </table>
+            </div>
+
+            <div class="mb-xl">
+                <h3 class="mb-lg background">GRAFICI</h3>
+                <div>
+                    <h4 class="text-center mb-md mt-lg">Percentili Boostrap</h4>
+                    <img src="{{ data.plots[1].svg }}" />
+                </div>
+                <div>
+                    <h3 class="text-center mb-md mt-lg">Perc.li Bootstrap vs Per.li Monte Carlo</h3>
+                    <img src="{{ data.plots[-2].svg }}" />
                 </div>
             </div>
         </div>
     </div>
 </div>
+</div>
 
 <!-- THIRD PAGE -->
- <div class="page">
+<div class="page">
     <div class="content">
         <div>
             <!-- Page Header -->
@@ -378,12 +447,12 @@
                 <div class="header">
                     <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
                     {% if header_numbering %}
-                        <p>Allegato {{ header_numbering[2] }}</p>
+                    <p>Allegato {{ header_numbering[2] }}</p>
                     {% endif %}
                 </div>
             </div>
             <!-- Page Content -->
-            <h2 class="mb-xl">Tavola di conversione</h2>
+            <h2 class="mb-xl">Tavola di conversione percentilica</h2>
             <div class="mb-xl">
                 <table class="table-bordered table-striped normative-table">
                     <thead>
@@ -400,32 +469,33 @@
                             </td>
                             <td class="text-center">
                                 {% if loop.first %}
-                                    &mdash;
+                                &mdash;
                                 {% else %}
-                                    {% if data.metric_config.metric_type == "continuous" %}
-                                        {% if data.metric_config.metric_subtype == "time" %}
-                                            da {{ (cutoff[0] + (1  / (10 ** data.metric_config.metric_precision))) | format_seconds }}
-                                        {% else %}
-                                            da {{ (cutoff[0] + (1  / (10 ** data.metric_config.metric_precision))) }}
-                                        {% endif %}
-                                    {% else %}
-                                        da {{ format_float_number | format(cutoff[0] + 1) }}
-                                    {% endif %}
+                                {% if data.metric_config.metric_type == "continuous" %}
+                                {% if data.metric_config.metric_subtype == "time" %}
+                                da {{ (cutoff[0] + (1 / (10 ** data.metric_config.metric_precision))) | format_seconds
+                                }}
+                                {% else %}
+                                da {{ (cutoff[0] + (1 / (10 ** data.metric_config.metric_precision))) }}
+                                {% endif %}
+                                {% else %}
+                                da {{ format_float_number | format(cutoff[0] + 1) }}
+                                {% endif %}
                                 {% endif %}
                             </td>
                             <td class="text-center">
                                 {% if loop.last %}
-                                    &mdash;
+                                &mdash;
                                 {% else %}
-                                    {% if data.metric_config.metric_type == "continuous" %}
-                                        {% if data.metric_config.metric_subtype == "time" %}
-                                            fino a {{ cutoff[1] | format_seconds }}
-                                        {% else %}
-                                            fino a {{ format_float_number | format(cutoff[1]) }}
-                                        {% endif %} 
-                                    {% else %}
-                                        fino a {{ format_float_number | format(cutoff[1]) }}
-                                    {% endif %}
+                                {% if data.metric_config.metric_type == "continuous" %}
+                                {% if data.metric_config.metric_subtype == "time" %}
+                                fino a {{ cutoff[1] | format_seconds }}
+                                {% else %}
+                                fino a {{ format_float_number | format(cutoff[1]) }}
+                                {% endif %}
+                                {% else %}
+                                fino a {{ format_float_number | format(cutoff[1]) }}
+                                {% endif %}
                                 {% endif %}
                             </td>
                             <td class="text-center">
@@ -438,5 +508,5 @@
             </div>
         </div>
     </div>
- </div>
+</div>
 {% endblock %}
