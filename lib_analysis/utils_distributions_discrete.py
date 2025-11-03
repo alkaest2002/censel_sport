@@ -662,34 +662,19 @@ class StatsModelsZeroInflatedPoissonDist(stats.rv_discrete):
 
 
 def get_discrete_distributions(
-    ) -> dict[str, tuple[stats.rv_continuous | stats.rv_discrete, FitFunctionType]]:
+    ) -> dict[str, stats.rv_continuous | stats.rv_discrete]:
     """
-    Fit Poisson distribution parameters to data.
+    Get a mapping of distribution names to their corresponding SciPy distribution objects.
 
     Returns:
     --------
-    dict: dictionary mapping distribution names to (distribution class, fit function) tuples
+    dict: Mapping of distribution names to distribution classes
     """
     # Mapping of distributions
     return {
-            "geometric": (
-                StatsModelsGeometricDist,
-                lambda x: StatsModelsGeometricDist.fit_parameters(x),
-            ),
-            "binomial": (
-                StatsModelsBinomialDist,
-                lambda x: StatsModelsBinomialDist.fit_parameters(x),
-            ),
-            "negative_binomial": (
-                StatsModelsNegativeBinomialDist,
-                lambda x: StatsModelsNegativeBinomialDist.fit_parameters(x),
-            ),
-            "poisson": (
-                StatsModelsPoissonDist,
-                lambda x: StatsModelsPoissonDist.fit_parameters(x),
-            ),
-            "zero_inflated_poisson": (
-                StatsModelsZeroInflatedPoissonDist,
-                lambda x: StatsModelsZeroInflatedPoissonDist.fit_parameters(x),
-            ),
+        "geometric": StatsModelsGeometricDist,
+        "binomial": StatsModelsBinomialDist,
+        "negative_binomial": StatsModelsNegativeBinomialDist,
+        "poisson": StatsModelsPoissonDist,
+        "zero_inflated_poisson": StatsModelsZeroInflatedPoissonDist,
     }

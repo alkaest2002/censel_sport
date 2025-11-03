@@ -73,18 +73,21 @@ class DistributionFitter:
         failed_models: list[str] = []
 
         # Get distributions
-        distributions: dict[str, tuple[stats.rv_discrete | stats.rv_continuous, FitFunctionType]] =\
+        distributions: dict[str, stats.rv_discrete | stats.rv_continuous] =\
             get_continuous_distributions() if metric_type == "continuous" else get_discrete_distributions()
 
         # Pre-sort data for efficiency
         sorted_data = np.sort(data)
 
-        # Fit each distribution
-        for dist_name, (dist_class, fit_func) in distributions.items():
+        # Iterate over distributions
+        for dist_name, dist_class in distributions.items():
 
             try:
-                # Fit distribution
-                parameters = fit_func(data)
+                # Get fitted parameters
+                # For continuous distributions, fix location to 0 (metric data is non-negative)
+                # For discrete distributions, use custom fit_parameters method
+                parameters = dist_class.fit(data, floc=0)\
+                    if metric_type == "continuous" else dist_class.fit_parameters(data)
 
                 # Handle case where fitting fails and returns empty parameters
                 if not parameters or len(parameters) == 0:

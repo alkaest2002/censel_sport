@@ -1,27 +1,20 @@
-
-from collections.abc import Callable
-from typing import Any
-
-import numpy as np
-from numpy.typing import NDArray
 from scipy import stats
 
-FitFunctionType = Callable[[NDArray[np.integer[Any] | np.floating[Any]]], tuple[float, ...]]
 
 def get_continuous_distributions(
-    ) -> dict[str, tuple[stats.rv_continuous | stats.rv_discrete, FitFunctionType]]:
+    ) -> dict[str, stats.rv_continuous | stats.rv_discrete]:
     """
-    Fit Poisson distribution parameters to data.
+    Get a mapping of distribution names to their corresponding SciPy distribution objects.
 
     Returns:
     --------
-    dict: dictionary mapping distribution names to (distribution class, fit function) tuples
+    dict: Mapping of distribution names to distribution classes
     """
     # Mapping of distributions
     return {
-        "exponential": (stats.expon, lambda x: stats.expon.fit(x, floc=0)),
-        "skew_normal": (stats.skewnorm, lambda x: stats.skewnorm.fit(x, floc=0)),
-        "log_normal": (stats.lognorm, lambda x: stats.lognorm.fit(x, floc=0)),
-        "gamma": (stats.gamma, lambda x: stats.gamma.fit(x, floc=0)),
-        "weibull": (stats.weibull_min, lambda x: stats.weibull_min.fit(x, floc=0)),
+        "exponential": stats.expon,
+        "skew_normal": stats.skewnorm,
+        "log_normal": stats.lognorm,
+        "gamma": stats.gamma,
+        "weibull": stats.weibull_min,
     }

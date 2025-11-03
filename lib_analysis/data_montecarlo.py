@@ -11,8 +11,6 @@ from lib_analysis.utils_generic import is_falsy
 if TYPE_CHECKING:
     from scipy import stats
 
-    from lib_analysis.data_fit import FitFunctionType
-
 
 def monte_carlo_validation(
     data_dict: dict[str, Any],
@@ -63,11 +61,11 @@ def monte_carlo_validation(
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Get distributions
-    distributions: dict[str, tuple[stats.rv_discrete | stats.rv_continuous, FitFunctionType]] =\
+    distributions: dict[str, stats.rv_continuous | stats.rv_discrete] =\
         get_continuous_distributions() if metric_type == "continuous" else get_discrete_distributions()
 
     # Get best model class
-    model_class, _ = distributions[best_model["name"]]
+    model_class = distributions[best_model["name"]]
 
     # Istantiate best model class with fitted parameters
     model = model_class(*best_model["parameters"])

@@ -20,8 +20,6 @@ if TYPE_CHECKING:
     from numpy.typing import NDArray
     from scipy import stats
 
-    from lib_analysis.data_fit import FitFunctionType
-
 def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
 
     # Extract data from dictionary
@@ -60,11 +58,11 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Get distributions
-    distributions: dict[str, tuple[stats.rv_discrete | stats.rv_continuous, FitFunctionType]] =\
+    distributions: dict[str, stats.rv_continuous | stats.rv_discrete] =\
         get_continuous_distributions() if metric_type == "continuous" else get_discrete_distributions()
 
     # Get best model class
-    model_class, _ = distributions[best_model_name]
+    model_class = distributions[best_model_name]
 
     # Instantiate best model class with fitted params
     try:
