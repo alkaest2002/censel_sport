@@ -1,28 +1,252 @@
 from collections.abc import Callable
-from typing import Any, Literal, cast
+from typing import Any, cast
 
 import numpy as np
 from numpy.typing import NDArray
 from scipy import stats
 import statsmodels.api as sm
 
+FitFunctionType = Callable[[NDArray[np.integer[Any] | np.floating[Any]]], tuple[float, ...]]
+
 # ruff: noqa: BLE001
 # ruff: noqa: SLF001
 
-# Type for distribution classes
-DistributionType = (
-    type["stats.rv_continuous"] |
-    type["stats.rv_discrete"] |
-    type["StatsModelsPoissonDist"] |
-    type["StatsModelsNegativeBinomialDist"] |
-    type["StatsModelsZeroInflatedPoissonDist"]
-)
 
-# Type for fit functions
-FitFunctionType = Callable[[NDArray[np.integer[Any] | np.floating[Any]]], tuple[float, ...]]
+class StatsModelsGeometricDist(stats.rv_discrete):
+    """Geometric distribution using scipy stats with statsmodels-style interface."""
+
+    def __init__(self, p: float | None = None) -> None:
+        self.p: float | None = p
+
+    @classmethod
+    def fit(cls, data: NDArray[np.integer[Any] | np.floating[Any]]) -> "StatsModelsGeometricDist":
+        """
+        Fit Geometric distribution to data.
+
+        The geometric distribution models the number of trials needed to get the first success.
+
+        Parameters:
+        -----------
+        data : NDArray[np.integer[Any] | np.floating[Any]]
+            Data to fit (should be positive integers)
+
+        Returns:
+        --------
+        StatsModelsGeometricDist : Fitted distribution instance
+        """
+        instance = cls()
+
+        # Method of moments estimator for geometric distribution
+        # For geometric distribution: E[X] = 1/p, so p = 1/mean
+        data_array = np.asarray(data, dtype=float)
+
+        # Filter out non-positive values as geometric distribution starts from 1
+        valid_data = data_array[data_array > 0]
+
+        if len(valid_data) == 0:
+            raise ValueError("Geometric distribution requires positive integer data")
+
+        mean_val = float(np.mean(valid_data))
+
+        if mean_val <= 0:
+            raise ValueError("Mean must be positive for geometric distribution")
+
+        instance.p = min(0.999, max(0.001, 1.0 / mean_val))  # Clamp to avoid edge cases
+
+        return instance
+
+    @classmethod
+    def fit_parameters(cls, data: NDArray[np.integer[Any] | np.floating[Any]]) -> tuple[float]:
+        """
+        Fit Geometric distribution parameters to data.
+
+        Parameters:
+        -----------
+        data : NDArray[np.integer[Any] | np.floating[Any]]
+            Data to fit
+
+        Returns:
+        --------
+        tuple[float] : Tuple containing (p,) parameter
+        """
+        fitted_dist = cls.fit(data)
+        if fitted_dist.p is None:
+            raise ValueError("Failed to fit Geometric distribution parameters")
+        return (fitted_dist.p,)
+
+    def pmf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+        """Probability mass function."""
+        if self.p is None:
+            raise ValueError("Distribution not fitted. Use .fit() first.")
+        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.geom.pmf(k, self.p))
+
+    def logpmf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+        """Log probability mass function."""
+        if self.p is None:
+            raise ValueError("Distribution not fitted. Use .fit() first.")
+        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.geom.logpmf(k, self.p))
+
+    def pdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+        """PDF method for compatibility (same as PMF for discrete distribution)."""
+        return self.pmf(k)
+
+    def logpdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+        """Log PDF method for compatibility (same as log PMF for discrete distribution)."""
+        return self.logpmf(k)
+
+    def cdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+        """Cumulative distribution function."""
+        if self.p is None:
+            raise ValueError("Distribution not fitted. Use .fit() first.")
+        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.geom.cdf(k, self.p))
+
+    def ppf(self, q: NDArray[np.floating[Any]] | float) -> NDArray[np.integer[Any]] | int:
+        """Percent point function (quantile function)."""
+        if self.p is None:
+            raise ValueError("Distribution not fitted. Use .fit() first.")
+        return cast("NDArray[np.integer[Any]] | int", stats.geom.ppf(q, self.p))
+
+    def rvs(self, size: int | tuple[int, ...] | None = 1, random_state: int | None = 42) -> NDArray[np.integer[Any]]:
+        """Generate random variates."""
+        if self.p is None:
+            raise ValueError("Distribution not fitted. Use .fit() first.")
+        return cast("NDArray[np.integer[Any]]", stats.geom.rvs(self.p, size=size, random_state=random_state))
+
+    def mean(self) -> float:
+        """Mean of the distribution."""
+        if self.p is None:
+            raise ValueError("Distribution not fitted. Use .fit() first.")
+        return float(1.0 / self.p)
+
+    def var(self) -> float:
+        """Variance of the distribution."""
+        if self.p is None:
+            raise ValueError("Distribution not fitted. Use .fit() first.")
+        return float((1.0 - self.p) / (self.p**2))
 
 
-class StatsModelsPoissonDist:
+class StatsModelsBinomialDist(stats.rv_discrete):
+    """Binomial distribution using scipy stats with statsmodels-style interface."""
+
+    def __init__(self, n: int | None = None, p: float | None = None) -> None:
+        self.n: int | None = n
+        self.p: float | None = p
+
+    @classmethod
+    def fit(cls, data: NDArray[np.integer[Any] | np.floating[Any]], n: int | None = None) -> "StatsModelsBinomialDist":
+        """
+        Fit Binomial distribution to data.
+
+        Parameters:
+        -----------
+        data : NDArray[np.integer[Any] | np.floating[Any]]
+            Data to fit (should be non-negative integers)
+        n : int | None
+            Number of trials. If None, will be estimated as max(data)
+
+        Returns:
+        --------
+        StatsModelsBinomialDist : Fitted distribution instance
+        """
+        instance = cls()
+
+        data_array = np.asarray(data, dtype=int)
+
+        # Filter out negative values
+        valid_data = data_array[data_array >= 0]
+
+        if len(valid_data) == 0:
+            raise ValueError("Binomial distribution requires non-negative integer data")
+
+        # Estimate n if not provided
+        if n is None:
+            instance.n = int(np.max(valid_data))
+        else:
+            instance.n = n
+
+        if instance.n <= 0:
+            raise ValueError("Number of trials (n) must be positive")
+
+        # Estimate p using method of moments: p = mean / n
+        mean_val = float(np.mean(valid_data))
+        instance.p = min(0.999, max(0.001, mean_val / instance.n))
+
+        return instance
+
+    @classmethod
+    def fit_parameters(
+        cls, data: NDArray[np.integer[Any] | np.floating[Any]], n: int | None = None) -> tuple[int, float]:
+        """
+        Fit Binomial distribution parameters to data.
+
+        Parameters:
+        -----------
+        data : NDArray[np.integer[Any] | np.floating[Any]]
+            Data to fit
+        n : int | None
+            Number of trials. If None, will be estimated as max(data)
+
+        Returns:
+        --------
+        tuple[int, float] : Tuple containing (n, p) parameters
+        """
+        fitted_dist = cls.fit(data, n=n)
+        if fitted_dist.n is None or fitted_dist.p is None:
+            raise ValueError("Failed to fit Binomial distribution parameters")
+        return (fitted_dist.n, fitted_dist.p)
+
+    def pmf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+        """Probability mass function."""
+        if self.n is None or self.p is None:
+            raise ValueError("Distribution not fitted. Use .fit() first.")
+        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.binom.pmf(k, self.n, self.p))
+
+    def logpmf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+        """Log probability mass function."""
+        if self.n is None or self.p is None:
+            raise ValueError("Distribution not fitted. Use .fit() first.")
+        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.binom.logpmf(k, self.n, self.p))
+
+    def pdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+        """PDF method for compatibility (same as PMF for discrete distribution)."""
+        return self.pmf(k)
+
+    def logpdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+        """Log PDF method for compatibility (same as log PMF for discrete distribution)."""
+        return self.logpmf(k)
+
+    def cdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+        """Cumulative distribution function."""
+        if self.n is None or self.p is None:
+            raise ValueError("Distribution not fitted. Use .fit() first.")
+        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.binom.cdf(k, self.n, self.p))
+
+    def ppf(self, q: NDArray[np.floating[Any]] | float) -> NDArray[np.integer[Any]] | int:
+        """Percent point function (quantile function)."""
+        if self.n is None or self.p is None:
+            raise ValueError("Distribution not fitted. Use .fit() first.")
+        return cast("NDArray[np.integer[Any]] | int", stats.binom.ppf(q, self.n, self.p))
+
+    def rvs(self, size: int | tuple[int, ...] | None = 1, random_state: int | None = 42) -> NDArray[np.integer[Any]]:
+        """Generate random variates."""
+        if self.n is None or self.p is None:
+            raise ValueError("Distribution not fitted. Use .fit() first.")
+        return cast("NDArray[np.integer[Any]]", stats.binom.rvs(self.n, self.p, size=size, random_state=random_state))
+
+    def mean(self) -> float:
+        """Mean of the distribution."""
+        if self.n is None or self.p is None:
+            raise ValueError("Distribution not fitted. Use .fit() first.")
+        return float(self.n * self.p)
+
+    def var(self) -> float:
+        """Variance of the distribution."""
+        if self.n is None or self.p is None:
+            raise ValueError("Distribution not fitted. Use .fit() first.")
+        return float(self.n * self.p * (1 - self.p))
+
+
+class StatsModelsPoissonDist(stats.rv_discrete):
     """Poisson distribution using statsmodels."""
 
     def __init__(self, lambda_: float | None = None) -> None:
@@ -130,7 +354,7 @@ class StatsModelsPoissonDist:
         return float(self._lambda)
 
 
-class StatsModelsNegativeBinomialDist:
+class StatsModelsNegativeBinomialDist(stats.rv_discrete):
     """Negative Binomial distribution using statsmodels."""
 
     def __init__(self, mu: float | None = None, alpha: float | None = None) -> None:
@@ -256,7 +480,7 @@ class StatsModelsNegativeBinomialDist:
         return float(self.mu + self.alpha * self.mu**2)
 
 
-class StatsModelsZeroInflatedPoissonDist:
+class StatsModelsZeroInflatedPoissonDist(stats.rv_discrete):
     """Zero-Inflated Poisson distribution using statsmodels."""
 
     def __init__(self, lambda_: float | None = None, pi: float | None = None) -> None:
@@ -437,27 +661,25 @@ class StatsModelsZeroInflatedPoissonDist:
         return float(mean_val + self.pi * (1 - self.pi) * self.lambda_**2)
 
 
-def get_distributions(
-        metric_type: Literal["discrete", "continuous"] | None,
-        distribution: str | None = None,
-    ) -> dict[str, tuple[DistributionType, FitFunctionType]]:
+def get_discrete_distributions(
+    ) -> dict[str, tuple[stats.rv_continuous | stats.rv_discrete, FitFunctionType]]:
     """
     Fit Poisson distribution parameters to data.
-
-    Parameters:
-    -----------
-    metric_type : Literal["discrete", "continuous"]
-
-    distribution : str | None
-        Specific distribution to get (if None, return all for the metric type)
 
     Returns:
     --------
     dict: dictionary mapping distribution names to (distribution class, fit function) tuples
     """
     # Mapping of distributions
-    distributions = {
-        "discrete": {
+    return {
+            "geometric": (
+                StatsModelsGeometricDist,
+                lambda x: StatsModelsGeometricDist.fit_parameters(x),
+            ),
+            "binomial": (
+                StatsModelsBinomialDist,
+                lambda x: StatsModelsBinomialDist.fit_parameters(x),
+            ),
             "negative_binomial": (
                 StatsModelsNegativeBinomialDist,
                 lambda x: StatsModelsNegativeBinomialDist.fit_parameters(x),
@@ -470,35 +692,4 @@ def get_distributions(
                 StatsModelsZeroInflatedPoissonDist,
                 lambda x: StatsModelsZeroInflatedPoissonDist.fit_parameters(x),
             ),
-        },
-        "continuous": {
-            "normal": (stats.norm, lambda x: stats.norm.fit(x)),
-            "lognormal": (stats.lognorm, lambda x: stats.lognorm.fit(x, floc=0)),
-            "gamma": (stats.gamma, lambda x: stats.gamma.fit(x, floc=0)),
-            "weibull": (stats.weibull_min, lambda x: stats.weibull_min.fit(x, floc=0)),
-        },
     }
-
-    # If metric type is invalid, raise error
-    if metric_type not in distributions:
-        raise ValueError(f"Unsupported metric type '{metric_type}'")
-
-    # If distribution is not valid, raise error
-    if distribution is not None and distribution not in\
-        [*distributions["discrete"].keys(), *distributions["continuous"].keys()]:
-            raise ValueError(f"Unsupported distribution '{distribution}'")
-
-    # Count distributions
-    if metric_type == "discrete":
-        if distribution is not None:
-            return {
-                distribution: distributions["discrete"][distribution],
-            }
-        return distributions["discrete"]
-
-    # Continuous distributions
-    if distribution is not None:
-        return {
-            distribution: distributions["continuous"][distribution],
-        }
-    return distributions["continuous"]
