@@ -80,7 +80,7 @@
             <div class="two-columns">
     
                 <div class="mb-xl">
-                    <h3 class="mb-lg">Note introduttive</h3>
+                    <h3 class="mb-lg background">NOTE INTRODUTTIVE</h3>
                     <ul>
                         <li>
                             <p>
@@ -129,7 +129,7 @@
                     </ul>
                 </div>
                 <div class="mb-xl">
-                    <h3 class="mb-lg">Caratteristiche dei dati</h3>
+                    <h3 class="mb-lg background">CARATTERISTICHE DEI DATI</h3>
                     <table class="table-bordered full-width">
                         <thead>
                             <th class="text-left" style="width: 60%;">FEATURE</th>
@@ -156,7 +156,7 @@
                 </div>
     
                 <div class="mb-xl">
-                    <h3 class="mb-lg">Statistiche descrittive</h3>
+                    <h3 class="mb-lg background">STATISTICHE DESCRITTIVE</h3>
                     <table class="table-bordered full-width">
                         <thead>
                             <th class="text-left" style="width: 60%;">STATISTICS</th>
@@ -190,7 +190,7 @@
                 </div>
     
                 <div class="mb-xl">
-                    <h3 class="mb-lg">Fitting delle distribuzioni teoriche</h3>
+                    <h3 class="mb-lg background">FITTING DISTRIBUZIONI TEORICHE</h3>
                     <table class="table-bordered full-width">
                         <thead>
                             <tr>
@@ -226,17 +226,17 @@
                 </div>
     
                 <div class="mb-xl">
-                    <h3 class="mb-lg">Grafici</h3>
+                    <h3 class="mb-lg background">GRAFICI</h3>
                     <div>
-                        <h4 class="text-center mb-md mt-lg">ISTOGRAMMA DEL CAMPIONE</h4>
+                        <h4 class="text-center mb-md mt-lg">Istogramma campione di riferimento</h4>
                         <img src="{{ data.plots[0].svg }}" />
                     </div>
                     <div>
                         <h3 class="text-center mb-md mt-lg">
                             {% if data.metric_config.metric_type == "continuous" %}
-                                Q-Q PLOT
+                                Plot Q-Q
                             {% else %}
-                                ROOTOGRAM
+                                Rootogram
                             {% endif %}
                         </h3>
                         <img src="{{ data.plots[-1].svg }}" />
@@ -265,7 +265,7 @@
             <div class="two-columns">
     
                 <div class="mb-xl">
-                    <h3 class="mb-lg">Note introduttive</h3>
+                    <h3 class="mb-lg background">NOTE INTRODUTTIVE</h3>
                     <ul>
                         <li>
                             <p>
@@ -292,7 +292,7 @@
                 </div>
     
                 <div class="mb-xl">
-                    <h3 class="mb-lg">Descrittive percentili bootstrap</h3>
+                    <h3 class="mb-lg background">PERCENTILI BOOSTRAP</h3>
                     <table class="table-bordered full-width">
                         <thead>
                             <th class="text-left">PERC.LE</th>
@@ -324,7 +324,7 @@
                 </div>
     
                 <div class="mb-xl">
-                    <h3 class="mb-lg">Validazione Monte Carlo</h3>
+                    <h3 class="mb-lg background">VALIDAZIONE MONTECARLO</h3>
                     <table class="table-bordered full-width">
                         <thead>
                             <th class="text-left">PERC.LE</th>
@@ -354,13 +354,13 @@
                 </div>
     
                 <div class="mb-xl">
-                    <h3 class="mb-lg">Grafici</h3>
+                    <h3 class="mb-lg background">GRAFICI</h3>
                     <div>
-                        <h4 class="text-center mb-md mt-lg">PERCENTILI BOOTSTRAP</h4>
+                        <h4 class="text-center mb-md mt-lg">Percentili Boostrap</h4>
                         <img src="{{ data.plots[1].svg }}" />
                     </div>
                     <div>
-                        <h3 class="text-center mb-md mt-lg">PERC.LI BOOTSTRAP vs PERC.LI MONTE CARLO</h3>
+                        <h3 class="text-center mb-md mt-lg">Perc.li Bootstrap vs Per.li Monte Carlo</h3>
                         <img src="{{ data.plots[-2].svg }}" />
                     </div>
                 </div>
@@ -383,7 +383,7 @@
                 </div>
             </div>
             <!-- Page Content -->
-            <h2 class="mb-xl">Tavole normative percentiliche</h2>
+            <h2 class="mb-xl">Tavola di conversione</h2>
             <div class="mb-xl">
                 <table class="table-bordered table-striped normative-table">
                     <thead>
