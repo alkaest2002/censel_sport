@@ -70,12 +70,6 @@ def main() -> int:
         print(f"{step_counter}. Computing bootstrap percentiles...")
         data_dict, bootstrap_samples = compute_bootstrap_percentiles(data_dict=data_dict)
 
-        ##############################################################################################
-        # Apply percentile-based standardization to data
-        ##############################################################################################
-        step_counter += 1
-        print(f"{step_counter}. Applying standardization...")
-        data_dict = compute_standard_scores(data_dict)
 
         ###############################################################################################
         # Perform Montecarlo simulation
@@ -90,6 +84,13 @@ def main() -> int:
         step_counter += 1
         print(f"{step_counter}. Saving plots...")
         data_dict = create_plots(data_dict)
+
+        ##############################################################################################
+        # Apply percentile-based standardization to data
+        ##############################################################################################
+        step_counter += 1
+        print(f"{step_counter}. Applying standardization...")
+        data_dict = compute_standard_scores(data_dict)
 
         ##############################################################################################
         # Save results
