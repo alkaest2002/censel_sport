@@ -19,8 +19,8 @@ def get_continuous_distributions(
     """
     # Mapping of distributions
     return {
-        "exponential": (stats.expon, lambda x: stats.expon.fit(x)),
-        "skew_normal": (stats.skewnorm, lambda x: stats.skewnorm.fit(x)),
+        "exponential": (stats.expon, lambda x: stats.expon.fit(x, floc=0)),
+        "skew_normal": (stats.skewnorm, lambda x: stats.skewnorm.fit(x, floc=0)),
         "log_normal": (stats.lognorm, lambda x: stats.lognorm.fit(x, floc=0)),
         "gamma": (stats.gamma, lambda x: stats.gamma.fit(x, floc=0)),
         "weibull": (stats.weibull_min, lambda x: stats.weibull_min.fit(x, floc=0)),
