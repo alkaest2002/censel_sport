@@ -141,14 +141,14 @@
                                 <td class="text-center">{{ data.clean.descriptive_stats.count | int }}</td>
                             </tr>
                             <tr>
-                                <td class="text-left">MEASUREMENT UNIT</td>
+                                <td class="text-left">UNIT</td>
                                 <td class="text-center">{{ data.metric_config.metric_unit }}</td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="4">
-                                    <span class="caption text-bold">Tabella {{ header_numbering[0] }}.1</span> SAMPLE SIZE = Numerosità campionaria, MEASUREMENT UNIT = Unità di misura.
+                                    <span class="caption text-bold">Tabella {{ header_numbering[0] }}.1</span> SAMPLE SIZE = Num.tà campionaria, UNIT = Unità di misura.
                                 </td>
                             </tr>
                         </tfoot>
@@ -218,8 +218,7 @@
                         <tfoot>
                             <tr>
                                 <td colspan="4">
-                                    <span class="caption text-bold">Tabella {{ header_numbering[0] }}.3</span> MODEL = Modello, AIC = Akaike Information
-                                    Criterion, BIC = Bayesian Information Criterion, CVM = Cramér-von Mises statistic.
+                                    <span class="caption text-bold">Tabella {{ header_numbering[0] }}.3</span> AIC = Akaike Information Criterion, BIC = Bayesian Information Criterion, CVM = Cramér-von Mises statistic.
                                 </td>
                             </tr>
                         </tfoot>
@@ -296,10 +295,10 @@
                     <h3 class="mb-lg">Descrittive percentili bootstrap</h3>
                     <table class="table-bordered full-width">
                         <thead>
-                            <th class="text-left">PERC.</th>
-                            <th class="text-center">VALUE</th>
-                            <th class="text-center">LOWER BOUND</th>
-                            <th class="text-center">UPPER BOUND</th>
+                            <th class="text-left">PERC.LE</th>
+                            <th class="text-center">BOOTSTRAP VALUE</th>
+                            <th class="text-center">{{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% LB</th>
+                            <th class="text-center">{{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% UB</th>
                         </thead>
                         <tbody>
                             {% for pct in data.bootstrap.percentiles %}
@@ -315,8 +314,9 @@
                             <tr>
                                 <td colspan="4">
                                     <span class="caption text-bold">Tabella {{ header_numbering[1] }}.1:</span>
-                                    Intervallo di confidenza al {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}%,
-                                    Unità di misura: {{ data.metric_config.metric_unit }}.
+                                    BOOTSTRAP VALUE = stima Bootstrap del percentile, 
+                                    {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% LB = Limite di confidenza inferiore,
+                                    {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% UB = Limite di confidenza superiore.
                                 </td>
                             </tr>
                         </tfoot>
@@ -327,19 +327,19 @@
                     <h3 class="mb-lg">Validazione Monte Carlo</h3>
                     <table class="table-bordered full-width">
                         <thead>
-                            <th class="text-left">PERC.</th>
-                            <th class="text-center">BOOTSTRAP</th>
+                            <th class="text-left">PERC.LE</th>
                             <th class="text-center">MONTE CARLO</th>
-                            <th class="text-center">BIAS</th>
+                            <th class="text-center">BOOTSTRAP</th>
                             <th class="text-center">COVERAGE</th>
                         </thead>
                         <tbody>
                             {% for pct in data.montecarlo.results %}
                             <tr>
                                 <td class="text-left">{{ pct.percentile | upper }}</td>
-                                <td class="text-center">{{ format_float_number | format(pct.bootstrap_value) }}</td>
                                 <td class="text-center">{{ format_float_number | format(pct.montecarlo_value) }}</td>
-                                <td class="text-center">{{ format_float_number | format(pct.bias) }}</td>
+                                <td class="text-center">
+                                    {{ format_float_number | format(pct.bootstrap_value) }}
+                                </td>
                                 <td class="text-center">{{ format_float_number | format(pct['coverage_%']) }} %</td>
                             </tr>
                             {% endfor %}
@@ -347,9 +347,7 @@
                         <tfoot>
                             <tr>
                                 <td colspan="5">
-                                    <span class="caption text-bold">Tabella {{ header_numbering[1] }}.2:</span> Percentili bootstrap e intervalli
-                                    di confidenza al {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}%, 
-                                    Unità di misura: {{ data.metric_config.metric_unit }}.</td>
+                                    <span class="caption text-bold">Tabella {{ header_numbering[1] }}.2:</span> MONTE CARLO = Percentile calcolato tramite simulazione Monte Carlo, BOOTSTRAP = Percentile stimato con tecnica bootstrap, COVERAGE = Percentuale di casi in cui il valore del percentile calcolato tramite simulazione Monte Carlo è contenuto nell'intervallo di confidenza stimato con la tecnica bootstrap.</td>
                             </tr>
                         </tfoot>
                     </table>
