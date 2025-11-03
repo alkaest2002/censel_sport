@@ -21,15 +21,15 @@ def _validate_data_points(
         plot_name: str,
     ) -> tuple[NDArray[np.integer[Any] | np.floating[Any]], int]:
     """
-        Checks minimum number of data-points.
+        Validate the data points for plotting.
 
     Parameters:
     ------------
-        data: NDArray
-            Data to plot
+    data: NDArray
+        Data to plot
 
-        plot_name: str
-            Name of the plot
+    plot_name: str
+        Name of the plot
 
     Returns:
     -----------
@@ -61,19 +61,16 @@ def _validate_data_points(
     return data, data.size
 
 def figure_to_svg_string(fig: Figure) -> str:
-    """Convert a matplotlib figure to an SVG string ready for file saving.
-
-    Takes a matplotlib figure object and converts it to an SVG format string
-    that can be directly saved to an .svg file. The figure is automatically
-    closed after conversion to free memory.
+    """Convert a matplotlib figure to an SVG string.
 
     Parameters:
     ------------
-        fig: Matplotlib figure object to convert.
+    fig: Figure
+        Matplotlib figure object to convert.
 
     Returns:
     -----------
-    SVG string content ready to be written to a file.
+    str: SVG content ready to be written to a file.
     """
     # Initialize an in-memory text buffer for SVG content
     buffer = io.BytesIO()
@@ -553,6 +550,7 @@ def plot_montecarlo(comparison_data: list[dict[str, Any]]) -> str:
     diag_min = data_min - margin
     diag_max = data_max + margin
 
+    # Create perfect agreement diagonal line
     diagonal = np.linspace(diag_min, diag_max, 100)
     ax.plot(diagonal, diagonal, c="#CCCCCC", linestyle="--", linewidth=2,
         label="Perfect Agreement")
