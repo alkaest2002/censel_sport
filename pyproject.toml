@@ -409,3 +409,6 @@ exclude_lines = [
     "@(abc\\.)?abstractmethod",
     "\\.\\.\\.",
 ]
+
+[tool.bandit]
+exclude_dirs = ["./report.py"]
