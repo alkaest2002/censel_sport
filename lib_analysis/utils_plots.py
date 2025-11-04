@@ -181,13 +181,13 @@ def plot_histogram_with_fitted_model(
         # Calculate frequencies (normalized if density=True)
         if density:
             frequencies: NDArray[np.floating[Any]] = counts / n
-            ylabel: str = "Probability"
+            ylabel: str = "Probabilità"
         else:
             frequencies = counts
-            ylabel = "Frequency"
+            ylabel = "Frequenza"
 
         # Create bar plot for observed data
-        ax.bar(unique_values, frequencies, width=0.2, color=NEUTRAL_COLOR, linewidth=1, label="Observed data")
+        ax.bar(unique_values, frequencies, width=0.2, color=NEUTRAL_COLOR, linewidth=1, label="Dati osservati")
 
         # Create x range for theoretical PMF
         x_min, x_max = max(0, np.min(unique_values)), np.max(unique_values)
@@ -222,11 +222,11 @@ def plot_histogram_with_fitted_model(
             color=NEUTRAL_COLOR_LIGHT,
             edgecolor=NEUTRAL_COLOR_LIGHT,
             linewidth=0.5,
-            label="Observed data",
+            label="Dati osservati",
         )
 
         # Determine ylabel based on density setting
-        ylabel = "Density" if density else "Frequency"
+        ylabel = "Densità" if density else "Frequenza"
 
         # Compute x range for theoretical PDF
         x_min, x_max = max(0, np.min(data)), np.max(data)
@@ -248,7 +248,7 @@ def plot_histogram_with_fitted_model(
             raise AttributeError("---> Model must have pdf() method for continuous data") from e
 
     # Common formatting for both discrete and continuous
-    ax.set_xlabel("Values", fontsize=BASE_FONTSIZE)
+    ax.set_xlabel("Valori", fontsize=BASE_FONTSIZE)
     ax.set_ylabel(ylabel, fontsize=BASE_FONTSIZE)
     ax.legend(fontsize=BASE_FONTSIZE - 2, frameon=False)
     ax.yaxis.set_ticks_position("both")
@@ -294,17 +294,17 @@ def plot_qq_plot(
 
     # Create the Q-Q scatter plot
     ax.scatter(x, y, alpha=BASE_ALPHA, c=PRIMARY_COLOR,
-               edgecolors=PRIMARY_COLOR, linewidths=0.5, s=50, label="Data points")
+               edgecolors=PRIMARY_COLOR, linewidths=0.5, s=50, label="Dati osservati")
 
     # Plot diagonal reference line
     data_min: float = float(np.min([x, y]))
     data_max: float = float(np.max([x, y]))
     diag: NDArray[np.floating[Any]] = np.linspace(data_min, data_max, 1000)
-    ax.plot(diag, diag, color="k", linestyle="--", linewidth=2, label="Fit line")
+    ax.plot(diag, diag, color="k", linestyle="--", linewidth=2, label="Linea di riferimento (y=x)")
 
     # Add labels and formatting
-    ax.set_xlabel(f"{model_name} Quantiles", fontsize=BASE_FONTSIZE)
-    ax.set_ylabel("Sample Quantiles", fontsize=BASE_FONTSIZE)
+    ax.set_xlabel(f"Quantili {model_name}", fontsize=BASE_FONTSIZE)
+    ax.set_ylabel("Quantili del campione", fontsize=BASE_FONTSIZE)
     ax.legend(fontsize=BASE_FONTSIZE-2, frameon=False)
     ax.yaxis.set_ticks_position("both")
     ax.set_xlim(*_get_x_lim_with_padding(data))
@@ -406,14 +406,14 @@ def plot_hanging_rootogram(
     ax.axhline(y=1, color="gray", linestyle="--", alpha=BASE_ALPHA, linewidth=1.5)
 
     # Add 1 reference line (x-axis)
-    ax.axhline(y=0, color="gray", linestyle="-", alpha=BASE_ALPHA, linewidth=1.5, label="Reference line (x-axis)")
+    ax.axhline(y=0, color="gray", linestyle="-", alpha=BASE_ALPHA, linewidth=1.5, label="Linea di riferimento (asse x)")
 
     # Add 1 reference line (x-axis)
     ax.axhline(y=-1, color="gray", linestyle="--", alpha=BASE_ALPHA, linewidth=1.5)
 
     # Formatting
-    ax.set_xlabel("Values", fontsize=BASE_FONTSIZE)
-    ax.set_ylabel("Square Root of Frequency", fontsize=BASE_FONTSIZE)
+    ax.set_xlabel("Valori", fontsize=BASE_FONTSIZE)
+    ax.set_ylabel("Radice quadrata della frequenza", fontsize=BASE_FONTSIZE)
     ax.legend(fontsize=BASE_FONTSIZE-2, frameon=False)
 
     # Set integer ticks on x-axis
@@ -484,17 +484,17 @@ def plot_bootstrap_percentile_with_ci(
 
     ax.fill_between(percentiles, ci_lower, ci_upper,
         alpha=BASE_ALPHA, color="lightblue",
-        label=f"{ci_percentage}% Confidence Interval")
+        label=f"Intervallo di Confidenza {ci_percentage}%")
 
     # Plot percentile estimates as points connected by lines
     ax.plot(percentiles, values, color=PRIMARY_COLOR, linewidth=2,
         marker="o", markersize=6, markerfacecolor=PRIMARY_COLOR,
         markeredgecolor=PRIMARY_COLOR, markeredgewidth=2,
-        label="Percentile Estimates")
+        label="Stime Percentili")
 
     # Formatting
-    ax.set_xlabel("Percentiles", fontsize=BASE_FONTSIZE)
-    ax.set_ylabel("Values", fontsize=BASE_FONTSIZE)
+    ax.set_xlabel("Percentili", fontsize=BASE_FONTSIZE)
+    ax.set_ylabel("Valori", fontsize=BASE_FONTSIZE)
     ax.legend(fontsize=BASE_FONTSIZE-2, frameon=False)
 
     # Set reasonable x-axis limits and ticks
@@ -605,8 +605,8 @@ def plot_montecarlo_vs_bootstrap(
     ax.set_xlim(0.5, len(positions) + 0.5)
     ax.set_xticks(positions)
     ax.set_xticklabels(percentile_labels)
-    ax.set_xlabel("Percentiles", fontsize=BASE_FONTSIZE)
-    ax.set_ylabel("Values", fontsize=BASE_FONTSIZE)
+    ax.set_xlabel("Percentili", fontsize=BASE_FONTSIZE)
+    ax.set_ylabel("Valori", fontsize=BASE_FONTSIZE)
 
     # Position y-axis ticks on both sides following utils_plots
     ax.yaxis.set_ticks_position("both")
@@ -615,10 +615,10 @@ def plot_montecarlo_vs_bootstrap(
     legend_elements = [
         Line2D([0], [0], color=PRIMARY_COLOR, marker="s", linestyle="None",
                markersize=10, markerfacecolor=PRIMARY_COLOR, markeredgecolor=PRIMARY_COLOR,
-               label="Bootstrap Distribution"),
+               label="Distribuzione Bootstrap"),
         Line2D([0], [0], color=SECONDARY_COLOR, marker="s", linestyle="None",
                markersize=10, markerfacecolor=SECONDARY_COLOR, markeredgecolor=SECONDARY_COLOR,
-               label="Monte Carlo Distribution"),
+               label="Distribuzione Monte Carlo"),
     ]
     ax.legend(handles=legend_elements, fontsize=BASE_FONTSIZE-2, frameon=False, loc="upper left")
 
