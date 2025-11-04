@@ -142,12 +142,12 @@
                     <h3 class="mb-lg background">CARATTERISTICHE DEI DATI</h3>
                     <table class="table-bordered full-width">
                         <thead>
-                            <th class="text-left" style="width: 60%;">FEATURE</th>
-                            <th class="text-center">VALUE</th>
+                            <th class="text-left" style="width: 60%;">CARATTERISTICA</th>
+                            <th class="text-center">VALORE</th>
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="text-left">Type of metric</td>
+                                <td class="text-left">Metrica</td>
                                 <td class="text-center">
                                     {% if data.metric_config.metric_type == "continuous" %}
                                     continua
@@ -157,11 +157,11 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td class="text-left">Measurement unit</td>
+                                <td class="text-left">Unità di misura</td>
                                 <td class="text-center">{{ data.metric_config.metric_unit }}</td>
                             </tr>
                             <tr>
-                                <td class="text-left">Sample size</td>
+                                <td class="text-left">Dimensione del campione</td>
                                 <td class="text-center">{{ data.clean.descriptive_stats.count | int }}</td>
                             </tr>
                         </tbody>
@@ -171,8 +171,7 @@
                                     <div class="caption">
                                         <span>Tabella {{ header }}1.1</span>
                                         <span>
-                                            Type of metric = Tipo di metrica, Measurement unit = Unità di misura, Sample
-                                            Size = Numerosità campionaria.
+                                            La metrica oggetto di studio può essere sia continua (es., tempo) che discreta (es., numero di ripetizioni).
                                         </span>
                                     </div>
                                 </td>
@@ -185,18 +184,34 @@
                     <h3 class="mb-lg background">STATISTICHE DESCRITTIVE</h3>
                     <table class="table-bordered full-width">
                         <thead>
-                            <th class="text-left" style="width: 60%;">STATISTICS</th>
-                            <th class="text-center">VALUE</th>
+                            <th class="text-left" style="width: 60%;">STATISTICA</th>
+                            <th class="text-center">VALORE</th>
                         </thead>
                         <tbody>
-                            {% for key, value in data.clean.descriptive_stats.items() %}
-                            {% if loop.index0 > 0 %}
                             <tr>
-                                <td class="text-left">{{ key | title }}</td>
-                                <td class="text-center">{{ format_float_number | format(value) }}</td>
+                                <td class="text-left">Media</td>
+                                <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.mean) }}</td>
                             </tr>
-                            {% endif %}
-                            {% endfor %}
+                            <tr>
+                                <td class="text-left">Mediana</td>
+                                <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats["50%"]) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Deviazione standard</td>
+                                <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.std) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">IQR</td>
+                                <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats["75%"] - data.clean.descriptive_stats["25%"]) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Minimo</td>
+                                <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.min) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Massimo</td>
+                                <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.max) }}</td>
+                            </tr>
                         </tbody>
                         <tfoot>
                             <tr>
@@ -204,13 +219,7 @@
                                     <div class="caption">
                                         <span>Tabella {{ header }}1.2</span>
                                         <span>
-                                            Mean = Media,
-                                            Std = Deviazione standard,
-                                            Min = Minimo,
-                                            25% = Primo quartile,
-                                            50% = Mediana,
-                                            75% = Terzo quartile,
-                                            Max = Massimo.
+                                           IQR = Interquartile Range (differenza tra 75° e 25° percentile).
                                         </span>
                                     </div>
                                 </td>
@@ -223,7 +232,7 @@
                     <table class="table-bordered full-width">
                         <thead>
                             <tr>
-                                <th class="text-left">MODEL</th>
+                                <th class="text-left">DISTRIBUZIONE</th>
                                 <th class="text-center">AIC</th>
                                 <th class="text-center">BIC</th>
                                 <th class="text-center">CVM</th>
@@ -346,7 +355,7 @@
                     <table class="table-bordered full-width">
                         <thead>
                             <th class="text-left">PERC.LE</th>
-                            <th class="text-center">BOOTSTRAP VALUE</th>
+                            <th class="text-center">STIMA BOOTSTRAP</th>
                             <th class="text-center">{{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}%
                                 LB</th>
                             <th class="text-center">{{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}%
@@ -368,7 +377,6 @@
                                     <div class="caption">
                                         <span>Tabella {{ header }}2.1:</span>
                                         <span>
-                                            BOOTSTRAP VALUE = stima Bootstrap del percentile,
                                             {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% LB =
                                             Limite di confidenza inferiore,
                                             {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% UB =
@@ -388,7 +396,7 @@
                             <th class="text-left">PERC.LE</th>
                             <th class="text-center">MONTE CARLO</th>
                             <th class="text-center">BOOTSTRAP</th>
-                            <th class="text-center">COVERAGE</th>
+                            <th class="text-center">COPERTURA</th>
                         </thead>
                         <tbody>
                             {% for pct in data.montecarlo.results %}
@@ -409,7 +417,7 @@
                                         <span>Tabella {{ header }}2.2:</span>
                                         <span>
                                             MONTE CARLO = Percentile calcolato con simulazione Monte Carlo,
-                                            BOOTSTRAP = Percentile stimato con tecnica Bootstrap, COVERAGE = Percentuale
+                                            BOOTSTRAP = Percentile stimato con tecnica Bootstrap, COPERTURA = Percentuale
                                             di casi in cui il valore del percentile calcolato con simulazione Monte
                                             Carlo è contenuto nell'intervallo di confidenza stimato con tecnica
                                             Bootstrap.
