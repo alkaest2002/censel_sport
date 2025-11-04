@@ -109,11 +109,11 @@ def monte_carlo_validation(
         # Compute montecarlo values
         montecarlo_value = float(np.median(montecarlo_values))\
             if metric_type == "continuous" else int(np.median(montecarlo_values))
-        montecarlo_std = np.std(montecarlo_values)
         montecarlo_min = np.min(montecarlo_values)
         montecarlo_max = np.max(montecarlo_values)
-        montecarlo_iqr = np.percentile(montecarlo_values, 75, method=percentile_method)\
-            - np.percentile(montecarlo_values, 25, method=percentile_method)
+        montecarlo_first_quartile = np.percentile(montecarlo_values, 25, method=percentile_method)
+        montecarlo_third_quartile = np.percentile(montecarlo_values, 75, method=percentile_method)
+        montecarlo_iqr = montecarlo_third_quartile - montecarlo_first_quartile
         bias = montecarlo_value - bootstrap_value
         relative_bias = (bias / bootstrap_value) * 100 if bootstrap_value != 0 else 0
         coverage = np.mean((montecarlo_values >= bootstrap_ci_lower) &
@@ -121,14 +121,12 @@ def monte_carlo_validation(
 
         validation_results.append({
             "percentile": f"{p}",
-            "bootstrap_value": bootstrap_value,
-            "bootstrap_ci_lower": bootstrap_ci_lower,
-            "bootstrap_ci_upper": bootstrap_ci_upper,
-            "montecarlo_value":montecarlo_value,
-            "montecarlo_std_error": montecarlo_std,
-            "montecarlo_min": montecarlo_min,
-            "montecarlo_max": montecarlo_max,
-            "montecarlo_iqr": montecarlo_iqr,
+            "value":montecarlo_value,
+            "min": montecarlo_min,
+            "max": montecarlo_max,
+            "first_quartile": montecarlo_first_quartile,
+            "third_quartile": montecarlo_third_quartile,
+            "iqr": montecarlo_iqr,
             "bias": bias,
             "relative_bias_%": relative_bias,
             "coverage_%": coverage,
