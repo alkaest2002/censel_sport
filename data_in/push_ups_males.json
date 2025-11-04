@@ -1,6 +1,6 @@
 {
     "id": "push_ups_males",
-    "title": "Flessioni - genere maschile",
+    "title": "Flessioni - Maschi",
     "source_type": "synthetic",
     "synthetic_n_samples": 300,
     "source_filename": null,
