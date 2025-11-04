@@ -420,7 +420,8 @@ def plot_hanging_rootogram(
 
 
 def plot_bootstrap_percentile_with_ci(
-        percentile_data: list[dict[str, Any]],
+        bootstrap_requested_percentiles: list[dict[str, Any]],
+        bootstrap_all_percentiles: list[dict[str, Any]],
     ) -> str:
     """
     Create a plot of bootstrap percentile estimates with confidence intervals.
@@ -430,14 +431,11 @@ def plot_bootstrap_percentile_with_ci(
 
     Parameters:
     -----------
-    percentile_data : list[dict]
-        List of dictionaries, each containing:
-        - "percentile": percentile value (0-100)
-        - "value": estimated percentile value
-        - "ci_level": confidence level (e.g., 0.95)
-        - "ci_lower": lower confidence bound
-        - "ci_upper": upper confidence bound
-        - "std_error": standard error (optional, for display)
+    bootstrap_requested_percentiles : list[dict]
+        List of requested percentiles
+
+    bootstrap_all_percentiles: list[dict]
+        List of all percentiles from 1 to 99
 
     Returns:
     --------
@@ -445,29 +443,13 @@ def plot_bootstrap_percentile_with_ci(
     """
     # Extract data arrays
     try:
-        percentiles = np.array([item["percentile"] for item in percentile_data])
-        values = np.array([item["value"] for item in percentile_data])
-        ci_lower = np.array([item["ci_lower"] for item in percentile_data])
-        ci_upper = np.array([item["ci_upper"] for item in percentile_data])
-        ci_levels = np.array([item["ci_level"] for item in percentile_data])
-
-        # Optional: extract standard errors if available
-        std_errors = None
-        if all("std_error" in item for item in percentile_data):
-            std_errors = np.array([item["std_error"] for item in percentile_data])
+        percentiles = np.array([item["percentile"] for item in bootstrap_all_percentiles])
+        ci_lower = np.array([item["ci_lower"] for item in bootstrap_all_percentiles])
+        ci_upper = np.array([item["ci_upper"] for item in bootstrap_all_percentiles])
+        ci_levels = np.array([item["ci_level"] for item in bootstrap_all_percentiles])
 
     except KeyError as e:
         raise KeyError(f"---> Missing required key in percentile data: {e}") from e
-
-    # Sort data by percentile for proper plotting
-    sort_idx = np.argsort(percentiles)
-    percentiles = percentiles[sort_idx]
-    values = values[sort_idx]
-    ci_lower = ci_lower[sort_idx]
-    ci_upper = ci_upper[sort_idx]
-    ci_levels = ci_levels[sort_idx]
-    if std_errors is not None:
-        std_errors = std_errors[sort_idx]
 
     # Create the plot
     figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
@@ -482,20 +464,31 @@ def plot_bootstrap_percentile_with_ci(
         alpha=BASE_ALPHA, color="lightblue",
         label=f"Intervallo di Confidenza {ci_percentage}%")
 
+    # get requested percentiles for highlighting
+    requested_percentiles = [item["percentile"] for item in bootstrap_requested_percentiles]
+    requested_percentile_values = [item["value"] for item in bootstrap_requested_percentiles]
+
     # Plot percentile estimates as points connected by lines
-    ax.plot(percentiles, values, color=PRIMARY_COLOR, linewidth=2,
+    ax.plot(requested_percentiles, requested_percentile_values, color=PRIMARY_COLOR, linewidth=0,
         marker="o", markersize=6, markerfacecolor=PRIMARY_COLOR,
         markeredgecolor=PRIMARY_COLOR, markeredgewidth=2,
         label="Stime Percentili")
+
+    # plot a vertical line for each requested percentile
+    for rp, rv in zip(requested_percentiles, requested_percentile_values, strict=True):
+        ax.vlines(rp, ymin=0, ymax=rv, colors=PRIMARY_COLOR, linewidth=1)
 
     # Formatting
     ax.set_xlabel("Percentili", fontsize=BASE_FONTSIZE)
     ax.set_ylabel("Valori", fontsize=BASE_FONTSIZE)
     ax.legend(fontsize=BASE_FONTSIZE-2, frameon=False)
 
+    # Constrain y axis to start at 0
+    ax.set_ylim(bottom=0)
+
     # Set reasonable x-axis limits and ticks
     ax.set_xlim(max(0, np.min(percentiles) - 5), min(100, np.max(percentiles) + 5))
-    ax.set_xticks(percentiles)
+    ax.set_xticks(requested_percentiles)
     ax.yaxis.set_ticks_position("both")
 
     return figure_to_svg_string(figure)
