@@ -60,13 +60,20 @@ def clean_data(
     removed_outliers = len(clean_data) - np.sum(outlier_mask)
     final_data = clean_data[outlier_mask]
 
+    # Statistics and quantiles
+    statistics = pd.DataFrame(final_data).describe().squeeze()
+
+    # Add kurtosis and skewness
+    statistics["kurtosis"] = pd.Series(final_data).kurtosis() # type: ignore[index]
+    statistics["skewness"] = pd.Series(final_data).skew() # type: ignore[index]
+
     # Update data dictionary
     data_dict["clean"] = ({
         "data": final_data,
-         "quantiles": {
+        "quantiles": {
             f"q{int(q*100)}": cast("float", np.quantile(final_data, q)) for q in np.arange(0.01, 1., 0.01)
         },
-        "descriptive_stats": pd.DataFrame(final_data).describe().squeeze().to_dict(), # type: ignore[union-attr]
+        "descriptive_stats": statistics.to_dict(), # type: ignore[union-attr]
         "metadata": {
             "removed_invalid": removed_invalid,
             "removed_outliers": removed_outliers,
