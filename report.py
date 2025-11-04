@@ -7,8 +7,8 @@ a PDF using WeasyPrint. It is intended to be used as an executable script.
 Example:
     $ python report.py path/to/data.json
 """
-
 from pathlib import Path
+import subprocess
 import sys
 from typing import Any
 
@@ -35,19 +35,27 @@ def main() -> int:
 
     # Add parser argument numbering for report generation
     parser.add_argument(
-        "--header-numbering", "-x",
+        "--header-letter", "-l",
         required=True,
         type=str,
-        help="Numbering style for report header section (e.g., 'A1', 'A2')",
+        help="Letter for report header section (e.g., 'A')",
     )
 
     parser.add_argument(
-        "--page-numbering-start", "-p",
-        required=False,
+        "--page-number", "-n",
+        required=True,
         type=int,
         help="Starting page number for report pages (e.g., 1)",
     )
 
+    # Add parser argument numbering for report generation
+    parser.add_argument(
+        "--recompute", "-x",
+        action="store_true",
+        help="Re-run analysys",
+    )
+
+    # Parse arguments
     args = parser.parse_args()
 
     # Validate the file path
@@ -56,6 +64,15 @@ def main() -> int:
     except (FileNotFoundError, ValueError) as e:
         print(f"Error: {e}")
         return 1
+
+    # Re-run analys, if requested
+    if args.recompute:
+       analysis_script = Path("analysis.py").resolve()
+       # Validate that the analysis script exists and is safe to execute
+       if not analysis_script.exists():
+           print(f"Error: Analysis script not found: {analysis_script}")
+           return 1
+       _ = subprocess.run([sys.executable, str(analysis_script), "-f", args.filepath], check=True)
 
     # Init jinja environment
     templates_dir = Path("./lib_report").resolve()
@@ -76,10 +93,8 @@ def main() -> int:
         template = jinja_env.get_template("report.html")
         output_pdf = validated_path.with_suffix(".pdf")
         output_html = validated_path.with_suffix(".html")
-        header_numbering = list(map(str.strip, args.header_numbering.split(","))) if args.header_numbering else []
-        page_numbering_start = args.page_numbering_start if args.page_numbering_start else 1
         rendered_html: str =\
-            template.render(data=data, header_numbering=header_numbering, page_numbering_start=page_numbering_start)
+            template.render(data=data, header=args.header_letter, page=args.page_number)
 
         # Write html
         with output_html.open("w") as fout:
@@ -95,7 +110,6 @@ def main() -> int:
         return 2
 
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())
