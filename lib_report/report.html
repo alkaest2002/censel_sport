@@ -58,10 +58,10 @@
         font-weight: bold;
         margin-right: 3px;
     }
-    
+
     .footer {
         position: absolute;
-        bottom: 18pt;
+        bottom: 0;
         display: inline;
         width: 100%;
         text-align: center;
@@ -72,7 +72,6 @@
 
 {% block body %}
 {% set format_float_number = "%." + data.metric_config.metric_precision | string + "f" %}
-
 <!-- FIRST PAGE -->
 <div class="page">
     <div class="content">
@@ -81,15 +80,13 @@
             <div class="mb-xxl">
                 <div class="header">
                     <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
-                    {% if header_numbering %}
-                    <p>Allegato {{ header_numbering[0] }}</p>
-                    {% endif %}
+                    <p>Allegato {{ header }}1</p>
                 </div>
             </div>
+
             <!-- Page Content -->
             <h2 class="mb-xl">Campione di riferimento</h2>
             <div class="two-columns">
-
                 <div class="mb-xl">
                     <h3 class="mb-lg background">NOTE INTRODUTTIVE</h3>
                     <ul>
@@ -122,14 +119,15 @@
                         <li>
                             <p>
                                 Sempre in questa pagina, viene presentata la procedura di <span
-                                    class="text-italic">fitting</span> dei dati campionari a una
-                                famiglia di distribuzioni teoriche (<span class="text-italic">{% for model in data.fit.fitted_models.keys() %}{{ model | replace("_", " ") | title }}{% if not loop.last %}, {% endif %}{% endfor %}</span>).</p>
+                                    class="text-italic">adattamento</span> dei dati campionari a una
+                                famiglia di distribuzioni teoriche (<span class="text-italic">{% for model in
+                                    data.fit.fitted_models.keys() %}{{ model | replace("_", " ") | title }}{% if not
+                                    loop.last %}, {% endif %}{% endfor %}</span>).</p>
                             <p>
                                 La distribuzione con migliore adattamento (<span class="text-italic">fit</span>) sarà
                                 utilizzata
                                 per confermare l'affidabilità della tavola di conversione
-                                attraverso il metodo della simulazione Monte Carlo {% if header_numbering
-                                %}(cfr allegato {{ header_numbering[1] }}){% else %}(vedi pagina successiva){% endif %}.
+                                attraverso il metodo della simulazione Monte Carlo (cfr allegato {{ header }}2).
                             </p>
                             <p>
                                 La bontà dell'adattamento (<span class="text-italic">fit</span>) delle distribuzioni
@@ -171,7 +169,7 @@
                             <tr>
                                 <td colspan="4">
                                     <div class="caption">
-                                        <span>Tabella {{ header_numbering[0] }}.1</span>
+                                        <span>Tabella {{ header }}1.1</span>
                                         <span>
                                             Type of metric = Tipo di metrica, Measurement unit = Unità di misura, Sample
                                             Size = Numerosità campionaria.
@@ -204,7 +202,7 @@
                             <tr>
                                 <td colspan="2">
                                     <div class="caption">
-                                        <span>Tabella {{ header_numbering[0] }}.2</span>
+                                        <span>Tabella {{ header }}1.2</span>
                                         <span>
                                             Mean = Media,
                                             Std = Deviazione standard,
@@ -220,9 +218,8 @@
                         </tfoot>
                     </table>
                 </div>
-
                 <div class="mb-xl">
-                    <h3 class="mb-lg background">FITTING DISTRIBUZIONI TEORICHE</h3>
+                    <h3 class="mb-lg background">ADATTAMENTO DISTRIBUZIONI TEORICHE</h3>
                     <table class="table-bordered full-width">
                         <thead>
                             <tr>
@@ -251,7 +248,7 @@
                             <tr>
                                 <td colspan="4">
                                     <div class="caption">
-                                        <span>Tabella {{ header_numbering[0] }}.3</span>
+                                        <span>Tabella {{ header }}1.3</span>
                                         <span>AIC = Akaike Information Crit., BIC = Bayesian Information Crit.,
                                             CVM = Cramér-von Mises statistic.</span>
                                     </div>
@@ -260,7 +257,6 @@
                         </tfoot>
                     </table>
                 </div>
-
                 <div class="mb-xl">
                     <h3 class="mb-lg background">GRAFICI</h3>
                     <div>
@@ -280,8 +276,8 @@
                 </div>
             </div>
         </div>
+        <div class="footer">{{ page }}</div>
     </div>
-    <div class="footer">1</div>
 </div>
 
 <!-- SECOND PAGE -->
@@ -292,13 +288,12 @@
             <div class="mb-xxl">
                 <div class="header">
                     <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
-                    {% if header_numbering %}
-                    <p>Allegato {{ header_numbering[1] }}</p>
-                    {% endif %}
+                    <p>Allegato {{ header }}2</p>
                 </div>
             </div>
+            
             <!-- Page Content -->
-            <h2 class="mb-xl">Percentili bootstrap e validazione Monte Carlo</h2>
+            <h2 class="mb-xl">Percentili Bootstrap e validazione Monte Carlo</h2>
             <div class="two-columns">
 
                 <div class="mb-xl">
@@ -307,7 +302,7 @@
                         <li>
                             <p>
                                 In questa pagina viene presentata la tecnica di stima dei percentili campionari
-                                attraverso repliche <span class="text-italic">bootstrap</span>; tale tecnica rappresenta
+                                attraverso repliche <span class="text-italic">Bootstrap</span>; tale tecnica rappresenta
                                 un approccio non parametrico e cioè libero da assunzioni teoriche relative alla
                                 distribuzione dei dati.
                             </p>
@@ -323,25 +318,24 @@
                         </li>
                         <li>
                             <p>
-                                La validazione dei percentili <span class="text-italic">bootstrap</span> tramite
+                                La validazione dei percentili <span class="text-italic">Bootstrap</span> tramite
                                 simulazione Monte Carlo costituisce un ulteriore passaggio per verificare la
                                 generalizzabilità delle stime empiriche.
                             </p>
                             <p>
                                 Il processo inizia identificando la distribuzione probabilistica che meglio descrive i
-                                dati osservati. {% if header_numbering %}(cfr allegato {{ header_numbering[0] }}){% else
-                                %}(vedi pagina precedente){% endif %}.
+                                dati osservati. (cfr allegato {{ header }}1).
                                 Una volta selezionato il modello ottimale e stimati i parametri, si procede alla
                                 generazione di {{ data.metric_config.montecarlo_n_samples }} campioni teorici mediante
                                 simulazione Monte Carlo. Per ogni campione simulato vengono calcolati gli stessi
-                                percentili della tecnica <span class="text-italic">bootstrap</span>, creando una
+                                percentili della tecnica <span class="text-italic">Bootstrap</span>, creando una
                                 distribuzione teorica di riferimento.
                             </p>
                             <p>
-                                Il confronto tra percentili <span class="text-italic">bootstrap</span> e quelli teorici
+                                Il confronto tra percentili <span class="text-italic">Bootstrap</span> e quelli teorici
                                 avviene attraverso analisi statistiche e
                                 grafici. Una buona concordanza indica che le stime percentiliche
-                                ottenute con la tecnica <span class="text-italic">bootstrap</span> sono generalizzabili.
+                                ottenute con la tecnica <span class="text-italic">Bootstrap</span> sono generalizzabili.
                             </p>
                         </li>
                     </ul>
@@ -372,7 +366,7 @@
                             <tr>
                                 <td colspan="4">
                                     <div class="caption">
-                                        <span>Tabella {{ header_numbering[1] }}.1:</span>
+                                        <span>Tabella {{ header }}2.1:</span>
                                         <span>
                                             BOOTSTRAP VALUE = stima Bootstrap del percentile,
                                             {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% LB =
@@ -388,7 +382,7 @@
                 </div>
 
                 <div class="mb-xl">
-                    <h3 class="mb-lg background">VALIDAZIONE MONTECARLO</h3>
+                    <h3 class="mb-lg background">VALIDAZIONE MONTE CARLO</h3>
                     <table class="table-bordered full-width">
                         <thead>
                             <th class="text-left">PERC.LE</th>
@@ -412,35 +406,36 @@
                             <tr>
                                 <td colspan="5">
                                     <div class="caption">
-                                        <span>Tabella {{ header_numbering[1] }}.2:</span>
+                                        <span>Tabella {{ header }}2.2:</span>
                                         <span>
                                             MONTE CARLO = Percentile calcolato con simulazione Monte Carlo,
-                                            BOOTSTRAP = Percentile stimato con tecnica bootstrap, COVERAGE = Percentuale
+                                            BOOTSTRAP = Percentile stimato con tecnica Bootstrap, COVERAGE = Percentuale
                                             di casi in cui il valore del percentile calcolato con simulazione Monte
                                             Carlo è contenuto nell'intervallo di confidenza stimato con tecnica
-                                            bootstrap.
+                                            Bootstrap.
+                                        </span>
+                                    </div>
                                 </td>
-                                </span>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
-                </tr>
-                </tfoot>
-                </table>
-            </div>
 
-            <div class="mb-xl">
-                <h3 class="mb-lg background">GRAFICI</h3>
-                <div>
-                    <h4 class="text-center mb-md mt-lg">Percentili Boostrap</h4>
-                    <img src="{{ data.plots[1].svg }}" />
-                </div>
-                <div>
-                    <h3 class="text-center mb-md mt-lg">Perc.li Bootstrap vs Per.li Monte Carlo</h3>
-                    <img src="{{ data.plots[-2].svg }}" />
+                <div class="mb-xl">
+                    <h3 class="mb-lg background">GRAFICI</h3>
+                    <div>
+                        <h4 class="text-center mb-md mt-lg">Percentili Bootstrap</h4>
+                        <img src="{{ data.plots[1].svg }}" />
+                    </div>
+                    <div>
+                        <h3 class="text-center mb-md mt-lg">Bootstrap vs Monte Carlo</h3>
+                        <img src="{{ data.plots[-2].svg }}" />
+                    </div>
                 </div>
             </div>
         </div>
+        <div class="footer">{{ (page | int) + 1 }}</div>
     </div>
-    <div class="footer">2</div>
 </div>
 
 <!-- THIRD PAGE -->
@@ -451,9 +446,7 @@
             <div class="mb-xxl">
                 <div class="header">
                     <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
-                    {% if header_numbering %}
-                    <p>Allegato {{ header_numbering[2] }}</p>
-                    {% endif %}
+                    <p>Allegato {{ header }}3</p>
                 </div>
             </div>
             <!-- Page Content -->
@@ -512,7 +505,7 @@
                 </table>
             </div>
         </div>
+        <div class="footer">{{ (page | int) + 2 }}</div>
     </div>
-    <div class="footer">3</div>
 </div>
 {% endblock %}
