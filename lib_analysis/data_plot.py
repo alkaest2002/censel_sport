@@ -41,7 +41,8 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
     fit: dict[str, Any] = data_dict.get("fit", {})
     metric_type: Literal["continuous", "discrete"] | None = metric_config.get("metric_type")
     data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
-    bootstrap_percentiles: list[dict[str, Any]] = bootstrap.get("percentiles", [])
+    bootstrap_requested_percentiles: list[dict[str, Any]] = bootstrap.get("requested_percentiles", [])
+    bootstrap_all_percentiles: list[dict[str, Any]] = bootstrap.get("all_percentiles", [])
     best_model: dict[str, Any] = fit.get("best_model", {})
     best_model_name: str = best_model.get("name", "")
     best_model_parameters: list[float] = best_model.get("parameters", [])
@@ -58,7 +59,8 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
                     data,
                     metric_type,
                     data,
-                    bootstrap_percentiles,
+                    bootstrap_requested_percentiles,
+                    bootstrap_all_percentiles,
                     best_model,
                     best_model_name,
                     best_model_parameters,
@@ -90,11 +92,14 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
         },
         {
             "name": "histogram_of_percentiles_with_ci",
-            "svg": plot_bootstrap_percentile_with_ci(bootstrap_percentiles),
+            "svg": plot_bootstrap_percentile_with_ci(
+                bootstrap_requested_percentiles,
+                bootstrap_all_percentiles,
+            ),
         },
         {
-            "name": "monte_carlo_vs_bootstrap_percentiles",
-            "svg": plot_montecarlo_vs_bootstrap(bootstrap_percentiles, montecarlo_percentiles),
+            "name": "monte_carlo_vs_bootstrap_requested_percentiles",
+            "svg": plot_montecarlo_vs_bootstrap(bootstrap_requested_percentiles, montecarlo_percentiles),
         },
     ]
 
