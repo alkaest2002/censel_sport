@@ -387,17 +387,13 @@ def plot_hanging_rootogram(
     # Create the plot
     figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
 
-    # Create bars hanging from the theoretical distribution
-    bar_width = 0.1
-
     # For each count, create a bar that hangs from expected_sqrt down to
     # expected_sqrt - observed_sqrt (which could be negative)
     bar_bottoms = expected_sqrt - observed_sqrt  # Where bars end
     bar_heights = observed_sqrt  # Height of each bar
 
     # Plot hanging bars
-    _ = ax.bar(counts, bar_heights, bottom=bar_bottoms, width=bar_width,
-               color=NEUTRAL_COLOR, edgecolor=NEUTRAL_COLOR, linewidth=1)
+    _ = ax.bar(counts, bar_heights, bottom=bar_bottoms, width=0.2, color=NEUTRAL_COLOR, linewidth=1)
 
     # Plot theoretical (expected) square root line - this is where bars hang from
     ax.plot(counts, expected_sqrt, color=PRIMARY_COLOR, linewidth=2, marker="o", markersize=4, label=model_name)
