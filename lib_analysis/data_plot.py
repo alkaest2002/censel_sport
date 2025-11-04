@@ -12,7 +12,7 @@ from lib_analysis.utils_plots import (
     plot_bootstrap_percentile_with_ci,
     plot_hanging_rootogram,
     plot_histogram_with_fitted_model,
-    plot_montecarlo,
+    plot_montecarlo_vs_bootstrap,
     plot_qq_plot,
 )
 
@@ -45,7 +45,7 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
     best_model: dict[str, Any] = fit.get("best_model", {})
     best_model_name: str = best_model.get("name", "")
     best_model_parameters: list[float] = best_model.get("parameters", [])
-    montecarlo_results: list[dict[str, Any]] = montecarlo.get("results", [])
+    montecarlo_percentiles: list[dict[str, Any]] = montecarlo.get("results", [])
 
     # Raise error if something is missing
     if any(map(is_falsy,
@@ -62,7 +62,7 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
                     best_model,
                     best_model_name,
                     best_model_parameters,
-                    montecarlo_results,
+                    montecarlo_percentiles,
                 ),
             ),
         ):
@@ -94,7 +94,7 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
         },
         {
             "name": "monte_carlo_vs_bootstrap_percentiles",
-            "svg": plot_montecarlo(montecarlo_results),
+            "svg": plot_montecarlo_vs_bootstrap(bootstrap_percentiles, montecarlo_percentiles),
         },
     ]
 
