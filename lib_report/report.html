@@ -130,10 +130,9 @@
                                 attraverso il metodo della simulazione Monte Carlo (cfr allegato {{ header }}2).
                             </p>
                             <p>
-                                La bontà dell'adattamento (<span class="text-italic">fit</span>) delle distribuzioni
+                                La bontà dell'adattamento (<span class="text-italic">fit</span>)
                                 viene qui valutata attraverso indici di adeguatezza e grafici che
-                                quantificano la capacità delle distribuzioni teoriche di riprodurre le caratteristiche
-                                distribuzionali del campione empirico.
+                                quantificano la capacità del modello teorico con miglior <span class="text-italic">fit</span> di riprodurre le caratteristiche distribuzionali del campione empirico.
                             </p>
                         </li>
                     </ul>
@@ -366,7 +365,7 @@
                                 UB</th>
                         </thead>
                         <tbody>
-                            {% for pct in data.bootstrap.percentiles %}
+                            {% for pct in data.bootstrap.requested_percentiles %}
                             <tr>
                                 <td class="text-left">{{ pct.percentile | title }}</td>
                                 <td class="text-center">{{ format_float_number | format(pct.value) }}</td>
@@ -408,7 +407,7 @@
                                 <td class="text-left">{{ pct.percentile | title }}</td>
                                 <td class="text-center">{{ format_float_number | format(pct.value) }}</td>
                                 <td class="text-center">
-                                    {{ format_float_number | format(data.bootstrap.percentiles[loop.index0].value) }}
+                                    {{ format_float_number | format(data.bootstrap.requested_percentiles[loop.index0].value) }}
                                 </td>
                                 <td class="text-center">{{ format_float_number | format(pct['coverage_%']) }}%</td>
                             </tr>
