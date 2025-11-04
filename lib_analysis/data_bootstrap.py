@@ -103,19 +103,27 @@ def compute_bootstrap_percentiles(
         estimates = np.array(bootstrap_estimates[f"p{p}"])
 
         # Compute bootstrap
-        bootstrap_value = float(np.median(estimates)) if metric_type == "continuous" else int(np.median(estimates))
+        bootstrap_value = np.percentile(estimates, 50, method=percentile_method)
         bootstrap_ci_lower = np.percentile(estimates, lower_ci, method=percentile_method)
         bootstrap_ci_upper = np.percentile(estimates, upper_ci, method=percentile_method)
-        bootstrap_std_error = np.std(estimates, ddof=1)
+        bootstrap_min = np.min(estimates)
+        bootstrap_max = np.max(estimates)
+        boostrap_first_quartile = np.percentile(estimates, 25, method=percentile_method)
+        bootstrap_third_quartile = np.percentile(estimates, 75, method=percentile_method)
+        bootstrap_iqr = bootstrap_third_quartile - boostrap_first_quartile
 
         # Append results
         bootstrap_percentiles.append({
             "percentile": p,
             "value": bootstrap_value,
+            "min": bootstrap_min,
+            "max": bootstrap_max,
+            "first_quartile": boostrap_first_quartile,
+            "third_quartile": bootstrap_third_quartile,
+            "iqr": bootstrap_iqr,
             "ci_level": ci_level,
             "ci_lower": bootstrap_ci_lower,
             "ci_upper": bootstrap_ci_upper,
-            "std_error": bootstrap_std_error,
         })
 
     percentile_cutoffs = _compute_cutoffs(bootstrap_percentiles, metric_precision=metric_precision)
