@@ -124,8 +124,7 @@
                             </p>
                             <p>
                                 La bontà dell'adattamento (<span class="text-italic">fit</span>) delle distribuzioni
-                                viene qui valutata attraverso indici di adeguatezza (AIC, BIC, CVM)
-                                e grafici che
+                                viene qui valutata attraverso indici di adeguatezza e grafici che
                                 quantificano la capacità delle distribuzioni teoriche di riprodurre le caratteristiche
                                 distribuzionali del campione empirico.
                             </p>
@@ -330,8 +329,8 @@
                             </p>
                             <p>
                                 Il confronto tra percentili <span class="text-italic">bootstrap</span> e quelli teorici
-                                avviene attraverso analisi statistiche che valutano differenze assolute e relative e
-                                rappresentazioni grafiche. Una buona concordanza indica che le stime percentiliche
+                                avviene attraverso analisi statistiche e
+                                grafici. Una buona concordanza indica che le stime percentiliche
                                 ottenute con la tecnica <span class="text-italic">bootstrap</span> sono generalizzabili.
                             </p>
                         </li>
@@ -391,9 +390,9 @@
                             {% for pct in data.montecarlo.results %}
                             <tr>
                                 <td class="text-left">{{ pct.percentile | title }}</td>
-                                <td class="text-center">{{ format_float_number | format(pct.montecarlo_value) }}</td>
+                                <td class="text-center">{{ format_float_number | format(pct.value) }}</td>
                                 <td class="text-center">
-                                    {{ format_float_number | format(pct.bootstrap_value) }}
+                                    {{ format_float_number | format(data.bootstrap.percentiles[loop.index0].value) }}
                                 </td>
                                 <td class="text-center">{{ format_float_number | format(pct['coverage_%']) }}%</td>
                             </tr>
