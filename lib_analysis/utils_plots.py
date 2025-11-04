@@ -5,16 +5,21 @@ import io
 from typing import Any
 
 from matplotlib.figure import Figure
+from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
-import pandas as pd
 
 # Constants
+MIN_DATA_POINTS = 3
 BASE_FIGURE_SIZE = (10, 8)
 BASE_ALPHA = 0.5
-MIN_DATA_POINTS = 3
 BASE_FONTSIZE = 16
+PRIMARY_COLOR = "#5580B0"
+SECONDARY_COLOR = "#E23122"
+NEUTRAL_COLOR = "#888888"
+NEUTRAL_COLOR_LIGHT = "#CCCCCC"
+
 
 def _validate_data_points(
         data: NDArray[np.integer[Any] | np.floating[Any]],
@@ -81,7 +86,6 @@ def _get_x_lim_with_padding(
     max_padding: float | int = (x_max - x_min) * 0.1
     return x_min - min_padding, x_max + max_padding
 
-
 def figure_to_svg_string(fig: Figure) -> str:
     """Convert a matplotlib figure to an SVG string.
 
@@ -116,7 +120,6 @@ def figure_to_svg_string(fig: Figure) -> str:
     base64_encoded_string = b64encode(buffer.getvalue()).decode()
 
     return f"data:image/svg+xml;base64,{base64_encoded_string}"
-
 
 def plot_histogram_with_fitted_model(
         data: NDArray[np.integer[Any] | np.floating[Any]],
@@ -184,9 +187,7 @@ def plot_histogram_with_fitted_model(
             ylabel = "Frequency"
 
         # Create bar plot for observed data
-        ax.bar(unique_values, frequencies, width=0.8, alpha=BASE_ALPHA,
-            color="k", linewidth=0.5,
-            label="Observed data")
+        ax.bar(unique_values, frequencies, width=0.2, color=NEUTRAL_COLOR, linewidth=1, label="Observed data")
 
         # Create x range for theoretical PMF
         x_min, x_max = max(0, np.min(unique_values)), np.max(unique_values)
@@ -201,8 +202,7 @@ def plot_histogram_with_fitted_model(
                 theoretical_probs *= n
 
             # Plot theoretical PMF
-            ax.plot(x, theoretical_probs, color="k", linewidth=2,
-                marker="o", markersize=6, label=model_name)
+            ax.plot(x, theoretical_probs, color=PRIMARY_COLOR, linewidth=2, marker="o", markersize=4, label=model_name)
 
         except AttributeError as e:
             raise AttributeError("---> Model must have pmf() method for discrete data") from e
@@ -219,8 +219,8 @@ def plot_histogram_with_fitted_model(
             bins=bins,
             density=density,
             rwidth=0.9,
-            alpha=BASE_ALPHA, color="k",
-            edgecolor="black",
+            color=NEUTRAL_COLOR_LIGHT,
+            edgecolor=NEUTRAL_COLOR_LIGHT,
             linewidth=0.5,
             label="Observed data",
         )
@@ -242,7 +242,7 @@ def plot_histogram_with_fitted_model(
                 theoretical_density *= n * bin_width
 
             # Plot theoretical PDF
-            ax.plot(x, theoretical_density, color="k", linewidth=2, label=model_name)
+            ax.plot(x, theoretical_density, color=PRIMARY_COLOR, linewidth=2, label=model_name)
 
         except AttributeError as e:
             raise AttributeError("---> Model must have pdf() method for continuous data") from e
@@ -293,7 +293,8 @@ def plot_qq_plot(
     figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
 
     # Create the Q-Q scatter plot
-    ax.scatter(x, y, alpha=BASE_ALPHA, c="white", edgecolors="k", linewidths=0.5, s=50, label="Data points")
+    ax.scatter(x, y, alpha=BASE_ALPHA, c=PRIMARY_COLOR,
+               edgecolors=PRIMARY_COLOR, linewidths=0.5, s=50, label="Data points")
 
     # Plot diagonal reference line
     data_min: float = float(np.min([x, y]))
@@ -394,25 +395,18 @@ def plot_hanging_rootogram(
     bar_bottoms = expected_sqrt - observed_sqrt  # Where bars end
     bar_heights = observed_sqrt  # Height of each bar
 
-    # Color bars based on whether they cross the x-axis (theoretical underestimates)
-    # or don't reach it (theoretical overestimates)
-    colors = ["red" if bottom < 0 else "steelblue" for bottom in bar_bottoms]
-
     # Plot hanging bars
-    _ = ax.bar(counts, bar_heights, bottom=bar_bottoms,
-                  width=bar_width, color=colors, alpha=BASE_ALPHA,
-                  edgecolor="black", linewidth=1)
+    _ = ax.bar(counts, bar_heights, bottom=bar_bottoms, width=bar_width,
+               color=NEUTRAL_COLOR, edgecolor=NEUTRAL_COLOR, linewidth=1)
 
     # Plot theoretical (expected) square root line - this is where bars hang from
-    ax.plot(counts, expected_sqrt, color="black", linewidth=2,
-            marker="o", markersize=4, label=model_name)
+    ax.plot(counts, expected_sqrt, color=PRIMARY_COLOR, linewidth=2, marker="o", markersize=4, label=model_name)
 
     # Add 1 reference line (x-axis)
     ax.axhline(y=1, color="gray", linestyle="--", alpha=BASE_ALPHA, linewidth=1.5)
 
     # Add 1 reference line (x-axis)
-    ax.axhline(y=0, color="gray", linestyle="-", alpha=BASE_ALPHA, linewidth=1.5,
-               label="Reference line (x-axis)")
+    ax.axhline(y=0, color="gray", linestyle="-", alpha=BASE_ALPHA, linewidth=1.5, label="Reference line (x-axis)")
 
     # Add 1 reference line (x-axis)
     ax.axhline(y=-1, color="gray", linestyle="--", alpha=BASE_ALPHA, linewidth=1.5)
@@ -489,46 +483,32 @@ def plot_bootstrap_percentile_with_ci(
     ci_percentage = int(most_common_ci * 100)
 
     ax.fill_between(percentiles, ci_lower, ci_upper,
-        alpha=BASE_ALPHA, color="#DDDDDD",
+        alpha=BASE_ALPHA, color="lightblue",
         label=f"{ci_percentage}% Confidence Interval")
 
     # Plot percentile estimates as points connected by lines
-    ax.plot(percentiles, values, color="k", linewidth=2,
-        marker="o", markersize=6, markerfacecolor="white",
-        markeredgecolor="k", markeredgewidth=2,
+    ax.plot(percentiles, values, color=PRIMARY_COLOR, linewidth=2,
+        marker="o", markersize=6, markerfacecolor=PRIMARY_COLOR,
+        markeredgecolor=PRIMARY_COLOR, markeredgewidth=2,
         label="Percentile Estimates")
 
-    # Add confidence interval bounds as dotted lines for clarity
-    ax.plot(percentiles, ci_lower, color="darkgray", linewidth=1,
-        linestyle=":", label="CI Bounds")
-    ax.plot(percentiles, ci_upper, color="darkgray", linewidth=1,
-        linestyle=":")
-
     # Formatting
-    ax.set_xlabel("Percentile", fontsize=BASE_FONTSIZE)
-    ax.set_ylabel("Value", fontsize=BASE_FONTSIZE)
+    ax.set_xlabel("Percentiles", fontsize=BASE_FONTSIZE)
+    ax.set_ylabel("Values", fontsize=BASE_FONTSIZE)
     ax.legend(fontsize=BASE_FONTSIZE-2, frameon=False)
 
     # Set reasonable x-axis limits and ticks
     ax.set_xlim(max(0, np.min(percentiles) - 5), min(100, np.max(percentiles) + 5))
-
-    # Set x-axis ticks at meaningful percentile values
-    if np.max(percentiles) - np.min(percentiles) > 50:
-        tick_step = 10
-    elif np.max(percentiles) - np.min(percentiles) > 25:
-        tick_step = 5
-    else:
-        tick_step = max(1, int((np.max(percentiles) - np.min(percentiles)) / 10))
-
-    x_ticks = np.arange(0, 101, tick_step)
-    x_ticks = x_ticks[(x_ticks >= np.min(percentiles) - 5) & (x_ticks <= np.max(percentiles) + 5)]
-    ax.set_xticks(x_ticks)
+    ax.set_xticks(percentiles)
     ax.yaxis.set_ticks_position("both")
 
     return figure_to_svg_string(figure)
 
 
-def plot_montecarlo(comparison_data: list[dict[str, Any]]) -> str:
+def plot_montecarlo_vs_bootstrap(
+        bootstrap_percentiles: list[dict[str, Any]],
+        montecarlo_percentiles: list[dict[str, Any]],
+    ) -> str:
     """
     Create a scatter plot comparing bootstrap and Monte Carlo percentile estimates.
 
@@ -537,80 +517,109 @@ def plot_montecarlo(comparison_data: list[dict[str, Any]]) -> str:
 
     Parameters:
     -----------
-    comparison_data : list[dict]
+    bootstrap_percentiles : list[dict]
         List of dictionaries, each containing:
-        - "percentile": percentile identifier (can be string or number)
-        - "bootstrap_value": bootstrap estimate
-        - "bootstrap_ci_lower": bootstrap CI lower bound
-        - "bootstrap_ci_upper": bootstrap CI upper bound
-        - "montecarlo_value": Monte Carlo estimate
-        - "montecarlo_std": Monte Carlo standard deviation
-        - "montecarlo_min": Monte Carlo minimum value
-        - "montecarlo_max": Monte Carlo maximum value
-        - "montecarlo_iqr": Monte Carlo interquartile range
-        - "bias": difference (montecarlo - bootstrap)
-        - "relative_bias_%": relative bias percentage
-        - "rmse": root mean square error
-        - "coverage_%": coverage percentage
+        - "percentile": percentile value (0-100)
+        - "value": bootstrap percentile estimate
+        - "first_quartile": first quartile of Monte Carlo IQR
+        - "third_quartile": third quartile of Monte Carlo IQR
+    montecarlo_percentiles : list[dict]
+        List of dictionaries, each containing:
+        - "percentile": percentile value (0-100)
+        - "montecarlo_value": Monte Carlo percentile estimate
 
     Returns:
     --------
     str: SVG string of the generated Monte Carlo comparison plot
     """
-    if len(comparison_data) < MIN_DATA_POINTS:
-        raise ValueError(
-            f"---> Unable to plot Monte Carlo comparison: at least {MIN_DATA_POINTS} points required",
-        )
-
-    # Convert data into DataFrame
-    data: pd.DataFrame = pd.DataFrame(comparison_data)
-
-    # Create the plot
+    # Create figure following utils_plots conventions
     figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
 
-    # Add perfect agreement diagonal line
-    data_min = data.loc[:, ["bootstrap_value", "montecarlo_value"]].min().min()
-    data_max = data.loc[:, ["bootstrap_value", "montecarlo_value"]].max().max()
+    # Prepare data
+    percentile_labels = []
+    positions = []
+    box_width = 0.1
+    offset = 0.1  # Distance between paired boxes
 
-    # Extend the diagonal line slightly beyond data range
-    margin = 0.05 * (data_max - data_min)
-    diag_min = data_min - margin
-    diag_max = data_max + margin
+    for i, bootstrap_perc in enumerate(bootstrap_percentiles):
+        percentile = bootstrap_perc["percentile"]
+        percentile_labels.append(f"{percentile}")
 
-    # Create perfect agreement diagonal line
-    diagonal = np.linspace(diag_min, diag_max, 100)
-    ax.plot(diagonal, diagonal, c="#CCCCCC", linestyle="--", linewidth=2,
-        label="Perfect Agreement")
+        # Center position for this percentile group
+        center_position = i + 1
+        positions.append(center_position)
 
-    # Create scatter plot with Monte Carlo IQR as error bars
-    _ = ax.errorbar(
-        data["bootstrap_value"], data["montecarlo_value"],
-        yerr=data["montecarlo_iqr"].mul(1.5).div(2),  # IQR * 1.5 divided by 2 for symmetric error bars
-        fmt="o", markersize=6, markerfacecolor="white",
-        markeredgecolor="k", markeredgewidth=2,
-        ecolor="k", elinewidth=1.5, capsize=0, capthick=0,
-        label="Monte Carlo values, error-bars = IQR * 1.5",
-    )
+        # Positions for bootstrap (left) and Monte Carlo (right) boxes
+        bootstrap_pos = center_position - offset
+        montecarlo_pos = center_position + offset
 
-    # Add percentile labels to points
-    for _, row in data.iterrows():
-        ax.annotate(f"{row['percentile']}",
-            (row["bootstrap_value"], row["montecarlo_value"]),
-            xytext=(5, 5),
-            textcoords="offset points",
-            fontsize=BASE_FONTSIZE-2,
-            alpha=0.8,
-            ha="left",
-            va="bottom")
+        # === BOOTSTRAP BOX PLOT ===
+        bootstrap_q1 = bootstrap_perc["first_quartile"]
+        bootstrap_q3 = bootstrap_perc["third_quartile"]
+        bootstrap_min = bootstrap_perc["min"]
+        bootstrap_max = bootstrap_perc["max"]
 
-    # Formatting
-    ax.set_xlabel("Bootstrap Values", fontsize=BASE_FONTSIZE)
-    ax.set_ylabel("Monte Carlo Values", fontsize=BASE_FONTSIZE)
-    ax.legend(fontsize=BASE_FONTSIZE-2, frameon=False)
+        # Draw bootstrap box
+        bootstrap_box_height = bootstrap_q3 - bootstrap_q1
+        bootstrap_box = plt.Rectangle(
+            (bootstrap_pos - box_width/2, bootstrap_q1), box_width, bootstrap_box_height,
+            facecolor=PRIMARY_COLOR, edgecolor=PRIMARY_COLOR, linewidth=1.5,
+        )
+        ax.add_patch(bootstrap_box)
 
-    # Set axis limits with some padding
-    ax.set_xlim(diag_min, diag_max)
-    ax.set_ylim(diag_min, diag_max)
+        # Draw bootstrap whiskers
+        ax.vlines(bootstrap_pos, bootstrap_q1,
+                  bootstrap_min, colors=PRIMARY_COLOR, linewidth=1.5)
+        ax.hlines(bootstrap_min, bootstrap_pos - box_width/2,
+                  bootstrap_pos + box_width/2, colors=PRIMARY_COLOR, linewidth=1.5)
+        ax.vlines(bootstrap_pos, bootstrap_q3, bootstrap_max, colors=PRIMARY_COLOR, linewidth=1.5)
+        ax.hlines(bootstrap_max, bootstrap_pos - box_width/2,
+                  bootstrap_pos + box_width/2, colors=PRIMARY_COLOR, linewidth=1.5)
+
+        # === MONTE CARLO BOX PLOT ===
+        # Get corresponding Monte Carlo data
+        mc_data = montecarlo_percentiles[i]
+        mc_q1 = mc_data["first_quartile"]
+        mc_q3 =mc_data["third_quartile"]
+        mc_min = mc_data["min"]
+        mc_max = mc_data["max"]
+
+        # Draw Monte Carlo box
+        mc_box_height = mc_q3 - mc_q1
+        mc_box = plt.Rectangle(
+            (montecarlo_pos - box_width/2, mc_q1),
+            box_width, mc_box_height,
+            facecolor=SECONDARY_COLOR, edgecolor=SECONDARY_COLOR, linewidth=1.5,
+        )
+        ax.add_patch(mc_box)
+
+        # Draw Monte Carlo whiskers
+        ax.vlines(montecarlo_pos, mc_q1, mc_min, colors=SECONDARY_COLOR, linewidth=1.5)
+        ax.hlines(mc_min, montecarlo_pos - box_width/2, montecarlo_pos + box_width/2,
+                    colors=SECONDARY_COLOR, linewidth=1.5)
+        ax.vlines(montecarlo_pos, mc_q3, mc_max, colors=SECONDARY_COLOR, linewidth=1.5)
+        ax.hlines(mc_max, montecarlo_pos - box_width/2, montecarlo_pos + box_width/2,
+                    colors=SECONDARY_COLOR, linewidth=1.5)
+
+    # Formatting following utils_plots conventions
+    ax.set_xlim(0.5, len(positions) + 0.5)
+    ax.set_xticks(positions)
+    ax.set_xticklabels(percentile_labels)
+    ax.set_xlabel("Percentiles", fontsize=BASE_FONTSIZE)
+    ax.set_ylabel("Values", fontsize=BASE_FONTSIZE)
+
+    # Position y-axis ticks on both sides following utils_plots
     ax.yaxis.set_ticks_position("both")
+
+    # Create legend following utils_plots style (frameon=False)
+    legend_elements = [
+        Line2D([0], [0], color=PRIMARY_COLOR, marker="s", linestyle="None",
+               markersize=10, markerfacecolor=PRIMARY_COLOR, markeredgecolor=PRIMARY_COLOR,
+               label="Bootstrap Distribution"),
+        Line2D([0], [0], color=SECONDARY_COLOR, marker="s", linestyle="None",
+               markersize=10, markerfacecolor=SECONDARY_COLOR, markeredgecolor=SECONDARY_COLOR,
+               label="Monte Carlo Distribution"),
+    ]
+    ax.legend(handles=legend_elements, fontsize=BASE_FONTSIZE-2, frameon=False, loc="upper left")
 
     return figure_to_svg_string(figure)
