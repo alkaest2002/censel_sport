@@ -252,7 +252,12 @@
                         <tbody>
                             {% for model_name, model_data in data.fit.fitted_models.items() %}
                             <tr>
-                                <td class="text-left">{{ model_name | replace("_", " ") | title }}</td>
+                                <td class="text-left">
+                                    {{ model_name | replace("_", " ") | title }}
+                                    {% if data.fit.best_model.name == model_name %}
+                                        <span class="text-italic">(miglior fit)</span>
+                                    {% endif %}
+                                </td>
                                 <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.aic) }}</td>
                                 <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.bic) }}</td>
                                 <td class="text-center">
