@@ -155,7 +155,7 @@ def compute_bootstrap_percentiles(
             ],
         )
 
-    # Placeholder for all bootstrap percentile statistics
+    # List for all bootstrap percentile statistics
     all_bootstrap_percentiles: list[dict[str, Any]] = []
 
     # Iterate over all percentiles to compute statistics
@@ -172,7 +172,7 @@ def compute_bootstrap_percentiles(
             ci_level=ci_level,
         ))
 
-    # Placeholder for requested bootstrap percentile statistics
+    # List for requested bootstrap percentile statistics
     requested_bootstrap_percentiles: list[dict[str, Any]] = []
 
     # Iterate over requested percentiles to compute statistics (for validation or further use)
