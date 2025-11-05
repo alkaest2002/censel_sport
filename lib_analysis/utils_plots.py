@@ -9,6 +9,7 @@ from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
+import pandas as pd
 
 # Constants
 MIN_DATA_POINTS = 3
@@ -418,7 +419,6 @@ def plot_hanging_rootogram(
 
     return figure_to_svg_string(figure)
 
-
 def plot_bootstrap_percentile_with_ci(
         bootstrap_requested_percentiles: list[dict[str, Any]],
         bootstrap_all_percentiles: list[dict[str, Any]],
@@ -442,40 +442,30 @@ def plot_bootstrap_percentile_with_ci(
     str: SVG string of the generated percentile plot with confidence intervals
     """
     # Extract data arrays
-    try:
-        percentiles = np.array([item["percentile"] for item in bootstrap_all_percentiles])
-        ci_lower = np.array([item["ci_lower"] for item in bootstrap_all_percentiles])
-        ci_upper = np.array([item["ci_upper"] for item in bootstrap_all_percentiles])
-        ci_levels = np.array([item["ci_level"] for item in bootstrap_all_percentiles])
+    all_df = pd.DataFrame(bootstrap_all_percentiles)
+    requested_df = pd.DataFrame(bootstrap_requested_percentiles)
+    ci_level: float = bootstrap_all_percentiles[0]["ci_level"]
 
-    except KeyError as e:
-        raise KeyError(f"---> Missing required key in percentile data: {e}") from e
 
     # Create the plot
     figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
 
-    # Plot confidence interval bands
-    # Use the most common CI level for labeling
-    unique_ci_levels, counts = np.unique(ci_levels, return_counts=True)
-    most_common_ci = unique_ci_levels[np.argmax(counts)]
-    ci_percentage = int(most_common_ci * 100)
-
-    ax.fill_between(percentiles, ci_lower, ci_upper,
+    ax.fill_between(
+        x=all_df["percentile"],
+        y1=all_df["ci_lower"],
+        y2=all_df["ci_upper"],
         alpha=BASE_ALPHA, color="lightblue",
-        label=f"Intervallo di Confidenza {ci_percentage}%")
-
-    # get requested percentiles for highlighting
-    requested_percentiles = [item["percentile"] for item in bootstrap_requested_percentiles]
-    requested_percentile_values = [item["value"] for item in bootstrap_requested_percentiles]
+        label=f"Intervallo di Confidenza {ci_level * 100}%",
+    )
 
     # Plot percentile estimates as points connected by lines
-    ax.plot(requested_percentiles, requested_percentile_values, color=PRIMARY_COLOR, linewidth=0,
+    ax.plot(requested_df["percentile"], requested_df["value"], color=PRIMARY_COLOR, linewidth=0,
         marker="o", markersize=6, markerfacecolor=PRIMARY_COLOR,
         markeredgecolor=PRIMARY_COLOR, markeredgewidth=2,
         label="Stime Percentili")
 
     # plot a vertical line for each requested percentile
-    for rp, rv in zip(requested_percentiles, requested_percentile_values, strict=True):
+    for rp, rv in zip(requested_df["percentile"], requested_df["value"], strict=True):
         ax.vlines(rp, ymin=0, ymax=rv, colors=PRIMARY_COLOR, linewidth=1)
 
     # Formatting
@@ -487,12 +477,11 @@ def plot_bootstrap_percentile_with_ci(
     ax.set_ylim(bottom=0)
 
     # Set reasonable x-axis limits and ticks
-    ax.set_xlim(max(0, np.min(percentiles) - 5), min(100, np.max(percentiles) + 5))
-    ax.set_xticks(requested_percentiles)
+    ax.set_xlim(max(0, requested_df["percentile"].min() - 5), min(100, requested_df["percentile"].max() + 5))
+    ax.set_xticks(requested_df["percentile"])
     ax.yaxis.set_ticks_position("both")
 
     return figure_to_svg_string(figure)
-
 
 def plot_montecarlo_vs_bootstrap(
         bootstrap_percentiles: list[dict[str, Any]],
