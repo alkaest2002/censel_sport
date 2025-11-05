@@ -35,6 +35,51 @@ def _compute_cutoffs(
     # Compute final cutoffs in the form of: [(lower_bound, upper_bound), ...]
     return list(pairwise(cutoffs))
 
+def _compute_percentile_stats(
+        estimates: NDArray[np.floating[Any]],
+        percentile: float,
+        percentile_method: str,
+        ci_level: float,
+    ) -> dict[str, Any]:
+    """
+    Compute statistics for a given percentile from bootstrap estimates.
+
+    Parameters:
+    -----------
+    estimates : NDArray
+        Array of bootstrap estimates for the percentile
+
+    percentile : int | float
+        The percentile being analyzed
+
+    percentile_method : str
+        Method used for percentile calculation
+
+    ci_level : float
+        Confidence interval level
+
+    Returns:
+    --------
+    dict : Dictionary containing computed statistics for the percentile
+    """
+    alpha: float = 1 - ci_level
+    lower_ci: float = (alpha / 2) * 100
+    upper_ci: float = (1 - alpha / 2) * 100
+
+    return {
+        "percentile": percentile,
+        "value": np.percentile(estimates, 50, method=percentile_method),
+        "min": np.min(estimates),
+        "max": np.max(estimates),
+        "first_quartile": np.percentile(estimates, 25, method=percentile_method),
+        "third_quartile": np.percentile(estimates, 75, method=percentile_method),
+        "iqr": np.percentile(
+            estimates, 75, method=percentile_method) - np.percentile(estimates, 25, method=percentile_method),
+        "ci_level": ci_level,
+        "ci_lower": np.percentile(estimates, lower_ci, method=percentile_method),
+        "ci_upper": np.percentile(estimates, upper_ci, method=percentile_method),
+    }
+
 
 def compute_bootstrap_percentiles(
     data_dict: dict[str, Any],
@@ -71,75 +116,85 @@ def compute_bootstrap_percentiles(
     # Initialize random generator
     rng = np.random.default_rng(random_state)
 
-    # Generate all percentiles from 1 to 99
-    all_percentiles: list[int] = list(range(1, 100, 1))
-
-    # Initialize variables
-    bootstrap_samples: list[NDArray[np.integer[Any] | np.floating[Any]]] = []
-    bootstrap_estimates: dict[int | float, list[float]] = {p: [] for p in all_percentiles}
-    bootstrap_percentiles: list[dict[str, Any]] = []
-    alpha: float = 1 - ci_level
-    lower_ci: float = (alpha / 2) * 100
-    upper_ci: float = (1 - alpha / 2) * 100
-
     # Define percentile method based on metric_precision
     percentile_method: str = "linear" if metric_type == "continuous" else "nearest"
+
+    # Generate all percentiles from 0 to 100 in steps of 5
+    all_percentiles: list[int] = list(range(0, 101, 5))
+
+    # Initialize list to store all bootstrap samples
+    bootstrap_samples: list[NDArray[np.integer[Any] | np.floating[Any]]] = []
+
+    # Placeholder for computed percentiles across replicates
+    computed_all_percentiles: NDArray[np.float64] = np.array(all_percentiles).reshape(1, -1)
+    computed_requested_percentiles: NDArray[np.float64] = np.array(requested_percentiles).reshape(1, -1)
 
     # Bootstrap resampling
     for _ in range(n_replicates):
 
         # Generate bootstrap sample
-        resample: NDArray[np.integer[Any] | np.floating[Any]] = rng.choice(data, size=n_replicate_size, replace=True)
+        bootstrap_sample: NDArray[np.integer[Any] | np.floating[Any]] =\
+            rng.choice(data, size=n_replicate_size, replace=True)
 
-        # Store bootstrap sample
-        bootstrap_samples.append(resample)
+        # Store bootstrap sample for further analysis if needed
+        bootstrap_samples.append(bootstrap_sample)
 
-        # Compute percentiles for this bootstrap sample
-        for p in all_percentiles:
-            percentile: float = np.percentile(resample, p, method=percentile_method)
-            bootstrap_estimates[p].append(percentile)
+        # Compute all percentiles for current bootstrap sample and add to stack
+        computed_all_percentiles = np.vstack(
+            [
+                computed_all_percentiles,
+                np.percentile(bootstrap_sample, all_percentiles, method=percentile_method),
+            ],
+        )
+
+        # Compute requested percentiles for current bootstrap sample and add to stack
+        computed_requested_percentiles = np.vstack(
+            [
+                computed_requested_percentiles,
+                np.percentile(bootstrap_sample, requested_percentiles, method=percentile_method),
+            ],
+        )
+
+    # Placeholder for all bootstrap percentile statistics
+    all_bootstrap_percentiles: list[dict[str, Any]] = []
 
     # Iterate over all percentiles to compute statistics
-    for p in all_percentiles:
+    for i, p in enumerate(computed_all_percentiles[0, :]):
 
-        # Convert to numpy array for easier calculations
-        estimates = np.array(bootstrap_estimates[p])
+        # Get estimates for current percentile
+        estimates = computed_all_percentiles[1:, i]
 
-        # Compute bootstrap percentile statistics
-        bootstrap_value = np.percentile(estimates, 50, method=percentile_method)
-        bootstrap_min = np.min(estimates)
-        bootstrap_max = np.max(estimates)
-        bootstrap_first_quartile = np.percentile(estimates, 25, method=percentile_method)
-        bootstrap_third_quartile = np.percentile(estimates, 75, method=percentile_method)
-        bootstrap_iqr = bootstrap_third_quartile - bootstrap_first_quartile
-        bootstrap_ci_lower = np.percentile(estimates, lower_ci, method=percentile_method)
-        bootstrap_ci_upper = np.percentile(estimates, upper_ci, method=percentile_method)
+        # Compute and store statistics
+        all_bootstrap_percentiles.append(_compute_percentile_stats(
+            estimates=estimates,
+            percentile=p,
+            percentile_method=percentile_method,
+            ci_level=ci_level,
+        ))
 
-        # Append bootstrap percentile statistics
-        bootstrap_percentiles.append({
-            "percentile": p,
-            "value": bootstrap_value,
-            "min": bootstrap_min,
-            "max": bootstrap_max,
-            "first_quartile": bootstrap_first_quartile,
-            "third_quartile": bootstrap_third_quartile,
-            "iqr": bootstrap_iqr,
-            "ci_level": ci_level,
-            "ci_lower": bootstrap_ci_lower,
-            "ci_upper": bootstrap_ci_upper,
-        })
+    # Placeholder for requested bootstrap percentile statistics
+    requested_bootstrap_percentiles: list[dict[str, Any]] = []
 
-    # Extract requested percentiles only
-    requested_bootstrap_percentiles = [
-        bp for bp in bootstrap_percentiles if bp["percentile"] in requested_percentiles
-    ]
+    # Iterate over requested percentiles to compute statistics (for validation or further use)
+    for i, p in enumerate(computed_requested_percentiles[0, :]):
+
+        # Get estimates for current percentile
+        estimates = computed_requested_percentiles[1:, i]
+
+        # Compute and store statistics
+        requested_bootstrap_percentiles.append(_compute_percentile_stats(
+            estimates=estimates,
+            percentile=p,
+            percentile_method=percentile_method,
+            ci_level=ci_level,
+        ))
 
     # Compute cutoffs for normative tables based on requested percentiles
     percentile_cutoffs = _compute_cutoffs(requested_bootstrap_percentiles, metric_precision=metric_precision)
 
     # Store results in data dictionary
     data_dict["bootstrap"] = {
-        "all_percentiles": bootstrap_percentiles,
+        "all_percentiles": all_bootstrap_percentiles,
         "requested_percentiles": requested_bootstrap_percentiles,
         "cutoffs": percentile_cutoffs,
     }
