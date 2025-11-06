@@ -96,30 +96,30 @@
                                 utilizzato per la
                                 costruzione della tavola di conversione relativa a: <span
                                     class="text-italic text-underline">{{
-                                    data.metric_config.title }}</span>. Tale tavola consente la trasformazione dei
+                                    data.metric_config.title | lower }}</span> (cfr all. {{ header }}3, pag. {{ page + 2 }}). Tale tavola consente la trasformazione dei
                                 punteggi
                                 grezzi in punteggi standardizzati.
                             </p>
                             <p> L'affidabilità della tavola di conversione dipende dalla precisione dei percentili
                                 usati come
-                                soglie e la precisione di questi ultimi è funzione della numerosità
+                                intervalli e la precisione di questi ultimi è funzione della numerosità
                                 campionaria.
                             </p>
                             <p>
                                 Per percentili
                                 non estremi
-                                (10°&mdash;&nbsp;90°) un numero di osservazioni nell'ordine delle centinaia garantisce
+                                (10°&mdash;&nbsp;90°) una quantità di osservazioni nell'ordine delle centinaia garantisce
                                 stime attendibili; per
                                 percentili
                                 estremi
                                 (1°&mdash;&nbsp;10°, 90°&mdash;&nbsp;99°) sono necessarie migliaia di
-                                osservazioni, data la scarsità di valori nelle code della distribuzione.
+                                osservazioni, data la scarsità di informazione nelle code della distribuzione.
                             </p>
                         </li>
                         <li>
                             <p>
-                                Sempre in questa pagina, viene presentata la procedura di <span
-                                    class="text-italic">adattamento</span> dei dati campionari a una
+                                Sempre in questa pagina, viene presentata la procedura di adattamento <span
+                                    class="text-italic">(fitting)</span> dei dati campionari a una
                                 famiglia di distribuzioni teoriche (<span class="text-italic">{% for model in
                                     data.fit.fitted_models.keys() %}{{ model | replace("_", " ") | title }}{% if not
                                     loop.last %}, {% endif %}{% endfor %}</span>).</p>
@@ -127,7 +127,7 @@
                                 La distribuzione con migliore adattamento (<span class="text-italic">fit</span>) sarà
                                 utilizzata
                                 per confermare l'affidabilità della tavola di conversione
-                                attraverso il metodo della simulazione Monte Carlo (cfr allegato {{ header }}2).
+                                attraverso il metodo della simulazione Monte Carlo (cfr all. {{ header }}2, pag. {{ page + 1 }}).
                             </p>
                             <p>
                                 La bontà dell'adattamento (<span class="text-italic">fit</span>)
@@ -215,14 +215,16 @@
                                 <td class="text-left">Massimo</td>
                                 <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.max) }}</td>
                             </tr>
-                            <tr>
-                                <td class="text-left">Asimmetria</td>
-                                <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.skewness) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left">Curtosi</td>
-                                <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.kurtosis) }}</td>
-                            </tr>
+                            {% if data.metric_config.metric_type == "continuous" %}
+                                <tr>
+                                    <td class="text-left">Asimmetria</td>
+                                    <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.skewness) }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-left">Curtosi</td>
+                                    <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.kurtosis) }}</td>
+                                </tr>
+                            {% endif %}
                         </tbody>
                         <tfoot>
                             <tr>
@@ -255,7 +257,7 @@
                                 <td class="text-left">
                                     {{ model_name | replace("_", " ") | title }}
                                     {% if data.fit.best_model.name == model_name %}
-                                        <span class="text-italic">(miglior fit)</span>
+                                        <span class="text-italic">&rarr; fit migliore</span>
                                     {% endif %}
                                 </td>
                                 <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.aic) }}</td>
@@ -333,12 +335,10 @@
                             </p>
                             <p>
                                 Più precisamente, vengono generate {{ data.metric_config.bootstrap_n_replicates }}
-                                repliche dal <span class="text-italic">dataset</span> originale attraverso
+                                repliche dal <span class="text-italic">dataset</span> originario attraverso
                                 ricampionamento casuale con reimmissione. Per ciascuna replica si calcolano i percentili
-                                di interesse, ottenendo una distribuzione di {{
-                                data.metric_config.bootstrap_n_replicates }} valori. La stima finale dei percentili è
-                                rappresentata dalla mediana delle relative distribuzioni.
-
+                                di interesse, ottenendo una distribuzione di valori. La stima finale di ogni percentile è
+                                rappresentata dalla mediana della relativa distribuzione.
                             </p>
                         </li>
                         <li>
@@ -349,17 +349,16 @@
                             </p>
                             <p>
                                 Il processo inizia identificando la distribuzione probabilistica che meglio descrive i
-                                dati osservati. (cfr allegato {{ header }}1).
+                                dati osservati. (cfr all. {{ header }}1, pag. {{ page }}).
                                 Una volta selezionato il modello ottimale e stimati i parametri, si procede alla
                                 generazione di {{ data.metric_config.montecarlo_n_samples }} campioni teorici mediante
-                                simulazione Monte Carlo. Per ogni campione simulato vengono calcolati gli stessi
+                                simulazione Monte Carlo. Per ogni campione sintetico vengono calcolati gli stessi
                                 percentili della tecnica <span class="text-italic">Bootstrap</span>, creando una
                                 distribuzione teorica di riferimento.
                             </p>
                             <p>
                                 Il confronto tra percentili <span class="text-italic">Bootstrap</span> e quelli teorici
-                                avviene attraverso analisi statistiche e
-                                grafici. Una buona concordanza indica che le stime percentiliche
+                                avviene attraverso analisi statistiche e grafici. Una buona concordanza indica che le stime percentiliche
                                 ottenute con la tecnica <span class="text-italic">Bootstrap</span> sono generalizzabili.
                             </p>
                         </li>
@@ -367,7 +366,7 @@
                 </div>
 
                 <div class="mb-xl">
-                    <h3 class="mb-lg background">PERCENTILI BOOTSTRAP</h3>
+                    <h3 class="mb-lg background">STIMA BOOTSTRAP DEI PERCENTILI</h3>
                     <table class="table-bordered full-width">
                         <thead>
                             <th class="text-left">PERC.LE</th>
@@ -458,7 +457,7 @@
                 </div>
             </div>
         </div>
-        <div class="footer">{{ (page | int) + 1 }}</div>
+        <div class="footer">{{ page + 1 }}</div>
     </div>
 </div>
 
@@ -479,15 +478,18 @@
                 <table class="table-bordered table-striped normative-table">
                     <thead>
                         <th class="text-center">FASCIA</th>
+                        <th class="text-center">PUNTEGGIO</th>
                         <th class="text-center">LIMITE INFERIORE</th>
                         <th class="text-center">LIMITE SUPERIORE</th>
-                        <th class="text-center">PUNTEGGIO</th>
                     </thead>
                     <tbody>
                         {% for cutoff in data.bootstrap.cutoffs %}
                         <tr>
                             <td class="text-center">
                                 {{ loop.index }}
+                            </td>
+                            <td class="text-center">
+                                {{ "%.2f" | format(data.metric_config.awarded_scores[loop.index0]) }}
                             </td>
                             <td class="text-center">
                                 {% if loop.first %}
@@ -520,16 +522,13 @@
                                 {% endif %}
                                 {% endif %}
                             </td>
-                            <td class="text-center">
-                                {{ "%.2f" | format(data.metric_config.awarded_scores[loop.index0]) }}
-                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="footer">{{ (page | int) + 2 }}</div>
+        <div class="footer">{{ page + 2 }}</div>
     </div>
 </div>
 {% endblock %}
