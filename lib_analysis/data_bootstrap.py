@@ -4,6 +4,7 @@ from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
+from scipy.stats import iqr
 
 from lib_analysis.utils_generic import is_falsy
 
@@ -71,13 +72,12 @@ def _compute_percentile_stats(
         "value": np.percentile(estimates, 50, method=percentile_method),
         "min": np.min(estimates),
         "max": np.max(estimates),
+        "iqr": iqr(estimates, interpolation=percentile_method),
         "first_quartile": np.percentile(estimates, 25, method=percentile_method),
         "third_quartile": np.percentile(estimates, 75, method=percentile_method),
-        "iqr": np.percentile(
-            estimates, 75, method=percentile_method) - np.percentile(estimates, 25, method=percentile_method),
-        "ci_level": ci_level,
         "ci_lower": np.percentile(estimates, lower_ci, method=percentile_method),
         "ci_upper": np.percentile(estimates, upper_ci, method=percentile_method),
+        "ci_level": ci_level,
     }
 
 
