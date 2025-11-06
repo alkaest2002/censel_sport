@@ -80,7 +80,6 @@ def _compute_percentile_stats(
         "ci_level": ci_level,
     }
 
-
 def compute_bootstrap_percentiles(
     data_dict: dict[str, Any],
 ) -> tuple[dict[str, Any], list[NDArray[np.integer[Any] | np.floating[Any]]]]:
@@ -120,49 +119,45 @@ def compute_bootstrap_percentiles(
     percentile_method: str = "linear" if metric_type == "continuous" else "nearest"
 
     # Generate all percentiles from 0 to 100 in steps of 5
-    all_percentiles: list[int] = list(range(0, 101, 5))
+    all_percentiles: list[int | float] = list(range(0, 101, 5))
 
-    # Initialize list to store all bootstrap samples
+    # Initialize lists
     bootstrap_samples: list[NDArray[np.integer[Any] | np.floating[Any]]] = []
-
-    # Placeholder for computed percentiles across replicates
-    computed_all_percentiles: NDArray[np.float64] = np.array(all_percentiles).reshape(1, -1)
-    computed_requested_percentiles: NDArray[np.float64] = np.array(requested_percentiles).reshape(1, -1)
+    bootstrap_sample: NDArray[np.integer[Any] | np.floating[Any]] = np.array([])
+    computed_all_percentiles: list[NDArray[np.float64]] = []
+    computed_requested_percentiles: list[NDArray[np.float64]] = []
 
     # Bootstrap resampling
     for _ in range(n_replicates):
 
         # Generate bootstrap sample
-        bootstrap_sample: NDArray[np.integer[Any] | np.floating[Any]] =\
-            rng.choice(data, size=n_replicate_size, replace=True)
+        bootstrap_sample = rng.choice(data, size=n_replicate_size, replace=True)
 
         # Store bootstrap sample for further analysis if needed
         bootstrap_samples.append(bootstrap_sample)
 
-        # Compute all percentiles for current bootstrap sample and add to stack
-        computed_all_percentiles = np.vstack(
-            [
-                computed_all_percentiles,
-                np.percentile(bootstrap_sample, all_percentiles, method=percentile_method),
-            ],
-        )
+        # Compute all percentiles for current bootstrap sample and add to list
+        computed_all_percentiles\
+            .append(np.percentile(bootstrap_sample, all_percentiles, method=percentile_method))
 
-        # Compute requested percentiles for current bootstrap sample and add to stack
-        computed_requested_percentiles = np.vstack(
-            [
-                computed_requested_percentiles,
-                np.percentile(bootstrap_sample, requested_percentiles, method=percentile_method),
-            ],
-        )
+        # Compute requested percentiles for current bootstrap sample and add to list
+        computed_requested_percentiles\
+            .append(np.percentile(bootstrap_sample, requested_percentiles, method=percentile_method))
+
+    # Stack computed all percentiles for easier indexing
+    computed_all_percentiles_stack: NDArray[np.float64] = np.vstack(computed_all_percentiles)
+
+    # Stack computed requested percentiles for easier indexing
+    computed_requested_percentiles_stack: NDArray[np.float64] = np.vstack(computed_requested_percentiles)
 
     # List for all bootstrap percentile statistics
     all_bootstrap_percentiles: list[dict[str, Any]] = []
 
     # Iterate over all percentiles to compute statistics
-    for i, p in enumerate(computed_all_percentiles[0, :]):
+    for i, p in enumerate(all_percentiles):
 
         # Get estimates for current percentile
-        estimates = computed_all_percentiles[1:, i]
+        estimates = computed_all_percentiles_stack[:, i]
 
         # Compute and store statistics
         all_bootstrap_percentiles.append(_compute_percentile_stats(
@@ -176,10 +171,10 @@ def compute_bootstrap_percentiles(
     requested_bootstrap_percentiles: list[dict[str, Any]] = []
 
     # Iterate over requested percentiles to compute statistics (for validation or further use)
-    for i, p in enumerate(computed_requested_percentiles[0, :]):
+    for i, p in enumerate(requested_percentiles):
 
         # Get estimates for current percentile
-        estimates = computed_requested_percentiles[1:, i]
+        estimates = computed_requested_percentiles_stack[:, i]
 
         # Compute and store statistics
         requested_bootstrap_percentiles.append(_compute_percentile_stats(
