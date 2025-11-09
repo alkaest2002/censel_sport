@@ -202,7 +202,7 @@ def compute_bootstrap_percentiles(
         ci_level=ci_level,
     )
 
-    # Create list for requested bootstrap percentrile statistics
+    # Create list for requested bootstrap percentile statistics
     requested_bootstrap_percentiles: list[dict[str, Any]] = _create_percentile_statistics_list(
         percentiles=requested_percentiles,
         percentiles_estimates=computed_requested_percentiles,
