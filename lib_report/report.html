@@ -215,16 +215,6 @@
                                 <td class="text-left">Massimo</td>
                                 <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.max) }}</td>
                             </tr>
-                            {% if data.metric_config.metric_type == "continuous" %}
-                                <tr>
-                                    <td class="text-left">Asimmetria</td>
-                                    <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.skewness) }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left">Curtosi</td>
-                                    <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.kurtosis) }}</td>
-                                </tr>
-                            {% endif %}
                         </tbody>
                         <tfoot>
                             <tr>
@@ -474,6 +464,18 @@
             </div>
             <!-- Page Content -->
             <h2 class="mb-xl">Tavola di conversione percentilica</h2>
+            <div class="mb-xl text-small">
+                <p>Numerosità del campione: {{ data.clean.descriptive_stats.count | int }}</p>
+                {% set gender = data.metric_config.gender %}
+                <p>Genere: {% if gender %} 
+                    {% if (gender | upper) == 'M' %} Maschile {% else %} Femminile {% endif %} 
+                    {% else %} Maschi e Femmine {% endif %}
+                </p>
+                {% set age = data.metric_config.age %}
+                <p>
+                    Fascia di età: {% if age %} da {{ age[0] }} anni a {{ age[1] }} anni {% else %} da 0 anni a 99 anni {% endif %}
+                </p>
+            </div>
             <div class="mb-xl">
                 <table class="table-bordered table-striped normative-table">
                     <thead>
