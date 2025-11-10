@@ -176,10 +176,6 @@ class DistributionFitter:
         # If specific criterion provided, use it
         if criterion is not None:
 
-            # Raise error if criterion is invalid
-            if criterion not in self.DISTRIBUTION_CRITERIA:
-                raise ValueError(f"criterion must be one of {self.DISTRIBUTION_CRITERIA}, got '{criterion}'")
-
             # Compute best model via selected criterion
             best_model_name = min(valid_models.keys(), key=lambda x: valid_models[x][criterion])
 
