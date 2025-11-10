@@ -56,7 +56,6 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
 
         # Filter data with query
         df_query = df.query(db_query)
-
         # Enforce data to be numeric
         raw_data = pd.to_numeric(df_query.loc[:, "value"], downcast="integer").to_numpy()
 
