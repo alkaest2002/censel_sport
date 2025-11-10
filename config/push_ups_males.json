@@ -1,8 +1,8 @@
 {
     "id": "push_ups_males",
     "title": "Flessioni - Maschi",
-    "source_type": "synthetic",
-    "synthetic_n_samples": 300,
+    "source_type": "db",
+    "source_query": "gender == 'M' and test == 'push_ups' and age.between(18, 35)",
     "metric_type": "discrete",
     "metric_subtype": "count",
     "metric_unit": "numero di ripetizioni",
