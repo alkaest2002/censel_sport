@@ -32,7 +32,7 @@ def validate_file_path(filepath: str, type_of_request: Literal["analysis", "repo
     """
     file_path = (
         Path("./data_out") / filepath / f"{filepath}_analysis.json" if type_of_request == "report"
-        else Path("./data_in") / f"{Path(filepath)}.json"
+        else Path("./config") / f"{Path(filepath)}.json"
     )
     print(file_path)
 
