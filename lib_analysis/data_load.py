@@ -7,7 +7,7 @@ import pandas as pd
 from lib_analysis.utils_stats import generate_synthetic_data
 
 
-def _load_from_csv(metric_config: dict[str, Any]) -> dict[str, Any]:
+def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
     """
     Load performance data from a CSV file.
 
@@ -21,7 +21,7 @@ def _load_from_csv(metric_config: dict[str, Any]) -> dict[str, Any]:
     dict : Contains metric_config and data
     """
     # If file does not exist
-    filepath = Path("./data_in") / metric_config["source_filename"]
+    filepath = Path("./db") / "db.csv"
 
     # Check if file exists
     if not filepath.exists():
@@ -30,8 +30,11 @@ def _load_from_csv(metric_config: dict[str, Any]) -> dict[str, Any]:
         # Read csv file
         df = pd.read_csv(filepath)
 
+        # Query db
+        df_query = df.query(metric_config.get("source_query", ""))
+
         # Enforce data to be numeric
-        raw_data = pd.to_numeric(df.iloc[:, 0], downcast="integer").to_numpy()
+        raw_data = pd.to_numeric(df_query.loc[:, "value"], downcast="integer").to_numpy()
 
     # Catch exceptions
     except Exception as e:  # noqa: BLE001
@@ -62,7 +65,6 @@ def _load_from_csv(metric_config: dict[str, Any]) -> dict[str, Any]:
             },
         }
 
-
 def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
     """
     Load performance data from synthetic sources.
@@ -77,10 +79,10 @@ def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
     dict : Contains raw_data, metric_config, and metadata
     """
     # Get number of samples to generate
-    n_samples = metric_config.get("synthetic_n_samples", 500)
+    n_samples = metric_config.get("synthetic_n_samples", 300)
 
     # Set random seed for reproducibility
-    random_state = metric_config.get("random_state", 0)
+    random_state = metric_config.get("random_state", 42)
 
     # Get metric id, Keep only first suffix (denoted by underscore)
     metric_id = "_".join(metric_config["id"].split("_")[:2])
@@ -119,10 +121,10 @@ def load_data(metric_config: dict[str, Any]) -> dict[str, Any]:
     # Determine source type and load data accordingly
     source_type = metric_config.get("source_type")
 
-    if source_type not in ["csv", "synthetic"]:
+    if source_type not in ["db", "synthetic"]:
         raise NotImplementedError(f"---> Unknown source_type {source_type} in metric configuration.")
 
     return (
-        _load_from_csv(metric_config) if source_type == "csv"
+        _load_from_db(metric_config) if source_type == "db"
         else _load_from_synthetic(metric_config)
     )
