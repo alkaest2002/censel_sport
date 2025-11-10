@@ -67,7 +67,7 @@ def main() -> int:
 
     # Re-run analys, if requested
     if args.recompute:
-       analysis_script = Path("analysis.py").resolve()
+       analysis_script = Path("inner_loop.py").resolve()
        # Validate that the analysis script exists and is safe to execute
        if not analysis_script.exists():
            print(f"Error: Analysis script not found: {analysis_script}")
