@@ -1,8 +1,12 @@
 {
     "id": "sit_ups_males",
-    "title": "Addominali - Maschi",
+    "title": "Addominali - maschi",
     "source_type": "db",
-    "source_query": "gender == 'M' and test == 'sit_ups' and age.between(18, 35)",
+    "recruitment_type": null,
+    "recruitment_year": null,
+    "gender": "M",
+    "age": null,
+    "source_query": null,
     "metric_type": "discrete",
     "metric_subtype": "count",
     "metric_unit": "numero di ripetizioni",
@@ -18,6 +22,5 @@
     "distribution_best_criterion": null,
     "montecarlo_n_samples": 10000,
     "montecarlo_n_size": 300,
-    "random_state": 50,
-    "include_in_analysis": false
+    "random_state": 50
 }
