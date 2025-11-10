@@ -25,24 +25,23 @@ rng = np.random.default_rng(100)
 df: pd.DataFrame | None = None
 
 # Loop through all subsets and generate synthetic data
-for (year, concourse, test, gender) in subsets:
-    sample_size: int = rng.integers(90,150).astype(int)
-    fake_data: NDArray[np.integer[Any] | np.floating[Any]]  = generate_synthetic_data(test, sample_size)
+for (recruitment_year, recruitment_type, test, gender) in subsets:
+    fake_data: NDArray[np.integer[Any] | np.floating[Any]] = generate_synthetic_data(test, 300, 50)
     fake_data_df = (
         pd.DataFrame({ "value": fake_data })
             .assign(
-                concourse=concourse,
-                gender=gender,
-                year=year,
+                recruitment_year=recruitment_year,
+                recruitment_type=recruitment_type,
                 test=test,
+                gender=gender,
                 age=rng.normal(loc=20, scale=1.5, size=len(fake_data)).astype(int),
             )
-            .loc[:, ["year", "concourse", "test", "gender", "age", "value"]]
+            .loc[:, ["recruitment_year", "recruitment_type", "test", "gender", "age", "value"]]
     )
     df = fake_data_df if df is None else pd.concat([df, fake_data_df], ignore_index=True)
 
 # Set filepath
-file_path = Path("db/synthetic_data.csv")
+file_path = Path("db/db.csv")
 
 # Save to cb
 df.to_csv(file_path, index=False) #type: ignore[union-attr]
