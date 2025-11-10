@@ -13,7 +13,7 @@ from . import MT100, MT1000, PUSHUPS, SITUPS, SWIM25
 
 def generate_synthetic_data(
         metric_type: str,
-        n_samples: int = 500,
+        n_samples: int = 300,
         random_state: int = 42) -> Any:
     """
     Generate synthetic performance data for testing purposes.
