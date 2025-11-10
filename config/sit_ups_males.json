@@ -1,9 +1,8 @@
 {
-    "id": "push_ups_males",
-    "title": "Flessioni - Maschi",
+    "id": "sit_ups_males",
+    "title": "Addominali - Maschi",
     "source_type": "synthetic",
     "synthetic_n_samples": 300,
-    "source_filename": null,
     "metric_type": "discrete",
     "metric_subtype": "count",
     "metric_unit": "numero di ripetizioni",

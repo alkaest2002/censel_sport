@@ -1,9 +1,8 @@
 {
-    "id": "25mt_swim_males",
-    "title": "nuovo 25 mt - Maschi",
+    "id": "100mt_run_males",
+    "title": "corsa 100 mt piani - Maschi",
     "source_type": "synthetic",
     "synthetic_n_samples": 300,
-    "source_filename": null,
     "metric_type": "continuous",
     "metric_subtype": "time",
     "metric_unit": "secondi",
