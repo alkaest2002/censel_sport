@@ -1,5 +1,7 @@
+from datetime import datetime
 from pathlib import Path
 import sys
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 
@@ -18,34 +20,35 @@ def main() -> int:  # noqa: PLR0911
         - 1: Error in file validation or loading
     """
     # Define file path
-    filepath = Path("db/synthetic_data.csv")
+    filepath = Path("db/db.csv")
 
     # Read CSV file into DataFrame
     df = pd.read_csv(filepath)
 
-    # Expected columns --- > "year", "concourse", "test", "gender", "age", "value"
-
-    ################################################################
-    # Sanity checks
-    ################################################################
+    ######################################################################
+    # Basic Sanity checks
+    # Ensure the DataFrame has the expected structure data types
+    # And sensible values
+    # Does not deal with outliers or deeper data quality issues
+    ######################################################################
 
     # Year column
     conditions = [
-        "year" in df.columns,
-        df["year"].notna().all(),
-        df["year"].dtype == "int64",
-        df["year"].between(2022, 2024).all(),
+        "recruitment_year" in df.columns,
+        df["recruitment_year"].notna().all(),
+        df["recruitment_year"].dtype == "int64",
+        df["recruitment_year"].between(2000, datetime.now(ZoneInfo("Europe/Rome")).year).all(),
     ]
     if not all(conditions):
         print("FAILED Year checks")
         return 1
 
-    # Concourse column
+    # Recruitment Type column
     conditions = [
-        "concourse" in df.columns,
-        df["concourse"].notna().all(),
-        df["concourse"].dtype == "object",
-        df["concourse"].isin(["hd", "mlli"]).all(),
+        "recruitment_type" in df.columns,
+        df["recruitment_type"].notna().all(),
+        df["recruitment_type"].dtype == "object",
+        df["recruitment_type"].isin(["hd", "mlli"]).all(),
     ]
     if not all(conditions):
         print("FAILED Concourse checks")
@@ -67,7 +70,7 @@ def main() -> int:  # noqa: PLR0911
         "gender" in df.columns,
         df["gender"].notna().all(),
         df["gender"].dtype == "object",
-        df["gender"].str.lower().isin(["m", "f"]).all(),
+        df["gender"].isin(["M", "F"]).all(),
     ]
     if not all(conditions):
         print("FAILED Gender checks")
@@ -78,7 +81,7 @@ def main() -> int:  # noqa: PLR0911
         "age" in df.columns,
         df["age"].notna().all(),
         df["age"].dtype == "int64",
-        df["age"].between(0, 99).all(),
+        df["age"].between(14, 99).all(),
     ]
     if not all(conditions):
         print("FAILED Age checks")
@@ -95,7 +98,10 @@ def main() -> int:  # noqa: PLR0911
         print("FAILED Value checks")
         return 1
 
-    print("Data loaded and validated successfully.")
+    # Compute percentage of duplicates
+    duplicated: float = round((df.duplicated().sum() / df.shape[0]) * (100), 2)
+
+    print(f"Data loaded and validated successfully. Percentage of duplicates {duplicated}%")
     return 0
 
 if __name__ == "__main__":
