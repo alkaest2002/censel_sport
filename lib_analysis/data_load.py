@@ -27,32 +27,19 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
     if not filepath.exists():
         raise FileNotFoundError(f"File {filepath.name} not found")
 
-    # Extract data from dictionary
+    # Extract data from metric_config
     metric_id: str = "_".join(metric_config["id"].split("_")[:2])
-    recruitment_year: int | None = metric_config.get("recruitment_year")
-    recruitment_type: str | None = metric_config.get("recruitment_type")
-    gender: str | None = metric_config.get("gender")
-    age_from, age_to = metric_config.get("age") or [0,99]
-    source_query: str | None = metric_config.get("source_query")
+    stratification = metric_config.get("stratification", {})
 
     try:
         # Read csv file
         df = pd.read_csv(filepath)
 
-        # init query
-        db_query: str = ""
-
-        # Build query command
-        if source_query:
-            # Use source_query if defined
-            db_query = source_query
-        else:
-            # Build db_query
-            db_query = f"test=='{metric_id}'"
-            db_query += f" and recruitment_type=='{recruitment_type}'" if recruitment_type else ""
-            db_query += f" and recruitment_year=={recruitment_year}" if recruitment_year else ""
-            db_query += f" and gender=='{gender}'" if gender else ""
-            db_query += f" and age.between({age_from}, {age_to})" if age_from and age_to else ""
+        # Build db_query
+        db_query: str = f"test=='{metric_id}'"
+        for db_filter in stratification.values():
+            _, query = db_filter.values()
+            db_query += f" and {query}" if query else ""
 
         # Filter data with query
         df_query = df.query(db_query)
