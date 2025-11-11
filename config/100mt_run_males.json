@@ -2,11 +2,24 @@
     "id": "100mt_run_males",
     "title": "corsa 100 mt piani - maschi",
     "source_type": "db",
-    "recruitment_type": null,
-    "recruitment_year": null,
-    "gender": "M",
-    "age": null,
-    "source_query": null,
+    "stratification": {
+        "recruitment_type": {
+            "label": "Tipo di reclutamento: Accademia",
+            "query": "recruitment_type=='hd'"
+        },
+        "recruitment_year": {
+            "label": "Anno di riferimento: 2024",
+            "query": "recruitment_year==2024"
+        },
+        "gender": {
+            "label": "Genere: maschile",
+            "query": "gender=='M'"
+        },
+        "age": {
+            "label": "Fascia di età: 18-25 anni",
+            "query": "age>=18 and age<=25"
+        }
+    },
     "metric_type": "continuous",
     "metric_subtype": "time",
     "metric_unit": "secondi",

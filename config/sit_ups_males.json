@@ -2,11 +2,24 @@
     "id": "sit_ups_males",
     "title": "Addominali - maschi",
     "source_type": "db",
-    "recruitment_type": null,
-    "recruitment_year": null,
-    "gender": "M",
-    "age": null,
-    "source_query": null,
+    "stratification": {
+        "recruitment_type": {
+            "label": null,
+            "query": null
+        },
+        "recruitment_year": {
+            "label": null,
+            "query": null
+        },
+        "gender": {
+            "label": "Genere: maschile",
+            "query": "gender=='M'"
+        },
+        "age": {
+            "label": null,
+            "query": null
+        }
+    },
     "metric_type": "discrete",
     "metric_subtype": "count",
     "metric_unit": "numero di ripetizioni",
