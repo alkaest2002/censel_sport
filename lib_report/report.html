@@ -466,15 +466,9 @@
             <h2 class="mb-xl">Tavola di conversione percentilica</h2>
             <div class="mb-xl text-small">
                 <p>Numerosità del campione: {{ data.clean.descriptive_stats.count | int }}</p>
-                {% set gender = data.metric_config.gender %}
-                <p>Genere: {% if gender %} 
-                    {% if (gender | upper) == 'M' %} Maschile {% else %} Femminile {% endif %} 
-                    {% else %} Maschi e Femmine {% endif %}
-                </p>
-                {% set age = data.metric_config.age %}
-                <p>
-                    Fascia di età: {% if age %} da {{ age[0] }} anni a {{ age[1] }} anni {% else %} da 0 anni a 99 anni {% endif %}
-                </p>
+                {% for db_filter in data.metric_config.stratification.values() %}
+                    {% if db_filter.label %} <p>{{ db_filter.label }}</p> {% endif %}
+                {% endfor %}
             </div>
             <div class="mb-xl">
                 <table class="table-bordered table-striped normative-table">
