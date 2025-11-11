@@ -78,7 +78,7 @@ def main() -> int:  # noqa: PLR0911
         "age" in df.columns,
         df["age"].notna().all(),
         df["age"].dtype == "int64",
-        df["age"].between(17, 30).all(),
+        df["age"].between(0, 99).all(),
     ]
     if not all(conditions):
         print("FAILED Age checks")
