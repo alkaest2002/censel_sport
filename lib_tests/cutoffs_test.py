@@ -17,7 +17,7 @@ def get_cutoffs_test() -> pd.DataFrame:
     rng = np.random.default_rng(50)
 
     # Define base sample_sizes
-    sample_sizes = [30, 50, 100, 200, 500]
+    sample_sizes = [30, 50, 100, 150, 300]
 
     # Iterate over all analysis json files
     for file in Path("./data_out/").glob("**/*analysis.json"):
@@ -90,12 +90,19 @@ def get_cutoffs_test() -> pd.DataFrame:
     results: pd.DataFrame = (
         pd.concat(collected_data)
             .groupby(["test", "sample_size", "perc_step"], as_index=False)
-            .agg({"value": ["min", "max", "median"] })
+            .agg({
+                "value": [
+                    ("p5", lambda x: x.quantile(0.05)),  # type: ignore[list-item]
+                    ("p95", lambda x: x.quantile(0.95)), # type: ignore[list-item]
+                    ("p50", lambda x: x.quantile(0.50)), # type: ignore[list-item]
+                ],
+            })
             .assign(perc_expected=
                 lambda df: df["perc_step"].apply(lambda x: expected_percentile[x - 1]))
         )
+
     # Better columns names
     results.columns=[ s if s else f for f,s in results.columns.to_flat_index() ]
 
-    return results.loc[:, ["test", "sample_size", "perc_step", "perc_expected", "median", "min", "max"]]
+    return results.loc[:, ["test", "sample_size", "perc_step", "perc_expected", "p50", "p5", "p95"]]
 
