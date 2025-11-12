@@ -108,11 +108,17 @@ def main() -> int:  # noqa: PLR0911
     df["age_binned"] = pd.cut(df["age"], bins=age_bins, right=True)
 
     # Compute summary table
-    print(
+    db_stats = (
         df.groupby(["recruitment_year", "test", "gender", "age_binned"], observed=True)
             .size()
-            .reset_index(name="counts"),
+            .reset_index(name="counts")
+            .to_json(orient="records", indent=4)
     )
+
+    # Persist stats to disk
+    with Path("./db/db_stats.json").open("w") as fout:
+        fout.write(db_stats)
+
 
     print(f"Data loaded and validated successfully. Percentage of duplicates {duplicated}%")
     return 0
