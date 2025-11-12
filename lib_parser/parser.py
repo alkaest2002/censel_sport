@@ -14,8 +14,6 @@ def get_base_parser() -> argparse.ArgumentParser:
     Returns:
     --------
     argparse.Namespace
-        Parsed arguments with attribute:
-        - filepath (str): Path to the data file to report.
     """
     parser = argparse.ArgumentParser(
         description="Generate statistical analysis and reporting from data file",
@@ -31,9 +29,9 @@ def get_base_parser() -> argparse.ArgumentParser:
 
     return parser
 
-def get_dbstats_parser() -> argparse.ArgumentParser:
+def get_base_report_parser() -> argparse.ArgumentParser:
     """
-    Parse command line arguments for database statistics generation.
+    Parse command line arguments.
 
     Parameters:
     -----------
@@ -42,8 +40,6 @@ def get_dbstats_parser() -> argparse.ArgumentParser:
     Returns:
     --------
     argparse.Namespace
-        Parsed arguments with attribute:
-        - filepath (str): Path to the data file to report.
     """
     parser = argparse.ArgumentParser(
         description="Generate db statistics report",
@@ -68,7 +64,7 @@ def get_dbstats_parser() -> argparse.ArgumentParser:
 
 def get_report_parser() -> argparse.ArgumentParser:
     """
-    Parse command line arguments for report generation.
+    Parse command line arguments.
 
     Parameters:
     -----------
@@ -77,9 +73,6 @@ def get_report_parser() -> argparse.ArgumentParser:
     Returns:
     --------
     argparse.Namespace
-        Parsed arguments with attributes:
-        - filepath (str): Path to the data file to report.
-        - output (str): Path to save the generated report.
     """
     parser = get_base_parser()
 
