@@ -13,14 +13,15 @@ def get_cutoffs_test() -> pd.DataFrame:
     Test cutoffs with samples with various sample sizes.
     """
 
-    # Define base sample_sizes
-    sample_sizes = [30, 50, 100, 200, 500]
-
     # Initialize random generator
     rng = np.random.default_rng(50)
 
+    # Define base sample_sizes
+    sample_sizes = [30, 50, 100, 200, 500]
+
     # Iterate over all analysis json files
     for file in Path("./data_out/").glob("**/*analysis.json"):
+
 
         # Parse and load data
         json_data = orjson.loads(file.read_bytes())
@@ -35,6 +36,13 @@ def get_cutoffs_test() -> pd.DataFrame:
         # Omit sample sizes larger than data length
         sample_sizes = list(filter(lambda x: x <= len(data), sample_sizes))
 
+        # Create expected percentiles
+        expected_percentile: list[float] =\
+            np.subtract(
+                np.array([*requested_percentiles, 100]),
+                np.array([0, *requested_percentiles]),
+            ).tolist()
+
         # Initialize collected data
         collected_data: list[pd.DataFrame] = []
 
@@ -45,7 +53,7 @@ def get_cutoffs_test() -> pd.DataFrame:
             collected_current_sample_size_data: list[pd.DataFrame] = []
 
             # Iterate over 1000 samples of current size
-            for _ in range(1000):
+            for _ in range(5):
 
                 # randomly sample n data points
                 sampled_data = rng.choice(data, size=n, replace=True).tolist()
@@ -63,7 +71,7 @@ def get_cutoffs_test() -> pd.DataFrame:
                     .rename("value")
                     .to_frame()
                     .sort_index()
-                    .reset_index(drop=False, names="perc_range"))
+                    .reset_index(drop=False, names="perc_step"))
 
             # Convert collected data to DataFrame
             current_sample_size_df: pd.DataFrame = (
@@ -72,14 +80,22 @@ def get_cutoffs_test() -> pd.DataFrame:
                         sample_size=n,
                         test=metric_title,
                     )
-                    .loc[:, ["test", "sample_size", "perc_range", "value"]]
+                    .loc[:, ["test", "sample_size", "perc_step", "value"]]
                 )
 
             # append current sample size data to collected data
             collected_data.append(current_sample_size_df)
 
-    return (
+    # Collect results
+    results: pd.DataFrame = (
         pd.concat(collected_data)
-            .groupby(["test", "sample_size", "perc_range"], as_index=False)
-            .agg({"value": ["min", "max", "mean"] })
-    )
+            .groupby(["test", "sample_size", "perc_step"], as_index=False)
+            .agg({"value": ["min", "max", "median"] })
+            .assign(perc_expected=
+                lambda df: df["perc_step"].apply(lambda x: expected_percentile[x - 1]))
+        )
+    # Better columns names
+    results.columns=[ s if s else f for f,s in results.columns.to_flat_index() ]
+
+    return results.loc[:, ["test", "sample_size", "perc_step", "perc_expected", "median", "min", "max"]]
+
