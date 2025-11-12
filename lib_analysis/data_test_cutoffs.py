@@ -9,23 +9,17 @@ from lib_analysis.utils_stats import apply_standardization
 
 
 def _apply_cutoffs(
-    metric_title: str,
-    higher_is_better: bool,
     requested_percentiles: list[float],
     cutoffs: list[tuple],
     data: NDArray[np.integer[Any] | np.floating[Any]],
+    higher_is_better: bool,
+    sample_sizes: list[int],
     random_state: int,
 ) -> list:
     """_apply_cutoffs to several random samples of different sizes and collect results."""
 
     # Initialize random generator
     rng = np.random.default_rng(random_state)
-
-    # Define base sample_sizes
-    sample_sizes = [30, 50, 100, 150, 300]
-
-    # Omit sample sizes larger than data length
-    sample_sizes = list(filter(lambda x: x <= len(data), sample_sizes))
 
     # Create expected percentiles: i.e., [5, 20, 25, 25, 20, 5]
     expected_percentile: list[float] =\
@@ -67,11 +61,8 @@ def _apply_cutoffs(
         # Convert collected data to DataFrame
         current_sample_size_df: pd.DataFrame = (
             pd.concat(collected_current_sample_size_data)
-                .assign(
-                    sample_size=n,
-                    test=metric_title,
-                )
-                .loc[:, ["test", "sample_size", "perc_step", "value"]]
+                .assign(sample_size=n)
+                .loc[:, ["sample_size", "perc_step", "value"]]
             )
 
         # append current sample size data to collected data
@@ -80,7 +71,7 @@ def _apply_cutoffs(
     # Collect results
     results: pd.DataFrame = (
         pd.concat(collected_data)
-            .groupby(["test", "sample_size", "perc_step"], as_index=False)
+            .groupby(["sample_size", "perc_step"], as_index=False)
             .agg({
                 "value": [
                     ("p10", lambda x: round(x.quantile(0.10)*100,2)),  # type: ignore[list-item]
@@ -97,7 +88,7 @@ def _apply_cutoffs(
 
 
     return (results\
-        .loc[:, ["test", "sample_size", "perc_step", "perc_expected", "p50", "p10", "p90"]]
+        .loc[:, ["sample_size", "perc_step", "perc_expected", "p50", "p10", "p90"]]
         .to_dict(orient="records")
     )
 
@@ -123,26 +114,34 @@ def bootstrap_test_cutoffs(
     bootstrap: dict[str, Any] = data_dict.get("bootstrap", {})
     data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
     cutoffs = bootstrap.get("cutoffs", {})
-    metric_title: str = metric_config.get("title", "")
     higher_is_better: bool = metric_config.get("higher_is_better", False)
     requested_percentiles: list[float] = metric_config.get("requested_percentiles", [])
     random_state: int = metric_config.get("random_state", 42)
 
     # Raise error if something is missing
-    if any(map(is_falsy, (metric_title, data, cutoffs, requested_percentiles))):
+    if any(map(is_falsy, (data, cutoffs, requested_percentiles))):
         raise ValueError("---> The data dictionary does not contain all required parts.")
+
+    # Define base sample_sizes
+    sample_sizes = [30, 50, 100, 150, 300]
+
+    # Omit sample sizes larger than data length
+    sample_sizes = list(filter(lambda x: x <= len(data), sample_sizes))
 
     # Apply cutoffs to data
     final_data: list[dict[str, Any]] = _apply_cutoffs(
-        metric_title=metric_title,
-        higher_is_better=higher_is_better,
         requested_percentiles=requested_percentiles,
         cutoffs=cutoffs,
         data=data,
+        higher_is_better=higher_is_better,
+        sample_sizes=sample_sizes,
         random_state=random_state,
     )
 
     # Update data dictionary
-    data_dict["bootstrap"]["cutoffs_test"] = final_data
+    data_dict["bootstrap"]["cutoffs_test"] = {
+        "sample_sizes": sample_sizes,
+        "results": final_data,
+    }
 
     return data_dict
