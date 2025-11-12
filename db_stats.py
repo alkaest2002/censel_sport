@@ -1,11 +1,15 @@
 from pathlib import Path
 import sys
+from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 from weasyprint import HTML  # type: ignore[import-untyped]
 
 from lib_parser.parser import get_dbstats_parser
 from lib_report.jinja_environment import jinja_env, templates_dir
+
+if TYPE_CHECKING:
+    from collections.abc import Hashable
 
 
 def main() -> int:
@@ -45,10 +49,11 @@ def main() -> int:
     df["age_binned"] = pd.cut(df["age"], bins=age_bins, right=True)
 
     # Compute summary table
-    data: pd.DataFrame = (
-        df.groupby(["recruitment_year", "test", "gender", "age_binned"], observed=True)
+    data: list[dict[Hashable, Any]] = (
+        df.groupby(["test", "recruitment_year", "gender", "age_binned"], observed=True)
             .size()
             .reset_index(name="counts")
+            .to_dict(orient="records")
     )
 
     # Load data
