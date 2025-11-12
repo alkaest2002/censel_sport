@@ -83,8 +83,8 @@ def _apply_cutoffs(
             .groupby(["test", "sample_size", "perc_step"], as_index=False)
             .agg({
                 "value": [
-                    ("p5", lambda x: round(x.quantile(0.05)*100,2)),  # type: ignore[list-item]
-                    ("p95", lambda x: round(x.quantile(0.95)*100,2)), # type: ignore[list-item]
+                    ("p10", lambda x: round(x.quantile(0.10)*100,2)),  # type: ignore[list-item]
+                    ("p90", lambda x: round(x.quantile(0.90)*100,2)), # type: ignore[list-item]
                     ("p50", lambda x: round(x.quantile(0.50)*100,2)), # type: ignore[list-item]
                 ],
             })
@@ -97,7 +97,7 @@ def _apply_cutoffs(
 
 
     return (results\
-        .loc[:, ["test", "sample_size", "perc_step", "perc_expected", "p50", "p5", "p95"]]
+        .loc[:, ["test", "sample_size", "perc_step", "perc_expected", "p50", "p10", "p90"]]
         .to_dict(orient="records")
     )
 
