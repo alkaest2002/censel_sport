@@ -9,6 +9,7 @@ from lib_analysis.data_montecarlo import monte_carlo_validation
 from lib_analysis.data_plot import create_plots
 from lib_analysis.data_save import save_analysis_results
 from lib_analysis.data_standardize import compute_standard_scores
+from lib_analysis.data_test_cutoffs import bootstrap_test_cutoffs
 from lib_parser.parser import get_base_parser
 from lib_parser.utils_parser import load_configuration_data, validate_file_path
 
@@ -69,6 +70,13 @@ def main() -> int:
         step_counter += 1
         print(f"{step_counter}. Computing bootstrap percentiles...")
         data_dict, bootstrap_samples = compute_bootstrap_percentiles(data_dict=data_dict)
+
+        #############################################################################################
+        # Test bootstrap percentiles cutoffs
+        #############################################################################################
+        step_counter += 1
+        print(f"{step_counter}. Testing bootstrap percentiles cutoffs...")
+        data_dict = bootstrap_test_cutoffs(data_dict=data_dict)
 
         ###############################################################################################
         # Perform Montecarlo simulation
