@@ -98,29 +98,7 @@ def main() -> int:  # noqa: PLR0911
         print("FAILED Value checks")
         return 1
 
-    # Compute percentage of duplicates
-    duplicated: float = round((df.duplicated().sum() / df.shape[0]) * (100), 2)
-
-    # Define bin ages
-    age_bins = [14, 29, 39, 49, 59, 69, 79]
-
-    # Bin age
-    df["age_binned"] = pd.cut(df["age"], bins=age_bins, right=True)
-
-    # Compute summary table
-    db_stats = (
-        df.groupby(["recruitment_year", "test", "gender", "age_binned"], observed=True)
-            .size()
-            .reset_index(name="counts")
-            .to_json(orient="records", indent=4)
-    )
-
-    # Persist stats to disk
-    with Path("./db/db_stats.json").open("w") as fout:
-        fout.write(db_stats)
-
-
-    print(f"Data loaded and validated successfully. Percentage of duplicates {duplicated}%")
+    print("DB Data validated successfully.")
     return 0
 
 if __name__ == "__main__":
