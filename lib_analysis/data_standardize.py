@@ -36,7 +36,10 @@ def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Compute standatdizatin scores
-    scores: list[dict[Hashable, Any]] = apply_standardization(data_to_standardize=data, cutoffs=cutoffs)
+    scores: list[dict[Hashable, Any]] = (
+        apply_standardization(data_to_standardize=data, cutoffs=cutoffs)
+            .to_dict(orient="records")
+    )
 
     # Compute percentage of standardized scores
     value_counts_perc = (

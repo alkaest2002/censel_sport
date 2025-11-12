@@ -1,6 +1,5 @@
 # mypy: disable-error-code="misc"
 
-from collections.abc import Hashable
 from itertools import count
 from typing import Any
 
@@ -127,7 +126,7 @@ def apply_standardization(
         data_to_standardize: NDArray[np.integer[Any] | np.floating[Any]],
         cutoffs: list[tuple],
         higher_is_better: bool = False,
-    ) -> list[dict[Hashable, Any]]:
+    ) -> pd.DataFrame:
     """
     Standardize data with percentile cutoffs.
 
@@ -144,7 +143,7 @@ def apply_standardization(
 
     Returns:
     --------
-    list : Original data and Standardized data
+    pd.Dataframe : Original data and Standardized data
     """
 
     # Convert data to pandas Series for easier manipulation
@@ -183,4 +182,4 @@ def apply_standardization(
         ],
         keys=["original_value","standardized_value", "standardized_value_bounds"],
         axis=1,
-    ).to_dict(orient="records")
+    )
