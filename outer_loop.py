@@ -81,7 +81,7 @@ def main() -> int:  # noqa: PLR0911
         "age" in df.columns,
         df["age"].notna().all(),
         df["age"].dtype == "int64",
-        df["age"].between(14, 99).all(),
+        df["age"].between(14, 79).all(),
     ]
     if not all(conditions):
         print("FAILED Age checks")
@@ -100,6 +100,19 @@ def main() -> int:  # noqa: PLR0911
 
     # Compute percentage of duplicates
     duplicated: float = round((df.duplicated().sum() / df.shape[0]) * (100), 2)
+
+    # Define bin ages
+    age_bins = [14, 29, 39, 49, 59, 69, 79]
+
+    # Bin age
+    df["age_binned"] = pd.cut(df["age"], bins=age_bins, right=True)
+
+    # Compute summary table
+    print(
+        df.groupby(["recruitment_year", "test", "gender", "age_binned"], observed=True)
+            .size()
+            .reset_index(name="counts"),
+    )
 
     print(f"Data loaded and validated successfully. Percentage of duplicates {duplicated}%")
     return 0
