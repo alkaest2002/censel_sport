@@ -140,12 +140,6 @@
                 background-color: var(--base-background-color-light);
             }
 
-            .table-caption {
-                font-size: .6rem;
-                border-top: 1px solid var(--base-border-color);
-                padding-top: 6px;
-            }
-
             .text-center {
                 text-align: center !important;
             }
@@ -235,7 +229,50 @@
             .pr-md  { padding-right: 9pt; }
             .pr-lg  { padding-right: 12pt; }
             .pr-xl  { padding-right: 18pt; }
-            .pr-xxl { padding-right: 24pt; }            
+            .pr-xxl { padding-right: 24pt; }
+            
+            .header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 2px solid var(--base-border-color);
+                padding-bottom: 0.5rem;
+            }
+
+            .content {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+
+            .content div:first-child {
+                flex-grow: 1;
+            }
+
+            .caption {
+                text-align: left;
+            }
+
+            .caption span {
+                padding-top: 3px;
+                font-size: .7rem;
+                font-style: italic;
+            }
+
+            .caption span:first-child {
+                font-weight: bold;
+                margin-right: 3px;
+            }
+
+            .footer {
+                position: absolute;
+                bottom: 0;
+                display: inline;
+                width: 100%;
+                text-align: center;
+                font-size: .8rem;
+            }
         </style>
         
         {% block report_style %}
