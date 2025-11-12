@@ -1,0 +1,54 @@
+{% extends "_base.html" %}
+
+{% block style %}
+<style>
+    table tr th {
+        padding: 6px;
+    }
+
+    table tr td {
+        padding: 3px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<!-- FIRST PAGE -->
+<div class="page">
+    <div class="content">
+        <div>
+            <!-- Page Header -->
+            <div class="mb-xxl">
+                <div class="header">
+                    <h1 class="mb-xs">APPLICAZIONE DELLE TAVOLE DI CONVERZIONE</h1>
+                    <p>Allegato {{ header }}</p>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <h2 class="mb-xl">Applicazione al dataset originario del Centro di Selezione</h2>
+            <div>
+                <table class="table-bordered table-striped full-width">
+                    <tbody>
+                        <tr>
+                            <th class="text-center">Prova sportiva</th>
+                            <th class="text-center">Anno</th>
+                            <th class="text-center">Genere</th>
+                            <th class="text-center">Fascia di età</th>
+                            <th class="text-center">Conteggio</th>
+                        </tr>
+                    </tbody>
+                    {% for row in data %}
+                    <tr>
+                        {% for cell in row.values() %}
+                            <td class="text-center">{{ cell }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        <div class="footer">{{ page }}</div>
+    </div>
+</div>
+{% endblock %}
