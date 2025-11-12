@@ -1,0 +1,93 @@
+{% extends "_base.html" %}
+
+{% block report_style %}
+<style>
+    img {
+        width: 100%;
+    }
+
+    .content {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .content div:first-child {
+        flex-grow: 1;
+    }
+
+    .two-columns {
+        column-width: 50ch;
+        column-gap: 2.5rem;
+    }
+
+    .two-columns>* {
+        break-inside: avoid;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid var(--base-border-color);
+        padding-bottom: 0.5rem;
+    }
+
+    .normative-table th,
+    .normative-table td {
+        padding: 8px 18px;
+    }
+
+    .normative-table th {
+        background-color: #fff;
+        color: var(--black);
+    }
+
+    .caption {
+        text-align: left;
+    }
+
+    .caption span {
+        padding-top: 3px;
+        font-size: .7rem;
+        font-style: italic;
+    }
+
+    .caption span:first-child {
+        font-weight: bold;
+        margin-right: 3px;
+    }
+
+    .footer {
+        position: absolute;
+        bottom: 0;
+        display: inline;
+        width: 100%;
+        text-align: center;
+        font-size: .8rem;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+{% set format_float_number = "%." + data.metric_config.metric_precision | string + "f" %}
+<!-- FIRST PAGE -->
+<div class="page">
+    <div class="content">
+        <div>
+            <!-- Page Header -->
+            <div class="mb-xxl">
+                <div class="header">
+                    <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
+                    <p>Allegato {{ header }}1</p>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <h2 class="mb-xl">Campione di riferimento</h2>
+        </div>
+        <div class="footer">{{ page }}</div>
+    </div>
+</div>
+{% endblock %}
