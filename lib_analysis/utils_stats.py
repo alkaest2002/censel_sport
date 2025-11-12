@@ -121,7 +121,6 @@ def generate_synthetic_data(
 
     return data
 
-
 def apply_standardization(
         data_to_standardize: NDArray[np.integer[Any] | np.floating[Any]],
         cutoffs: list[tuple],
@@ -183,3 +182,4 @@ def apply_standardization(
         keys=["original_value","standardized_value", "standardized_value_bounds"],
         axis=1,
     )
+
