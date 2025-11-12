@@ -410,5 +410,5 @@ exclude_lines = [
     "\\.\\.\\.",
 ]
 
-[tool.bandit]
-exclude_dirs = ["./report.py", "./faker.py"]
+[tool.bandit.assert_used]
+skips = ["./report.py", "./faker.py"]
