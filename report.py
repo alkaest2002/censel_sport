@@ -14,7 +14,7 @@ from typing import Any
 
 from weasyprint import HTML  # type: ignore[import-untyped]
 
-from lib_parser.parser import get_base_parser
+from lib_parser.parser import get_report_parser
 from lib_parser.utils_parser import load_configuration_data, validate_file_path
 from lib_report.jinja_environment import jinja_env, templates_dir
 
@@ -30,29 +30,7 @@ def main() -> int:
         - 2: Rendering or PDF generation error
     """
     # Parse command line arguments
-    parser = get_base_parser()
-
-    # Add parser argument numbering for report generation
-    parser.add_argument(
-        "--header-letter", "-l",
-        required=True,
-        type=str,
-        help="Letter for report header section (e.g., 'A')",
-    )
-
-    parser.add_argument(
-        "--page-number", "-n",
-        required=True,
-        type=int,
-        help="Starting page number for report pages (e.g., 1)",
-    )
-
-    # Add parser argument numbering for report generation
-    parser.add_argument(
-        "--recompute", "-x",
-        action="store_true",
-        help="Re-run analysys",
-    )
+    parser = get_report_parser()
 
     # Parse arguments
     args = parser.parse_args()
@@ -64,29 +42,40 @@ def main() -> int:
         print(f"Error: {e}")
         return 1
 
-    # Re-run analys, if requested
+    # Re-run analysis, if requested
     if args.recompute:
-       analysis_script = Path("inner_loop.py").resolve()
-       # Validate that the analysis script exists and is safe to execute
-       if not analysis_script.exists():
-           print(f"Error: Analysis script not found: {analysis_script}")
-           return 1
-       _ = subprocess.run([sys.executable, str(analysis_script), "-f", args.filepath], check=True)
 
-    # Load data and render template, then generate PDF
+        # Resolve path to analysis script
+        analysis_script = Path("inner_loop.py").resolve()
+
+        # Validate that the analysis script exists and is safe to execute
+        if not analysis_script.exists():
+            print(f"Error: Analysis script not found: {analysis_script}")
+            return 1
+
+        # Execute the analysis script
+        subprocess.run([sys.executable, str(analysis_script), "-f", args.filepath], check=True)
+
     try:
+        # Load data
         data: dict[str, Any] = load_configuration_data(validated_path)
+
+        # Get report template
         template = jinja_env.get_template("report.html")
+
+        # Build output paths
         output_pdf = validated_path.with_suffix(".pdf")
         output_html = validated_path.with_suffix(".html")
+
+        # Render HTML
         rendered_html: str =\
             template.render(data=data, header=args.header_letter, page=args.page_number)
 
-        # Write html
+        # Write HTML file
         with output_html.open("w") as fout:
             fout.write(rendered_html)
 
-        # Write PDF
+        # Write PDF file
         HTML(string=rendered_html, base_url=str(templates_dir)).write_pdf(str(output_pdf))
         print(f"Report generated: {output_pdf}")
 
