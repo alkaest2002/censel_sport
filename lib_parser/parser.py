@@ -31,6 +31,41 @@ def get_base_parser() -> argparse.ArgumentParser:
 
     return parser
 
+def get_dbstats_parser() -> argparse.ArgumentParser:
+    """
+    Parse command line arguments for database statistics generation.
+
+    Parameters:
+    -----------
+    None
+
+    Returns:
+    --------
+    argparse.Namespace
+        Parsed arguments with attribute:
+        - filepath (str): Path to the data file to report.
+    """
+    parser = argparse.ArgumentParser(
+        description="Generate db statistics report",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+
+    parser.add_argument(
+        "--header-letter", "-l",
+        required=True,
+        type=str,
+        help="Letter for report header section (e.g., 'A')",
+    )
+
+    parser.add_argument(
+        "--page-number", "-n",
+        required=True,
+        type=int,
+        help="Starting page number for report pages (e.g., 1)",
+    )
+
+    return parser
+
 def get_report_parser() -> argparse.ArgumentParser:
     """
     Parse command line arguments for report generation.
@@ -48,7 +83,6 @@ def get_report_parser() -> argparse.ArgumentParser:
     """
     parser = get_base_parser()
 
-    # Add parser argument numbering for report generation
     parser.add_argument(
         "--header-letter", "-l",
         required=True,
@@ -63,7 +97,6 @@ def get_report_parser() -> argparse.ArgumentParser:
         help="Starting page number for report pages (e.g., 1)",
     )
 
-    # Add parser argument numbering for report generation
     parser.add_argument(
         "--recompute", "-x",
         action="store_true",
