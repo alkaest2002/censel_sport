@@ -12,12 +12,11 @@ import subprocess
 import sys
 from typing import Any
 
-from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
 from weasyprint import HTML  # type: ignore[import-untyped]
 
-from lib_analysis.utils_generic import format_seconds
 from lib_parser.parser import get_base_parser
 from lib_parser.utils_parser import load_configuration_data, validate_file_path
+from lib_report.jinja_environment import jinja_env, templates_dir
 
 
 def main() -> int:
@@ -73,19 +72,6 @@ def main() -> int:
            print(f"Error: Analysis script not found: {analysis_script}")
            return 1
        _ = subprocess.run([sys.executable, str(analysis_script), "-f", args.filepath], check=True)
-
-    # Init jinja environment
-    templates_dir = Path("./lib_report").resolve()
-    jinja_env: Environment = Environment(
-        # Use FileSystemLoader to load templates from the 'report' directory
-        loader=FileSystemLoader(str(templates_dir)),
-        # Enable strict undefined handling to catch missing variables
-        undefined=StrictUndefined,
-        # Auto-escape HTML for security
-        autoescape=select_autoescape(["html", "xml"]),
-    )
-
-    jinja_env.filters["format_seconds"] = format_seconds
 
     # Load data and render template, then generate PDF
     try:
