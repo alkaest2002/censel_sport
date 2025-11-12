@@ -23,13 +23,15 @@ def main() -> int:
     """
     Generate report for given data analysis.
 
-    int
+    Returns:
+    --------
+    int:
         Process exit status code:
         - 0: Success
         - 1: Error in file validation or loading
         - 2: Rendering or PDF generation error
     """
-    # Parse command line arguments
+    # Get report parser
     parser = get_report_parser()
 
     # Parse arguments
