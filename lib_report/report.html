@@ -15,14 +15,9 @@
         break-inside: avoid;
     }
 
-    .normative-table th {
-        background-color: #fff;
-        color: var(--black);
-    }
-
-    .normative-table th,
-    .normative-table td {
-        padding: 8px 18px;
+    .table-padded th,
+    .table-padded td {
+        padding: 0.3rem 1rem;
     }
 </style>
 {% endblock %}
@@ -408,7 +403,53 @@
     </div>
 </div>
 
-<!-- THIRD PAGE -->
+<div class="page">
+    <div class="content">
+        <div>
+             <!-- Page Header -->
+            <div class="mb-xxl">
+                <div class="header">
+                    <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
+                    <p>Allegato {{ header }}3</p>
+                </div>
+            </div>
+            
+            <!-- Page Content -->
+            <h2 class="mb-xl">Verifica della stabilità dei percentili</h2>
+            {% for sample_size in data.bootstrap.cutoffs_test.sample_sizes %}
+                <table class="table-bordered table-striped table-padded full-width mb-xl">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 16.6%;">Numerosità Campione</th>
+                            <th class="text-center" style="width: 16.6%;">Fascia</th>
+                            <th class="text-center" style="width: 16.6%;">Percentuale attesa</th>
+                            <th class="text-center" style="width: 16.6%;">Mediana</th>
+                            <th class="text-center" style="width: 16.6%;">P10</th>
+                            <th class="text-center" style="width: 16.6%;">P90</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in data.bootstrap.cutoffs_test.results %}
+                            {% if row.sample_size == sample_size %}
+                                <tr>
+                                    <td class="text-center">{{ row.sample_size }}</td>
+                                    <td class="text-center">{{ row.perc_step | int }}</td>
+                                    <td class="text-center">{{ row.perc_expected }}</td>
+                                    <td class="text-center">{{ row.p50 }}</td>
+                                    <td class="text-center">{{ row.p10 }}</td>
+                                    <td class="text-center">{{ row.p90 }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endfor %}
+        </div>
+        <div class="footer">{{ page + 1 }}</div>
+    </div>
+</div>
+
+<!-- FOURTH PAGE -->
 <div class="page">
     <div class="content">
         <div>
@@ -416,7 +457,7 @@
             <div class="mb-xxl">
                 <div class="header">
                     <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
-                    <p>Allegato {{ header }}3</p>
+                    <p>Allegato {{ header }}4</p>
                 </div>
             </div>
             <!-- Page Content -->
@@ -428,7 +469,7 @@
                 {% endfor %}
             </div>
             <div class="mb-xl">
-                <table class="table-bordered table-striped normative-table">
+                <table class="table-bordered table-striped table-padded">
                     <thead>
                         <th class="text-center">FASCIA</th>
                         <th class="text-center">PUNTEGGIO</th>
@@ -439,7 +480,7 @@
                         {% for cutoff in data.bootstrap.cutoffs %}
                         <tr>
                             <td class="text-center">
-                                {{ loop.index }}
+                                {{ loop.index | int }}
                             </td>
                             <td class="text-center">
                                 {{ "%.2f" | format(data.metric_config.awarded_scores[loop.index0]) }}
