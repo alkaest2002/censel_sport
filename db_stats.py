@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 import pandas as pd
 from weasyprint import HTML  # type: ignore[import-untyped]
 
-from lib_parser.parser import get_dbstats_parser
+from lib_parser.parser import get_base_report_parser
 from lib_report.jinja_environment import jinja_env, templates_dir
 
 if TYPE_CHECKING:
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 def main() -> int:
     """
-    Generate report for given data analysis.
+    Generate db statistics report.
 
     Returns:
     --------
@@ -25,7 +25,7 @@ def main() -> int:
         - 2: Rendering or PDF generation error
     """
     # Get report parser
-    parser = get_dbstats_parser()
+    parser = get_base_report_parser()
 
     # Parse arguments
     args = parser.parse_args()
