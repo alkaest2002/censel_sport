@@ -13,22 +13,24 @@ if TYPE_CHECKING:
 
 
 def main() -> int:
-    """
-    Generate db statistics report.
+    """Generate database statistics report.
+
+    This function reads a CSV database file, computes statistics including
+    duplicate percentages and age-binned summaries, then generates both HTML
+    and PDF reports using Jinja2 templates.
 
     Returns:
-    --------
-    int:
-        Process exit status code:
-        - 0: Success
-        - 1: Error in file validation or loading
-        - 2: Rendering or PDF generation error
+        int: Process exit status code:
+            - 0: Success
+            - 1: Error in file validation or loading
+            - 2: Rendering or PDF generation error
+
+    Raises:
+        Exception: Any error during report generation (caught and handled
+            internally, returning status code 2).
     """
     # Get report parser
     parser = get_base_report_parser()
-
-    # Parse arguments
-    args = parser.parse_args()
 
     # Parse arguments
     args = parser.parse_args()
@@ -40,7 +42,7 @@ def main() -> int:
     df = pd.read_csv(filepath)
 
     # Compute percentage of duplicates
-    duplicated: float = round((df.duplicated().sum() / df.shape[0]) * (100), 2)
+    duplicated: float = round((df.duplicated().sum() / df.shape[0]) * 100, 2)
 
     # Define bin ages
     age_bins = [14, 29, 39, 49, 59, 69, 79]
@@ -51,12 +53,12 @@ def main() -> int:
     # Compute summary table
     data: list[dict[Hashable, Any]] = (
         df.groupby(["test", "recruitment_year", "gender", "age_binned"], observed=True)
-            .size()
-            .reset_index(name="counts")
-            .to_dict(orient="records")
+        .size()
+        .reset_index(name="counts")
+        .to_dict(orient="records")
     )
 
-    # Load data
+    # Load data and generate reports
     try:
         # Get report template
         template = jinja_env.get_template("db_stats.html")
@@ -67,8 +69,8 @@ def main() -> int:
         output_html = base_path.with_suffix(".html")
 
         # Render HTML
-        rendered_html: str =\
-            template.render(data=data, header=args.header_letter, page=args.page_number)
+        rendered_html: str = template.render(
+            data=data, header=args.header_letter, page=args.page_number)
 
         # Write HTML file
         with output_html.open("w") as fout:
@@ -78,7 +80,6 @@ def main() -> int:
         HTML(string=rendered_html, base_url=str(templates_dir)).write_pdf(str(output_pdf))
         print(f"Report generated: {output_pdf}")
 
-    # Handle exceptions
     except Exception as e:  # noqa: BLE001
         print(f"Error while generating report: {e}")
         return 2
@@ -86,6 +87,6 @@ def main() -> int:
     print(f"Data loaded and validated successfully. Percentage of duplicates {duplicated}%")
     return 0
 
+
 if __name__ == "__main__":
     sys.exit(main())
-
