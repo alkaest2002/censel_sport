@@ -8,7 +8,7 @@ by providing a comprehensive synthetic dataset.
 
 from itertools import product
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
@@ -37,7 +37,7 @@ def _generate_fake_military_data() -> pd.DataFrame:
             - value: Test performance value (synthetic)
     """
     # Define all possible combinations of parameters
-    subsets = list(product(
+    subsets: list[tuple[int, str, str, str]] = list(product(
         [2024, 2023, 2022],
         ["hd", "mlli"],
         [MT100, MT1000, SWIM25, PUSHUPS, SITUPS],
@@ -45,10 +45,10 @@ def _generate_fake_military_data() -> pd.DataFrame:
     ))
 
     # Initialize random generator with fixed seed for reproducibility
-    rng = np.random.default_rng(100)
+    rng: np.random.Generator = np.random.default_rng(100)
 
-    # Initialize variable to hold full dataframe
-    df: pd.DataFrame | None = None
+    # Intialize list to collect dataframes
+    dataframes: list[pd.DataFrame] = []
 
     # Loop through all subsets and generate synthetic data
     for (recruitment_year, recruitment_type, test, gender) in subsets:
@@ -64,9 +64,9 @@ def _generate_fake_military_data() -> pd.DataFrame:
             )
             .loc[:, ["recruitment_year", "recruitment_type", "test", "gender", "age", "value"]]
         )
-        df = fake_data_df if df is None else pd.concat([df, fake_data_df], ignore_index=True)
+        dataframes.append(fake_data_df)
 
-    return cast("pd.DataFrame", df)
+    return pd.concat(dataframes, ignore_index=True)
 
 
 def _save_data_to_csv(df: pd.DataFrame, file_path: Path) -> None:
@@ -82,10 +82,10 @@ def _save_data_to_csv(df: pd.DataFrame, file_path: Path) -> None:
 def main() -> None:
     """Main function to generate synthetic data and save to CSV file."""
     # Generate synthetic military fitness data
-    df = _generate_fake_military_data()
+    df: pd.DataFrame = _generate_fake_military_data()
 
     # Set filepath
-    file_path = Path("db/db.csv")
+    file_path: Path = Path("db/db.csv")
 
     # Save to CSV
     _save_data_to_csv(df, file_path)
