@@ -123,10 +123,7 @@ def bootstrap_test_cutoffs(
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Define base sample_sizes
-    sample_sizes = [30, 50, 100, 150, 300]
-
-    # Omit sample sizes larger than data length
-    sample_sizes = list(filter(lambda x: x <= len(data), sample_sizes))
+    sample_sizes = [30, 50, 100, 150, 200, 300]
 
     # Apply cutoffs to data
     final_data: list[dict[str, Any]] = _apply_cutoffs(
