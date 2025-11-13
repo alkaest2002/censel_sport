@@ -13,22 +13,20 @@ if TYPE_CHECKING:
 
 
 def main() -> int:
-    """
-    Generate db statistics report.
+    """Generate database statistics report.
+
+    This function reads a CSV database file, processes the data to compute
+    statistics including duplicates percentage and age-binned summaries,
+    then generates both HTML and PDF reports using Jinja templates.
 
     Returns:
-    --------
-    int:
-        Process exit status code:
-        - 0: Success
-        - 1: Error in file validation or loading
-        - 2: Rendering or PDF generation error
+        int: Process exit status code:
+            - 0: Success
+            - 1: Error in file validation or loading
+            - 2: Rendering or PDF generation error
     """
     # Get report parser
     parser = get_base_report_parser()
-
-    # Parse arguments
-    args = parser.parse_args()
 
     # Parse arguments
     args = parser.parse_args()
@@ -86,6 +84,6 @@ def main() -> int:
     print(f"Data loaded and validated successfully. Percentage of duplicates {duplicated}%")
     return 0
 
+
 if __name__ == "__main__":
     sys.exit(main())
-

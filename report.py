@@ -20,16 +20,22 @@ from lib_report.jinja_environment import jinja_env, templates_dir
 
 
 def main() -> int:
-    """
-    Generate report for given data analysis.
+    """Generate report for given data analysis.
+
+    This function parses command line arguments, validates the input file path,
+    optionally re-runs analysis, loads data, renders an HTML template using Jinja2,
+    and generates both HTML and PDF output files using WeasyPrint.
 
     Returns:
-    --------
-    int:
-        Process exit status code:
-        - 0: Success
-        - 1: Error in file validation or loading
-        - 2: Rendering or PDF generation error
+        int: Process exit status code:
+            - 0: Success
+            - 1: Error in file validation or loading
+            - 2: Rendering or PDF generation error
+
+    Raises:
+        FileNotFoundError: If the input file or analysis script doesn't exist.
+        ValueError: If the file path validation fails.
+        Exception: For any other errors during report generation.
     """
     # Get report parser
     parser = get_report_parser()
