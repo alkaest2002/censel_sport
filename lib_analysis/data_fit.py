@@ -26,7 +26,7 @@ class DistributionFitter:
         Args:
             data_dict: Dictionary containing data.
         """
-        self.data_dict = data_dict
+        self.data_dict: dict[str, Any] = data_dict
 
     def fit_distributions(self) -> dict[str, Any]:
         """Fit multiple distributions to data and compute goodness-of-fit metrics.
@@ -73,7 +73,7 @@ class DistributionFitter:
             get_continuous_distributions() if metric_type == "continuous" else get_discrete_distributions()
 
         # Pre-sort data for efficiency
-        sorted_data = np.sort(data)
+        sorted_data: NDArray[np.number[Any]] = np.sort(data)
 
         # Iterate over distributions
         for dist_name, dist_class in distributions.items():
@@ -166,7 +166,7 @@ class DistributionFitter:
         if criterion is not None:
 
             # Compute best model via selected criterion
-            best_model_name: str = min(valid_models.keys(), key=lambda x: valid_models[x][criterion])
+            best_model_name: str = min(valid_models.keys(), key=lambda x: valid_models[x]["goodness_of_fit"][criterion])
 
             # Get parameters of best model
             best_parameters: tuple[float, ...] = fitted_models[best_model_name]["parameters"]
@@ -223,12 +223,14 @@ class DistributionFitter:
             for j in range(i + 1, n_models):
 
                 # Get model names
+                model_a: str
+                model_b: str
                 model_a, model_b = model_names[i], model_names[j]
-                model_a_goodness_of_fit = valid_models[model_a]["goodness_of_fit"]
-                model_b_goodness_of_fit = valid_models[model_b]["goodness_of_fit"]
+                model_a_goodness_of_fit: dict[str, float | None] = valid_models[model_a]["goodness_of_fit"]
+                model_b_goodness_of_fit: dict[str, float | None] = valid_models[model_b]["goodness_of_fit"]
 
                 # Count model a wins for each criterion (lower is better)
-                a_wins = sum(
+                a_wins: int = sum(
                     True for crit in criteria
                         if model_a_goodness_of_fit[crit] < model_b_goodness_of_fit[crit]
                 )
@@ -241,14 +243,14 @@ class DistributionFitter:
                     wins[model_b] += 1
 
         # Find model(s) with most pairwise wins
-        max_wins = max(wins.values())
+        max_wins: int = max(wins.values())
 
         # Identify models with the highest number of wins
         # It is possible to have ties here
-        winners = [name for name, win_count in wins.items() if win_count == max_wins]
+        winners: list[str] = [name for name, win_count in wins.items() if win_count == max_wins]
 
         # Determine best model name
-        best_model_name = winners[0] if len(winners) == 1 else self._break_tie(winners, valid_models, criteria)
+        best_model_name: str = winners[0] if len(winners) == 1 else self._break_tie(winners, valid_models, criteria)
 
         return {
             "name": best_model_name,
@@ -275,13 +277,13 @@ class DistributionFitter:
         for crit in criteria:
 
             # Find best model for this criterion
-            best_for_criterion = min(tied_models, key=lambda x: valid_models[x]["goodness_of_fit"][crit])
+            best_for_criterion: str = min(tied_models, key=lambda x: valid_models[x]["goodness_of_fit"][crit])
 
             # Check if this model is uniquely best for this criterion
-            best_value = valid_models[best_for_criterion]["goodness_of_fit"][crit]
+            best_value: float | None = valid_models[best_for_criterion]["goodness_of_fit"][crit]
 
             # Get other models' values for this criterion
-            other_values = [valid_models[model]["goodness_of_fit"][crit] for model in tied_models
+            other_values: list[float | None] = [valid_models[model]["goodness_of_fit"][crit] for model in tied_models
                 if model != best_for_criterion]
 
             # If uniquely best, return it
@@ -317,7 +319,7 @@ class DistributionFitter:
         # Log-likelihood
         try:
             if metric_type == "discrete":
-                log_lik = float(np.sum(dist_obj.logpmf(data)))
+                log_lik: float = float(np.sum(dist_obj.logpmf(data)))
             else:
                 log_lik = float(np.sum(dist_obj.logpdf(data)))
         except (AttributeError, ValueError) as e:
@@ -328,6 +330,7 @@ class DistributionFitter:
             raise ValueError("Log-likelihood is not finite")
 
         # Number of parameters
+        k: int
         if hasattr(dist_obj, "args"):
             k = len(dist_obj.args)
         elif hasattr(dist_obj, "kwds"):
@@ -337,10 +340,12 @@ class DistributionFitter:
             k = 2
 
         # Information criteria
-        aic = 2 * k - 2 * log_lik
-        bic = k * np.log(n) - 2 * log_lik
+        aic: float = 2 * k - 2 * log_lik
+        bic: float = k * np.log(n) - 2 * log_lik
 
         # Compute Cramér-von Mises
+        cvm_stat: float
+        cvm_pvalue: float | None
         cvm_stat, cvm_pvalue = self._compute_cramer_von_mises(
             dist_obj, sorted_data, n, metric_type,
         )
@@ -374,6 +379,8 @@ class DistributionFitter:
         """
         try:
             # Try scipy's built-in test first (if available)
+            cvm_stat: float | None
+            cvm_pvalue: float | None
             cvm_stat, cvm_pvalue = self._try_scipy_cvm(sorted_data, dist_obj, metric_type)
 
             # If scipy's test is successful, use it
@@ -382,10 +389,10 @@ class DistributionFitter:
 
             # Manual calculation (works for both discrete and continuous)
             # Empirical CDF at sorted data points
-            empirical_cdf = np.arange(1, n + 1) / n
+            empirical_cdf: NDArray[np.floating[Any]] = np.arange(1, n + 1) / n
 
             # Theoretical CDF at sorted data points
-            theoretical_cdf = dist_obj.cdf(sorted_data)
+            theoretical_cdf: NDArray[np.floating[Any]] = dist_obj.cdf(sorted_data)
 
             # Cramér-von Mises statistic
             cvm_stat = np.sum((empirical_cdf - theoretical_cdf) ** 2) + 1 / (12 * n)
@@ -419,7 +426,7 @@ class DistributionFitter:
 
         try:
             # Use scipy's cramervonmises test
-            result = stats.cramervonmises(sorted_data, dist_obj.cdf)
+            result: stats._result_classes.CramerVonMisesResult = stats.cramervonmises(sorted_data, dist_obj.cdf)
 
             return float(result.statistic), float(result.pvalue)
 
