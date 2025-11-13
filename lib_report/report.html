@@ -125,12 +125,12 @@
                         </tr>
                         <tr>
                             <td class="text-left">Genere</td>
-                            {% set gender = data.metric_config.stratification.gender.label.split(' : ')[-1] %}
+                            {% set gender = data.metric_config.stratification.gender.label.split(':')[-1] %}
                             <td class="text-center">{{ gender }}</td>
                         </tr>
                         <tr>
                             <td class="text-left">Fascia d'età</td>
-                            {% set age = data.metric_config.stratification.age.label.split(' : ')[-1] %}
+                            {% set age = data.metric_config.stratification.age.label.split(':')[-1] %}
                             <td class="text-center">{{ age }}</td>
                         </tr>
                     </tbody>
@@ -410,84 +410,7 @@
     </div>
 </div>
 
-<div class="page">
-    <div class="content">
-        <div>
-             <!-- Page Header -->
-            <div class="mb-xxl">
-                <div class="header">
-                    <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
-                    <p>Allegato {{ header }}3</p>
-                </div>
-            </div>
-            
-            <!-- Page Content -->
-            <h2 class="mb-xl">Verifica della stabilità dei percentili</h2>
-            <div class="two-columns">
-                <div class="mb-xl">
-                    <h3 class="mb-lg background">NOTE INTRODUTTIVE</h3>
-                    <ul>
-                        <li>
-                            <p>
-                                In questa pagina viene presentata un'analisi della stabilità dei percentili stimati attraverso la tecnica <span class="text-italic">bootstrap</span>, quando applicati a campioni di diversa numerosità ({{data.bootstrap.cutoffs_test.sample_sizes | join(", ")}} osservazioni).
-                            </p>
-                            <p>
-                                Per ciascuna delle {{ data.bootstrap.cutoffs_test.sample_sizes | length }} numerosità considerate, vengono calcolati un totale di 1000 campioni estratti dal <span class="text-italic">dataset</span> originale. Il ricampionamento causale con re-immissione consente di studiare la stabilità delle statistiche di interesse mantenendo le caratteristiche distributive dei dati originali.
-                            </p>
-                            <p>
-                                Su ogni campione generato vengono applicati i <span class="text-italic">cut-off</span> percentilici precedentemente stimati, trasformando i punteggi grezzi in fasce percentiliche e calcolando la proporzione di osservazioni ricadente in ciascuna fascia.
-                            </p>
-                        </li>
-                    </ul>
-                </div>
-                {% for sample_size in data.bootstrap.cutoffs_test.sample_sizes %}
-                    <div class="mb-xl">
-                        <h3 class="mb-lg background">STABILITÀ CON N={{ sample_size }}</h3>
-                        <table class="table-bordered full-width mb-xl">
-                            <thead>
-                                <tr>
-                                    <th class="text-center" style="width: 18%">FA</th>
-                                    <th class="text-center" style="width: 18%">AT</th>
-                                    <th class="text-center" style="width: 18%">OS</th>
-                                    <th class="text-center" style="width: 18%">AM</th>
-                                    <th class="text-center" style="width: 28%">IF</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for row in data.bootstrap.cutoffs_test.results %}
-                                    {% if row.sample_size == sample_size %}
-                                        <tr>
-                                            <td class="text-center">{{ row.perc_step | int }}</td>
-                                            <td class="text-center">{{ row.perc_expected }}</td>
-                                            <td class="text-center">{{ "%.2f" | format(row.p50) }}</td>
-                                            <td class="text-center">{{ "%.2f" | format(row.p90 - row.p10) }}</td>
-                                            <td class="text-center">[ {{ "%05.2f" | format(row.p10) }} &mdash; {{ "%05.2f" | format(row.p90) }} ]</td>
-                                        </tr>
-                                    {% endif %}
-                                {% endfor %}
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="5">
-                                        <div class="caption">
-                                            <span>Tabella {{ header }}3.{{ loop.index}}</span>
-                                            <span>
-                                                FA = Fascia, AT = Percentile atteso, OS = Percentile osservato, AM = Ampiezza intervallo di fluttuazione, IF = Intervallo di fluttuazione 10%-90%. 
-                                            </span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="footer">{{ page + 2 }}</div>
-    </div>
-</div>
-
-<!-- FOURTH PAGE -->
+<!-- THIRD PAGE -->
 <div class="page">
     <div class="content">
         <div>
@@ -495,16 +418,20 @@
             <div class="mb-xxl">
                 <div class="header">
                     <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
-                    <p>Allegato {{ header }}4</p>
+                    <p>Allegato {{ header }}3</p>
                 </div>
             </div>
             <!-- Page Content -->
             <h2 class="mb-xl">Tavola di conversione percentilica</h2>
             <div class="mb-xl text-small">
                 <p>Numerosità del campione: {{ data.clean.descriptive_stats.count | int }}</p>
-                {% for db_filter in data.metric_config.stratification.values() %}
-                    {% if db_filter.label %} <p>{{ db_filter.label }}</p> {% endif %}
-                {% endfor %}
+                {% set strat = data.metric_config.stratification %}
+                {% if strat.gender.label %}
+                    <p>{{ strat.gender.label }}</p>
+                {% endif %}
+                {% if strat.age.label %}
+                    <p>{{ strat.age.label }}</p>
+                {% endif %}
             </div>
             <div class="mb-xl">
                 <table class="table-bordered table-striped table-padded">
@@ -558,6 +485,84 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
+        </div>
+        <div class="footer">{{ page + 2 }}</div>
+    </div>
+</div>
+
+<!-- FOURTH PAGE -->
+<div class="page">
+    <div class="content">
+        <div>
+             <!-- Page Header -->
+            <div class="mb-xxl">
+                <div class="header">
+                    <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
+                    <p>Allegato {{ header }}3</p>
+                </div>
+            </div>
+            
+            <!-- Page Content -->
+            <h2 class="mb-xl">Verifica della stabilità della tavola di conversione</h2>
+            <div class="two-columns">
+                <div class="mb-xl">
+                    <h3 class="mb-lg background">NOTE INTRODUTTIVE</h3>
+                    <ul>
+                        <li>
+                            <p>
+                                In questa pagina viene presentata un'analisi della stabilità della tavola di conversione quando applicata a campioni di diversa consistenza numerica ({{data.bootstrap.cutoffs_test.sample_sizes | join(", ")}} osservazioni).
+                            </p>
+                            <p>
+                                Per ciascuna delle {{ data.bootstrap.cutoffs_test.sample_sizes | length }} numerosità considerate, sono stati generati 1000 campioni derivati dal <span class="text-italic">dataset</span> originario. Il ricampionamento causale con re-immissione consente di mantenere le caratteristiche distributive dei dati osservati.
+                            </p>
+                            <p>
+                                Su ogni campione viene applicata la tavola di conversione, trasformando i punteggi grezzi in fasce percentiliche e calcolando la proporzione di osservazioni ricadente in ciascuna fascia.
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+                {% for sample_size in data.bootstrap.cutoffs_test.sample_sizes %}
+                    <div class="mb-xl">
+                        <h3 class="mb-lg background">STABILITÀ CON N={{ sample_size }}</h3>
+                        <table class="table-bordered full-width mb-xl">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 18%">FA</th>
+                                    <th class="text-center" style="width: 18%">AT</th>
+                                    <th class="text-center" style="width: 18%">OS</th>
+                                    <th class="text-center" style="width: 18%">AM</th>
+                                    <th class="text-center" style="width: 28%">IF</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in data.bootstrap.cutoffs_test.results %}
+                                    {% if row.sample_size == sample_size %}
+                                        <tr>
+                                            <td class="text-center">{{ row.perc_step | int }}</td>
+                                            <td class="text-center">{{ row.perc_expected }}</td>
+                                            <td class="text-center">{{ "%.2f" | format(row.p50) }}</td>
+                                            <td class="text-center">{{ "%.2f" | format(row.p90 - row.p10) }}</td>
+                                            <td class="text-center">[ {{ "%05.2f" | format(row.p10) }} &mdash; {{ "%05.2f" | format(row.p90) }} ]</td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="caption">
+                                            <span>Tabella {{ header }}4.{{ loop.index }}</span>
+                                            <span>
+                                                FA = Fascia, AT = Percentile atteso, OS = Percentile osservato, AM = Ampiezza intervallo di fluttuazione, IF = Intervallo di fluttuazione 10%-90%. 
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                {% endfor %}
             </div>
         </div>
         <div class="footer">{{ page + 3 }}</div>
