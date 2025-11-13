@@ -16,8 +16,8 @@
             "query": "gender=='M'"
         },
         "age": {
-            "label": null,
-            "query": null
+            "label": "Fascia di età: 18-25 anni",
+            "query": "age >= 18 and age <= 25"
         }
     },
     "metric_type": "discrete",
