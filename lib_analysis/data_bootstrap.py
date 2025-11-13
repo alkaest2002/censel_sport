@@ -132,7 +132,7 @@ def _create_percentile_statistics_list(
 
 def compute_bootstrap_percentiles(
     data_dict: dict[str, Any],
-) -> tuple[dict[str, Any], list[NDArray[np.integer[Any] | np.floating[Any]]]]:
+) -> tuple[dict[str, Any], list[NDArray[np.number[Any]]]]:
     """
     Compute bootstrap percentiles and confidence intervals.
 
@@ -149,7 +149,7 @@ def compute_bootstrap_percentiles(
     # Extract data from dictionary
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
     clean: dict[str, Any] = data_dict.get("clean", {})
-    data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
+    data: NDArray[np.number[Any]] = clean.get("data", np.array([]))
     requested_percentiles: list[int | float] = metric_config.get("requested_percentiles", [5, 25, 50, 75, 95])
     n_replicates: int = metric_config.get("bootstrap_n_replicates", 10000)
     n_replicate_size: int = metric_config.get("bootstrap_n_replicate_size", data.size)
@@ -172,8 +172,8 @@ def compute_bootstrap_percentiles(
     all_percentiles: list[int | float] = list(range(0, 101, 5))
 
     # Initialize lists
-    bootstrap_samples: list[NDArray[np.integer[Any] | np.floating[Any]]] = []
-    bootstrap_sample: NDArray[np.integer[Any] | np.floating[Any]] = np.array([])
+    bootstrap_samples: list[NDArray[np.number[Any]]] = []
+    bootstrap_sample: NDArray[np.number[Any]] = np.array([])
     computed_all_percentiles: list[NDArray[np.float64]] = []
     computed_requested_percentiles: list[NDArray[np.float64]] = []
 

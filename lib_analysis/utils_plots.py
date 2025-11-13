@@ -23,9 +23,9 @@ NEUTRAL_COLOR_LIGHT = "#CCCCCC"
 
 
 def _validate_data_points(
-        data: NDArray[np.integer[Any] | np.floating[Any]],
+        data: NDArray[np.number[Any]],
         plot_name: str,
-    ) -> tuple[NDArray[np.integer[Any] | np.floating[Any]], int]:
+    ) -> tuple[NDArray[np.number[Any]], int]:
     """
         Validate the data points for plotting.
 
@@ -67,7 +67,7 @@ def _validate_data_points(
     return data, data.size
 
 def _get_x_lim_with_padding(
-        data: NDArray[np.integer[Any] | np.floating[Any]],
+        data: NDArray[np.number[Any]],
     ) -> tuple[float | int, float | int]:
     """Compute data min and max limits with padding.
 
@@ -123,7 +123,7 @@ def figure_to_svg_string(fig: Figure) -> str:
     return f"data:image/svg+xml;base64,{base64_encoded_string}"
 
 def plot_histogram_with_fitted_model(
-        data: NDArray[np.integer[Any] | np.floating[Any]],
+        data: NDArray[np.number[Any]],
         model_name: str,
         model: Any,
         bins: int | str | None = None,
@@ -258,7 +258,7 @@ def plot_histogram_with_fitted_model(
     return figure_to_svg_string(figure)
 
 def plot_qq_plot(
-        data: NDArray[np.integer[Any] | np.floating[Any]],
+        data: NDArray[np.number[Any]],
         model_name: str,
         model: Any,
     ) -> str:
@@ -313,7 +313,7 @@ def plot_qq_plot(
     return figure_to_svg_string(figure)
 
 def plot_hanging_rootogram(
-        data: NDArray[np.integer[Any] | np.floating[Any]],
+        data: NDArray[np.number[Any]],
         model_name: str,
         model: Any,
         max_count: int | None = None,

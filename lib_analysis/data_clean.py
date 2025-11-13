@@ -27,7 +27,7 @@ def clean_data(
     # Extract data from dictionary
     metric_config: dict[str, Any] =  data_dict.get("metric_config", {})
     load: dict[str, Any] = data_dict.get("load", {})
-    data: NDArray[np.integer[Any] | np.floating[Any]] = load.get("data", np.array([]))
+    data: NDArray[np.number[Any]] = load.get("data", np.array([]))
 
     # Raise error if something is missing
     if any(map(is_falsy, (metric_config, load, data))):

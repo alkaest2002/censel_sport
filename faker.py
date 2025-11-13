@@ -26,7 +26,7 @@ df: pd.DataFrame | None = None
 
 # Loop through all subsets and generate synthetic data
 for (recruitment_year, recruitment_type, test, gender) in subsets:
-    fake_data: NDArray[np.integer[Any] | np.floating[Any]] = generate_synthetic_data(test, 300, 50)
+    fake_data: NDArray[np.number[Any]] = generate_synthetic_data(test, 300, 50)
     fake_data_df = (
         pd.DataFrame({ "value": fake_data })
             .assign(

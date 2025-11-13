@@ -11,7 +11,7 @@ from lib_analysis.utils_distributions_continuous import get_continuous_distribut
 from lib_analysis.utils_distributions_discrete import get_discrete_distributions
 from lib_analysis.utils_generic import is_falsy
 
-FitFunctionType = Callable[[NDArray[np.integer[Any] | np.floating[Any]]], tuple[float, ...]]
+FitFunctionType = Callable[[NDArray[np.number[Any]]], tuple[float, ...]]
 
 
 class DistributionFitter:
@@ -46,7 +46,7 @@ class DistributionFitter:
         # Extract data from dictionary
         metric_config: dict[str, Any] = self.data_dict.get("metric_config", {})
         clean: dict[str, Any] = self.data_dict.get("clean", {})
-        data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
+        data: NDArray[np.number[Any]] = clean.get("data", np.array([]))
         metric_type: Literal["discrete", "continuous"] | None = metric_config.get("metric_type")
         distribution_best_criterion: Literal["aic", "bic", "cramer_von_mises"] | None =\
             self.data_dict.get("distribution_best_criterion", None)
@@ -294,8 +294,8 @@ class DistributionFitter:
     def _compute_metrics(
         self,
         dist_obj: Any,
-        data: NDArray[np.integer[Any] | np.floating[Any]],
-        sorted_data: NDArray[np.integer[Any] | np.floating[Any]],
+        data: NDArray[np.number[Any]],
+        sorted_data: NDArray[np.number[Any]],
         n: int,
         metric_type: str,
     ) -> dict[str, float | int | None]:
@@ -365,7 +365,7 @@ class DistributionFitter:
     def _compute_cramer_von_mises(
         self,
         dist_obj: Any,
-        sorted_data: NDArray[np.integer[Any] | np.floating[Any]],
+        sorted_data: NDArray[np.number[Any]],
         n: int,
         metric_type: str,
     ) -> tuple[float, float | None]:
@@ -414,7 +414,7 @@ class DistributionFitter:
 
     def _try_scipy_cvm(
         self,
-        sorted_data: NDArray[np.integer[Any] | np.floating[Any]],
+        sorted_data: NDArray[np.number[Any]],
         dist_obj: Any,
         metric_type: str,
     ) -> tuple[float | None, float | None]:

@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 def monte_carlo_validation(
     data_dict: dict[str, Any],
-) -> tuple[dict[str, Any], list[NDArray[np.integer[Any] | np.floating[Any]]]]:
+) -> tuple[dict[str, Any], list[NDArray[np.number[Any]]]]:
     """
     Validate bootstrap percentiles using Monte Carlo simulation from fitted distribution.
 
@@ -36,7 +36,7 @@ def monte_carlo_validation(
     montecarlo_n_samples: int = metric_config.get("montecarlo_n_samples", 0)
     montecarlo_n_size: int = metric_config.get("montecarlo_n_size", 0)
     random_state: int = metric_config.get("random_state", 0)
-    data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", [])
+    data: NDArray[np.number[Any]] = clean.get("data", [])
     bootstrap_requested_percentiles: list[dict[str, Any]] = bootstrap.get("requested_percentiles", [])
     best_model: dict[str, Any] = fitted_distributions.get("best_model", {})
 
@@ -69,7 +69,7 @@ def monte_carlo_validation(
     model = model_class(*best_model["parameters"])
 
     # Init lists to store montecarlo samples and synthetic percentile estimates
-    montecarlo_samples: list[NDArray[np.integer[Any] | np.floating[Any]]] = []
+    montecarlo_samples: list[NDArray[np.number[Any]]] = []
     montecarlo_estimates: dict[int | float, list[float]] = {
         percentile_data["percentile"]: []
         for percentile_data in bootstrap_requested_percentiles
@@ -106,7 +106,7 @@ def monte_carlo_validation(
         bootstrap_ci_upper: float = percentile_data["ci_upper"]
 
         # Get synthetic values and convert to numpy array for easier computation
-        montecarlo_values: NDArray[np.integer[Any] | np.floating[Any]] =\
+        montecarlo_values: NDArray[np.number[Any]] =\
             np.array(montecarlo_estimates[percentile])
 
         # Compute montecarlo values

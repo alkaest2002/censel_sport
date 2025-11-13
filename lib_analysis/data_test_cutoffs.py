@@ -12,7 +12,7 @@ from lib_analysis.utils_stats import apply_standardization
 def _apply_cutoffs(
     requested_percentiles: list[float],
     cutoffs: list[tuple],
-    data: NDArray[np.integer[Any] | np.floating[Any]],
+    data: NDArray[np.number[Any]],
     higher_is_better: bool,
     sample_sizes: list[int],
     random_state: int,
@@ -113,7 +113,7 @@ def bootstrap_test_cutoffs(
     metric_config: dict[str, Any] =  data_dict.get("metric_config", {})
     clean: dict[str, Any] = data_dict.get("clean", {})
     bootstrap: dict[str, Any] = data_dict.get("bootstrap", {})
-    data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
+    data: NDArray[np.number[Any]] = clean.get("data", np.array([]))
     cutoffs = bootstrap.get("cutoffs", {})
     higher_is_better: bool = metric_config.get("higher_is_better", False)
     requested_percentiles: list[float] = metric_config.get("requested_percentiles", [])

@@ -28,7 +28,7 @@ def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
     # Extract data from dictionary
     clean: dict[str, Any] = data_dict.get("clean", {})
     boostrap: dict[str, Any] = data_dict.get("bootstrap", [])
-    data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", [])
+    data: NDArray[np.number[Any]] = clean.get("data", [])
     cutoffs = boostrap.get("cutoffs", [])
 
     # Raise error if something is missing

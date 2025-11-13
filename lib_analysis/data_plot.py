@@ -40,7 +40,7 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
     montecarlo: dict[str, Any] = data_dict.get("montecarlo", {})
     fit: dict[str, Any] = data_dict.get("fit", {})
     metric_type: Literal["continuous", "discrete"] | None = metric_config.get("metric_type")
-    data: NDArray[np.integer[Any] | np.floating[Any]] = clean.get("data", np.array([]))
+    data: NDArray[np.number[Any]] = clean.get("data", np.array([]))
     bootstrap_requested_percentiles: list[dict[str, Any]] = bootstrap.get("requested_percentiles", [])
     bootstrap_all_percentiles: list[dict[str, Any]] = bootstrap.get("all_percentiles", [])
     best_model: dict[str, Any] = fit.get("best_model", {})

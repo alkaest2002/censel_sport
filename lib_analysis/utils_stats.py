@@ -122,7 +122,7 @@ def generate_synthetic_data(
     return data
 
 def apply_standardization(
-        data_to_standardize: NDArray[np.integer[Any] | np.floating[Any]],
+        data_to_standardize: NDArray[np.number[Any]],
         cutoffs: list[tuple],
         higher_is_better: bool = False,
     ) -> pd.DataFrame:

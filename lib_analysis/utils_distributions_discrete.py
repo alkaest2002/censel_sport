@@ -6,7 +6,7 @@ from numpy.typing import NDArray
 from scipy import stats
 import statsmodels.api as sm
 
-FitFunctionType = Callable[[NDArray[np.integer[Any] | np.floating[Any]]], tuple[float, ...]]
+FitFunctionType = Callable[[NDArray[np.number[Any]]], tuple[float, ...]]
 
 # ruff: noqa: BLE001
 # ruff: noqa: SLF001
@@ -19,7 +19,7 @@ class StatsModelsGeometricDist(stats.rv_discrete):
         self.p: float | None = p
 
     @classmethod
-    def fit(cls, data: NDArray[np.integer[Any] | np.floating[Any]]) -> "StatsModelsGeometricDist":
+    def fit(cls, data: NDArray[np.number[Any]]) -> "StatsModelsGeometricDist":
         """
         Fit Geometric distribution to data.
 
@@ -27,7 +27,7 @@ class StatsModelsGeometricDist(stats.rv_discrete):
 
         Parameters:
         -----------
-        data : NDArray[np.integer[Any] | np.floating[Any]]
+        data : NDArray[np.number[Any]]
             Data to fit (should be positive integers)
 
         Returns:
@@ -56,13 +56,13 @@ class StatsModelsGeometricDist(stats.rv_discrete):
         return instance
 
     @classmethod
-    def fit_parameters(cls, data: NDArray[np.integer[Any] | np.floating[Any]]) -> tuple[float]:
+    def fit_parameters(cls, data: NDArray[np.number[Any]]) -> tuple[float]:
         """
         Fit Geometric distribution parameters to data.
 
         Parameters:
         -----------
-        data : NDArray[np.integer[Any] | np.floating[Any]]
+        data : NDArray[np.number[Any]]
             Data to fit
 
         Returns:
@@ -74,31 +74,31 @@ class StatsModelsGeometricDist(stats.rv_discrete):
             raise ValueError("Failed to fit Geometric distribution parameters")
         return (fitted_dist.p,)
 
-    def pmf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def pmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Probability mass function."""
         if self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
-        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.geom.pmf(k, self.p))
+        return cast("NDArray[np.number[Any]]", stats.geom.pmf(k, self.p))
 
-    def logpmf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def logpmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Log probability mass function."""
         if self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
-        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.geom.logpmf(k, self.p))
+        return cast("NDArray[np.number[Any]]", stats.geom.logpmf(k, self.p))
 
-    def pdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def pdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """PDF method for compatibility (same as PMF for discrete distribution)."""
         return self.pmf(k)
 
-    def logpdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def logpdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Log PDF method for compatibility (same as log PMF for discrete distribution)."""
         return self.logpmf(k)
 
-    def cdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def cdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Cumulative distribution function."""
         if self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
-        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.geom.cdf(k, self.p))
+        return cast("NDArray[np.number[Any]]", stats.geom.cdf(k, self.p))
 
     def ppf(self, q: NDArray[np.floating[Any]] | float) -> NDArray[np.integer[Any]] | int:
         """Percent point function (quantile function)."""
@@ -133,13 +133,13 @@ class StatsModelsBinomialDist(stats.rv_discrete):
         self.p: float | None = p
 
     @classmethod
-    def fit(cls, data: NDArray[np.integer[Any] | np.floating[Any]], n: int | None = None) -> "StatsModelsBinomialDist":
+    def fit(cls, data: NDArray[np.number[Any]], n: int | None = None) -> "StatsModelsBinomialDist":
         """
         Fit Binomial distribution to data.
 
         Parameters:
         -----------
-        data : NDArray[np.integer[Any] | np.floating[Any]]
+        data : NDArray[np.number[Any]]
             Data to fit (should be non-negative integers)
         n : int | None
             Number of trials. If None, will be estimated as max(data)
@@ -175,13 +175,13 @@ class StatsModelsBinomialDist(stats.rv_discrete):
 
     @classmethod
     def fit_parameters(
-        cls, data: NDArray[np.integer[Any] | np.floating[Any]], n: int | None = None) -> tuple[int, float]:
+        cls, data: NDArray[np.number[Any]], n: int | None = None) -> tuple[int, float]:
         """
         Fit Binomial distribution parameters to data.
 
         Parameters:
         -----------
-        data : NDArray[np.integer[Any] | np.floating[Any]]
+        data : NDArray[np.number[Any]]
             Data to fit
         n : int | None
             Number of trials. If None, will be estimated as max(data)
@@ -195,31 +195,31 @@ class StatsModelsBinomialDist(stats.rv_discrete):
             raise ValueError("Failed to fit Binomial distribution parameters")
         return (fitted_dist.n, fitted_dist.p)
 
-    def pmf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def pmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Probability mass function."""
         if self.n is None or self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
-        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.binom.pmf(k, self.n, self.p))
+        return cast("NDArray[np.number[Any]]", stats.binom.pmf(k, self.n, self.p))
 
-    def logpmf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def logpmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Log probability mass function."""
         if self.n is None or self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
-        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.binom.logpmf(k, self.n, self.p))
+        return cast("NDArray[np.number[Any]]", stats.binom.logpmf(k, self.n, self.p))
 
-    def pdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def pdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """PDF method for compatibility (same as PMF for discrete distribution)."""
         return self.pmf(k)
 
-    def logpdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def logpdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Log PDF method for compatibility (same as log PMF for discrete distribution)."""
         return self.logpmf(k)
 
-    def cdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def cdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Cumulative distribution function."""
         if self.n is None or self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
-        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.binom.cdf(k, self.n, self.p))
+        return cast("NDArray[np.number[Any]]", stats.binom.cdf(k, self.n, self.p))
 
     def ppf(self, q: NDArray[np.floating[Any]] | float) -> NDArray[np.integer[Any]] | int:
         """Percent point function (quantile function)."""
@@ -253,13 +253,13 @@ class StatsModelsPoissonDist(stats.rv_discrete):
         self._lambda: float | None = lambda_
 
     @classmethod
-    def fit(cls, data: NDArray[np.integer[Any] | np.floating[Any]]) -> "StatsModelsPoissonDist":
+    def fit(cls, data: NDArray[np.number[Any]]) -> "StatsModelsPoissonDist":
         """
         Fit Poisson distribution to data using statsmodels.
 
         Parameters:
         -----------
-        data : NDArray[np.integer[Any] | np.floating[Any]]
+        data : NDArray[np.number[Any]]
             Data to fit
 
         Returns:
@@ -285,13 +285,13 @@ class StatsModelsPoissonDist(stats.rv_discrete):
         return instance
 
     @classmethod
-    def fit_parameters(cls, data: NDArray[np.integer[Any] | np.floating[Any]]) -> tuple[float]:
+    def fit_parameters(cls, data: NDArray[np.number[Any]]) -> tuple[float]:
         """
         Fit Poisson distribution parameters to data.
 
         Parameters:
         -----------
-        data : NDArray[np.integer[Any] | np.floating[Any]]
+        data : NDArray[np.number[Any]]
             Data to fit
 
         Returns:
@@ -303,31 +303,31 @@ class StatsModelsPoissonDist(stats.rv_discrete):
             raise ValueError("Failed to fit Poisson distribution parameters")
         return (fitted_dist._lambda,)
 
-    def pmf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def pmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Probability mass function."""
         if self._lambda is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
-        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.poisson.pmf(k, self._lambda))
+        return cast("NDArray[np.number[Any]]", stats.poisson.pmf(k, self._lambda))
 
-    def logpmf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def logpmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Log probability mass function."""
         if self._lambda is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
-        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.poisson.logpmf(k, self._lambda))
+        return cast("NDArray[np.number[Any]]", stats.poisson.logpmf(k, self._lambda))
 
-    def pdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def pdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """PDF method for compatibility (same as PMF for discrete distribution)."""
         return self.pmf(k)
 
-    def logpdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def logpdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Log PDF method for compatibility (same as log PMF for discrete distribution)."""
         return self.logpmf(k)
 
-    def cdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def cdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Cumulative distribution function."""
         if self._lambda is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
-        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.poisson.cdf(k, self._lambda))
+        return cast("NDArray[np.number[Any]]", stats.poisson.cdf(k, self._lambda))
 
     def ppf(self, q: NDArray[np.floating[Any]] | float) -> NDArray[np.integer[Any]] | int:
         """Percent point function (quantile function)."""
@@ -362,13 +362,13 @@ class StatsModelsNegativeBinomialDist(stats.rv_discrete):
         self.alpha: float | None = alpha
 
     @classmethod
-    def fit(cls, data: NDArray[np.integer[Any] | np.floating[Any]]) -> "StatsModelsNegativeBinomialDist":
+    def fit(cls, data: NDArray[np.number[Any]]) -> "StatsModelsNegativeBinomialDist":
         """
         Fit Negative Binomial distribution to data using statsmodels.
 
         Parameters:
         -----------
-        data : NDArray[np.integer[Any] | np.floating[Any]]
+        data : NDArray[np.number[Any]]
             Data to fit
 
         Returns:
@@ -404,7 +404,7 @@ class StatsModelsNegativeBinomialDist(stats.rv_discrete):
         return instance
 
     @classmethod
-    def fit_parameters(cls, data: NDArray[np.integer[Any] | np.floating[Any]]) -> tuple[float, float]:
+    def fit_parameters(cls, data: NDArray[np.number[Any]]) -> tuple[float, float]:
         """
         Fit Negative Binomial distribution parameters to data.
 
@@ -434,28 +434,28 @@ class StatsModelsNegativeBinomialDist(stats.rv_discrete):
         p = n / (n + self.mu)
         return n, p
 
-    def pmf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def pmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Probability mass function."""
         n, p = self._convert_to_scipy_params()
-        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.nbinom.pmf(k, n, p))
+        return cast("NDArray[np.number[Any]]", stats.nbinom.pmf(k, n, p))
 
-    def logpmf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def logpmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Log probability mass function."""
         n, p = self._convert_to_scipy_params()
-        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.nbinom.logpmf(k, n, p))
+        return cast("NDArray[np.number[Any]]", stats.nbinom.logpmf(k, n, p))
 
-    def pdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def pdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """PDF method for compatibility (same as PMF for discrete distribution)."""
         return self.pmf(k)
 
-    def logpdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def logpdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Log PDF method for compatibility (same as log PMF for discrete distribution)."""
         return self.logpmf(k)
 
-    def cdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def cdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Cumulative distribution function."""
         n, p = self._convert_to_scipy_params()
-        return cast("NDArray[np.integer[Any] | np.floating[Any]]", stats.nbinom.cdf(k, n, p))
+        return cast("NDArray[np.number[Any]]", stats.nbinom.cdf(k, n, p))
 
     def ppf(self, q: NDArray[np.floating[Any]] | float) -> NDArray[np.integer[Any]] | int:
         """Percent point function (quantile function)."""
@@ -488,13 +488,13 @@ class StatsModelsZeroInflatedPoissonDist(stats.rv_discrete):
         self.pi: float | None = pi
 
     @classmethod
-    def fit(cls, data: NDArray[np.integer[Any] | np.floating[Any]]) -> "StatsModelsZeroInflatedPoissonDist":
+    def fit(cls, data: NDArray[np.number[Any]]) -> "StatsModelsZeroInflatedPoissonDist":
         """
         Fit Zero-Inflated Poisson distribution to data using statsmodels.
 
         Parameters:
         -----------
-        data : NDArray[np.integer[Any] | np.floating[Any]]
+        data : NDArray[np.number[Any]]
             Data to fit
 
         Returns:
@@ -534,13 +534,13 @@ class StatsModelsZeroInflatedPoissonDist(stats.rv_discrete):
         return instance
 
     @classmethod
-    def fit_parameters(cls, data: NDArray[np.integer[Any] | np.floating[Any]]) -> tuple[float, float]:
+    def fit_parameters(cls, data: NDArray[np.number[Any]]) -> tuple[float, float]:
         """
         Fit Zero-Inflated Poisson distribution parameters to data.
 
         Parameters:
         -----------
-        data : NDArray[np.integer[Any] | np.floating[Any]]
+        data : NDArray[np.number[Any]]
             Data to fit
 
         Returns:
@@ -552,7 +552,7 @@ class StatsModelsZeroInflatedPoissonDist(stats.rv_discrete):
             raise ValueError("Failed to fit Zero-Inflated Poisson distribution parameters")
         return (fitted_dist.lambda_, fitted_dist.pi)
 
-    def pmf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def pmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Probability mass function."""
         if self.lambda_ is None or self.pi is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
@@ -568,29 +568,29 @@ class StatsModelsZeroInflatedPoissonDist(stats.rv_discrete):
         if np.any(nonzero_mask):
             result[nonzero_mask] = (1 - self.pi) * stats.poisson.pmf(k_array[nonzero_mask], self.lambda_)
 
-        return cast("NDArray[np.integer[Any] | np.floating[Any]]", result)
+        return cast("NDArray[np.number[Any]]", result)
 
-    def pdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def pdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """PDF method for compatibility (same as PMF for discrete distribution)."""
         return self.pmf(k)
 
-    def logpdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def logpdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Log PDF method."""
         pmf_values = self.pmf(k)
         result = np.log(np.maximum(pmf_values, np.finfo(float).eps))  # Avoid log(0)
-        return cast("NDArray[np.integer[Any] | np.floating[Any]]", result)
+        return cast("NDArray[np.number[Any]]", result)
 
-    def logpmf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def logpmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Log probability mass function."""
         return self.logpdf(k)
 
-    def cdf(self, k: NDArray[np.integer[Any] | np.floating[Any]]) -> NDArray[np.integer[Any] | np.floating[Any]]:
+    def cdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
         """Cumulative distribution function."""
         k_array = np.asarray(k, dtype=float)
         result = np.zeros_like(k_array, dtype=float)
         for i, ki in enumerate(k_array):
             result[i] = float(np.sum(self.pmf(np.arange(0, int(ki) + 1))))
-        return cast("NDArray[np.integer[Any] | np.floating[Any]]", result)
+        return cast("NDArray[np.number[Any]]", result)
 
     def ppf(self, q: NDArray[np.floating[Any]] | float) -> NDArray[np.integer[Any]] | int:
         """
