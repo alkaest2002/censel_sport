@@ -21,27 +21,23 @@ class DistributionFitter:
     DISTRIBUTION_CRITERIA: set[str] = {"aic", "bic", "cramer_von_mises"}
 
     def __init__(self, data_dict: dict[str, Any]) -> None:
-        """
-        Initialize the distribution fitter.
+        """Initialize the distribution fitter.
 
-        Parameters
-        ----------
-        data_dict : dict
-            Dictionary containing data
-
-        Returns:
-        ---------
-        None
+        Args:
+            data_dict: Dictionary containing data.
         """
         self.data_dict = data_dict
 
     def fit_distributions(self) -> dict[str, Any]:
-        """
-        Fit multiple distributions to data and compute goodness-of-fit metrics.
+        """Fit multiple distributions to data and compute goodness-of-fit metrics.
 
         Returns:
-        -------
-        dict: Updated data dictionary
+            Updated data dictionary with fitted distribution results.
+
+        Raises:
+            ValueError: If the data dictionary is missing required components,
+                if metric_type is invalid, if distribution_best_criterion is invalid,
+                if insufficient sample size, or if all distributions fail to fit.
         """
         # Extract data from dictionary
         metric_config: dict[str, Any] = self.data_dict.get("metric_config", {})
@@ -143,23 +139,15 @@ class DistributionFitter:
         fitted_models: dict[str, Any],
         criterion: str | None,
     ) -> dict[str, Any]:
-        """
-        Get the best fitting model based on specified criterion.
+        """Get the best fitting model based on specified criterion.
 
-        Parameters
-        ----------
-        fitted_models : dict
-            Dictionary of fitted distribution models
-
-        results : dict
-            Dictionary of goodness-of-fit metrics for each model
-
-        criterion : str or None
-            Selection criterion ('aic', 'bic', 'cramer_von_mises', or None for majority vote)
+        Args:
+            fitted_models: Dictionary of fitted distribution models.
+            criterion: Selection criterion ('aic', 'bic', 'cramer_von_mises', or None
+                for majority vote).
 
         Returns:
-        -------
-        dict: Best model information with 'name' and 'parameters' keys
+            Best model information with 'name' and 'parameters' keys.
         """
         # Filter out distributions with invalid values for all criteria
         valid_models = {
@@ -192,20 +180,14 @@ class DistributionFitter:
         fitted_models: dict[str, Any],
         valid_models: dict[str, Any],
     ) -> dict[str, Any]:
-        """
-        Select the best model using majority vote across criteria.
+        """Select the best model using majority vote across criteria.
 
-        Parameters
-        ----------
-        fitted_models : dict
-            Dictionary of fitted distribution models
-
-        valid_models : dict
-            Dictionary of valid models with their goodness-of-fit metrics
+        Args:
+            fitted_models: Dictionary of fitted distribution models.
+            valid_models: Dictionary of valid models with their goodness-of-fit metrics.
 
         Returns:
-        -------
-        dict: Best model information with 'name' and 'parameters' keys
+            Best model information with 'name' and 'parameters' keys.
         """
         # If there is just one model
         if len(valid_models) == 1:
@@ -257,23 +239,15 @@ class DistributionFitter:
         valid_models: dict[str, Any],
         criteria: list[str],
     ) -> str:
-        """
-        Break ties using hierarchical criterion preference (BIC > AIC > CvM).
+        """Break ties using hierarchical criterion preference (BIC > AIC > CvM).
 
-        Parameters
-        ----------
-        tied_models : list[str]
-            Names of models tied for best
-
-        valid_models : dict
-            Dictionary of valid models with their goodness-of-fit metrics
-
-        criteria : list[str]
-            List of criteria names ordered by preference
+        Args:
+            tied_models: Names of models tied for best.
+            valid_models: Dictionary of valid models with their goodness-of-fit metrics.
+            criteria: List of criteria names ordered by preference.
 
         Returns:
-        -------
-        str: Name of the best model after tie-breaking
+            Name of the best model after tie-breaking.
         """
         for crit in criteria:
             # Find best model for this criterion
@@ -299,29 +273,20 @@ class DistributionFitter:
         n: int,
         metric_type: str,
     ) -> dict[str, float | int | None]:
-        """
-        Compute goodness-of-fit metrics for a fitted distribution.
+        """Compute goodness-of-fit metrics for a fitted distribution.
 
-        Parameters
-        ----------
-        dist_obj : Any
-            Fitted distribution object
-
-        data : ndarray
-            Original data
-
-        sorted_data : ndarray
-            Pre-sorted data for efficiency
-
-        n : int
-            Number of data points
-
-        metric_type : str
-            Type of metric ('discrete' or 'continuous')
+        Args:
+            dist_obj: Fitted distribution object.
+            data: Original data.
+            sorted_data: Pre-sorted data for efficiency.
+            n: Number of data points.
+            metric_type: Type of metric ('discrete' or 'continuous').
 
         Returns:
-        -------
-        dict: Dictionary containing AIC, BIC, Cramér-von Mises and other fit statistics
+            Dictionary containing AIC, BIC, Cramér-von Mises and other fit statistics.
+
+        Raises:
+            ValueError: If log-likelihood computation fails or is not finite.
         """
         # Log-likelihood
         try:
@@ -369,26 +334,16 @@ class DistributionFitter:
         n: int,
         metric_type: str,
     ) -> tuple[float, float | None]:
-        """
-        Compute Cramér-von Mises test statistic and p-value.
+        """Compute Cramér-von Mises test statistic and p-value.
 
-        Parameters
-        ----------
-        dist_obj : Any
-            Fitted distribution object
-
-        sorted_data : ndarray
-            Pre-sorted data
-
-        n : int
-            Number of data points
-
-        metric_type : str
-            Type of metric ('discrete' or 'continuous')
+        Args:
+            dist_obj: Fitted distribution object.
+            sorted_data: Pre-sorted data.
+            n: Number of data points.
+            metric_type: Type of metric ('discrete' or 'continuous').
 
         Returns:
-        -------
-        tuple: Cramér-von Mises statistic and p-value (if available)
+            Cramér-von Mises statistic and p-value (if available).
         """
         try:
             # Try scipy's built-in test first (if available)
@@ -418,23 +373,16 @@ class DistributionFitter:
         dist_obj: Any,
         metric_type: str,
     ) -> tuple[float | None, float | None]:
-        """
-        Try to use scipy's Cramér-von Mises test for continuous distributions.
+        """Try to use scipy's Cramér-von Mises test for continuous distributions.
 
-        Parameters
-        ----------
-        sorted_data : ndarray
-            Pre-sorted data
-
-        dist_obj : Any
-            Fitted distribution object
-
-        metric_type : str
-            Type of metric ('discrete' or 'continuous')
+        Args:
+            sorted_data: Pre-sorted data.
+            dist_obj: Fitted distribution object.
+            metric_type: Type of metric ('discrete' or 'continuous').
 
         Returns:
-        -------
-        tuple: Cramér-von Mises statistic and p-value if successful, otherwise (None, None)
+            Cramér-von Mises statistic and p-value if successful, otherwise
+            (None, None).
         """
         # Only try scipy for continuous distributions
         if metric_type != "continuous":
