@@ -26,22 +26,19 @@ def _validate_data_points(
         data: NDArray[np.number[Any]],
         plot_name: str,
     ) -> tuple[NDArray[np.number[Any]], int]:
-    """
-        Validate the data points for plotting.
+    """Validate the data points for plotting.
 
-    Parameters:
-    ------------
-    data: NDArray
-        Data to plot
-
-    plot_name: str
-        Name of the plot
+    Args:
+        data: Data to plot.
+        plot_name: Name of the plot.
 
     Returns:
-    -----------
-    Tuple: The filtered data array and its size.
-    """
+        The filtered data array and its size.
 
+    Raises:
+        ValueError: If data points are insufficient, contain negative values,
+            or have no finite values.
+    """
     # Raise error if number of observations is lower than 3
     if data.size < MIN_DATA_POINTS:
         raise ValueError(
@@ -66,38 +63,33 @@ def _validate_data_points(
 
     return data, data.size
 
+
 def _get_x_lim_with_padding(
         data: NDArray[np.number[Any]],
     ) -> tuple[float | int, float | int]:
     """Compute data min and max limits with padding.
 
-    Parameters:
-    ------------
-    data: NDArray
-        Numpy array containing data.
+    Args:
+        data: Numpy array containing data.
 
     Returns:
-    -----------
-    tuple: Data min and max with padding.
+        Data min and max with padding.
     """
-
     x_min: float | int = max(0, np.min(data))
     x_max: float | int = np.max(data)
     min_padding: float | int = max(0, (x_max - x_min) * 0.1)
     max_padding: float | int = (x_max - x_min) * 0.1
     return x_min - min_padding, x_max + max_padding
 
+
 def figure_to_svg_string(fig: Figure) -> str:
     """Convert a matplotlib figure to an SVG string.
 
-    Parameters:
-    ------------
-    fig: Figure
-        Matplotlib figure object to convert.
+    Args:
+        fig: Matplotlib figure object to convert.
 
     Returns:
-    -----------
-    str: SVG content ready to be written to a file.
+        SVG content ready to be written to a file.
     """
     # Initialize an in-memory text buffer for SVG content
     buffer = io.BytesIO()
@@ -122,6 +114,7 @@ def figure_to_svg_string(fig: Figure) -> str:
 
     return f"data:image/svg+xml;base64,{base64_encoded_string}"
 
+
 def plot_histogram_with_fitted_model(
         data: NDArray[np.number[Any]],
         model_name: str,
@@ -129,34 +122,26 @@ def plot_histogram_with_fitted_model(
         bins: int | str | None = None,
         density: bool = False,
     ) -> str:
-    """
-    Create a histogram of observed data overlaid with the fitted theoretical distribution.
+    """Create a histogram of observed data overlaid with the fitted theoretical distribution.
 
     For discrete data, creates a bar plot of observed frequencies with theoretical PMF.
     For continuous data, creates a histogram with theoretical PDF overlay.
 
-    Parameters:
-    -----------
-    data : NDArray
-        Data to plot (integer for discrete, float for continuous)
-
-    model_name : str
-        Name of the fitted distribution for plot title
-
-    model : Any
-        Fitted statistical model with pdf()/pmf() method
-
-    bins : int, str, or None, optional
-        Number of histogram bins for continuous data or binning strategy.
-        Ignored for discrete data. Default uses 'auto' for continuous data.
-
-    density : bool, optional
-        If True, normalize histogram to show density (default).
-        If False, show raw counts.
+    Args:
+        data: Data to plot (integer for discrete, float for continuous).
+        model_name: Name of the fitted distribution for plot title.
+        model: Fitted statistical model with pdf()/pmf() method.
+        bins: Number of histogram bins for continuous data or binning strategy.
+            Ignored for discrete data. Default uses 'auto' for continuous data.
+        density: If True, normalize histogram to show density (default).
+            If False, show raw counts.
 
     Returns:
-    --------
-    str: SVG string of the generated histogram with fitted model
+        SVG string of the generated histogram with fitted model.
+
+    Raises:
+        ValueError: If data is insufficient or contains invalid values.
+        AttributeError: If model doesn't have required pdf() or pmf() method.
     """
     # Raise error if data size is insufficient
     data, n = _validate_data_points(data, "Histogram with Fitted Model")
@@ -257,25 +242,25 @@ def plot_histogram_with_fitted_model(
 
     return figure_to_svg_string(figure)
 
+
 def plot_qq_plot(
         data: NDArray[np.number[Any]],
         model_name: str,
         model: Any,
     ) -> str:
-    """
-    Create a Q-Q (quantile-quantile) plot comparing sample data to a normal distribution.
+    """Create a Q-Q (quantile-quantile) plot comparing sample data to a fitted distribution.
 
-    Parameters:
-    -----------
-    data : NDArray
-        Data to plot
-
-    fitted_model: dict
-        Dictionary containing the fitted model
+    Args:
+        data: Data to plot.
+        model_name: Name of the fitted distribution for plot title.
+        model: Fitted statistical model with ppf() method.
 
     Returns:
-    -------
-    str: SVG string of the generated Q-Q plot.
+        SVG string of the generated Q-Q plot.
+
+    Raises:
+        ValueError: If data is insufficient or contains invalid values.
+        AttributeError: If model doesn't have required ppf() method.
     """
     # Raise error data size is insufficient
     data, n = _validate_data_points(data, "Q-Q Plot")
@@ -312,39 +297,35 @@ def plot_qq_plot(
 
     return figure_to_svg_string(figure)
 
+
 def plot_hanging_rootogram(
         data: NDArray[np.number[Any]],
         model_name: str,
         model: Any,
         max_count: int | None = None,
     ) -> str:
-    """
-    Create a hanging rootogram for discrete discrete data.
+    """Create a hanging rootogram for discrete data.
 
     Bars hang from the theoretical distribution line. If theoretical distribution
     overestimates a count, the observed bar doesn't reach the x-axis. If it
     underestimates, the observed bar crosses the x-axis (extends below zero).
 
-    Parameters:
-    -----------
-    data : NDArray[np.integer]
-        Integer discrete data to analyze
-
-    model_name : str
-        Name of the fitted distribution for plot title
-
-    model : Any
-        Fitted statistical model with pmf() method for probability mass function
-
-    max_count : int, optional
-        Maximum count value to display. If None, uses max(data) + 2
+    Args:
+        data: Integer discrete data to analyze.
+        model_name: Name of the fitted distribution for plot title.
+        model: Fitted statistical model with pmf() method for probability mass function.
+        max_count: Maximum count value to display. If None, uses max(data) + 2.
 
     Returns:
-    --------
-    str: SVG string of the generated hanging rootogram
+        SVG string of the generated hanging rootogram.
+
+    Raises:
+        ValueError: If data is insufficient or contains invalid values.
+        TypeError: If data is not integer count data.
+        AttributeError: If model doesn't have required pmf() method.
     """
     # Raise error data size is insufficient
-    data, n = _validate_data_points(data, "Rootgram Plot")
+    data, n = _validate_data_points(data, "Rootogram Plot")
 
     # Humanize model name for display
     model_name = model_name.replace("_", " ").title()
@@ -399,13 +380,9 @@ def plot_hanging_rootogram(
     # Plot theoretical (expected) square root line - this is where bars hang from
     ax.plot(counts, expected_sqrt, color=PRIMARY_COLOR, linewidth=2, marker="o", markersize=4, label=model_name)
 
-    # Add 1 reference line (x-axis)
+    # Add reference lines
     ax.axhline(y=1, color="gray", linestyle="--", alpha=BASE_ALPHA, linewidth=1.5)
-
-    # Add 1 reference line (x-axis)
     ax.axhline(y=0, color="gray", linestyle="-", alpha=BASE_ALPHA, linewidth=1.5, label="Linea di riferimento (asse x)")
-
-    # Add 1 reference line (x-axis)
     ax.axhline(y=-1, color="gray", linestyle="--", alpha=BASE_ALPHA, linewidth=1.5)
 
     # Formatting
@@ -419,33 +396,27 @@ def plot_hanging_rootogram(
 
     return figure_to_svg_string(figure)
 
+
 def plot_bootstrap_percentile_with_ci(
         bootstrap_requested_percentiles: list[dict[str, Any]],
         bootstrap_all_percentiles: list[dict[str, Any]],
     ) -> str:
-    """
-    Create a plot of bootstrap percentile estimates with confidence intervals.
+    """Create a plot of bootstrap percentile estimates with confidence intervals.
 
     Shows percentile values as points with confidence interval bands, useful for
     visualizing the uncertainty in percentile estimates from bootstrap sampling.
 
-    Parameters:
-    -----------
-    bootstrap_requested_percentiles : list[dict]
-        List of requested percentiles
-
-    bootstrap_all_percentiles: list[dict]
-        List of all percentiles from 1 to 99
+    Args:
+        bootstrap_requested_percentiles: List of requested percentiles with estimates.
+        bootstrap_all_percentiles: List of all percentiles from 1 to 99.
 
     Returns:
-    --------
-    str: SVG string of the generated percentile plot with confidence intervals
+        SVG string of the generated percentile plot with confidence intervals.
     """
     # Extract data arrays
     all_df = pd.DataFrame(bootstrap_all_percentiles)
     requested_df = pd.DataFrame(bootstrap_requested_percentiles)
     ci_level: float = bootstrap_all_percentiles[0]["ci_level"]
-
 
     # Create the plot
     figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
@@ -483,32 +454,32 @@ def plot_bootstrap_percentile_with_ci(
 
     return figure_to_svg_string(figure)
 
+
 def plot_montecarlo_vs_bootstrap(
         bootstrap_percentiles: list[dict[str, Any]],
         montecarlo_percentiles: list[dict[str, Any]],
     ) -> str:
-    """
-    Create a scatter plot comparing bootstrap and Monte Carlo percentile estimates.
+    """Create a box plot comparing bootstrap and Monte Carlo percentile distributions.
 
-    Shows bootstrap values vs Monte Carlo values with Monte Carlo IQR as error bars.
-    Points should ideally lie on the main diagonal, indicating agreement between methods.
+    Shows side-by-side box plots for each percentile, allowing visual comparison
+    of the distribution characteristics between bootstrap and Monte Carlo methods.
 
-    Parameters:
-    -----------
-    bootstrap_percentiles : list[dict]
-        List of dictionaries, each containing:
-        - "percentile": percentile value (0-100)
-        - "value": bootstrap percentile estimate
-        - "first_quartile": first quartile of Monte Carlo IQR
-        - "third_quartile": third quartile of Monte Carlo IQR
-    montecarlo_percentiles : list[dict]
-        List of dictionaries, each containing:
-        - "percentile": percentile value (0-100)
-        - "montecarlo_value": Monte Carlo percentile estimate
+    Args:
+        bootstrap_percentiles: List of dictionaries, each containing:
+            - "percentile": percentile value (0-100)
+            - "first_quartile": first quartile of bootstrap distribution
+            - "third_quartile": third quartile of bootstrap distribution
+            - "min": minimum value of bootstrap distribution
+            - "max": maximum value of bootstrap distribution
+        montecarlo_percentiles: List of dictionaries, each containing:
+            - "percentile": percentile value (0-100)
+            - "first_quartile": first quartile of Monte Carlo distribution
+            - "third_quartile": third quartile of Monte Carlo distribution
+            - "min": minimum value of Monte Carlo distribution
+            - "max": maximum value of Monte Carlo distribution
 
     Returns:
-    --------
-    str: SVG string of the generated Monte Carlo comparison plot
+        SVG string of the generated Monte Carlo comparison plot.
     """
     # Create figure following utils_plots conventions
     figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
