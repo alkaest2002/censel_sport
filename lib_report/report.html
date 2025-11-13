@@ -7,11 +7,14 @@
     }
 
     .two-columns {
+        height: 100dvh;
+        column-count: 2;
         column-width: 50ch;
         column-gap: 2.5rem;
+        column-fill: auto;
     }
 
-    .two-columns>* {
+    .two-columns table {
         break-inside: avoid;
     }
 
@@ -27,221 +30,225 @@
 <!-- FIRST PAGE -->
 <div class="page">
     <div class="content">
-        <div>
-            <!-- Page Header -->
-            <div class="mb-xxl">
-                <div class="header">
-                    <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
-                    <p>Allegato {{ header }}1</p>
-                </div>
+        <!-- Page Header -->
+        <div class="mb-xxl">
+            <div class="header">
+                <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
+                <p>Allegato {{ header }}1</p>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <h2 class="mb-xl">Campione di riferimento</h2>
+        <div class="two-columns">
+            
+            <div class="mb-xl">
+                <h3 class="mb-lg background">NOTE INTRODUTTIVE</h3>
+                <ul>
+                    <li>
+                        <p>
+                            In questa pagina vengono presentate le informazioni relative al campione
+                            utilizzato per la
+                            costruzione della tavola di conversione relativa a: <span
+                                class="text-italic text-underline">{{
+                                data.metric_config.title | lower }}</span> (cfr all. {{ header }}3, pag. {{ page + 2 }}). Tale tavola consente la trasformazione dei
+                            punteggi
+                            grezzi in punteggi standardizzati.
+                        </p>
+                        <p> L'affidabilità della tavola di conversione dipende dalla precisione dei percentili
+                            usati come
+                            intervalli e la precisione di questi ultimi è funzione della numerosità
+                            campionaria.
+                        </p>
+                        <p>
+                            Per percentili
+                            non estremi
+                            (10°&mdash;&nbsp;90°) una quantità di osservazioni nell'ordine delle centinaia garantisce
+                            stime attendibili; per
+                            percentili
+                            estremi
+                            (1°&mdash;&nbsp;10°, 90°&mdash;&nbsp;99°) sono necessarie migliaia di
+                            osservazioni, data la scarsità di informazione nelle code della distribuzione.
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Sempre in questa pagina, viene presentata la procedura di adattamento <span
+                                class="text-italic">(fitting)</span> dei dati campionari a una
+                            famiglia di distribuzioni teoriche (<span class="text-italic">{% for model in
+                                data.fit.fitted_models.keys() %}{{ model | replace("_", " ") | title }}{% if not
+                                loop.last %}, {% endif %}{% endfor %}</span>).</p>
+                        <p>
+                            La distribuzione con migliore adattamento (<span class="text-italic">fit</span>) sarà
+                            utilizzata
+                            per confermare l'affidabilità della tavola di conversione
+                            attraverso il metodo della simulazione Monte Carlo (cfr all. {{ header }}2, pag. {{ page + 1 }}).
+                        </p>
+                        <p>
+                            La bontà dell'adattamento (<span class="text-italic">fit</span>)
+                            viene qui valutata attraverso indici di adeguatezza e grafici che
+                            quantificano la capacità del modello teorico con miglior <span class="text-italic">fit</span> di riprodurre le caratteristiche distribuzionali del campione empirico.
+                        </p>
+                    </li>
+                </ul>
             </div>
 
-            <!-- Page Content -->
-            <h2 class="mb-xl">Campione di riferimento</h2>
-            <div class="two-columns">
-                <div class="mb-xl">
-                    <h3 class="mb-lg background">NOTE INTRODUTTIVE</h3>
-                    <ul>
-                        <li>
-                            <p>
-                                In questa pagina vengono presentate le informazioni relative al campione
-                                utilizzato per la
-                                costruzione della tavola di conversione relativa a: <span
-                                    class="text-italic text-underline">{{
-                                    data.metric_config.title | lower }}</span> (cfr all. {{ header }}3, pag. {{ page + 2 }}). Tale tavola consente la trasformazione dei
-                                punteggi
-                                grezzi in punteggi standardizzati.
-                            </p>
-                            <p> L'affidabilità della tavola di conversione dipende dalla precisione dei percentili
-                                usati come
-                                intervalli e la precisione di questi ultimi è funzione della numerosità
-                                campionaria.
-                            </p>
-                            <p>
-                                Per percentili
-                                non estremi
-                                (10°&mdash;&nbsp;90°) una quantità di osservazioni nell'ordine delle centinaia garantisce
-                                stime attendibili; per
-                                percentili
-                                estremi
-                                (1°&mdash;&nbsp;10°, 90°&mdash;&nbsp;99°) sono necessarie migliaia di
-                                osservazioni, data la scarsità di informazione nelle code della distribuzione.
-                            </p>
-                        </li>
-                        <li>
-                            <p>
-                                Sempre in questa pagina, viene presentata la procedura di adattamento <span
-                                    class="text-italic">(fitting)</span> dei dati campionari a una
-                                famiglia di distribuzioni teoriche (<span class="text-italic">{% for model in
-                                    data.fit.fitted_models.keys() %}{{ model | replace("_", " ") | title }}{% if not
-                                    loop.last %}, {% endif %}{% endfor %}</span>).</p>
-                            <p>
-                                La distribuzione con migliore adattamento (<span class="text-italic">fit</span>) sarà
-                                utilizzata
-                                per confermare l'affidabilità della tavola di conversione
-                                attraverso il metodo della simulazione Monte Carlo (cfr all. {{ header }}2, pag. {{ page + 1 }}).
-                            </p>
-                            <p>
-                                La bontà dell'adattamento (<span class="text-italic">fit</span>)
-                                viene qui valutata attraverso indici di adeguatezza e grafici che
-                                quantificano la capacità del modello teorico con miglior <span class="text-italic">fit</span> di riprodurre le caratteristiche distribuzionali del campione empirico.
-                            </p>
-                        </li>
-                    </ul>
-                </div>
-                <div class="mb-xl">
-                    <h3 class="mb-lg background">CARATTERISTICHE DEI DATI</h3>
-                    <table class="table-bordered full-width">
-                        <thead>
-                            <th class="text-left" style="width: 60%;">CARATTERISTICA</th>
-                            <th class="text-center">VALORE</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="text-left">Metrica</td>
-                                <td class="text-center">{{ data.metric_config.title | lower }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left">Unità di misura</td>
-                                <td class="text-center">{{ data.metric_config.metric_unit }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left">Dimensione del campione</td>
-                                <td class="text-center">{{ data.clean.descriptive_stats.count | int }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left">Tipo di metrica</td>
-                                <td class="text-center">
-                                    {% if data.metric_config.metric_type == "continuous" %}
-                                        continua
-                                    {% else %}
-                                        discreta
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="4">
-                                    <div class="caption">
-                                        <span>Tabella {{ header }}1.1</span>
-                                        <span>
-                                            Il tipo di metrica oggetto di studio (continua o discreta) comporta delle differenze nelle distribuzioni teoriche e nei grafici impiegati.
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
+            <div class="mb-xl">
+                <h3 class="mb-lg background">CARATTERISTICHE DEI DATI</h3>
+                <table class="table-bordered full-width">
+                    <thead>
+                        <th class="text-left" style="width: 60%;">CARATTERISTICA</th>
+                        <th class="text-center">VALORE</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-left">Metrica</td>
+                            <td class="text-center">{{ data.metric_config.title | lower }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Tipo di metrica</td>
+                            <td class="text-center">
+                                {% if data.metric_config.metric_type == "continuous" %}
+                                    continua
+                                {% else %}
+                                    discreta
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Unità di misura</td>
+                            <td class="text-center">{{ data.metric_config.metric_unit }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Dimensione del campione</td>
+                            <td class="text-center">{{ data.clean.descriptive_stats.count | int }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Genere</td>
+                            {% set gender = data.metric_config.stratification.gender.label.split(' : ')[-1] %}
+                            <td class="text-center">{{ gender }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Fascia d'età</td>
+                            {% set age = data.metric_config.stratification.age.label.split(' : ')[-1] %}
+                            <td class="text-center">{{ age }}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4">
+                                <div class="caption">
+                                    <span>Tabella {{ header }}1.1</span>
+                                    <span>
+                                        Il tipo di metrica oggetto di studio (continua o discreta) comporta delle differenze nelle distribuzioni teoriche e nei grafici impiegati.
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
 
-                <div class="mb-xl">
-                    <h3 class="mb-lg background">STATISTICHE DESCRITTIVE</h3>
-                    <table class="table-bordered full-width">
-                        <thead>
-                            <th class="text-left" style="width: 60%;">STATISTICA</th>
-                            <th class="text-center">VALORE</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="text-left">Media</td>
-                                <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.mean) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left">Mediana</td>
-                                <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats["50%"]) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left">Deviazione standard</td>
-                                <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.std) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left">IQR</td>
-                                <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats["75%"] - data.clean.descriptive_stats["25%"]) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left">Minimo</td>
-                                <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.min) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left">Massimo</td>
-                                <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.max) }}</td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="2">
-                                    <div class="caption">
-                                        <span>Tabella {{ header }}1.2</span>
-                                        <span>
-                                           IQR = Interquartile Range (differenza tra 75° e 25° percentile).
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
+            <div class="mb-xl">
+                <h3 class="mb-lg background">STATISTICHE DESCRITTIVE</h3>
+                <table class="table-bordered full-width">
+                    <thead>
+                        <th class="text-left" style="width: 60%;">STATISTICA</th>
+                        <th class="text-center">VALORE</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-left">Media</td>
+                            <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.mean) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Mediana</td>
+                            <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats["50%"]) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Minimo</td>
+                            <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.min) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Massimo</td>
+                            <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.max) }}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2">
+                                <div class="caption">
+                                    <span>Tabella {{ header }}1.2</span>
+                                    <span>
+                                        IQR = Interquartile Range (differenza tra 75° e 25° percentile).
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            
+            <div class="mb-xl">
+                <h3 class="mb-lg background">ADATTAMENTO DISTRIBUZIONI TEORICHE</h3>
+                <table class="table-bordered full-width">
+                    <thead>
+                        <tr>
+                            <th class="text-left">DISTRIBUZIONE</th>
+                            <th class="text-center">AIC</th>
+                            <th class="text-center">BIC</th>
+                            <th class="text-center">CVM</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for model_name, model_data in data.fit.fitted_models.items() %}
+                        <tr>
+                            <td class="text-left">
+                                {{ model_name | replace("_", " ") | title }}
+                                {% if data.fit.best_model.name == model_name %}
+                                    <span class="text-italic">&rarr; fit migliore</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.aic) }}</td>
+                            <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.bic) }}</td>
+                            <td class="text-center">
+                                {{ "%.2f" | format(model_data.goodness_of_fit.cramer_von_mises) }}
+                                {% if model_data.goodness_of_fit.cvm_pvalue is not none %}
+                                (p={{ "%.3f" | format(model_data.goodness_of_fit.cvm_pvalue) }})
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4">
+                                <div class="caption">
+                                    <span>Tabella {{ header }}1.3</span>
+                                    <span>AIC = Akaike Information Criterion, BIC = Bayesian Information Criterion,
+                                        CVM = Cramér-von Mises statistic.</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            
+            <div class="mb-xl">
+                <h3 class="mb-lg background">GRAFICI</h3>
+                <div>
+                    <h4 class="text-center mb-md mt-lg">Istogramma</h4>
+                    <img src="{{ data.plots[0].svg }}" />
                 </div>
-                <div class="mb-xl">
-                    <h3 class="mb-lg background">ADATTAMENTO DISTRIBUZIONI TEORICHE</h3>
-                    <table class="table-bordered full-width">
-                        <thead>
-                            <tr>
-                                <th class="text-left">DISTRIBUZIONE</th>
-                                <th class="text-center">AIC</th>
-                                <th class="text-center">BIC</th>
-                                <th class="text-center">CVM</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for model_name, model_data in data.fit.fitted_models.items() %}
-                            <tr>
-                                <td class="text-left">
-                                    {{ model_name | replace("_", " ") | title }}
-                                    {% if data.fit.best_model.name == model_name %}
-                                        <span class="text-italic">&rarr; fit migliore</span>
-                                    {% endif %}
-                                </td>
-                                <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.aic) }}</td>
-                                <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.bic) }}</td>
-                                <td class="text-center">
-                                    {{ "%.2f" | format(model_data.goodness_of_fit.cramer_von_mises) }}
-                                    {% if model_data.goodness_of_fit.cvm_pvalue is not none %}
-                                    (p={{ "%.3f" | format(model_data.goodness_of_fit.cvm_pvalue) }})
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="4">
-                                    <div class="caption">
-                                        <span>Tabella {{ header }}1.3</span>
-                                        <span>AIC = Akaike Information Criterion, BIC = Bayesian Information Criterion,
-                                            CVM = Cramér-von Mises statistic.</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-                <div class="mb-xl">
-                    <h3 class="mb-lg background">GRAFICI</h3>
-                    <div>
-                        <h4 class="text-center mb-md mt-lg">Istogramma</h4>
-                        <img src="{{ data.plots[0].svg }}" />
-                    </div>
-                    <div>
-                        <h3 class="text-center mb-md mt-lg">
-                            {% if data.metric_config.metric_type == "continuous" %}
-                            Q-Q Plot
-                            {% else %}
-                            Rootogram
-                            {% endif %}
-                        </h3>
-                        <img src="{{ data.plots[-1].svg }}" />
-                    </div>
+                <div>
+                    <h3 class="text-center mb-md mt-lg">
+                        {% if data.metric_config.metric_type == "continuous" %}
+                        Q-Q Plot
+                        {% else %}
+                        Rootogram
+                        {% endif %}
+                    </h3>
+                    <img src="{{ data.plots[-1].svg }}" />
                 </div>
             </div>
         </div>
@@ -416,36 +423,62 @@
             
             <!-- Page Content -->
             <h2 class="mb-xl">Verifica della stabilità dei percentili</h2>
-            {% for sample_size in data.bootstrap.cutoffs_test.sample_sizes %}
-                <table class="table-bordered table-striped table-padded full-width mb-xl">
-                    <thead>
-                        <tr>
-                            <th class="text-center" style="width: 16.6%;">Numerosità Campione</th>
-                            <th class="text-center" style="width: 16.6%;">Fascia</th>
-                            <th class="text-center" style="width: 16.6%;">Percentuale attesa</th>
-                            <th class="text-center" style="width: 16.6%;">Mediana</th>
-                            <th class="text-center" style="width: 16.6%;">P10</th>
-                            <th class="text-center" style="width: 16.6%;">P90</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for row in data.bootstrap.cutoffs_test.results %}
-                            {% if row.sample_size == sample_size %}
+            <div class="two-columns">
+                <div class="mb-xl">
+                    <h3 class="mb-lg background">NOTE INTRODUTTIVE</h3>
+                    <ul>
+                        <li>
+                            <p>
+                                In questa pagina viene presentata un'analisi approfondita della stabilità dei percentili stimati attraverso la tecnica bootstrap, applicati a campioni di diversa numerosità ({{data.bootstrap.cutoffs_test.sample_sizes | join(", ")}} osservazioni).
+                            </p>
+                            <p>
+                                Questo aspetto è particolarmente rilevante quando si lavora con campioni di dimensioni ridotte, dove la variabilità dei risultati (dovuta a questioni meramente statistiche) potrebbe non essere adeguatamente catturata dalle soglie percentiliche della tavola di conversione.
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+                {% for sample_size in data.bootstrap.cutoffs_test.sample_sizes %}
+                    <div class="mb-xl">
+                        <h3 class="mb-lg background">STABILITÀ CONDIZIONALE N={{ sample_size }}</h3>
+                        <table class="table-bordered full-width mb-xl">
+                            <thead>
                                 <tr>
-                                    <td class="text-center">{{ row.sample_size }}</td>
-                                    <td class="text-center">{{ row.perc_step | int }}</td>
-                                    <td class="text-center">{{ row.perc_expected }}</td>
-                                    <td class="text-center">{{ row.p50 }}</td>
-                                    <td class="text-center">{{ row.p10 }}</td>
-                                    <td class="text-center">{{ row.p90 }}</td>
+                                    <th class="text-center" style="width: 16%;">%EX</th>
+                                    <th class="text-center" style="width: 16%;">%OB</th>
+                                    <th class="text-center" style="width: 16%;">%FL</th>
+                                    <th class="text-center" style="width: 16%;">%DF</th>
                                 </tr>
-                            {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% endfor %}
+                            </thead>
+                            <tbody>
+                                {% for row in data.bootstrap.cutoffs_test.results %}
+                                    {% if row.sample_size == sample_size %}
+                                        <tr>
+                                            <td class="text-center">{{ row.perc_expected }}</td>
+                                            <td class="text-center">{{ "%.2f" | format(row.p50) }}</td>
+                                            <td class="text-center">[ {{ "%05.2f" | format(row.p10) }} &mdash; {{ "%05.2f" | format(row.p90) }} ]</td>
+                                            <td class="text-center">{{ "%.2f" | format(row.p90 - row.p10) }}</td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4">
+                                        <div class="caption">
+                                            <span>Tabella {{ header }}3.1</span>
+                                            <span>
+                                                %EX = Percentile atteso, %OB = Percentile osservato, %FL = Intervallo di fluttuazione 10-90, %DF = Ampiezza intervallo di fluttuazione. 
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-        <div class="footer">{{ page + 1 }}</div>
+        <div class="footer">{{ page + 2 }}</div>
     </div>
 </div>
 
@@ -522,7 +555,7 @@
                 </table>
             </div>
         </div>
-        <div class="footer">{{ page + 2 }}</div>
+        <div class="footer">{{ page + 3 }}</div>
     </div>
 </div>
 {% endblock %}
