@@ -52,7 +52,10 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
         # Build db_query
         db_query: str = f"test=='{metric_id}'"
 
-        # Iterate over stratification filters
+        # Type hint for db_filter
+        db_filter: dict[str, Any]
+
+        # Add stratification filters to db_query
         for db_filter in stratification.values():
 
             # Extract query
