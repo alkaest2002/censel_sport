@@ -1,4 +1,3 @@
-
 from base64 import b64decode
 from pathlib import Path
 from typing import Any
@@ -13,26 +12,33 @@ def save_analysis_results(
     data_dict: dict[str, Any],
     bootstrap_samples: list[Any],
     simulation_samples: list[Any],
-    ) -> None:
-    """
-    Save analysis results and bootstrap estimates to JSON files.
+) -> None:
+    """Save analysis results and bootstrap estimates to JSON files.
 
-    Parameters:
-    -----------
-    data_dict : dict
-        Dictionary containing data
+    This function extracts analysis data from a dictionary and saves it to multiple
+    files including SVG plots, analysis results, bootstrap samples, and Monte Carlo
+    simulation samples. All files are saved to a directory named after the metric ID.
 
-    bootstrap_samples : list
-        list containing bootstrap samples
-
-    simulation_samples: list
-        list containing montecarlo samples
+    Args:
+        data_dict: Dictionary containing analysis data with required keys:
+            - 'metric_config': Configuration dictionary containing metric metadata
+            - 'plots': List of plot dictionaries with 'name' and 'svg' keys
+        bootstrap_samples: List containing bootstrap samples for statistical analysis.
+        simulation_samples: List containing Monte Carlo simulation samples.
 
     Returns:
-    --------
-    None
-    """
+        None
 
+    Raises:
+        ValueError: If data_dict is missing required keys ('metric_config', 'plots')
+            or if metric_config is missing the 'id' key.
+
+    Note:
+        - Creates output directory structure under ./data_out/{metric_id}/
+        - Removes existing files in the output directory before writing new ones
+        - SVG plots are decoded from base64 format before saving
+        - All JSON files are formatted with indentation for readability
+    """
     # Extract data from dictionary
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
     plots: list[dict[str, str]] = data_dict.get("plots", {})
@@ -74,8 +80,8 @@ def save_analysis_results(
         orjson_options = orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2
         f.write(orjson.dumps(bootstrap_samples, option=orjson_options).decode("utf-8"))
 
-    # Write montecarlo samples to JSON file
-    mtntecarlo_output_path = output_path / f"{metric_id}_montecarlo_samples.json"
-    with mtntecarlo_output_path.open("w") as f:
+    # Write Monte Carlo samples to JSON file (fixed typo)
+    montecarlo_output_path = output_path / f"{metric_id}_montecarlo_samples.json"
+    with montecarlo_output_path.open("w") as f:
         orjson_options = orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2
         f.write(orjson.dumps(simulation_samples, option=orjson_options).decode("utf-8"))
