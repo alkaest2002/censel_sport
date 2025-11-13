@@ -1,11 +1,13 @@
 from pathlib import Path
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import numpy as np
 import pandas as pd
 
 from lib_analysis.utils_stats import generate_synthetic_data
 
+if TYPE_CHECKING:
+    from numpy.typing import NDArray
 
 def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
     """Load performance data from a CSV file.
@@ -23,7 +25,7 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
         FileNotFoundError: If the database CSV file does not exist.
     """
     # If file does not exist
-    filepath = Path("./db") / "db.csv"
+    filepath: Path = Path("./db") / "db.csv"
 
     # Check if file exists
     if not filepath.exists():
@@ -31,11 +33,11 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
 
     # Extract data from metric_config
     metric_id: str = "_".join(metric_config["id"].split("_")[:2])
-    stratification = metric_config.get("stratification", {})
+    stratification: dict[str, Any] = metric_config.get("stratification", {})
 
     try:
         # Read csv file
-        df = pd.read_csv(filepath)
+        df: pd.DataFrame = pd.read_csv(filepath)
 
         # Build db_query
         db_query: str = f"test=='{metric_id}'"
@@ -44,9 +46,10 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
             db_query += f" and {query}" if query else ""
 
         # Filter data with query
-        df_query = df.query(db_query)
+        df_query: pd.DataFrame = df.query(db_query)
+
         # Enforce data to be numeric
-        raw_data = pd.to_numeric(df_query.loc[:, "value"], downcast="integer").to_numpy()
+        raw_data: np.ndarray = pd.to_numeric(df_query.loc[:, "value"], downcast="integer").to_numpy()
 
     # Catch exceptions
     except Exception as e:  # noqa: BLE001
@@ -54,7 +57,7 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
         return {
             "metric_config": metric_config,
             "load": {
-                "data": None,
+                "data": np.array([]),
                 "quantiles": None,
                 "metadata": {
                     "original_size": 0,
@@ -98,16 +101,16 @@ def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
               quantiles, and metadata
     """
     # Get number of samples to generate
-    n_samples = metric_config.get("synthetic_n_samples", 300)
+    n_samples: int = metric_config.get("synthetic_n_samples", 300)
 
     # Set random seed for reproducibility
-    random_state = metric_config.get("random_state", 42)
+    random_state: int = metric_config.get("random_state", 42)
 
     # Get metric id, Keep only first suffix (denoted by underscore)
-    metric_id = "_".join(metric_config["id"].split("_")[:2])
+    metric_id: str = "_".join(metric_config["id"].split("_")[:2])
 
     # Generate synthetic data
-    raw_data = generate_synthetic_data(metric_id, n_samples, random_state)
+    raw_data: NDArray[np.number[Any]] = generate_synthetic_data(metric_id, n_samples, random_state)
 
     return {
         "metric_config": metric_config,
@@ -146,12 +149,12 @@ def load_data(metric_config: dict[str, Any]) -> dict[str, Any]:
         NotImplementedError: If source_type is not 'db' or 'synthetic'.
     """
     # Determine source type and load data accordingly
-    source_type = metric_config.get("source_type")
+    source_type: str = metric_config.get("source_type", "")
 
     if source_type not in ["db", "synthetic"]:
-        raise NotImplementedError(f"---> Unknown source_type {source_type} in metric configuration.")
+        raise NotImplementedError(f"---> Unknown source_type '{source_type}' in metric configuration.")
 
     return (
         _load_from_db(metric_config) if source_type == "db"
-        else _load_from_synthetic(metric_config)
+            else _load_from_synthetic(metric_config)
     )
