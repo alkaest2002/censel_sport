@@ -4,18 +4,13 @@ from typing import Any, cast
 
 
 def is_falsy(value: Any) -> bool:
-    """
-    Check if a value is falsy with support for numpy arrays and custom logic.
+    """Check if a value is falsy with support for numpy arrays and custom logic.
 
-    Parameters
-    ----------
-    value : Any
-        The value to check
+    Args:
+        value: The value to check.
 
     Returns:
-    -------
-    bool
-        True if the value is falsy, False otherwise
+        True if the value is falsy, False otherwise.
     """
     # Handle None explicitly
     if value is None:
@@ -41,18 +36,13 @@ def is_falsy(value: Any) -> bool:
 
 
 def format_seconds(seconds: float) -> str:
-    """
-    Format seconds into a human-readable string (HH:MM:SS.sss).
+    """Format seconds into a human-readable string (HH:MM:SS.sss).
 
-    Parameters
-    ----------
-    seconds : float
-        The time in seconds to format.
+    Args:
+        seconds: The time in seconds to format.
 
     Returns:
-    -------
-    str
-        Formatted time string.
+        Formatted time string in HH:MM:SS.sss format.
     """
     # Separate whole seconds and fractional part
     whole_seconds = int(seconds)
