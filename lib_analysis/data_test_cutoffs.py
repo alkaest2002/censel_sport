@@ -1,3 +1,4 @@
+from itertools import pairwise
 from typing import Any
 
 import numpy as np
@@ -125,6 +126,9 @@ def bootstrap_test_cutoffs(
     # Define base sample_sizes
     sample_sizes = [30, 50, 100, 150, 200, 300]
 
+    # Define percentile bands
+    percentile_bands: list[tuple[float, float]] = list(pairwise([0, *requested_percentiles, 100]))
+
     # Apply cutoffs to data
     final_data: list[dict[str, Any]] = _apply_cutoffs(
         requested_percentiles=requested_percentiles,
@@ -138,6 +142,7 @@ def bootstrap_test_cutoffs(
     # Update data dictionary
     data_dict["bootstrap"]["cutoffs_test"] = {
         "sample_sizes": sample_sizes,
+        "percentile_bands": percentile_bands,
         "results": final_data,
     }
 
