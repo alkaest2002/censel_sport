@@ -8,17 +8,19 @@ from lib_analysis.utils_stats import generate_synthetic_data
 
 
 def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
-    """
-    Load performance data from a CSV file.
+    """Load performance data from a CSV file.
 
-    Parameters:
-    -----------
-    metric_config : dict
-        Configuration for the metric (name, units, higher_is_better)
+    Args:
+        metric_config: Configuration dictionary containing metric details such as
+            id, units, higher_is_better, and optional stratification parameters.
 
     Returns:
-    --------
-    dict : Contains metric_config and data
+        Dictionary containing:
+            - metric_config: The input configuration
+            - load: Dictionary with data, quantiles, and metadata
+
+    Raises:
+        FileNotFoundError: If the database CSV file does not exist.
     """
     # If file does not exist
     filepath = Path("./db") / "db.csv"
@@ -75,18 +77,25 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
             },
         }
 
-def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
-    """
-    Load performance data from synthetic sources.
 
-    Parameters:
-    -----------
-    metric_config : dict
-        Configuration for the metric
+def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
+    """Load performance data from synthetic sources.
+
+    Generates synthetic performance data based on the metric configuration.
+    Uses the metric ID to determine the data generation pattern and applies
+    the specified random seed for reproducibility.
+
+    Args:
+        metric_config: Configuration dictionary containing:
+            - id: Metric identifier
+            - synthetic_n_samples: Number of samples to generate (default: 300)
+            - random_state: Random seed for reproducibility (default: 42)
 
     Returns:
-    --------
-    dict : Contains raw_data, metric_config, and metadata
+        Dictionary containing:
+            - metric_config: The input configuration
+            - load: Dictionary with generated data, descriptive statistics,
+              quantiles, and metadata
     """
     # Get number of samples to generate
     n_samples = metric_config.get("synthetic_n_samples", 300)
@@ -104,7 +113,7 @@ def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
         "metric_config": metric_config,
         "load": {
             "data": raw_data,
-            "descriptive_stats": pd.DataFrame(raw_data).describe().squeeze().to_dict(), # type: ignore[union-attr]
+            "descriptive_stats": pd.DataFrame(raw_data).describe().squeeze().to_dict(),  # type: ignore[union-attr]
             "quantiles": {
                 f"q{int(q*100)}": cast("float", np.quantile(raw_data, q)) for q in np.arange(0.01, 1., 0.01)
             },
@@ -116,18 +125,25 @@ def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
         },
     }
 
-def load_data(metric_config: dict[str, Any]) -> dict[str, Any]:
-    """
-    Load performance data based on the metric configuration.
 
-    Parameters:
-    -----------
-    metric_config : dict
-        Configuration for the metric
+def load_data(metric_config: dict[str, Any]) -> dict[str, Any]:
+    """Load performance data based on the metric configuration.
+
+    Dispatches data loading to the appropriate function based on the source_type
+    specified in the metric configuration. Supports loading from database files
+    or generating synthetic data.
+
+    Args:
+        metric_config: Configuration dictionary that must contain a 'source_type'
+            key with value either 'db' or 'synthetic'. Additional keys depend on
+            the source type selected.
 
     Returns:
-    --------
-    dict : Contains raw_data, metric_config, and metadata
+        Dictionary containing the loaded data, metric configuration, and metadata.
+        Structure matches the return format of the specific loader function used.
+
+    Raises:
+        NotImplementedError: If source_type is not 'db' or 'synthetic'.
     """
     # Determine source type and load data accordingly
     source_type = metric_config.get("source_type")
