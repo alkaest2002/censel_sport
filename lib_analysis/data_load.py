@@ -1,13 +1,23 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, cast
+from typing import Any
 
 import numpy as np
+from numpy.typing import NDArray
 import pandas as pd
 
 from lib_analysis.utils_stats import generate_synthetic_data
 
-if TYPE_CHECKING:
-    from numpy.typing import NDArray
+
+def _get_descriptive_stats(data: NDArray[np.number[Any]]) -> dict[Any, Any]:
+    """Compute descriptive statistics for the given data.
+
+    Args:
+        data: Numpy array of performance data.
+
+    Returns:
+        Dictionary containing descriptive statistics.
+    """
+    return pd.DataFrame(data).describe().squeeze().to_dict()  # type: ignore[union-attr]
 
 def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
     """Load performance data from a CSV file.
@@ -19,7 +29,7 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
     Returns:
         Dictionary containing:
             - metric_config: The input configuration
-            - load: Dictionary with data, quantiles, and metadata
+            - load: Dictionary with data and metadata
 
     Raises:
         FileNotFoundError: If the database CSV file does not exist.
@@ -41,8 +51,14 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
 
         # Build db_query
         db_query: str = f"test=='{metric_id}'"
+
+        # Iterate over stratification filters
         for db_filter in stratification.values():
+
+            # Extract query
             _, query = db_filter.values()
+
+            # Append to db_query
             db_query += f" and {query}" if query else ""
 
         # Filter data with query
@@ -51,6 +67,9 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
         # Enforce data to be numeric
         raw_data: np.ndarray = pd.to_numeric(df_query.loc[:, "value"], downcast="integer").to_numpy()
 
+        # Generate descriptive statistics from data
+        descriptive_stats: dict[str, float] = _get_descriptive_stats(raw_data)
+
     # Catch exceptions
     except Exception as e:  # noqa: BLE001
         print(e)
@@ -58,7 +77,7 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
             "metric_config": metric_config,
             "load": {
                 "data": np.array([]),
-                "quantiles": None,
+                "descriptive_stats": {},
                 "metadata": {
                     "original_size": 0,
                     "valid_records": 0,
@@ -71,7 +90,7 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
             "metric_config": metric_config,
             "load": {
                 "data": raw_data,
-                "quantiles": None,
+                "descriptive_stats": descriptive_stats,
                 "metadata": {
                     "original_size": len(df),
                     "valid_records": len(raw_data),
@@ -112,14 +131,14 @@ def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
     # Generate synthetic data
     raw_data: NDArray[np.number[Any]] = generate_synthetic_data(metric_id, n_samples, random_state)
 
+    # Generate descriptive statistics from data
+    descriptive_stats: dict[str, float] = _get_descriptive_stats(raw_data)
+
     return {
         "metric_config": metric_config,
         "load": {
             "data": raw_data,
-            "descriptive_stats": pd.DataFrame(raw_data).describe().squeeze().to_dict(),  # type: ignore[union-attr]
-            "quantiles": {
-                f"q{int(q*100)}": cast("float", np.quantile(raw_data, q)) for q in np.arange(0.01, 1., 0.01)
-            },
+            "descriptive_stats": descriptive_stats,
             "metadata": {
                 "original_size": len(raw_data),
                 "valid_records": len(raw_data),
