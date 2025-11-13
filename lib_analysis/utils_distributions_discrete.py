@@ -13,26 +13,33 @@ FitFunctionType = Callable[[NDArray[np.number[Any]]], tuple[float, ...]]
 
 
 class StatsModelsGeometricDist(stats.rv_discrete):
-    """Geometric distribution using scipy stats with statsmodels-style interface."""
+    """Geometric distribution using scipy stats with statsmodels-style interface.
+
+    The geometric distribution models the number of trials needed to get the first success.
+    """
 
     def __init__(self, p: float | None = None) -> None:
+        """Initialize the Geometric distribution.
+
+        Args:
+            p: Success probability parameter. If None, distribution must be fitted first.
+        """
         self.p: float | None = p
 
     @classmethod
     def fit(cls, data: NDArray[np.number[Any]]) -> "StatsModelsGeometricDist":
-        """
-        Fit Geometric distribution to data.
+        """Fit Geometric distribution to data.
 
         The geometric distribution models the number of trials needed to get the first success.
 
-        Parameters:
-        -----------
-        data : NDArray[np.number[Any]]
-            Data to fit (should be positive integers)
+        Args:
+            data: Data to fit (should be positive integers).
 
         Returns:
-        --------
-        StatsModelsGeometricDist : Fitted distribution instance
+            Fitted distribution instance.
+
+        Raises:
+            ValueError: If data contains no positive values or mean is non-positive.
         """
         instance = cls()
 
@@ -57,17 +64,16 @@ class StatsModelsGeometricDist(stats.rv_discrete):
 
     @classmethod
     def fit_parameters(cls, data: NDArray[np.number[Any]]) -> tuple[float]:
-        """
-        Fit Geometric distribution parameters to data.
+        """Fit Geometric distribution parameters to data.
 
-        Parameters:
-        -----------
-        data : NDArray[np.number[Any]]
-            Data to fit
+        Args:
+            data: Data to fit.
 
         Returns:
-        --------
-        tuple[float] : Tuple containing (p,) parameter
+            Tuple containing (p,) parameter.
+
+        Raises:
+            ValueError: If parameter fitting fails.
         """
         fitted_dist = cls.fit(data)
         if fitted_dist.p is None:
@@ -75,78 +81,164 @@ class StatsModelsGeometricDist(stats.rv_discrete):
         return (fitted_dist.p,)
 
     def pmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Probability mass function."""
+        """Probability mass function.
+
+        Args:
+            k: Values at which to evaluate the PMF.
+
+        Returns:
+            PMF values.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.number[Any]]", stats.geom.pmf(k, self.p))
 
     def logpmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Log probability mass function."""
+        """Log probability mass function.
+
+        Args:
+            k: Values at which to evaluate the log PMF.
+
+        Returns:
+            Log PMF values.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.number[Any]]", stats.geom.logpmf(k, self.p))
 
     def pdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """PDF method for compatibility (same as PMF for discrete distribution)."""
+        """PDF method for compatibility (same as PMF for discrete distribution).
+
+        Args:
+            k: Values at which to evaluate the PDF.
+
+        Returns:
+            PDF values.
+        """
         return self.pmf(k)
 
     def logpdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Log PDF method for compatibility (same as log PMF for discrete distribution)."""
+        """Log PDF method for compatibility (same as log PMF for discrete distribution).
+
+        Args:
+            k: Values at which to evaluate the log PDF.
+
+        Returns:
+            Log PDF values.
+        """
         return self.logpmf(k)
 
     def cdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Cumulative distribution function."""
+        """Cumulative distribution function.
+
+        Args:
+            k: Values at which to evaluate the CDF.
+
+        Returns:
+            CDF values.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.number[Any]]", stats.geom.cdf(k, self.p))
 
     def ppf(self, q: NDArray[np.number[Any]] | float) -> NDArray[np.integer[Any]] | int:
-        """Percent point function (quantile function)."""
+        """Percent point function (quantile function).
+
+        Args:
+            q: Quantiles to compute.
+
+        Returns:
+            Quantile values.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.integer[Any]] | int", stats.geom.ppf(q, self.p))
 
     def rvs(self, size: int | tuple[int, ...] | None = 1, random_state: int | None = 42) -> NDArray[np.integer[Any]]:
-        """Generate random variates."""
+        """Generate random variates.
+
+        Args:
+            size: Size of random samples to generate.
+            random_state: Random state for reproducibility.
+
+        Returns:
+            Random samples from the distribution.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.integer[Any]]", stats.geom.rvs(self.p, size=size, random_state=random_state))
 
     def mean(self) -> float:
-        """Mean of the distribution."""
+        """Mean of the distribution.
+
+        Returns:
+            Distribution mean.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return float(1.0 / self.p)
 
     def var(self) -> float:
-        """Variance of the distribution."""
+        """Variance of the distribution.
+
+        Returns:
+            Distribution variance.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return float((1.0 - self.p) / (self.p**2))
 
 
 class StatsModelsBinomialDist(stats.rv_discrete):
-    """Binomial distribution using scipy stats with statsmodels-style interface."""
+    """Binomial distribution using scipy stats with statsmodels-style interface.
+
+    The binomial distribution models the number of successes in n independent trials.
+    """
 
     def __init__(self, n: int | None = None, p: float | None = None) -> None:
+        """Initialize the Binomial distribution.
+
+        Args:
+            n: Number of trials. If None, distribution must be fitted first.
+            p: Success probability. If None, distribution must be fitted first.
+        """
         self.n: int | None = n
         self.p: float | None = p
 
     @classmethod
     def fit(cls, data: NDArray[np.number[Any]], n: int | None = None) -> "StatsModelsBinomialDist":
-        """
-        Fit Binomial distribution to data.
+        """Fit Binomial distribution to data.
 
-        Parameters:
-        -----------
-        data : NDArray[np.number[Any]]
-            Data to fit (should be non-negative integers)
-        n : int | None
-            Number of trials. If None, will be estimated as max(data)
+        Args:
+            data: Data to fit (should be non-negative integers).
+            n: Number of trials. If None, will be estimated as max(data).
 
         Returns:
-        --------
-        StatsModelsBinomialDist : Fitted distribution instance
+            Fitted distribution instance.
+
+        Raises:
+            ValueError: If data contains no non-negative values or n is invalid.
         """
         instance = cls()
 
@@ -176,19 +268,17 @@ class StatsModelsBinomialDist(stats.rv_discrete):
     @classmethod
     def fit_parameters(
         cls, data: NDArray[np.number[Any]], n: int | None = None) -> tuple[int, float]:
-        """
-        Fit Binomial distribution parameters to data.
+        """Fit Binomial distribution parameters to data.
 
-        Parameters:
-        -----------
-        data : NDArray[np.number[Any]]
-            Data to fit
-        n : int | None
-            Number of trials. If None, will be estimated as max(data)
+        Args:
+            data: Data to fit.
+            n: Number of trials. If None, will be estimated as max(data).
 
         Returns:
-        --------
-        tuple[int, float] : Tuple containing (n, p) parameters
+            Tuple containing (n, p) parameters.
+
+        Raises:
+            ValueError: If parameter fitting fails.
         """
         fitted_dist = cls.fit(data, n=n)
         if fitted_dist.n is None or fitted_dist.p is None:
@@ -196,75 +286,158 @@ class StatsModelsBinomialDist(stats.rv_discrete):
         return (fitted_dist.n, fitted_dist.p)
 
     def pmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Probability mass function."""
+        """Probability mass function.
+
+        Args:
+            k: Values at which to evaluate the PMF.
+
+        Returns:
+            PMF values.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.n is None or self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.number[Any]]", stats.binom.pmf(k, self.n, self.p))
 
     def logpmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Log probability mass function."""
+        """Log probability mass function.
+
+        Args:
+            k: Values at which to evaluate the log PMF.
+
+        Returns:
+            Log PMF values.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.n is None or self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.number[Any]]", stats.binom.logpmf(k, self.n, self.p))
 
     def pdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """PDF method for compatibility (same as PMF for discrete distribution)."""
+        """PDF method for compatibility (same as PMF for discrete distribution).
+
+        Args:
+            k: Values at which to evaluate the PDF.
+
+        Returns:
+            PDF values.
+        """
         return self.pmf(k)
 
     def logpdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Log PDF method for compatibility (same as log PMF for discrete distribution)."""
+        """Log PDF method for compatibility (same as log PMF for discrete distribution).
+
+        Args:
+            k: Values at which to evaluate the log PDF.
+
+        Returns:
+            Log PDF values.
+        """
         return self.logpmf(k)
 
     def cdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Cumulative distribution function."""
+        """Cumulative distribution function.
+
+        Args:
+            k: Values at which to evaluate the CDF.
+
+        Returns:
+            CDF values.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.n is None or self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.number[Any]]", stats.binom.cdf(k, self.n, self.p))
 
     def ppf(self, q: NDArray[np.number[Any]] | float) -> NDArray[np.integer[Any]] | int:
-        """Percent point function (quantile function)."""
+        """Percent point function (quantile function).
+
+        Args:
+            q: Quantiles to compute.
+
+        Returns:
+            Quantile values.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.n is None or self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.integer[Any]] | int", stats.binom.ppf(q, self.n, self.p))
 
     def rvs(self, size: int | tuple[int, ...] | None = 1, random_state: int | None = 42) -> NDArray[np.integer[Any]]:
-        """Generate random variates."""
+        """Generate random variates.
+
+        Args:
+            size: Size of random samples to generate.
+            random_state: Random state for reproducibility.
+
+        Returns:
+            Random samples from the distribution.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.n is None or self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.integer[Any]]", stats.binom.rvs(self.n, self.p, size=size, random_state=random_state))
 
     def mean(self) -> float:
-        """Mean of the distribution."""
+        """Mean of the distribution.
+
+        Returns:
+            Distribution mean.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.n is None or self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return float(self.n * self.p)
 
     def var(self) -> float:
-        """Variance of the distribution."""
+        """Variance of the distribution.
+
+        Returns:
+            Distribution variance.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.n is None or self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return float(self.n * self.p * (1 - self.p))
 
 
 class StatsModelsPoissonDist(stats.rv_discrete):
-    """Poisson distribution using statsmodels."""
+    """Poisson distribution using statsmodels.
+
+    The Poisson distribution models the number of events occurring in a fixed interval.
+    """
 
     def __init__(self, lambda_: float | None = None) -> None:
+        """Initialize the Poisson distribution.
+
+        Args:
+            lambda_: Rate parameter. If None, distribution must be fitted first.
+        """
         self._lambda: float | None = lambda_
 
     @classmethod
     def fit(cls, data: NDArray[np.number[Any]]) -> "StatsModelsPoissonDist":
-        """
-        Fit Poisson distribution to data using statsmodels.
+        """Fit Poisson distribution to data using statsmodels.
 
-        Parameters:
-        -----------
-        data : NDArray[np.number[Any]]
-            Data to fit
+        Args:
+            data: Data to fit.
 
         Returns:
-        --------
-        StatsModelsPoissonDist : Fitted distribution instance
+            Fitted distribution instance.
         """
         instance = cls()
 
@@ -286,17 +459,16 @@ class StatsModelsPoissonDist(stats.rv_discrete):
 
     @classmethod
     def fit_parameters(cls, data: NDArray[np.number[Any]]) -> tuple[float]:
-        """
-        Fit Poisson distribution parameters to data.
+        """Fit Poisson distribution parameters to data.
 
-        Parameters:
-        -----------
-        data : NDArray[np.number[Any]]
-            Data to fit
+        Args:
+            data: Data to fit.
 
         Returns:
-        --------
-        tuple[float] : Tuple containing (lambda,) parameter
+            Tuple containing (lambda,) parameter.
+
+        Raises:
+            ValueError: If parameter fitting fails.
         """
         fitted_dist = cls.fit(data)
         if fitted_dist._lambda is None:
@@ -304,76 +476,161 @@ class StatsModelsPoissonDist(stats.rv_discrete):
         return (fitted_dist._lambda,)
 
     def pmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Probability mass function."""
+        """Probability mass function.
+
+        Args:
+            k: Values at which to evaluate the PMF.
+
+        Returns:
+            PMF values.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self._lambda is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.number[Any]]", stats.poisson.pmf(k, self._lambda))
 
     def logpmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Log probability mass function."""
+        """Log probability mass function.
+
+        Args:
+            k: Values at which to evaluate the log PMF.
+
+        Returns:
+            Log PMF values.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self._lambda is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.number[Any]]", stats.poisson.logpmf(k, self._lambda))
 
     def pdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """PDF method for compatibility (same as PMF for discrete distribution)."""
+        """PDF method for compatibility (same as PMF for discrete distribution).
+
+        Args:
+            k: Values at which to evaluate the PDF.
+
+        Returns:
+            PDF values.
+        """
         return self.pmf(k)
 
     def logpdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Log PDF method for compatibility (same as log PMF for discrete distribution)."""
+        """Log PDF method for compatibility (same as log PMF for discrete distribution).
+
+        Args:
+            k: Values at which to evaluate the log PDF.
+
+        Returns:
+            Log PDF values.
+        """
         return self.logpmf(k)
 
     def cdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Cumulative distribution function."""
+        """Cumulative distribution function.
+
+        Args:
+            k: Values at which to evaluate the CDF.
+
+        Returns:
+            CDF values.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self._lambda is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.number[Any]]", stats.poisson.cdf(k, self._lambda))
 
     def ppf(self, q: NDArray[np.number[Any]] | float) -> NDArray[np.integer[Any]] | int:
-        """Percent point function (quantile function)."""
+        """Percent point function (quantile function).
+
+        Args:
+            q: Quantiles to compute.
+
+        Returns:
+            Quantile values.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self._lambda is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.integer[Any]] | int", stats.poisson.ppf(q, self._lambda))
 
     def rvs(self, size: int | tuple[int, ...] | None = 1, random_state: int | None = 42) -> NDArray[np.integer[Any]]:
-        """Generate random variates."""
+        """Generate random variates.
+
+        Args:
+            size: Size of random samples to generate.
+            random_state: Random state for reproducibility.
+
+        Returns:
+            Random samples from the distribution.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self._lambda is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.integer[Any]]", stats.poisson.rvs(self._lambda, size=size, random_state=random_state))
 
     def mean(self) -> float:
-        """Mean of the distribution."""
+        """Mean of the distribution.
+
+        Returns:
+            Distribution mean.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self._lambda is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return float(self._lambda)
 
     def var(self) -> float:
-        """Variance of the distribution."""
+        """Variance of the distribution.
+
+        Returns:
+            Distribution variance.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self._lambda is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return float(self._lambda)
 
 
 class StatsModelsNegativeBinomialDist(stats.rv_discrete):
-    """Negative Binomial distribution using statsmodels."""
+    """Negative Binomial distribution using statsmodels.
+
+    The negative binomial distribution models the number of failures before a specified
+    number of successes in a sequence of independent Bernoulli trials.
+    """
 
     def __init__(self, mu: float | None = None, alpha: float | None = None) -> None:
+        """Initialize the Negative Binomial distribution.
+
+        Args:
+            mu: Mean parameter. If None, distribution must be fitted first.
+            alpha: Dispersion parameter. If None, distribution must be fitted first.
+        """
         self.mu: float | None = mu
         self.alpha: float | None = alpha
 
     @classmethod
     def fit(cls, data: NDArray[np.number[Any]]) -> "StatsModelsNegativeBinomialDist":
-        """
-        Fit Negative Binomial distribution to data using statsmodels.
+        """Fit Negative Binomial distribution to data using statsmodels.
 
-        Parameters:
-        -----------
-        data : NDArray[np.number[Any]]
-            Data to fit
+        Args:
+            data: Data to fit.
 
         Returns:
-        --------
-        StatsModelsNegativeBinomialDist : Fitted distribution instance
+            Fitted distribution instance.
         """
         instance = cls()
 
@@ -405,17 +662,16 @@ class StatsModelsNegativeBinomialDist(stats.rv_discrete):
 
     @classmethod
     def fit_parameters(cls, data: NDArray[np.number[Any]]) -> tuple[float, float]:
-        """
-        Fit Negative Binomial distribution parameters to data.
+        """Fit Negative Binomial distribution parameters to data.
 
-        Parameters:
-        -----------
-        data : NumberArray
-            Data to fit
+        Args:
+            data: Data to fit.
 
         Returns:
-        --------
-        tuple[float, float] : Tuple containing (mu, alpha) parameters
+            Tuple containing (mu, alpha) parameters.
+
+        Raises:
+            ValueError: If parameter fitting fails.
         """
         fitted_dist = cls.fit(data)
         if fitted_dist.mu is None or fitted_dist.alpha is None:
@@ -423,7 +679,14 @@ class StatsModelsNegativeBinomialDist(stats.rv_discrete):
         return (fitted_dist.mu, fitted_dist.alpha)
 
     def _convert_to_scipy_params(self) -> tuple[float, float]:
-        """Convert statsmodels parameterization to scipy parameterization."""
+        """Convert statsmodels parameterization to scipy parameterization.
+
+        Returns:
+            Tuple of (n, p) parameters in scipy format.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.mu is None or self.alpha is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
 
@@ -435,71 +698,141 @@ class StatsModelsNegativeBinomialDist(stats.rv_discrete):
         return n, p
 
     def pmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Probability mass function."""
+        """Probability mass function.
+
+        Args:
+            k: Values at which to evaluate the PMF.
+
+        Returns:
+            PMF values.
+        """
         n, p = self._convert_to_scipy_params()
         return cast("NDArray[np.number[Any]]", stats.nbinom.pmf(k, n, p))
 
     def logpmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Log probability mass function."""
+        """Log probability mass function.
+
+        Args:
+            k: Values at which to evaluate the log PMF.
+
+        Returns:
+            Log PMF values.
+        """
         n, p = self._convert_to_scipy_params()
         return cast("NDArray[np.number[Any]]", stats.nbinom.logpmf(k, n, p))
 
     def pdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """PDF method for compatibility (same as PMF for discrete distribution)."""
+        """PDF method for compatibility (same as PMF for discrete distribution).
+
+        Args:
+            k: Values at which to evaluate the PDF.
+
+        Returns:
+            PDF values.
+        """
         return self.pmf(k)
 
     def logpdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Log PDF method for compatibility (same as log PMF for discrete distribution)."""
+        """Log PDF method for compatibility (same as log PMF for discrete distribution).
+
+        Args:
+            k: Values at which to evaluate the log PDF.
+
+        Returns:
+            Log PDF values.
+        """
         return self.logpmf(k)
 
     def cdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Cumulative distribution function."""
+        """Cumulative distribution function.
+
+        Args:
+            k: Values at which to evaluate the CDF.
+
+        Returns:
+            CDF values.
+        """
         n, p = self._convert_to_scipy_params()
         return cast("NDArray[np.number[Any]]", stats.nbinom.cdf(k, n, p))
 
     def ppf(self, q: NDArray[np.number[Any]] | float) -> NDArray[np.integer[Any]] | int:
-        """Percent point function (quantile function)."""
+        """Percent point function (quantile function).
+
+        Args:
+            q: Quantiles to compute.
+
+        Returns:
+            Quantile values.
+        """
         n, p = self._convert_to_scipy_params()
         return cast("NDArray[np.integer[Any]] | int", stats.nbinom.ppf(q, n, p))
 
     def rvs(self, size: int | tuple[int, ...] | None = 1, random_state: int | None = 42) -> NDArray[np.integer[Any]]:
-        """Generate random variates."""
+        """Generate random variates.
+
+        Args:
+            size: Size of random samples to generate.
+            random_state: Random state for reproducibility.
+
+        Returns:
+            Random samples from the distribution.
+        """
         n, p = self._convert_to_scipy_params()
         return cast("NDArray[np.integer[Any]]", stats.nbinom.rvs(n, p, size=size, random_state=random_state))
 
     def mean(self) -> float:
-        """Mean of the distribution."""
+        """Mean of the distribution.
+
+        Returns:
+            Distribution mean.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.mu is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return float(self.mu)
 
     def var(self) -> float:
-        """Variance of the distribution."""
+        """Variance of the distribution.
+
+        Returns:
+            Distribution variance.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.mu is None or self.alpha is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return float(self.mu + self.alpha * self.mu**2)
 
 
 class StatsModelsZeroInflatedPoissonDist(stats.rv_discrete):
-    """Zero-Inflated Poisson distribution using statsmodels."""
+    """Zero-Inflated Poisson distribution using statsmodels.
+
+    The zero-inflated Poisson distribution models count data with excess zeros.
+    It assumes data comes from a mixture of a Poisson distribution and a point mass at zero.
+    """
 
     def __init__(self, lambda_: float | None = None, pi: float | None = None) -> None:
+        """Initialize the Zero-Inflated Poisson distribution.
+
+        Args:
+            lambda_: Poisson rate parameter. If None, distribution must be fitted first.
+            pi: Zero-inflation probability. If None, distribution must be fitted first.
+        """
         self.lambda_: float | None = lambda_
         self.pi: float | None = pi
 
     @classmethod
     def fit(cls, data: NDArray[np.number[Any]]) -> "StatsModelsZeroInflatedPoissonDist":
-        """
-        Fit Zero-Inflated Poisson distribution to data using statsmodels.
+        """Fit Zero-Inflated Poisson distribution to data using statsmodels.
 
-        Parameters:
-        -----------
-        data : NDArray[np.number[Any]]
-            Data to fit
+        Args:
+            data: Data to fit.
 
         Returns:
-        --------
-        StatsModelsZeroInflatedPoissonDist : Fitted distribution instance
+            Fitted distribution instance.
         """
         instance = cls()
 
@@ -535,17 +868,16 @@ class StatsModelsZeroInflatedPoissonDist(stats.rv_discrete):
 
     @classmethod
     def fit_parameters(cls, data: NDArray[np.number[Any]]) -> tuple[float, float]:
-        """
-        Fit Zero-Inflated Poisson distribution parameters to data.
+        """Fit Zero-Inflated Poisson distribution parameters to data.
 
-        Parameters:
-        -----------
-        data : NDArray[np.number[Any]]
-            Data to fit
+        Args:
+            data: Data to fit.
 
         Returns:
-        --------
-        tuple[float, float] : Tuple containing (lambda, pi) parameters
+            Tuple containing (lambda, pi) parameters.
+
+        Raises:
+            ValueError: If parameter fitting fails.
         """
         fitted_dist = cls.fit(data)
         if fitted_dist.lambda_ is None or fitted_dist.pi is None:
@@ -553,7 +885,17 @@ class StatsModelsZeroInflatedPoissonDist(stats.rv_discrete):
         return (fitted_dist.lambda_, fitted_dist.pi)
 
     def pmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Probability mass function."""
+        """Probability mass function.
+
+        Args:
+            k: Values at which to evaluate the PMF.
+
+        Returns:
+            PMF values.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.lambda_ is None or self.pi is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
 
@@ -571,21 +913,49 @@ class StatsModelsZeroInflatedPoissonDist(stats.rv_discrete):
         return cast("NDArray[np.number[Any]]", result)
 
     def pdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """PDF method for compatibility (same as PMF for discrete distribution)."""
+        """PDF method for compatibility (same as PMF for discrete distribution).
+
+        Args:
+            k: Values at which to evaluate the PDF.
+
+        Returns:
+            PDF values.
+        """
         return self.pmf(k)
 
     def logpdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Log PDF method."""
+        """Log PDF method.
+
+        Args:
+            k: Values at which to evaluate the log PDF.
+
+        Returns:
+            Log PDF values.
+        """
         pmf_values = self.pmf(k)
         result = np.log(np.maximum(pmf_values, np.finfo(float).eps))  # Avoid log(0)
         return cast("NDArray[np.number[Any]]", result)
 
     def logpmf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Log probability mass function."""
+        """Log probability mass function.
+
+        Args:
+            k: Values at which to evaluate the log PMF.
+
+        Returns:
+            Log PMF values.
+        """
         return self.logpdf(k)
 
     def cdf(self, k: NDArray[np.number[Any]]) -> NDArray[np.number[Any]]:
-        """Cumulative distribution function."""
+        """Cumulative distribution function.
+
+        Args:
+            k: Values at which to evaluate the CDF.
+
+        Returns:
+            CDF values.
+        """
         k_array = np.asarray(k, dtype=float)
         result = np.zeros_like(k_array, dtype=float)
         for i, ki in enumerate(k_array):
@@ -593,10 +963,18 @@ class StatsModelsZeroInflatedPoissonDist(stats.rv_discrete):
         return cast("NDArray[np.number[Any]]", result)
 
     def ppf(self, q: NDArray[np.number[Any]] | float) -> NDArray[np.integer[Any]] | int:
-        """
-        Percent point function (quantile function) for Zero-Inflated Poisson.
+        """Percent point function (quantile function) for Zero-Inflated Poisson.
 
         For discrete distributions, this finds the smallest integer k such that CDF(k) >= q.
+
+        Args:
+            q: Quantiles to compute (values between 0 and 1).
+
+        Returns:
+            Quantile values.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
         """
         if self.lambda_ is None or self.pi is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
@@ -637,7 +1015,18 @@ class StatsModelsZeroInflatedPoissonDist(stats.rv_discrete):
         return cast("NDArray[np.integer[Any]]", result)
 
     def rvs(self, size: int | tuple[int, ...] | None = 1, random_state: int | None = 42) -> NDArray[np.integer[Any]]:
-        """Generate random variates."""
+        """Generate random variates.
+
+        Args:
+            size: Size of random samples to generate.
+            random_state: Random state for reproducibility.
+
+        Returns:
+            Random samples from the distribution.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.lambda_ is None or self.pi is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
 
@@ -648,13 +1037,27 @@ class StatsModelsZeroInflatedPoissonDist(stats.rv_discrete):
         return cast("NDArray[np.integer[Any]]", result)
 
     def mean(self) -> float:
-        """Mean of the distribution."""
+        """Mean of the distribution.
+
+        Returns:
+            Distribution mean.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.lambda_ is None or self.pi is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return float((1 - self.pi) * self.lambda_)
 
     def var(self) -> float:
-        """Variance of the distribution."""
+        """Variance of the distribution.
+
+        Returns:
+            Distribution variance.
+
+        Raises:
+            ValueError: If distribution has not been fitted.
+        """
         if self.lambda_ is None or self.pi is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
         mean_val = (1 - self.pi) * self.lambda_
@@ -663,12 +1066,10 @@ class StatsModelsZeroInflatedPoissonDist(stats.rv_discrete):
 
 def get_discrete_distributions(
     ) -> dict[str, stats.rv_continuous | stats.rv_discrete]:
-    """
-    Get a mapping of distribution names to their corresponding SciPy distribution objects.
+    """Get a mapping of distribution names to their corresponding SciPy distribution objects.
 
     Returns:
-    --------
-    dict: Mapping of distribution names to distribution classes
+        dict: Mapping of distribution names to distribution classes.
     """
     return {
         "geometric": StatsModelsGeometricDist,
