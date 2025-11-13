@@ -37,8 +37,8 @@ def _apply_cutoffs(
         # Initialize collected data for current sample size
         collected_current_sample_size_data: list[pd.DataFrame] = []
 
-        # Iterate over 500 samples of current size
-        for _ in range(500):
+        # Iterate over 1000 samples of current size
+        for _ in range(1000):
 
             # randomly sample n data points
             sampled_data = rng.choice(data, size=n, replace=True).tolist()
