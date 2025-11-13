@@ -27,7 +27,6 @@ def clean_data(
     Returns:
         Updated data dictionary with a new "clean" key containing:
             - "data": Cleaned NumPy array
-            - "quantiles": Dictionary of percentile values (q1 to q99)
             - "descriptive_stats": Dictionary of descriptive statistics
             - "metadata": Dictionary with cleaning operation counts
 
