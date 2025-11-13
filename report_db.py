@@ -9,7 +9,10 @@ from lib_parser.parser import get_base_report_parser
 from lib_report.jinja_environment import jinja_env, templates_dir
 
 if TYPE_CHECKING:
+    import argparse
     from collections.abc import Hashable
+
+    import jinja2
 
 
 def main() -> int:
@@ -26,22 +29,22 @@ def main() -> int:
             - 2: Rendering or PDF generation error
     """
     # Get report parser
-    parser = get_base_report_parser()
+    parser: argparse.ArgumentParser = get_base_report_parser()
 
     # Parse arguments
-    args = parser.parse_args()
+    args: argparse.Namespace = parser.parse_args()
 
     # Define file path
-    filepath = Path("db/db.csv")
+    filepath: Path = Path("db/db.csv")
 
     # Read CSV file into DataFrame
-    df = pd.read_csv(filepath)
+    df: pd.DataFrame = pd.read_csv(filepath)
 
     # Compute percentage of duplicates
     duplicated: float = round((df.duplicated().sum() / df.shape[0]) * (100), 2)
 
     # Define bin ages
-    age_bins = [14, 29, 39, 49, 59, 69, 79]
+    age_bins: list[int] = [14, 29, 39, 49, 59, 69, 79]
 
     # Bin age
     df["age_binned"] = pd.cut(df["age"], bins=age_bins, right=True)
@@ -57,12 +60,12 @@ def main() -> int:
     # Load data
     try:
         # Get report template
-        template = jinja_env.get_template("db_stats.html")
+        template: jinja2.Template = jinja_env.get_template("db_stats.html")
 
         # Build output paths
-        base_path = Path("./data_out/db_stats")
-        output_pdf = base_path.with_suffix(".pdf")
-        output_html = base_path.with_suffix(".html")
+        base_path: Path = Path("./data_out/db_stats")
+        output_pdf: Path = base_path.with_suffix(".pdf")
+        output_html: Path = base_path.with_suffix(".html")
 
         # Render HTML
         rendered_html: str =\
