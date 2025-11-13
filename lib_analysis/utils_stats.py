@@ -14,25 +14,25 @@ def generate_synthetic_data(
         metric_type: str,
         n_samples: int = 300,
         random_state: int = 42) -> Any:
-    """
-    Generate synthetic performance data for testing purposes.
+    """Generate synthetic performance data for testing purposes.
 
-    Parameters:
-    -----------
-    metric_type : str
-        Type of metric to generate data for
-
-    n_samples : int
-        Number of samples to generate
-
-    random_state : int
-        Random seed for reproducibility
+    Args:
+        metric_type: Type of metric to generate data for. Must be one of the
+            predefined metric types (SWIM25, MT100, MT1000, SITUPS, PUSHUPS).
+        n_samples: Number of samples to generate. Defaults to 300.
+        random_state: Random seed for reproducibility. Defaults to 42.
 
     Returns:
-    --------
-    np.array : Generated performance data
-    """
+        Generated performance data as a numpy array.
 
+    Raises:
+        ValueError: If metric_type is not a recognized metric type.
+
+    Example:
+        >>> data = generate_synthetic_data("SWIM25", n_samples=100, random_state=42)
+        >>> len(data)
+        100
+    """
     rng = np.random.default_rng(random_state)
 
     base_synthetic_data = {
@@ -121,30 +121,31 @@ def generate_synthetic_data(
 
     return data
 
+
 def apply_standardization(
         data_to_standardize: NDArray[np.number[Any]],
         cutoffs: list[tuple],
         higher_is_better: bool = False,
     ) -> pd.DataFrame:
-    """
-    Standardize data with percentile cutoffs.
+    """Apply standardization to data using percentile cutoffs.
 
-    Parameters:
-    -----------
-    data_to_standardize : np.array
-        Data to be standardized
+    This function standardizes data by assigning scores based on percentile ranges.
+    The scoring direction depends on whether higher values indicate better performance.
 
-    cutoffs : list of tuples
-        List of tuples containing percentile cutoffs
-
-    higher_is_better : bool
-        Whether higher values indicate better performance
+    Args:
+        data_to_standardize: Numerical data array to be standardized.
+        cutoffs: List of tuples containing percentile cutoff ranges. Each tuple
+            should contain (lower_bound, upper_bound) for a score category.
+        higher_is_better: Whether higher values indicate better performance.
+            If True, higher scores are assigned to better performance ranges.
+            Defaults to False.
 
     Returns:
-    --------
-    pd.Dataframe : Original data and Standardized data
+        DataFrame with three columns:
+            - original_value: The original data values
+            - standardized_value: The assigned standardized scores
+            - standardized_value_bounds: The cutoff ranges for each score category.
     """
-
     # Convert data to pandas Series for easier manipulation
     data = pd.Series(data_to_standardize)
 
@@ -152,7 +153,7 @@ def apply_standardization(
     # First cutoff is inclusive on both sides, others only on the right
     cutoffs_with_inclusive = list(zip(cutoffs, ["both", *["right"] * (len(cutoffs) - 1)], strict=True))
 
-    # initialize counter based on whether higher values denotes better performance
+    # Initialize counter based on whether higher values denotes better performance
     counter = count(start=1, step=1) if higher_is_better else count(start=len(cutoffs), step=-1)
 
     # Compute standardized scores
@@ -179,7 +180,6 @@ def apply_standardization(
             standardized_scores,
             standardized_bounds,
         ],
-        keys=["original_value","standardized_value", "standardized_value_bounds"],
+        keys=["original_value", "standardized_value", "standardized_value_bounds"],
         axis=1,
     )
-
