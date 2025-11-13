@@ -2,6 +2,8 @@
 
 This module creates fake data for various military fitness tests across different
 recruitment years, types, and demographics, then saves the combined dataset to a CSV file.
+Justification: This module is intended to test data analysis and reporting functionalities
+by providing a comprehensive synthetic dataset.
 """
 
 from itertools import product
