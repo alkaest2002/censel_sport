@@ -15,15 +15,16 @@ from lib_parser.utils_parser import load_configuration_data, validate_file_path
 
 
 def main() -> int:
-    """
-    Run the full data analysis pipeline.
+    """Run the full data analysis pipeline.
+
+    This function executes a comprehensive data analysis workflow including:
+    data loading, cleaning, distribution fitting, bootstrap analysis,
+    Monte Carlo simulation, plotting, standardization, and result saving.
 
     Returns:
-    --------
-    int
-        Process exit status code:
-        - 0: Success
-        - 1: Error in file validation or loading
+        int: Process exit status code.
+            - 0: Success
+            - 1: Error in file validation, loading, or processing
     """
     # Parse command line arguments
     parser = get_base_parser()
