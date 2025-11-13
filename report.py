@@ -1,7 +1,7 @@
 from pathlib import Path
 import subprocess
 import sys
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from weasyprint import HTML  # type: ignore[import-untyped]
 
@@ -9,6 +9,10 @@ from lib_parser.parser import get_report_parser
 from lib_parser.utils_parser import load_configuration_data, validate_file_path
 from lib_report.jinja_environment import jinja_env, templates_dir
 
+if TYPE_CHECKING:
+    import argparse
+
+    import jinja2
 
 def main() -> int:
     """Generate report for given data analysis.
@@ -29,14 +33,14 @@ def main() -> int:
         Exception: For any other errors during report generation.
     """
     # Get report parser
-    parser = get_report_parser()
+    parser: argparse.ArgumentParser = get_report_parser()
 
     # Parse arguments
-    args = parser.parse_args()
+    args: argparse.Namespace = parser.parse_args()
 
     # Validate the file path
     try:
-        validated_path = validate_file_path(args.filepath, "report")
+        validated_path: Path = validate_file_path(args.filepath, "report")
     except (FileNotFoundError, ValueError) as e:
         print(f"Error: {e}")
         return 1
@@ -45,7 +49,7 @@ def main() -> int:
     if args.recompute:
 
         # Resolve path to analysis script
-        analysis_script = Path("inner_loop.py").resolve()
+        analysis_script: Path = Path("inner_loop.py").resolve()
 
         # Validate that the analysis script exists and is safe to execute
         if not analysis_script.exists():
@@ -60,11 +64,11 @@ def main() -> int:
         data: dict[str, Any] = load_configuration_data(validated_path)
 
         # Get report template
-        template = jinja_env.get_template("report.html")
+        template: jinja2.Template = jinja_env.get_template("report.html")
 
         # Build output paths
-        output_pdf = validated_path.with_suffix(".pdf")
-        output_html = validated_path.with_suffix(".html")
+        output_pdf: Path = validated_path.with_suffix(".pdf")
+        output_html: Path = validated_path.with_suffix(".html")
 
         # Render HTML
         rendered_html: str =\
