@@ -1,12 +1,17 @@
 from datetime import datetime
 from pathlib import Path
 import sys
+from typing import TYPE_CHECKING
 from zoneinfo import ZoneInfo
 
 import pandas as pd
 
 from lib_analysis import MT100, MT1000, PUSHUPS, SITUPS, SWIM25
 
+if TYPE_CHECKING:
+    import builtins
+
+    import numpy as np
 
 def main() -> int:  # noqa: PLR0911
     """
@@ -20,10 +25,10 @@ def main() -> int:  # noqa: PLR0911
         - 1: Error in file validation or loading
     """
     # Define file path
-    filepath = Path("db/db.csv")
+    filepath: Path = Path("db/db.csv")
 
     # Read CSV file into DataFrame
-    df = pd.read_csv(filepath)
+    df: pd.DataFrame = pd.read_csv(filepath)
 
     ######################################################################
     # Basic Sanity checks
@@ -33,12 +38,14 @@ def main() -> int:  # noqa: PLR0911
     ######################################################################
 
     # Year column
-    conditions = [
+    conditions: list[bool | np.bool[builtins.bool]] = [
         "recruitment_year" in df.columns,
         df["recruitment_year"].notna().all(),
         df["recruitment_year"].dtype == "int64",
         df["recruitment_year"].between(2000, datetime.now(ZoneInfo("Europe/Rome")).year).all(),
     ]
+
+    # Raise error if any condition fails
     if not all(conditions):
         print("FAILED Year checks")
         return 1
@@ -50,6 +57,8 @@ def main() -> int:  # noqa: PLR0911
         df["recruitment_type"].dtype == "object",
         df["recruitment_type"].isin(["hd", "mlli"]).all(),
     ]
+
+    # Raise error if any condition fails
     if not all(conditions):
         print("FAILED Concourse checks")
         return 1
@@ -61,6 +70,8 @@ def main() -> int:  # noqa: PLR0911
         df["test"].dtype == "object",
         df["test"].isin([MT100, MT1000, SWIM25, SITUPS, PUSHUPS]).all(),
     ]
+
+    # Raise error if any condition fails
     if not all(conditions):
         print("FAILED Test checks")
         return 1
@@ -72,6 +83,8 @@ def main() -> int:  # noqa: PLR0911
         df["gender"].dtype == "object",
         df["gender"].isin(["M", "F"]).all(),
     ]
+
+    # Raise error if any condition fails
     if not all(conditions):
         print("FAILED Gender checks")
         return 1
@@ -83,6 +96,8 @@ def main() -> int:  # noqa: PLR0911
         df["age"].dtype == "int64",
         df["age"].between(14, 79).all(),
     ]
+
+    # Raise error if any condition failsß
     if not all(conditions):
         print("FAILED Age checks")
         return 1
@@ -94,6 +109,8 @@ def main() -> int:  # noqa: PLR0911
         df["value"].dtype == "float64",
         (df["value"] >= 0).all(),
     ]
+
+    # Raise error if any condition fails
     if not all(conditions):
         print("FAILED Value checks")
         return 1
