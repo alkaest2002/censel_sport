@@ -24,13 +24,15 @@ def _compute_cutoffs(
         A list of tuples containing the normative table cutoffs as (lower_bound, upper_bound) pairs.
     """
     # Extract percentile values
-    percentiles_values: list[int | float] = [percentile["value"] for percentile in bootstrap_percentiles]
+    percentiles_values: list[float] = [percentile["value"] for percentile in bootstrap_percentiles]
 
     # Define cutoffs array
-    cutoffs = np.round([0, *percentiles_values, 1e10], metric_precision)
+    cutoffs: NDArray[np.number[Any]] = np.round([0, *percentiles_values, 1e10], metric_precision)
 
-    # Compute final cutoffs in the form of: [(lower_bound, upper_bound), ...]
-    return list(pairwise(cutoffs))
+    # Make pairs of cutoffs in the form of: [(lower_bound, upper_bound), ...]
+    cutoffs_pairs: list[tuple[float, float]] = list(pairwise(cutoffs))
+
+    return cutoffs_pairs
 
 def _compute_percentile_statistics(
         percentile: float,
@@ -89,7 +91,7 @@ def _create_percentile_statistics_list(
     """
 
     # Initialize dictionary
-    dict_with_percentiles_statistics: list[dict[str, Any]] = []
+    results: list[dict[str, Any]] = []
 
     # Convert list into numpy array for better indexing
     percentiles_estimates_stack: NDArray[np.number[Any]] =  np.vstack(percentiles_estimates)
@@ -98,17 +100,17 @@ def _create_percentile_statistics_list(
     for i, p in enumerate(percentiles):
 
         # Get estimates for current percentile
-        percentile_estimates = percentiles_estimates_stack[:, i]
+        percentile_estimates: NDArray[np.number[Any]] = percentiles_estimates_stack[:, i]
 
         # Compute and store statistics
-        dict_with_percentiles_statistics.append(_compute_percentile_statistics(
+        results.append(_compute_percentile_statistics(
             percentile=p,
             percentile_estimates=percentile_estimates,
             percentile_method=percentile_method,
             ci_level=ci_level,
         ))
 
-    return dict_with_percentiles_statistics
+    return results
 
 
 def compute_bootstrap_percentiles(
@@ -145,7 +147,7 @@ def compute_bootstrap_percentiles(
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
     clean: dict[str, Any] = data_dict.get("clean", {})
     data: NDArray[np.number[Any]] = clean.get("data", np.array([]))
-    requested_percentiles: list[int | float] = metric_config.get("requested_percentiles", [5, 25, 50, 75, 95])
+    requested_percentiles: list[float] = metric_config.get("requested_percentiles", [5, 25, 50, 75, 95])
     n_replicates: int = metric_config.get("bootstrap_n_replicates", 10000)
     n_replicate_size: int = metric_config.get("bootstrap_n_replicate_size", data.size)
     ci_level: float = metric_config.get("bootstrap_ci_level", 0.95)
@@ -164,7 +166,7 @@ def compute_bootstrap_percentiles(
     percentile_method: str = "linear" if metric_type == "continuous" else "nearest"
 
     # Generate all percentiles from 0 to 100 in steps of 5
-    all_percentiles: list[int | float] = list(range(0, 101, 5))
+    all_percentiles: list[float] = list(range(0, 101, 5))
 
     # Initialize lists
     bootstrap_samples: list[NDArray[np.number[Any]]] = []
