@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
@@ -46,46 +46,41 @@ def clean_data(
 
     # Get cleaning parameters
     remove_outliers: bool = metric_config.get("remove_outliers", False)
-    outlier_factor: float = metric_config.get("outlier_factor", 1.5)
+    outlier_factor: float = metric_config.get("outlier_factor", 3)
 
     # Remove non-positive values and NaNs
-    valid_mask = (data > 0) & np.isfinite(data)
-    clean_data = data[valid_mask]
+    valid_mask: NDArray[np.bool_] = (data > 0) & np.isfinite(data)
+    clean_data: NDArray[np.number[Any]] = data[valid_mask]
 
     # Count invalid
-    removed_invalid = len(data) - len(clean_data)
+    removed_invalid: int = len(data) - len(clean_data)
 
     # Remove outliers if requested
-    removed_outliers = 0
     if remove_outliers:
-        q1 = np.percentile(clean_data, 25)
-        q3 = np.percentile(clean_data, 75)
-        iqr = q3 - q1
-        lower_bound = q1 - outlier_factor * iqr
-        upper_bound = q3 + outlier_factor * iqr
-        outlier_mask = (clean_data >= lower_bound) & (clean_data <= upper_bound)
-    # No outlier method, keep everything
+        q1: float = np.percentile(clean_data, 25)
+        q3: float = np.percentile(clean_data, 75)
+        iqr: float = q3 - q1
+        lower_bound: float = q1 - outlier_factor * iqr
+        upper_bound: float = q3 + outlier_factor * iqr
+        outlier_mask: NDArray[np.bool_] = (clean_data >= lower_bound) & (clean_data <= upper_bound)
     else:
+        # No outlier method, keep everything
         outlier_mask = np.ones(len(clean_data), dtype=bool)
 
-    removed_outliers = len(clean_data) - np.sum(outlier_mask)
-    final_data = clean_data[outlier_mask]
+    removed_outliers: int = len(clean_data) - np.sum(outlier_mask).astype(int)
+    final_data: NDArray[np.number[Any]] = clean_data[outlier_mask]
 
-    # Statistics and quantiles
-    statistics = pd.DataFrame(final_data).describe().squeeze()
+    # Compute descriptive statistics
+    statistics: dict[Any, Any] = pd.DataFrame(final_data).describe().squeeze().to_dict() # type: ignore[union-attr]
 
     # Add kurtosis and skewness
-    statistics["kurtosis"] = pd.Series(final_data).kurtosis()  # type: ignore[index]
-    statistics["skewness"] = pd.Series(final_data).skew()  # type: ignore[index]
+    statistics["kurtosis"] = pd.Series(final_data).kurtosis()
+    statistics["skewness"] = pd.Series(final_data).skew()
 
     # Update data dictionary
     data_dict["clean"] = {
         "data": final_data,
-        "quantiles": {
-            f"q{int(q*100)}": cast("float", np.quantile(final_data, q))
-                for q in np.arange(0.01, 1.0, 0.01)
-        },
-        "descriptive_stats": statistics.to_dict(),  # type: ignore[union-attr]
+        "descriptive_stats": statistics,
         "metadata": {
             "removed_invalid": removed_invalid,
             "removed_outliers": removed_outliers,
