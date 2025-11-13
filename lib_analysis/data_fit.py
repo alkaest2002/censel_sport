@@ -1,7 +1,7 @@
 # mypy: disable-error-code="operator"
 
 from collections.abc import Callable
-from typing import Any, Literal, cast
+from typing import Any, Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -53,16 +53,16 @@ class DistributionFitter:
 
         # Validate metric type
         if metric_type not in {"discrete", "continuous"}:
-            raise ValueError(f"---> Metric_type must be 'discrete' or 'continuous', got '{metric_type}'")
+            raise ValueError(f"---> Metric_type must be 'discrete' or 'continuous', got '{metric_type}'.")
 
         # Validate distribution_best_criterion
         if distribution_best_criterion is not None and \
             distribution_best_criterion not in self.DISTRIBUTION_CRITERIA:
-            raise ValueError(f"---> Distribution_best_criterion {distribution_best_criterion} is invalid")
+            raise ValueError(f"---> Distribution_best_criterion {distribution_best_criterion} is invalid.")
 
         # Validate minimum sample size
         if data.size < self.MIN_SAMPLE_SIZE:
-            raise ValueError(f"---> {self.MIN_SAMPLE_SIZE} measures are needed to fit distributions, got {data.size}")
+            raise ValueError(f"---> {self.MIN_SAMPLE_SIZE} measures are needed to fit distributions, got {data.size}.")
 
         # Initialize results
         fitted_models: dict[str, Any] = {}
@@ -82,7 +82,7 @@ class DistributionFitter:
                 # Get fitted parameters
                 # For continuous distributions, fix location to 0 (metric data is non-negative)
                 # For discrete distributions, use custom fit_parameters method
-                parameters = dist_class.fit(data, floc=0)\
+                parameters: tuple[float, ...] = dist_class.fit(data, floc=0)\
                     if metric_type == "continuous" else dist_class.fit_parameters(data)
 
                 # Handle case where fitting fails and returns empty parameters
@@ -93,19 +93,18 @@ class DistributionFitter:
                         "quantiles": None,
                     }
                     continue
+
                 # Create distribution object
-                dist_obj = dist_class(*parameters)
+                dist_obj: stats.rv_discrete | stats.rv_continuous = dist_class(*parameters)
 
                 # Compute metrics
-                metrics = self._compute_metrics(dist_obj, data, sorted_data, data.size, metric_type)
+                metrics: dict[str, float | None] =\
+                    self._compute_metrics(dist_obj, data, sorted_data, data.size, metric_type)
 
                 # Store results of fitted distribution
                 fitted_models[dist_name] = {
                     "parameters": parameters,
                     "goodness_of_fit": metrics,
-                    "quantiles": {
-                        f"q{int(round(q*100,0))}": dist_obj.ppf(cast("float",q)) for q in np.arange(0.01, 1., 0.01)
-                    },
                 }
 
             # On fitting error
@@ -113,7 +112,6 @@ class DistributionFitter:
                 fitted_models[dist_name] = {
                     "parameters": None,
                     "goodness_of_fit": None,
-                    "quantiles": None,
                 }
                 failed_models.append(f"{dist_name}: {e!s}")
                 continue
@@ -123,7 +121,7 @@ class DistributionFitter:
             raise ValueError(f"All distributions failed to fit. Errors: {failed_models}")
 
         # Determine best model
-        best_model = self._get_best_model(fitted_models, distribution_best_criterion)
+        best_model: dict[str, Any] = self._get_best_model(fitted_models, distribution_best_criterion)
 
         # Update data dict with fitted distributions
         self.data_dict["fit"] = {
@@ -150,27 +148,33 @@ class DistributionFitter:
             Best model information with 'name' and 'parameters' keys.
         """
         # Filter out distributions with invalid values for all criteria
-        valid_models = {
+        valid_models: dict[str, Any] = {
             name: data
             for name, data in fitted_models.items()
-            if (all(data["goodness_of_fit"][crit] is not None and np.isfinite(data["goodness_of_fit"][crit])
+                if (all(data["goodness_of_fit"][crit] is not None and np.isfinite(data["goodness_of_fit"][crit])
                     for crit in self.DISTRIBUTION_CRITERIA))
         }
 
-        # If there aare no valid models
+        # If there are no valid models
         if not valid_models:
-            return {"name": None, "parameters": None}
+            return {
+                "name": None,
+                "parameters": None,
+            }
 
         # If specific criterion provided, use it
         if criterion is not None:
 
             # Compute best model via selected criterion
-            best_model_name = min(valid_models.keys(), key=lambda x: valid_models[x][criterion])
+            best_model_name: str = min(valid_models.keys(), key=lambda x: valid_models[x][criterion])
 
             # Get parameters of best model
-            best_parameters = fitted_models[best_model_name]["parameters"]
+            best_parameters: tuple[float, ...] = fitted_models[best_model_name]["parameters"]
 
-            return {"name": best_model_name, "parameters": best_parameters}
+            return {
+                "name": best_model_name,
+                "parameters": best_parameters,
+            }
 
         # Use majority vote across all criteria
         return self._majority_vote_selection(fitted_models, valid_models)
@@ -191,30 +195,42 @@ class DistributionFitter:
         """
         # If there is just one model
         if len(valid_models) == 1:
-            name = next(iter(valid_models))
-            return {"name": name, "parameters": fitted_models[name]["parameters"]}
+
+            # Get next  valid model
+            name: str = next(iter(valid_models))
+
+            return {
+                "name": name,
+                "parameters": fitted_models[name]["parameters"],
+            }
 
         # Order by importance for tie-breaking
-        criteria = ["bic", "aic", "cramer_von_mises"]
+        criteria: list[str] = ["bic", "aic", "cramer_von_mises"]
 
-        # Get nodel names
-        model_names = list(valid_models.keys())
-
-        # Get number of valid models
-        n_models = len(model_names)
+        # Get model names
+        model_names: list[str] = list(valid_models.keys())
 
         # Initialize win matrix for pairwise comparisons
-        wins = dict.fromkeys(model_names, 0)
+        wins: dict[str, int] = dict.fromkeys(model_names, 0)
 
-        # Perform pairwise comparisons
+        # Get number of valid models
+        n_models: int = len(model_names)
+
+        # Iterate over all pairs of models
         for i in range(n_models):
+
+            # Iterate over models j > i to avoid duplicate comparisons
             for j in range(i + 1, n_models):
+
+                # Get model names
                 model_a, model_b = model_names[i], model_names[j]
+                model_a_goodness_of_fit = valid_models[model_a]["goodness_of_fit"]
+                model_b_goodness_of_fit = valid_models[model_b]["goodness_of_fit"]
 
                 # Count model a wins for each criterion (lower is better)
                 a_wins = sum(
                     True for crit in criteria
-                    if valid_models[model_a]["goodness_of_fit"][crit] < valid_models[model_b]["goodness_of_fit"][crit]
+                        if model_a_goodness_of_fit[crit] < model_b_goodness_of_fit[crit]
                 )
 
                 # Award win to model with majority of criteria
@@ -226,12 +242,18 @@ class DistributionFitter:
 
         # Find model(s) with most pairwise wins
         max_wins = max(wins.values())
+
+        # Identify models with the highest number of wins
+        # It is possible to have ties here
         winners = [name for name, win_count in wins.items() if win_count == max_wins]
 
         # Determine best model name
         best_model_name = winners[0] if len(winners) == 1 else self._break_tie(winners, valid_models, criteria)
 
-        return {"name": best_model_name, "parameters": fitted_models[best_model_name]["parameters"]}
+        return {
+            "name": best_model_name,
+            "parameters": fitted_models[best_model_name]["parameters"],
+        }
 
     def _break_tie(
         self,
@@ -249,12 +271,16 @@ class DistributionFitter:
         Returns:
             Name of the best model after tie-breaking.
         """
+        # Iterate over criteria in order of preference
         for crit in criteria:
+
             # Find best model for this criterion
             best_for_criterion = min(tied_models, key=lambda x: valid_models[x]["goodness_of_fit"][crit])
 
             # Check if this model is uniquely best for this criterion
             best_value = valid_models[best_for_criterion]["goodness_of_fit"][crit]
+
+            # Get other models' values for this criterion
             other_values = [valid_models[model]["goodness_of_fit"][crit] for model in tied_models
                 if model != best_for_criterion]
 
@@ -262,7 +288,7 @@ class DistributionFitter:
             if all(best_value < other_val for other_val in other_values):
                 return best_for_criterion
 
-        # If still tied, return first alphabetically (deterministic)
+        # If still tied, return first alphabetically
         return sorted(tied_models)[0]
 
     def _compute_metrics(
@@ -272,7 +298,7 @@ class DistributionFitter:
         sorted_data: NDArray[np.number[Any]],
         n: int,
         metric_type: str,
-    ) -> dict[str, float | int | None]:
+    ) -> dict[str, float | None]:
         """Compute goodness-of-fit metrics for a fitted distribution.
 
         Args:
@@ -307,13 +333,14 @@ class DistributionFitter:
         elif hasattr(dist_obj, "kwds"):
             k = len(dist_obj.kwds)
         else:
-            k = 2  # Default assumption (location, scale)
+            # Default assumption if attributes not found (location and scale)
+            k = 2
 
         # Information criteria
         aic = 2 * k - 2 * log_lik
         bic = k * np.log(n) - 2 * log_lik
 
-        # Cramér-von Mises
+        # Compute Cramér-von Mises
         cvm_stat, cvm_pvalue = self._compute_cramer_von_mises(
             dist_obj, sorted_data, n, metric_type,
         )
@@ -348,6 +375,8 @@ class DistributionFitter:
         try:
             # Try scipy's built-in test first (if available)
             cvm_stat, cvm_pvalue = self._try_scipy_cvm(sorted_data, dist_obj, metric_type)
+
+            # If scipy's test is successful, use it
             if cvm_stat is not None:
                 return cvm_stat, cvm_pvalue
 
@@ -391,7 +420,10 @@ class DistributionFitter:
         try:
             # Use scipy's cramervonmises test
             result = stats.cramervonmises(sorted_data, dist_obj.cdf)
+
             return float(result.statistic), float(result.pvalue)
+
+        # If scipy's test fails, return None
         except (AttributeError, ValueError, TypeError):
             pass
 
