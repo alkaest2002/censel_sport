@@ -16,16 +16,12 @@ def _compute_cutoffs(
     """
     Compute normative table cutoffs based on bootstrap percentiles.
 
-    Parameters:
-    -----------
-    bootstrap_percentiles : dict
-        Data dictionary with bootstrap percentile data
-
-    metric_precision : int
-        Decimal precision for rounding cutoffs
+    Args:
+        bootstrap_percentiles: List of dictionaries containing bootstrap percentile data.
+        metric_precision: Decimal precision for rounding cutoffs. Defaults to 2.
 
     Returns:
-        list: A list containing the normative table cutoffs.
+        A list of tuples containing the normative table cutoffs as (lower_bound, upper_bound) pairs.
     """
     # Extract percentile values
     percentiles_values: list[int | float] = [percentile["value"] for percentile in bootstrap_percentiles]
@@ -45,23 +41,15 @@ def _compute_percentile_statistics(
     """
     Compute statistics for a given percentile from bootstrap estimates.
 
-    Parameters:
-    -----------
-    percentile : int | float
-        The percentile being analyzed
-
-    percentile_estimates : NDArray
-        Array of bootstrap estimates for the percentile
-
-    percentile_method : str
-        Method used for percentile calculation
-
-    ci_level : float
-        Confidence interval level
+    Args:
+        percentile: The percentile being analyzed.
+        percentile_estimates: Array of bootstrap estimates for the percentile.
+        percentile_method: Method used for percentile calculation.
+        ci_level: Confidence interval level (e.g., 0.95 for 95% CI).
 
     Returns:
-    --------
-    dict : Dictionary containing computed statistics for the percentile
+        Dictionary containing computed statistics for the percentile including value,
+        confidence intervals, quartiles, min/max, and IQR.
     """
     alpha: float = 1 - ci_level
     lower_ci: float = (alpha / 2) * 100
@@ -86,25 +74,18 @@ def _create_percentile_statistics_list(
         percentile_method: str,
         ci_level: float,
     ) -> list[dict[str, Any]]:
-    """Create dict.
+    """
+    Create a list of percentile statistics dictionaries from bootstrap estimates.
 
-    Parameters:
-    -----------
-    percentiles : list[int | float]:
-        List of percentiles being analyzed
-
-    percentiles_estimates: list[NDArray[np.number[Any]]]:
-        list of all percentiles estimates
-
-    percentile_method : str
-        Method used for percentile calculation
-
-    ci_level : float
-        Confidence interval level
+    Args:
+        percentiles: List of percentiles being analyzed.
+        percentiles_estimates: List of numpy arrays containing bootstrap estimates
+            for each percentile.
+        percentile_method: Method used for percentile calculation (e.g., 'linear', 'nearest').
+        ci_level: Confidence interval level (e.g., 0.95 for 95% CI).
 
     Returns:
-    --------
-    list[dict]: list of dictionaries. Each dictionary contains statistics for a specific percentile
+        List of dictionaries, where each dictionary contains statistics for a specific percentile.
     """
 
     # Initialize dictionary
@@ -134,17 +115,31 @@ def compute_bootstrap_percentiles(
     data_dict: dict[str, Any],
 ) -> tuple[dict[str, Any], list[NDArray[np.number[Any]]]]:
     """
-    Compute bootstrap percentiles and confidence intervals.
+    Compute bootstrap percentiles and confidence intervals from data.
 
-    Parameters:
-    -----------
-    data_dict : dict
-        Dictionary containing data
+    This function performs bootstrap resampling to estimate percentiles and their
+    confidence intervals. It computes both all percentiles (0-100 in steps of 5)
+    and user-requested percentiles, then creates normative table cutoffs.
+
+    Args:
+        data_dict: Dictionary containing the following required keys:
+            - 'metric_config': Configuration parameters including percentiles to compute,
+              bootstrap parameters, and random state
+            - 'clean': Dictionary with 'data' key containing the numpy array of clean data
 
     Returns:
-    --------
-    dict : Dict with percentiles and confidence intervals
-    dict : All bootstrap samples for further analysis
+        A tuple containing:
+            - Updated data_dict with bootstrap results added under 'bootstrap' key
+            - List of bootstrap samples for further analysis
+
+    Raises:
+        ValueError: If required data (metric_config, clean, or data) is missing or falsy.
+
+    Note:
+        The function adds a 'bootstrap' key to data_dict containing:
+        - 'all_percentiles': Statistics for percentiles 0-100 (step 5)
+        - 'requested_percentiles': Statistics for user-requested percentiles
+        - 'cutoffs': Normative table cutoff ranges
     """
     # Extract data from dictionary
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
