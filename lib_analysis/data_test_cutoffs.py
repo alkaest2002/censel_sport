@@ -17,7 +17,24 @@ def _apply_cutoffs(
     sample_sizes: list[int],
     random_state: int,
 ) -> list:
-    """_apply_cutoffs to several random samples of different sizes and collect results."""
+    """Apply cutoffs to several random samples of different sizes and collect results.
+
+    This function generates random samples of various sizes from the provided data,
+    applies standardization with the given cutoffs, and collects statistical results
+    about the distribution of standardized values.
+
+    Args:
+        requested_percentiles: List of percentile thresholds for cutoffs.
+        cutoffs: List of tuples defining the cutoff boundaries.
+        data: Array of numerical data to sample from.
+        higher_is_better: Whether higher values indicate better performance.
+        sample_sizes: List of sample sizes to test.
+        random_state: Seed for random number generation.
+
+    Returns:
+        List of dictionaries containing statistical results for each sample size
+        and percentile step combination, including p10, p50, p90 values.
+    """
 
     # Initialize random generator
     rng = np.random.default_rng(random_state)
@@ -97,17 +114,35 @@ def _apply_cutoffs(
 def bootstrap_test_cutoffs(
     data_dict: dict[str, Any],
 ) -> dict[str, Any]:
-    """
-    Clean performance data by removing outliers and invalid values.
+    """Bootstrap test cutoffs using different sample sizes.
 
-    Parameters:
-    -----------
-    data_dict : dict
-        Dictionary containing data
+    This function performs a bootstrap analysis to test the stability and accuracy
+    of cutoff values across different sample sizes. It extracts data from the
+    provided dictionary, applies cutoffs to multiple random samples of varying
+    sizes, and collects statistical results.
+
+    Args:
+        data_dict: Dictionary containing data and configuration parameters.
+                  Must include 'metric_config', 'clean', and 'bootstrap' sections.
+                  Expected structure:
+                  - metric_config: Contains higher_is_better, requested_percentiles, random_state
+                  - clean: Contains the data array
+                  - bootstrap: Contains cutoffs configuration
 
     Returns:
-    --------
-    dict : Updated data dictionary
+        Updated data dictionary with bootstrap test results added under
+        data_dict["bootstrap"]["cutoffs_test"]. The results include:
+        - sample_sizes: List of tested sample sizes
+        - percentile_bands: List of percentile band tuples
+        - results: Statistical results from the bootstrap analysis
+
+    Raises:
+        ValueError: If required data components (data, cutoffs, requested_percentiles)
+                   are missing or empty.
+
+    Note:
+        The function tests sample sizes of [30, 50, 100, 150, 200, 300] by default
+        and performs 1000 bootstrap iterations for each sample size.
     """
     # Extract data from dictionary
     metric_config: dict[str, Any] =  data_dict.get("metric_config", {})
