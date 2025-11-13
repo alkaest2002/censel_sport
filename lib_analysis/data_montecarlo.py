@@ -15,17 +15,31 @@ if TYPE_CHECKING:
 def monte_carlo_validation(
     data_dict: dict[str, Any],
 ) -> tuple[dict[str, Any], list[NDArray[np.number[Any]]]]:
-    """
-    Validate bootstrap percentiles using Monte Carlo simulation from fitted distribution.
+    """Validate bootstrap percentiles using Monte Carlo simulation from fitted distribution.
 
-    Parameters:
-    -----------
-    data_dict : dict
-        Dictionary containing data
+    This function performs Monte Carlo validation by generating synthetic datasets
+    from the best-fitted distribution and computing validation statistics to assess
+    the quality of bootstrap percentile estimates.
+
+    Args:
+        data_dict: Dictionary containing analysis data with the following required keys:
+            - metric_config: Configuration parameters including metric_type,
+              montecarlo_n_samples, montecarlo_n_size, and random_state
+            - clean: Cleaned data containing the original dataset
+            - bootstrap: Bootstrap results with requested percentiles
+            - fit: Distribution fitting results with best model information
 
     Returns:
-    --------
-    dict : Updated data dictionary
+        A tuple containing:
+            - Updated data dictionary with Monte Carlo validation results
+            - List of synthetic datasets generated during validation
+
+    Raises:
+        ValueError: If any required data dictionary components are missing or empty.
+
+    Note:
+        The function uses different percentile computation methods based on metric type:
+        'linear' for continuous metrics and 'nearest' for discrete metrics.
     """
     # Extract data from dictionary
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
@@ -65,7 +79,7 @@ def monte_carlo_validation(
     # Get best model class
     model_class = distributions[best_model["name"]]
 
-    # Istantiate best model class with fitted parameters
+    # Instantiate best model class with fitted parameters
     model = model_class(*best_model["parameters"])
 
     # Init lists to store montecarlo samples and synthetic percentile estimates
@@ -78,7 +92,7 @@ def monte_carlo_validation(
     # Compute validation metrics
     montecarlo_results: list[dict[str, Any]] = []
 
-    # Define percentile method based on metric_precision
+    # Define percentile method based on metric_type
     percentile_method = "linear" if metric_type == "continuous" else "nearest"
 
     # Run Monte Carlo simulations
@@ -123,7 +137,7 @@ def monte_carlo_validation(
 
         montecarlo_results.append({
             "percentile": percentile,
-            "value":montecarlo_value,
+            "value": montecarlo_value,
             "min": montecarlo_min,
             "max": montecarlo_max,
             "first_quartile": montecarlo_first_quartile,
