@@ -1,6 +1,3 @@
-
-
-
 from typing import TYPE_CHECKING, Any, Literal
 
 import numpy as np
@@ -20,19 +17,30 @@ if TYPE_CHECKING:
     from numpy.typing import NDArray
     from scipy import stats
 
+
 def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
     """Create plots for the analysis results.
 
-    Parameters:
-    -----------
-    data_dict : dict
-        Dictionary containing data
+    This function generates various statistical plots based on the analysis results
+    contained in the input dictionary, including histograms, Q-Q plots, rootograms,
+    and comparison plots between Monte Carlo and bootstrap methods.
+
+    Args:
+        data_dict: Dictionary containing analysis data with the following expected keys:
+            - metric_config: Configuration for the metric type
+            - clean: Cleaned data array
+            - bootstrap: Bootstrap analysis results
+            - montecarlo: Monte Carlo simulation results
+            - fit: Model fitting results
 
     Returns:
-    --------
-    dict : Updated data dictionary
-    """
+        Updated data dictionary with added 'plots' key containing a list of plot
+        dictionaries, each with 'name' and 'svg' keys.
 
+    Raises:
+        ValueError: If the data dictionary is missing required components or if
+            model instantiation fails.
+    """
     # Extract data from dictionary
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
     clean: dict[str, Any] = data_dict.get("clean", {})
@@ -68,11 +76,13 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
                 ),
             ),
         ):
-        raise ValueError("---> The data dictionary does not contain all required parts.")
+        raise ValueError("The data dictionary does not contain all required parts.")
 
     # Get distributions
-    distributions: dict[str, stats.rv_continuous | stats.rv_discrete] =\
-        get_continuous_distributions() if metric_type == "continuous" else get_discrete_distributions()
+    distributions: dict[str, stats.rv_continuous | stats.rv_discrete] = (
+        get_continuous_distributions() if metric_type == "continuous"
+        else get_discrete_distributions()
+    )
 
     # Get best model class
     model_class = distributions[best_model_name]
@@ -80,9 +90,8 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
     # Instantiate best model class with fitted params
     try:
         model = model_class(*best_model_parameters)
-    # Raise error if instantiation fails
     except (TypeError, ValueError) as e:
-        raise ValueError(f"---> Failed to instantiate model {best_model_name}: {e}") from e
+        raise ValueError(f"Failed to instantiate model {best_model_name}: {e}") from e
 
     # Add plots
     data_dict["plots"] = [
@@ -110,7 +119,7 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
         })
 
     if metric_type == "discrete":
-         data_dict["plots"].append({
+        data_dict["plots"].append({
             "name": "rootogram",
             "svg": plot_hanging_rootogram(data, best_model_name, model),
         })
