@@ -1,5 +1,6 @@
+
 import sys
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from lib_analysis.data_bootstrap import compute_bootstrap_percentiles
 from lib_analysis.data_clean import clean_data
@@ -13,6 +14,9 @@ from lib_analysis.data_test_cutoffs import bootstrap_test_cutoffs
 from lib_parser.parser import get_base_parser
 from lib_parser.utils_parser import load_configuration_data, validate_file_path
 
+if TYPE_CHECKING:
+    import argparse
+    from pathlib import Path
 
 def main() -> int:
     """Run the full data analysis pipeline.
@@ -27,12 +31,12 @@ def main() -> int:
             - 1: Error in file validation, loading, or processing
     """
     # Parse command line arguments
-    parser = get_base_parser()
-    args = parser.parse_args()
+    parser: argparse.ArgumentParser = get_base_parser()
+    args: argparse.Namespace = parser.parse_args()
 
     try:
         # Validate the file path
-        validated_path = validate_file_path(args.filepath, "analysis")
+        validated_path: Path = validate_file_path(args.filepath, "analysis")
 
     # Except block to catch file validation errors
     except (FileNotFoundError, ValueError) as e:
@@ -46,7 +50,7 @@ def main() -> int:
         #################################################################################
         # Load data
         ################################################################################
-        step_counter = 1
+        step_counter: int = 1
         print(f"{step_counter}. Loading data for {metric_config.get('title')}...")
         data_dict: dict[str, Any] = load_data(metric_config=metric_config)
 
