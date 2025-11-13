@@ -13,7 +13,7 @@ from . import MT100, MT1000, PUSHUPS, SITUPS, SWIM25
 def generate_synthetic_data(
         metric_type: str,
         n_samples: int = 300,
-        random_state: int = 42) -> Any:
+        random_state: int = 42) -> NDArray[np.number]:
     """Generate synthetic performance data for testing purposes.
 
     Args:
@@ -27,15 +27,10 @@ def generate_synthetic_data(
 
     Raises:
         ValueError: If metric_type is not a recognized metric type.
-
-    Example:
-        >>> data = generate_synthetic_data("SWIM25", n_samples=100, random_state=42)
-        >>> len(data)
-        100
     """
-    rng = np.random.default_rng(random_state)
+    rng: np.random.Generator = np.random.default_rng(random_state)
 
-    base_synthetic_data = {
+    base_synthetic_data: dict[str, dict[str, Any]] = {
         SWIM25: {
             "distributions": [
                 (rng.normal, (11.5, 0.8), 0.05),
@@ -100,13 +95,13 @@ def generate_synthetic_data(
     config: dict[str, Any] = base_synthetic_data[metric_type]
 
     # Generate data from multiple distributions
-    data_parts = []
+    data_parts: list[NDArray[np.number[Any]]] = []
     for func, params, proportion in config["distributions"]:
         size = int(n_samples * proportion)
         data_parts.append(func(*params, size))
 
     # Concatenate data
-    data = np.concatenate(data_parts)
+    data: NDArray[np.number[Any]] = np.concatenate(data_parts)
 
     # Apply bounds
     lower, upper = config["bounds"]
