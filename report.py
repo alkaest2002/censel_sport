@@ -1,12 +1,3 @@
-"""CLI utility to generate a statistical analysis report from a data file.
-
-This module validates an input file path supplied via the command line,
-loads the JSON data, renders a Jinja2 HTML template, and converts it to
-a PDF using WeasyPrint. It is intended to be used as an executable script.
-
-Example:
-    $ python report.py path/to/data.json
-"""
 from pathlib import Path
 import subprocess
 import sys
