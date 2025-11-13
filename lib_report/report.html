@@ -429,45 +429,50 @@
                     <ul>
                         <li>
                             <p>
-                                In questa pagina viene presentata un'analisi approfondita della stabilità dei percentili stimati attraverso la tecnica bootstrap, applicati a campioni di diversa numerosità ({{data.bootstrap.cutoffs_test.sample_sizes | join(", ")}} osservazioni).
+                                In questa pagina viene presentata un'analisi della stabilità dei percentili stimati attraverso la tecnica <span class="text-italic">bootstrap</span>, quando applicati a campioni di diversa numerosità ({{data.bootstrap.cutoffs_test.sample_sizes | join(", ")}} osservazioni).
                             </p>
                             <p>
-                                Questo aspetto è particolarmente rilevante quando si lavora con campioni di dimensioni ridotte, dove la variabilità dei risultati (dovuta a questioni meramente statistiche) potrebbe non essere adeguatamente catturata dalle soglie percentiliche della tavola di conversione.
+                                Per ciascuna delle {{ data.bootstrap.cutoffs_test.sample_sizes | length }} numerosità considerate, vengono calcolati un totale di 1000 campioni estratti dal <span class="text-italic">dataset</span> originale. Il ricampionamento causale con re-immissione consente di studiare la stabilità delle statistiche di interesse mantenendo le caratteristiche distributive dei dati originali.
+                            </p>
+                            <p>
+                                Su ogni campione generato vengono applicati i <span class="text-italic">cut-off</span> percentilici precedentemente stimati, trasformando i punteggi grezzi in fasce percentiliche e calcolando la proporzione di osservazioni ricadente in ciascuna fascia.
                             </p>
                         </li>
                     </ul>
                 </div>
                 {% for sample_size in data.bootstrap.cutoffs_test.sample_sizes %}
                     <div class="mb-xl">
-                        <h3 class="mb-lg background">STABILITÀ CONDIZIONALE N={{ sample_size }}</h3>
+                        <h3 class="mb-lg background">STABILITÀ CON N={{ sample_size }}</h3>
                         <table class="table-bordered full-width mb-xl">
                             <thead>
                                 <tr>
-                                    <th class="text-center" style="width: 16%;">%EX</th>
-                                    <th class="text-center" style="width: 16%;">%OB</th>
-                                    <th class="text-center" style="width: 16%;">%FL</th>
-                                    <th class="text-center" style="width: 16%;">%DF</th>
+                                    <th class="text-center" style="width: 18%">FA</th>
+                                    <th class="text-center" style="width: 18%">AT</th>
+                                    <th class="text-center" style="width: 18%">OS</th>
+                                    <th class="text-center" style="width: 18%">AM</th>
+                                    <th class="text-center" style="width: 28%">IF</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for row in data.bootstrap.cutoffs_test.results %}
                                     {% if row.sample_size == sample_size %}
                                         <tr>
+                                            <td class="text-center">{{ row.perc_step | int }}</td>
                                             <td class="text-center">{{ row.perc_expected }}</td>
                                             <td class="text-center">{{ "%.2f" | format(row.p50) }}</td>
-                                            <td class="text-center">[ {{ "%05.2f" | format(row.p10) }} &mdash; {{ "%05.2f" | format(row.p90) }} ]</td>
                                             <td class="text-center">{{ "%.2f" | format(row.p90 - row.p10) }}</td>
+                                            <td class="text-center">[ {{ "%05.2f" | format(row.p10) }} &mdash; {{ "%05.2f" | format(row.p90) }} ]</td>
                                         </tr>
                                     {% endif %}
                                 {% endfor %}
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="4">
+                                    <td colspan="5">
                                         <div class="caption">
                                             <span>Tabella {{ header }}3.{{ loop.index}}</span>
                                             <span>
-                                                %EX = Percentile atteso, %OB = Percentile osservato, %FL = Intervallo di fluttuazione 10-90, %DF = Ampiezza intervallo di fluttuazione. 
+                                                FA = Fascia, AT = Percentile atteso, OS = Percentile osservato, AM = Ampiezza intervallo di fluttuazione, IF = Intervallo di fluttuazione 10%-90%. 
                                             </span>
                                         </div>
                                     </td>
