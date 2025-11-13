@@ -38,7 +38,7 @@ def _compute_cutoffs(
 
 def _compute_percentile_statistics(
         percentile: float,
-        percentile_estimates: NDArray[np.floating[Any]],
+        percentile_estimates: NDArray[np.number[Any]],
         percentile_method: str,
         ci_level: float,
     ) -> dict[str, Any]:
@@ -82,7 +82,7 @@ def _compute_percentile_statistics(
 
 def _create_percentile_statistics_list(
         percentiles: list[float | int],
-        percentiles_estimates: list[NDArray[np.float64]],
+        percentiles_estimates: list[NDArray[np.number[Any]]],
         percentile_method: str,
         ci_level: float,
     ) -> list[dict[str, Any]]:
@@ -93,7 +93,7 @@ def _create_percentile_statistics_list(
     percentiles : list[int | float]:
         List of percentiles being analyzed
 
-    percentiles_estimates: list[NDArray[np.float64]]:
+    percentiles_estimates: list[NDArray[np.number[Any]]]:
         list of all percentiles estimates
 
     percentile_method : str
@@ -111,7 +111,7 @@ def _create_percentile_statistics_list(
     dict_with_percentiles_statistics: list[dict[str, Any]] = []
 
     # Convert list into numpy array for better indexing
-    percentiles_estimates_stack: NDArray[np.floating[Any]] =  np.vstack(percentiles_estimates)
+    percentiles_estimates_stack: NDArray[np.number[Any]] =  np.vstack(percentiles_estimates)
 
     # Iterate over percentiles and compute statistics
     for i, p in enumerate(percentiles):
@@ -174,8 +174,8 @@ def compute_bootstrap_percentiles(
     # Initialize lists
     bootstrap_samples: list[NDArray[np.number[Any]]] = []
     bootstrap_sample: NDArray[np.number[Any]] = np.array([])
-    computed_all_percentiles: list[NDArray[np.float64]] = []
-    computed_requested_percentiles: list[NDArray[np.float64]] = []
+    computed_all_percentiles: list[NDArray[np.number[Any]]] = []
+    computed_requested_percentiles: list[NDArray[np.number[Any]]] = []
 
     # Bootstrap resampling
     for _ in range(n_replicates):

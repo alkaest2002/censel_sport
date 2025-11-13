@@ -100,7 +100,7 @@ class StatsModelsGeometricDist(stats.rv_discrete):
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.number[Any]]", stats.geom.cdf(k, self.p))
 
-    def ppf(self, q: NDArray[np.floating[Any]] | float) -> NDArray[np.integer[Any]] | int:
+    def ppf(self, q: NDArray[np.number[Any]] | float) -> NDArray[np.integer[Any]] | int:
         """Percent point function (quantile function)."""
         if self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
@@ -221,7 +221,7 @@ class StatsModelsBinomialDist(stats.rv_discrete):
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.number[Any]]", stats.binom.cdf(k, self.n, self.p))
 
-    def ppf(self, q: NDArray[np.floating[Any]] | float) -> NDArray[np.integer[Any]] | int:
+    def ppf(self, q: NDArray[np.number[Any]] | float) -> NDArray[np.integer[Any]] | int:
         """Percent point function (quantile function)."""
         if self.n is None or self.p is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
@@ -329,7 +329,7 @@ class StatsModelsPoissonDist(stats.rv_discrete):
             raise ValueError("Distribution not fitted. Use .fit() first.")
         return cast("NDArray[np.number[Any]]", stats.poisson.cdf(k, self._lambda))
 
-    def ppf(self, q: NDArray[np.floating[Any]] | float) -> NDArray[np.integer[Any]] | int:
+    def ppf(self, q: NDArray[np.number[Any]] | float) -> NDArray[np.integer[Any]] | int:
         """Percent point function (quantile function)."""
         if self._lambda is None:
             raise ValueError("Distribution not fitted. Use .fit() first.")
@@ -457,7 +457,7 @@ class StatsModelsNegativeBinomialDist(stats.rv_discrete):
         n, p = self._convert_to_scipy_params()
         return cast("NDArray[np.number[Any]]", stats.nbinom.cdf(k, n, p))
 
-    def ppf(self, q: NDArray[np.floating[Any]] | float) -> NDArray[np.integer[Any]] | int:
+    def ppf(self, q: NDArray[np.number[Any]] | float) -> NDArray[np.integer[Any]] | int:
         """Percent point function (quantile function)."""
         n, p = self._convert_to_scipy_params()
         return cast("NDArray[np.integer[Any]] | int", stats.nbinom.ppf(q, n, p))
@@ -592,7 +592,7 @@ class StatsModelsZeroInflatedPoissonDist(stats.rv_discrete):
             result[i] = float(np.sum(self.pmf(np.arange(0, int(ki) + 1))))
         return cast("NDArray[np.number[Any]]", result)
 
-    def ppf(self, q: NDArray[np.floating[Any]] | float) -> NDArray[np.integer[Any]] | int:
+    def ppf(self, q: NDArray[np.number[Any]] | float) -> NDArray[np.integer[Any]] | int:
         """
         Percent point function (quantile function) for Zero-Inflated Poisson.
 

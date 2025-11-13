@@ -181,7 +181,7 @@ def plot_histogram_with_fitted_model(
 
         # Calculate frequencies (normalized if density=True)
         if density:
-            frequencies: NDArray[np.floating[Any]] = counts / n
+            frequencies: NDArray[np.number[Any]] = counts / n
             ylabel: str = "Probabilità"
         else:
             frequencies = counts
@@ -192,7 +192,7 @@ def plot_histogram_with_fitted_model(
 
         # Create x range for theoretical PMF
         x_min, x_max = max(0, np.min(unique_values)), np.max(unique_values)
-        x: NDArray[np.floating[Any]] = np.arange(x_min, x_max + 1)
+        x: NDArray[np.number[Any]] = np.arange(x_min, x_max + 1)
 
         try:
             # Calculate theoretical PMF
@@ -284,11 +284,11 @@ def plot_qq_plot(
     model_name = model_name.replace("_", " ").title()
 
     # Sort data in ascending order
-    y: NDArray[np.floating[Any]] = np.sort(data)
+    y: NDArray[np.number[Any]] = np.sort(data)
 
     # Generate probability points using i/(N+2) to avoid extreme quantiles
     prob_points_array = np.linspace(1/(n+2), n/(n+2), n)
-    x: NDArray[np.floating[Any]] = np.array([model.ppf(p) for p in prob_points_array])
+    x: NDArray[np.number[Any]] = np.array([model.ppf(p) for p in prob_points_array])
 
     # Create a new figure with specified size for better SVG output
     figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
@@ -300,7 +300,7 @@ def plot_qq_plot(
     # Plot diagonal reference line
     data_min: float = float(np.min([x, y]))
     data_max: float = float(np.max([x, y]))
-    diag: NDArray[np.floating[Any]] = np.linspace(data_min, data_max, 1000)
+    diag: NDArray[np.number[Any]] = np.linspace(data_min, data_max, 1000)
     ax.plot(diag, diag, color="k", linestyle="--", linewidth=2, label="Linea di riferimento (y=x)")
 
     # Add labels and formatting
