@@ -49,7 +49,7 @@ def monte_carlo_validation(
     metric_type: Literal["continuous", "discrete"] | None = metric_config.get("metric_type")
     montecarlo_n_samples: int = metric_config.get("montecarlo_n_samples", 0)
     montecarlo_n_size: int = metric_config.get("montecarlo_n_size", 0)
-    random_state: int = metric_config.get("random_state", 0)
+    random_state: int = metric_config.get("random_state", 42)
     data: NDArray[np.number[Any]] = clean.get("data", [])
     bootstrap_requested_percentiles: list[dict[str, Any]] = bootstrap.get("requested_percentiles", [])
     best_model: dict[str, Any] = fitted_distributions.get("best_model", {})
@@ -64,7 +64,6 @@ def monte_carlo_validation(
             metric_type,
             montecarlo_n_samples,
             montecarlo_n_size,
-            random_state,
             data,
             bootstrap_requested_percentiles,
             best_model,
@@ -76,30 +75,32 @@ def monte_carlo_validation(
     distributions: dict[str, stats.rv_continuous | stats.rv_discrete] =\
         get_continuous_distributions() if metric_type == "continuous" else get_discrete_distributions()
 
-    # Get best model class
-    model_class = distributions[best_model["name"]]
+    # Get best model distribution class
+    model_class: type[stats.rv_continuous | stats.rv_discrete] = distributions[best_model["name"]]
 
     # Instantiate best model class with fitted parameters
-    model = model_class(*best_model["parameters"])
+    model: stats.rv_continuous | stats.rv_discrete = model_class(*best_model["parameters"])
 
-    # Init lists to store montecarlo samples and synthetic percentile estimates
+    # Initialize list to store montecarlo samples
     montecarlo_samples: list[NDArray[np.number[Any]]] = []
+
+    # Initialize list to store montecarlo percentile estimates
     montecarlo_estimates: dict[int | float, list[float]] = {
         percentile_data["percentile"]: []
-        for percentile_data in bootstrap_requested_percentiles
+            for percentile_data in bootstrap_requested_percentiles
     }
 
-    # Compute validation metrics
+    # Initialize list to store montecarlo percentile estimates metrics
     montecarlo_results: list[dict[str, Any]] = []
 
     # Define percentile method based on metric_type
-    percentile_method = "linear" if metric_type == "continuous" else "nearest"
+    percentile_method: Literal["linear", "nearest"] = "linear" if metric_type == "continuous" else "nearest"
 
     # Run Monte Carlo simulations
     for i in range(montecarlo_n_samples):
 
         # Generate synthetic dataset from fitted distribution
-        synthetic_data = model.rvs(size=montecarlo_n_size, random_state=random_state + i)
+        synthetic_data: NDArray[np.number[Any]] = model.rvs(size=montecarlo_n_size, random_state=random_state + i)
 
         # Append sample to list
         montecarlo_samples.append(synthetic_data)
@@ -124,16 +125,16 @@ def monte_carlo_validation(
             np.array(montecarlo_estimates[percentile])
 
         # Compute montecarlo values
-        montecarlo_value = np.percentile(montecarlo_values, 50, method=percentile_method)
-        montecarlo_min = np.min(montecarlo_values)
-        montecarlo_max = np.max(montecarlo_values)
-        montecarlo_first_quartile = np.percentile(montecarlo_values, 25, method=percentile_method)
-        montecarlo_third_quartile = np.percentile(montecarlo_values, 75, method=percentile_method)
-        montecarlo_iqr = montecarlo_third_quartile - montecarlo_first_quartile
-        bias = montecarlo_value - bootstrap_value
-        relative_bias = (bias / bootstrap_value) * 100 if bootstrap_value != 0 else 0
-        coverage = np.mean((montecarlo_values >= bootstrap_ci_lower) &
-            (montecarlo_values <= bootstrap_ci_upper)) * 100
+        montecarlo_value: float = np.percentile(montecarlo_values, 50, method=percentile_method)
+        montecarlo_min: float = np.min(montecarlo_values)
+        montecarlo_max: float = np.max(montecarlo_values)
+        montecarlo_first_quartile: float = np.percentile(montecarlo_values, 25, method=percentile_method)
+        montecarlo_third_quartile: float = np.percentile(montecarlo_values, 75, method=percentile_method)
+        montecarlo_iqr: float = montecarlo_third_quartile - montecarlo_first_quartile
+        bias: float = montecarlo_value - bootstrap_value
+        relative_bias: float = (bias / bootstrap_value) * 100 if bootstrap_value != 0 else 0
+        coverage: float = (np.mean((montecarlo_values >= bootstrap_ci_lower) &
+            (montecarlo_values <= bootstrap_ci_upper)) * 100).astype(float)
 
         montecarlo_results.append({
             "percentile": percentile,
