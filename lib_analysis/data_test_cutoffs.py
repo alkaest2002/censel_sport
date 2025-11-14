@@ -37,7 +37,7 @@ def _apply_cutoffs(
     """
 
     # Initialize random generator
-    rng = np.random.default_rng(random_state)
+    rng: np.random.Generator = np.random.default_rng(random_state)
 
     # Create expected percentiles: i.e., [5, 20, 25, 25, 20, 5]
     expected_percentile: list[float] =\
@@ -59,7 +59,7 @@ def _apply_cutoffs(
         for _ in range(1000):
 
             # randomly sample n data points
-            sampled_data = rng.choice(data, size=n, replace=True).tolist()
+            sampled_data: NDArray[np.number[Any]] = rng.choice(data, size=n, replace=True).tolist()
 
             # Compute standardized scores
             collected_current_sample_size_data.append(
@@ -105,8 +105,7 @@ def _apply_cutoffs(
     results.columns=[ s if s else f for f,s in results.columns.to_flat_index() ]
 
 
-    return (results\
-        .loc[:, ["sample_size", "perc_step", "perc_expected", "p50", "p10", "p90"]]
+    return (results.loc[:, ["sample_size", "perc_step", "perc_expected", "p50", "p10", "p90"]]
         .to_dict(orient="records")
     )
 
@@ -159,7 +158,7 @@ def bootstrap_test_cutoffs(
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Define base sample_sizes
-    sample_sizes = [30, 50, 100, 150, 200, 300]
+    sample_sizes: list[int] = [30, 50, 100, 150, 200, 300]
 
     # Define percentile bands
     percentile_bands: list[tuple[float, float]] = list(pairwise([0, *requested_percentiles, 100]))
