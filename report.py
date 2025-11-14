@@ -62,6 +62,8 @@ def main() -> int:
     try:
         # Load data
         data: dict[str, Any] = load_configuration_data(validated_path)
+        header_letter: str = data.get("metric_config", {}).get("report", {}).get("header_letter", "A")
+        page_number: int = data.get("metric_config", {}).get("report", {}).get("initial_page", 1)
 
         # Get report template
         template: jinja2.Template = jinja_env.get_template("report.html")
@@ -72,7 +74,11 @@ def main() -> int:
 
         # Render HTML
         rendered_html: str =\
-            template.render(data=data, header=args.header_letter, page=args.page_number)
+            template.render(
+                data=data,
+                header=header_letter,
+                page=page_number,
+            )
 
         # Write HTML file
         with output_html.open("w") as fout:
