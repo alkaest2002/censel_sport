@@ -58,42 +58,41 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
 
     # Raise error if something is missing
     if any(map(is_falsy,
-               (
-                    metric_config,
-                    clean,
-                    bootstrap,
-                    montecarlo,
-                    fit,
-                    data,
-                    metric_type,
-                    data,
-                    bootstrap_requested_percentiles,
-                    bootstrap_all_percentiles,
-                    best_model,
-                    best_model_name,
-                    best_model_parameters,
-                    montecarlo_percentiles,
-                ),
+            (
+                metric_config,
+                clean,
+                bootstrap,
+                montecarlo,
+                fit,
+                data,
+                metric_type,
+                data,
+                bootstrap_requested_percentiles,
+                bootstrap_all_percentiles,
+                best_model,
+                best_model_name,
+                best_model_parameters,
+                montecarlo_percentiles,
             ),
-        ):
+        )):
         raise ValueError("The data dictionary does not contain all required parts.")
 
     # Get distributions
     distributions: dict[str, stats.rv_continuous | stats.rv_discrete] = (
         get_continuous_distributions() if metric_type == "continuous"
-        else get_discrete_distributions()
+            else get_discrete_distributions()
     )
 
     # Get best model class
-    model_class = distributions[best_model_name]
+    model_class: type[stats.rv_continuous | stats.rv_discrete] = distributions[best_model_name]
 
     # Instantiate best model class with fitted params
     try:
-        model = model_class(*best_model_parameters)
+        model: stats.rv_continuous | stats.rv_discrete = model_class(*best_model_parameters)
     except (TypeError, ValueError) as e:
         raise ValueError(f"Failed to instantiate model {best_model_name}: {e}") from e
 
-    # Add plots
+    # Add commont plots for both continuous and discrete data
     data_dict["plots"] = [
         {
             "name": "histogram_of_data_with_fitted_distribution",
@@ -112,12 +111,14 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
         },
     ]
 
+    # Add Q-Q plot for continuous data
     if metric_type == "continuous":
         data_dict["plots"].append({
             "name": "qq_plot",
             "svg": plot_qq_plot(data, best_model_name, model),
         })
 
+    # Add rootogram for discrete data
     if metric_type == "discrete":
         data_dict["plots"].append({
             "name": "rootogram",
