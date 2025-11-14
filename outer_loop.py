@@ -4,6 +4,7 @@ import sys
 from typing import TYPE_CHECKING
 from zoneinfo import ZoneInfo
 
+import numpy as np
 import pandas as pd
 
 from lib_analysis import MT100, MT1000, PUSHUPS, SITUPS, SWIM25
@@ -11,7 +12,6 @@ from lib_analysis import MT100, MT1000, PUSHUPS, SITUPS, SWIM25
 if TYPE_CHECKING:
     import builtins
 
-    import numpy as np
 
 def main() -> int:  # noqa: PLR0911
     """
@@ -107,6 +107,7 @@ def main() -> int:  # noqa: PLR0911
         "value" in df.columns,
         df["value"].notna().all(),
         df["value"].dtype == "float64",
+        np.isfinite(df["value"]).all(),
         (df["value"] >= 0).all(),
     ]
 
