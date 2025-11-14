@@ -49,7 +49,7 @@ def save_analysis_results(
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Determine output folder
-    output_path = data_out / metric_id
+    output_path: Path = data_out / metric_id
 
     # Make sure output folder exists or create it
     output_path.mkdir(parents=True, exist_ok=True)
@@ -61,27 +61,30 @@ def save_analysis_results(
 
     # Write plots to SVG files
     for plot in plots:
-        plot_output_path = output_path / f"{metric_id}_{plot['name']}.svg"
+        # Create output path for plot
+        plot_output_path: Path = output_path / f"{metric_id}_{plot['name']}.svg"
+
+        # Write SVG plot to file
         with plot_output_path.open("w") as f:
             # Strip 'data:image/svg+xml;base64,'
             plot_str: str = plot["svg"][26:]
             # Write svg to file
             f.write(b64decode(plot_str).decode("utf-8"))
 
-    # Write results to JSON file
-    analysis_output_path = output_path / f"{metric_id}_analysis.json"
+    # Write data analysis to JSON file
+    analysis_output_path: Path = output_path / f"{metric_id}_analysis.json"
     with analysis_output_path.open("w") as f:
-        orjson_options = orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2
+        orjson_options: int = orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2
         f.write(orjson.dumps(data_dict, option=orjson_options).decode("utf-8"))
 
     # Write bootstrap samples to JSON file
-    bootstrap_output_path = output_path / f"{metric_id}_bootstrap_samples.json"
+    bootstrap_output_path: Path = output_path / f"{metric_id}_bootstrap_samples.json"
     with bootstrap_output_path.open("w") as f:
         orjson_options = orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2
         f.write(orjson.dumps(bootstrap_samples, option=orjson_options).decode("utf-8"))
 
-    # Write Monte Carlo samples to JSON file (fixed typo)
-    montecarlo_output_path = output_path / f"{metric_id}_montecarlo_samples.json"
+    # Write Monte Carlo samples to JSON file
+    montecarlo_output_path: Path = output_path / f"{metric_id}_montecarlo_samples.json"
     with montecarlo_output_path.open("w") as f:
         orjson_options = orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2
         f.write(orjson.dumps(simulation_samples, option=orjson_options).decode("utf-8"))
