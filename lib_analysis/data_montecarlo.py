@@ -53,6 +53,8 @@ def monte_carlo_validation(
     data: NDArray[np.number[Any]] = clean.get("data", [])
     bootstrap_requested_percentiles: list[dict[str, Any]] = bootstrap.get("requested_percentiles", [])
     best_model: dict[str, Any] = fitted_distributions.get("best_model", {})
+    best_model_name: str = best_model.get("name", "")
+    best_model_parameters: list[float] = best_model.get("parameters", [])
 
     # Raise error if something is missing
     if any(map(is_falsy,
@@ -60,12 +62,12 @@ def monte_carlo_validation(
             metric_config,
             clean,
             bootstrap,
-            fitted_distributions,
+            data,
             metric_type,
             montecarlo_n_samples,
             montecarlo_n_size,
-            data,
             bootstrap_requested_percentiles,
+            fitted_distributions,
             best_model,
         ),
     )):
@@ -76,10 +78,10 @@ def monte_carlo_validation(
         get_continuous_distributions() if metric_type == "continuous" else get_discrete_distributions()
 
     # Get best model distribution class
-    model_class: type[stats.rv_continuous | stats.rv_discrete] = distributions[best_model["name"]]
+    model_class: type[stats.rv_continuous | stats.rv_discrete] = distributions[best_model_name]
 
     # Instantiate best model class with fitted parameters
-    model: stats.rv_continuous | stats.rv_discrete = model_class(*best_model["parameters"])
+    model: stats.rv_continuous | stats.rv_discrete = model_class(*best_model_parameters)
 
     # Initialize list to store montecarlo samples
     montecarlo_samples: list[NDArray[np.number[Any]]] = []
