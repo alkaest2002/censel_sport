@@ -39,7 +39,7 @@ def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
     clean: dict[str, Any] = data_dict.get("clean", {})
     bootstrap: dict[str, Any] = data_dict.get("bootstrap", {})
     data: NDArray[np.number[Any]] = clean.get("data", [])
-    cutoffs = bootstrap.get("cutoffs", [])
+    cutoffs: list[tuple[float, float]] = bootstrap.get("cutoffs", [])
 
     # Raise error if something is missing
     if any(map(is_falsy, (clean, bootstrap, data, cutoffs))):
@@ -48,22 +48,22 @@ def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
     # Compute standardization scores
     scores: list[dict[Hashable, Any]] = (
         apply_standardization(data_to_standardize=data, cutoffs=cutoffs)
-        .to_dict(orient="records")
+            .to_dict(orient="records")
     )
 
     # Compute percentage of standardized scores
-    value_counts_perc = (
+    value_counts_perc: dict[str, float] = (
         pd.Series([x["standardized_value"] for x in scores])
-        # Convert to int first
-        .astype("int")
-        # Then to string since they will be used as keys in a JSON
-        .astype("string")
-        # Compute value counts as percentage
-        .value_counts(normalize=True, sort=False)
-        # Multiply by 100 to get percentage
-        .mul(100)
-        # Convert to dictionary
-        .to_dict()
+            # Convert to int first
+            .astype("int")
+            # Then to string since they will be used as keys in a JSON
+            .astype("string")
+            # Compute value counts as percentage
+            .value_counts(normalize=True, sort=False)
+            # Multiply by 100 to get percentage
+            .mul(100)
+            # Convert to dictionary
+            .to_dict()
     )
 
     # Update data dict
