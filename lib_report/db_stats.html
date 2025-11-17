@@ -27,22 +27,46 @@
 
             <!-- Page Content -->
             <h2 class="mb-xl">Composizione del dataset</h2>
-            <div>
+            <!-- <div class="mb-xl">
                 <table class="table-bordered table-striped full-width">
                     <tbody>
                         <tr>
                             <th class="text-center">Prova sportiva</th>
-                            <th class="text-center">Anno</th>
                             <th class="text-center">Genere</th>
                             <th class="text-center">Fascia di età</th>
-                            <th class="text-center">Conteggio</th>
+                            <th class="text-center">Anni</th>
+                            <th class="text-center">Totale</th>
                         </tr>
                     </tbody>
-                    {% for row in data %}
+                    {% for row in data.years_data %}
                     <tr>
-                        {% for cell in row.values() %}
-                            <td class="text-center">{{ cell }}</td>
-                        {% endfor %}
+                        <td class="text-center">{{ row.test }}</td>
+                        <td class="text-center">{{ row.gender }}</td>
+                        <td class="text-center">{{ row.age_binned }}</td>
+                        <td class="text-center">{{ row.recruitment_year }}</td>
+                        <td class="text-center">{{ row.counts }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div> -->
+            <div class="mb-xl">
+                <table class="table-bordered table-striped full-width">
+                    <tbody>
+                        <tr>
+                            <th class="text-center">Prova sportiva</th>
+                            <th class="text-center">Anni</th>
+                            <th class="text-center">Fascia di età</th>
+                            <th class="text-center">Genere</th>
+                            <th class="text-center">Totale</th>
+                        </tr>
+                    </tbody>
+                    {% for row in data.gender_data %}
+                    <tr>
+                        <td class="text-center">{{ row.test }}</td>
+                        <td class="text-center">{{ row.recruitment_year }}</td>
+                        <td class="text-center">{{ row.age_binned }}</td>
+                        <td class="text-center">{{ row.gender }}</td>
+                        <td class="text-center">{{ row.counts }}</td>
                     </tr>
                     {% endfor %}
                 </table>
