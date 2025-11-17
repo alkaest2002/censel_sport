@@ -158,7 +158,7 @@ def bootstrap_test_cutoffs(
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Define base sample_sizes
-    sample_sizes: list[int] = [30, 50, 100, 150, 200, 300]
+    sample_sizes: list[int] = [30, 50, 100, 150, 200, 300, 500]
 
     # Define percentile bands
     percentile_bands: list[tuple[float, float]] = list(pairwise([0, *requested_percentiles, 100]))
