@@ -14,50 +14,6 @@ if TYPE_CHECKING:
     import jinja2
 
 
-def _recruitment_year_fn(
-        test: str,  # noqa: ARG001
-        gender: str,  # noqa: ARG001
-        age_binned: str,  # noqa: ARG001
-        df: pd.DataFrame,
-    ) -> str:
-    """Get recruitment years for a given group.
-
-    Args:
-        x: DataFrame group containing data
-        test: Test type
-        gender: Gender
-        age_binned: Age bin
-        df: Entire DataFrame
-
-    Returns:
-        str: String representation of recruitment years count dictionary.
-    """
-    query_string ="test==@test and gender==@gender and age_binned==@age_binned"
-    years = df.query(query_string).loc[:,"recruitment_year"].value_counts()
-    return str(years.to_dict())[1:-1]
-
-def _gender_fn(
-        test: str,  # noqa: ARG001
-        recruitment_year: int,  # noqa: ARG001
-        age_binned: str,  # noqa: ARG001
-        df: pd.DataFrame,
-    ) -> str:
-    """Get recruitment years for a given group.
-
-    Args:
-        x: DataFrame group containing data
-        test: Test type
-        recruitment_year: Year
-        age_binned: Age bin
-        df: Entire DataFrame
-
-    Returns:
-        str: String representation of recruitment years count dictionary.
-    """
-    query_string ="test==@test and recruitment_year==@recruitment_year and age_binned==@age_binned"
-    genders = df.query(query_string).loc[:,"gender"].value_counts()
-    return str(genders.to_dict())[1:-1]
-
 def main() -> int:
     """Generate database statistics report.
 
@@ -96,35 +52,25 @@ def main() -> int:
         right=True,
     ).astype(str)
 
-    # Compute summary table
-    gender_data: list[dict[str, Any]] = []
-    years_data: list[dict[str, Any]] = []
 
-    for _, g_data in df.groupby(["test", "recruitment_year", "age_binned"], observed=True):
-        test = g_data.iloc[0]["test"]
-        recruitment_year = g_data.iloc[0]["recruitment_year"]
-        age_binned = g_data.iloc[0]["age_binned"]
-        current_group_data = ({
-            "test": test,
-            "recruitment_year":recruitment_year,
-            "age_binned":age_binned,
-            "gender": _gender_fn(test, recruitment_year, age_binned, df),
-            "counts": g_data.shape[0],
-        })
-        gender_data.append(current_group_data)
-
-    for _, g_data in df.groupby(["test", "gender", "age_binned"], observed=True):
-        test = g_data.iloc[0]["test"]
-        gender = g_data.iloc[0]["gender"]
-        age_binned = g_data.iloc[0]["age_binned"]
-        current_group_data = ({
-            "test": test,
-            "gender":gender,
-            "age_binned":age_binned,
-            "recruitment_year":_recruitment_year_fn(test, gender, age_binned, df),
-            "counts": g_data.shape[0],
-        })
-        years_data.append(current_group_data)
+    data: dict[str, Any] = {
+        "age_binned": [],
+        "gender": [],
+    }
+    for key, val in data.items():
+        for _, g_data in df.groupby(["test", "recruitment_year"]):
+            dict_data = {
+                "test": g_data.loc[:, "test"].iloc[0],
+                "recruitment_year": g_data.loc[:, "recruitment_year"].iloc[0],
+                key: str(g_data[key]
+                         .value_counts()
+                         .to_dict())[1:-1]
+                         .replace("'","")
+                         .replace(",", " | ")
+                         .replace(":", " &rarr; "),
+                "counts": int(g_data.shape[0]),
+            }
+            val.append(dict_data)
 
     # Load data
     try:
@@ -138,10 +84,7 @@ def main() -> int:
 
         # Render HTML
         rendered_html: str =\
-            template.render(data={
-                "gender_data": gender_data,
-                "years_data": years_data,
-            }, header=args.header_letter, page=args.page_number)
+            template.render(data=data, header=args.header_letter, page=args.page_number)
 
         # Write HTML file
         with output_html.open("w") as fout:
