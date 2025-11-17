@@ -10,10 +10,53 @@ from lib_report.jinja_environment import jinja_env, templates_dir
 
 if TYPE_CHECKING:
     import argparse
-    from collections.abc import Hashable
 
     import jinja2
 
+
+def _recruitment_year_fn(
+        test: str,  # noqa: ARG001
+        gender: str,  # noqa: ARG001
+        age_binned: str,  # noqa: ARG001
+        df: pd.DataFrame,
+    ) -> str:
+    """Get recruitment years for a given group.
+
+    Args:
+        x: DataFrame group containing data
+        test: Test type
+        gender: Gender
+        age_binned: Age bin
+        df: Entire DataFrame
+
+    Returns:
+        str: String representation of recruitment years count dictionary.
+    """
+    query_string ="test==@test and gender==@gender and age_binned==@age_binned"
+    years = df.query(query_string).loc[:,"recruitment_year"].value_counts()
+    return str(years.to_dict())[1:-1]
+
+def _gender_fn(
+        test: str,  # noqa: ARG001
+        recruitment_year: int,  # noqa: ARG001
+        age_binned: str,  # noqa: ARG001
+        df: pd.DataFrame,
+    ) -> str:
+    """Get recruitment years for a given group.
+
+    Args:
+        x: DataFrame group containing data
+        test: Test type
+        recruitment_year: Year
+        age_binned: Age bin
+        df: Entire DataFrame
+
+    Returns:
+        str: String representation of recruitment years count dictionary.
+    """
+    query_string ="test==@test and recruitment_year==@recruitment_year and age_binned==@age_binned"
+    genders = df.query(query_string).loc[:,"gender"].value_counts()
+    return str(genders.to_dict())[1:-1]
 
 def main() -> int:
     """Generate database statistics report.
@@ -44,18 +87,44 @@ def main() -> int:
     duplicated: float = round((df.duplicated().sum() / df.shape[0]) * (100), 2)
 
     # Define bin ages
-    age_bins: list[int] = [14, 29, 39, 49, 59, 69, 79]
+    age_bins: list[int] = [13, 29, 39, 49, 59, 69, 79]
 
     # Bin age
-    df["age_binned"] = pd.cut(df["age"], bins=age_bins, right=True)
+    df["age_binned"] = pd.cut(
+        df["age"], bins=age_bins,
+        labels=["14-29", "30-39", "40-49", "50-59", "60-69", "70-79"],
+        right=True,
+    ).astype(str)
 
     # Compute summary table
-    data: list[dict[Hashable, Any]] = (
-        df.groupby(["test", "recruitment_year", "gender", "age_binned"], observed=True)
-            .size()
-            .reset_index(name="counts")
-            .to_dict(orient="records")
-    )
+    gender_data: list[dict[str, Any]] = []
+    years_data: list[dict[str, Any]] = []
+
+    for _, g_data in df.groupby(["test", "recruitment_year", "age_binned"], observed=True):
+        test = g_data.iloc[0]["test"]
+        recruitment_year = g_data.iloc[0]["recruitment_year"]
+        age_binned = g_data.iloc[0]["age_binned"]
+        current_group_data = ({
+            "test": test,
+            "recruitment_year":recruitment_year,
+            "age_binned":age_binned,
+            "gender": _gender_fn(test, recruitment_year, age_binned, df),
+            "counts": g_data.shape[0],
+        })
+        gender_data.append(current_group_data)
+
+    for _, g_data in df.groupby(["test", "gender", "age_binned"], observed=True):
+        test = g_data.iloc[0]["test"]
+        gender = g_data.iloc[0]["gender"]
+        age_binned = g_data.iloc[0]["age_binned"]
+        current_group_data = ({
+            "test": test,
+            "gender":gender,
+            "age_binned":age_binned,
+            "recruitment_year":_recruitment_year_fn(test, gender, age_binned, df),
+            "counts": g_data.shape[0],
+        })
+        years_data.append(current_group_data)
 
     # Load data
     try:
@@ -69,7 +138,10 @@ def main() -> int:
 
         # Render HTML
         rendered_html: str =\
-            template.render(data=data, header=args.header_letter, page=args.page_number)
+            template.render(data={
+                "gender_data": gender_data,
+                "years_data": years_data,
+            }, header=args.header_letter, page=args.page_number)
 
         # Write HTML file
         with output_html.open("w") as fout:
