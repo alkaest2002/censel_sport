@@ -411,4 +411,4 @@ exclude_lines = [
 ]
 
 [tool.bandit.assert_used]
-skips = ["./report.py", "./faker.py"]
+skips = ["./report_annex.py", "./faker.py"]
