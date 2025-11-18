@@ -1,0 +1,90 @@
+{% extends "_base.html" %}
+
+{% block style %}
+<style>
+    .toc-list,
+    .toc-list ol {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .toc-list ol {
+        padding-left: 2ch;
+    }
+
+    .toc-list li {
+        margin-bottom: 0.5em;
+        line-height: 1.4;
+    }
+
+    .toc-list li > a {
+        color: #000;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        min-height: 1.4em;
+    }
+
+    .toc-list .title {
+        flex: 0 0 auto;
+        background: white;
+        padding-right: 0.5ch;
+        line-height: 1.4;
+    }
+
+    .toc-list .leaders {
+        flex: 1 1 auto;
+        border-bottom: 1px dotted #000;
+        margin: 0 0;
+        height: 1px;
+        min-width: 1em;
+        margin-bottom: -0.5em; /* Adjust this to fine-tune alignment */
+    }
+
+    .toc-list .toc-page {
+        flex: 0 0 auto;
+        background: white;
+        padding-left: 0.5ch;
+        line-height: 1.4;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page">
+    <div class="content">
+        <div>
+            <!-- Page Header -->
+            <div class="mb-xxl">
+                <div class="header">
+                    <h1 class="mb-xs">ELENCO DEGLI ALLEGATI</h1>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <div class="mb-xxl">
+                <ol class="toc-list" role="list">
+                    <li>
+                        <a href="#link_to_heading">
+                            <span class="title">A. Dataset Centro di Selezione</span>
+                            <span class="leaders"></span>
+                            <span class="toc-page">pag. {{ page + 1 }}</span>
+                        </a>
+                    </li>
+                    {% for t in toc %}
+                        <li>
+                            <a href="#link_to_heading">
+                                <span class="title">{{ t.header_letter | upper }}. {{ t.title | format_title }}</span>
+                                <span class="leaders"></span>
+                                <span class="toc-page">pag. {{ t.initial_page }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+        <div class="footer">{{ page }}</div>
+    </div>
+</div>
+{% endblock %}
