@@ -69,7 +69,7 @@ class DistributionFitter:
         failed_models: list[str] = []
 
         # Get distributions
-        distributions: dict[str, stats.rv_discrete | stats.rv_continuous] =\
+        distributions: dict[str, type[stats.rv_discrete | stats.rv_continuous]] =\
             get_continuous_distributions() if metric_type == "continuous" else get_discrete_distributions()
 
         # Pre-sort data for efficiency

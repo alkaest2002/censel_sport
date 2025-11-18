@@ -1065,7 +1065,7 @@ class StatsModelsZeroInflatedPoissonDist(stats.rv_discrete):
 
 
 def get_discrete_distributions(
-    ) -> dict[str, stats.rv_continuous | stats.rv_discrete]:
+    ) -> dict[str, type[stats.rv_continuous | stats.rv_discrete]]:
     """Get a mapping of distribution names to their corresponding SciPy distribution objects.
 
     Returns:
