@@ -62,6 +62,7 @@ def main() -> int:
     try:
         # Load data
         data: dict[str, Any] = load_configuration_data(validated_path)
+        metric_id: str = data.get("metric_config", {}).get("id", "unknown_metric")
         header_letter: str = data.get("metric_config", {}).get("report", {}).get("header_letter", "A")
         page_number: int = data.get("metric_config", {}).get("report", {}).get("initial_page", 1)
 
@@ -69,7 +70,8 @@ def main() -> int:
         template: jinja2.Template = jinja_env.get_template("report.html")
 
         # Build output paths
-        output_pdf: Path = validated_path.with_suffix(".pdf")
+        output_pdf: Path =\
+            (validated_path.parent.parent / "_report" / f"{header_letter}_{metric_id}").with_suffix(".pdf")
         output_html: Path = validated_path.with_suffix(".html")
 
         # Render HTML
