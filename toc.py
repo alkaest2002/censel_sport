@@ -3,7 +3,6 @@ import sys
 from typing import TYPE_CHECKING, Any
 
 import orjson
-import pandas as pd
 from weasyprint import HTML  # type: ignore[import-untyped]
 
 from lib_parser.parser import get_db_report_parser
@@ -13,28 +12,6 @@ if TYPE_CHECKING:
     import argparse
 
     import jinja2
-
-
-def _stringify_value_counts(x: pd.Series) -> str:
-    """Convert a dictionary to a string representation.
-
-    Args:
-        x: Series to convert.
-
-    Returns:
-        String representation of the dictionary.
-    """
-    # Collect value counts as dictionary
-    value_counts_dict: dict[Any, int] = x.value_counts().to_dict()
-    # Omit keys with values equal to zero
-    value_counts_dict = {k: v for k, v in value_counts_dict.items() if v != 0}
-    # Convert to string with custom formatting
-    return (
-        str(value_counts_dict)[1:-1]
-        .replace("'", "")
-        .replace(",", " | ")
-        .replace(":", " &rarr; ")
-    )
 
 def main() -> int:
     """Generate database statistics report.
@@ -46,8 +23,7 @@ def main() -> int:
     Returns:
         int: Process exit status code:
             - 0: Success
-            - 1: Error in file validation or loading
-            - 2: Rendering or PDF generation error
+            - 1: Rendering or PDF generation error
     """
     # Get report parser
     parser: argparse.ArgumentParser = get_db_report_parser()
@@ -61,9 +37,13 @@ def main() -> int:
     # Initialize TOC list
     toc: list[dict[str, Any]] = []
 
-    # Iterate over config files and print their contents
+    # Iterate over config files
     for config_file in config_files:
+
+        # Load and parse current config data
         config_data: dict[str, Any] = orjson.loads(config_file.read_text())
+
+        # Append current config data to toc
         toc.append({
             "title": config_data.get("title", "No Title"),
             "header_letter": config_data.get("report", {}).get("header_letter", "ZZZ"),
@@ -73,7 +53,6 @@ def main() -> int:
     # Reorder TOC by initial_page
     toc.sort(key=lambda x: x["initial_page"])
 
-    # Load data
     try:
         # Get report template
         template: jinja2.Template = jinja_env.get_template("toc.html")
@@ -83,10 +62,10 @@ def main() -> int:
         output_pdf: Path = base_path.with_suffix(".pdf")
         output_html: Path = base_path.with_suffix(".html")
 
+        # Render template
         rendered_html: str =\
             template.render(toc=toc, header=args.header_letter, page=args.page_number)
 
-        # Write HTML file
         # Write HTML file
         with output_html.open("w") as fout:
             fout.write(rendered_html)
@@ -97,10 +76,10 @@ def main() -> int:
 
     # Handle exceptions
     except Exception as e:  # noqa: BLE001
-        print(f"Error while generating report: {e}")
-        return 2
+        print(f"Error while generating TOC: {e}")
+        return 1
 
-    print("Toc was generated successfully.")
+    print("TOC was generated successfully.")
     return 0
 
 
