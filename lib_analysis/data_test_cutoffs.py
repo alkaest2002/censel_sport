@@ -150,7 +150,7 @@ def bootstrap_test_cutoffs(
     data: NDArray[np.number[Any]] = clean.get("data", np.array([]))
     cutoffs = bootstrap.get("cutoffs", {})
     higher_is_better: bool = metric_config.get("higher_is_better", False)
-    requested_percentiles: list[float] = metric_config.get("requested_percentiles", [])
+    requested_percentiles: list[float] = sorted(metric_config.get("requested_percentiles", []))
     random_state: int = metric_config.get("random_state", 42)
 
     # Raise error if something is missing

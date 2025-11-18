@@ -147,7 +147,7 @@ def compute_bootstrap_percentiles(
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
     clean: dict[str, Any] = data_dict.get("clean", {})
     data: NDArray[np.number[Any]] = clean.get("data", np.array([]))
-    requested_percentiles: list[float] = metric_config.get("requested_percentiles", [5, 25, 50, 75, 95])
+    requested_percentiles: list[float] = sorted(metric_config.get("requested_percentiles", [5, 25, 50, 75, 95]))
     n_replicates: int = metric_config.get("bootstrap_n_replicates", 10000)
     n_replicate_size: int = metric_config.get("bootstrap_n_replicate_size", data.size)
     ci_level: float = metric_config.get("bootstrap_ci_level", 0.95)
