@@ -44,7 +44,7 @@
                         {% for row in test_data %}
                             <tr {% if loop.last and not parent_loop.last %}style="border-bottom:1px dotted #888"{% endif %}>
                                 {% if loop.first  %}
-                                    <td class="text-center" rowspan="{{ test_data | length }}">{{ test }}</td>
+                                    <td class="text-center" rowspan="{{ test_data | length }}">{{ get_test_label(test) | title }}</td>
                                 {% endif %}
                                 <td class="text-center">{{ row.recruitment_year }}</td>
                                 <td class="text-center">{{ row.gender | safe }}</td>

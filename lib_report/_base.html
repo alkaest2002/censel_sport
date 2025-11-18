@@ -1,3 +1,20 @@
+{% macro get_test_label(test_type) %}
+    {% if test_type == "1000mt_run" %}
+        corsa 1000 mt
+    {% endif %}
+    {% if test_type == "100mt_run" %}
+        corsa 100 mt
+    {% endif %}
+    {% if test_type == "25mt_swim" %}
+        nuoto 25mt
+    {% endif %}
+    {% if test_type == "push_ups" %}
+        piegamenti sulle braccia
+    {% endif %}
+    {% if test_type == "sit_ups" %}
+        addominali
+    {% endif %}
+{% endmacro %}
 <!DOCTYPE html>
 <html>
     <head>
