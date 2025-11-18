@@ -25,8 +25,10 @@ def _stringify_value_counts(x: pd.Series) -> str:
     """
     # Collect value counts as dictionary
     value_counts_dict: dict[Any, int] = x.value_counts().to_dict()
+
     # Omit keys with values equal to zero
     value_counts_dict = {k: v for k, v in value_counts_dict.items() if v != 0}
+
     # Convert to string with custom formatting
     return (
         str(value_counts_dict)[1:-1]
@@ -47,16 +49,16 @@ def main() -> int:
             - 0: Success
             - 1: Rendering or PDF generation error
     """
-    # Get report parser
+    # Get parser
     parser: argparse.ArgumentParser = get_db_report_parser()
 
     # Parse arguments
     args: argparse.Namespace = parser.parse_args()
 
-    # Define file path
+    # Define db file path
     filepath: Path = Path("db/db.csv")
 
-    # Read CSV file into DataFrame
+    # Read db file into DataFrame
     df: pd.DataFrame = pd.read_csv(filepath)
 
     # Compute percentage of duplicates
@@ -72,25 +74,25 @@ def main() -> int:
         right=True,
     )
 
-    # Group by test and recruitment year
+    # Group db by test and recruitment year
     grouped = df.groupby(["test", "recruitment_year"])
 
-    # Create data for report
+    # Create data for db report
     data = (pd.concat([
         grouped["gender"].apply(_stringify_value_counts),
         grouped["age_binned"].apply(_stringify_value_counts),
         grouped.size().rename("counts"),
         ], axis=1).reset_index(names=["test", "recruitment_year"]))
 
-    # Load data
     try:
-        # Get report template
+        # Get db report template
         template: jinja2.Template = jinja_env.get_template("db_stats.html")
 
-        # Build output paths
+        # Build output path
         base_path: Path = Path("./data_out/_report/A_db_stats")
         output_pdf: Path = base_path.with_suffix(".pdf")
 
+        # Render template with data
         rendered_html: str =\
             template.render(data=data, header=args.header_letter, page=args.page_number)
 
