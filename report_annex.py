@@ -88,13 +88,13 @@ def main() -> int:
 
         # Write PDF file
         HTML(string=rendered_html, base_url=str(templates_dir)).write_pdf(str(output_pdf))
-        print(f"Report generated: {output_pdf}")
 
     # Handle exceptions
     except Exception as e:  # noqa: BLE001
-        print(f"Error while generating report: {e}")
+        print(f"Error while generating report: {e}, file=sys.stderr")
         return 2
 
+    print(f"Report generated: {output_pdf}")
     return 0
 
 if __name__ == "__main__":

@@ -45,8 +45,7 @@ def main() -> int:
     Returns:
         int: Process exit status code:
             - 0: Success
-            - 1: Error in file validation or loading
-            - 2: Rendering or PDF generation error
+            - 1: Rendering or PDF generation error
     """
     # Get report parser
     parser: argparse.ArgumentParser = get_db_report_parser()
@@ -101,8 +100,8 @@ def main() -> int:
 
     # Handle exceptions
     except Exception as e:  # noqa: BLE001
-        print(f"Error while generating report: {e}")
-        return 2
+        print(f"Error while generating report: {e}", file=sys.stderr)
+        return 1
 
     print(f"Data loaded and validated successfully. Percentage of duplicates {duplicated}%")
     return 0

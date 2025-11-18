@@ -11,7 +11,7 @@ import sys
 from pypdf import PdfWriter
 
 
-def natural_key(s: str) -> list:
+def _natural_key(s: str) -> list:
     """Convert a string into a list for natural sorting.
 
     Splits the string into numeric and non-numeric parts to enable
@@ -54,7 +54,7 @@ def _collect_pdfs(folder: Path, out_name: str) -> list[Path]:
     ]
 
     # Sort pdfs naturally
-    pdfs.sort(key=lambda p: natural_key(p.name))
+    pdfs.sort(key=lambda p: _natural_key(p.name))
 
     return pdfs
 
