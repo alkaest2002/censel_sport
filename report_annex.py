@@ -49,7 +49,7 @@ def main() -> int:
     if args.recompute:
 
         # Resolve path to analysis script
-        analysis_script: Path = Path("inner_loop.py").resolve()
+        analysis_script: Path = Path("loop_inner.py").resolve()
 
         # Validate that the analysis script exists and is safe to execute
         if not analysis_script.exists():
