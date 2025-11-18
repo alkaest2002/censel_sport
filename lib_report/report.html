@@ -123,16 +123,20 @@
                             <td class="text-left">Dimensione del campione</td>
                             <td class="text-center">{{ data.clean.descriptive_stats.count | int }}</td>
                         </tr>
-                        <tr>
-                            <td class="text-left">Genere</td>
-                            {% set gender = data.metric_config.stratification.gender.label.split(':')[-1] %}
-                            <td class="text-center">{{ gender }}</td>
-                        </tr>
-                        <tr>
-                            <td class="text-left">Fascia d'età</td>
-                            {% set age = data.metric_config.stratification.age.label.split(':')[-1] %}
-                            <td class="text-center">{{ age }}</td>
-                        </tr>
+                        {% if data.metric_config.stratification.gender.label %}
+                            <tr>
+                                <td class="text-left">Genere</td>
+                                {% set gender = data.metric_config.stratification.gender.label.split(':')[-1] %}
+                                <td class="text-center">{{ gender }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if data.metric_config.stratification.age.label %}
+                            <tr>
+                                <td class="text-left">Fascia d'età</td>
+                                {% set age = data.metric_config.stratification.age.label.split(':')[-1] %}
+                                <td class="text-center">{{ age }}</td>
+                            </tr>
+                        {% endif %}
                     </tbody>
                     <tfoot>
                         <tr>
