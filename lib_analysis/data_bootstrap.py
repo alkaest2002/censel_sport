@@ -23,8 +23,8 @@ def _compute_cutoffs(
     Returns:
         A list of tuples containing the normative table cutoffs as (lower_bound, upper_bound) pairs.
     """
-    # Extract percentile values
-    percentiles_values: list[float] = [percentile["value"] for percentile in bootstrap_percentiles]
+    # Extract percentile values and sort them
+    percentiles_values: list[float] = sorted([percentile["value"] for percentile in bootstrap_percentiles])
 
     # Define cutoffs array adding 0 and a large number at the right end
     cutoffs: NDArray[np.number[Any]] = np.round([0, *percentiles_values, 1e10], metric_precision)
