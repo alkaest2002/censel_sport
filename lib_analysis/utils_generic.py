@@ -54,3 +54,14 @@ def format_seconds(seconds: float) -> str:
 
     # Format with fractional seconds
     return f"{hours:02d}:{minutes:02d}:{secs + fractional_part:05.2f}"
+
+def format_title(title: str) -> str:
+    """Format a title string by capitalizing each word.
+
+    Args:
+        title: The title string to format.
+
+    Returns:
+        Formatted title string with each word capitalized.
+    """
+    return title[0].upper() + title[1:].lower() if title else ""
