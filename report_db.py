@@ -91,15 +91,9 @@ def main() -> int:
         # Build output paths
         base_path: Path = Path("./data_out/db_stats")
         output_pdf: Path = base_path.with_suffix(".pdf")
-        output_html: Path = base_path.with_suffix(".html")
 
-        # Render HTML
         rendered_html: str =\
             template.render(data=data, header=args.header_letter, page=args.page_number)
-
-        # Write HTML file
-        with output_html.open("w") as fout:
-            fout.write(rendered_html)
 
         # Write PDF file
         HTML(string=rendered_html, base_url=str(templates_dir)).write_pdf(str(output_pdf))
