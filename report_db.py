@@ -14,6 +14,27 @@ if TYPE_CHECKING:
     import jinja2
 
 
+def _stringify_value_counts(x: pd.Series) -> str:
+    """Convert a dictionary to a string representation.
+
+    Args:
+        x: Series to convert.
+
+    Returns:
+        String representation of the dictionary.
+    """
+    # Collect value counts as dictionary
+    value_counts_dict: dict[Any, int] = x.value_counts().to_dict()
+    # Omit keys with values equal to zero
+    value_counts_dict = {k: v for k, v in value_counts_dict.items() if v != 0}
+    # Convert to string with custom formatting
+    return (
+        str(value_counts_dict)[1:-1]
+        .replace("'", "")
+        .replace(",", " | ")
+        .replace(":", " &rarr; ")
+    )
+
 def main() -> int:
     """Generate database statistics report.
 
@@ -48,29 +69,19 @@ def main() -> int:
     # Bin age
     df["age_binned"] = pd.cut(
         df["age"], bins=age_bins,
-        labels=["14-29", "30-39", "40-49", "50-59", "60-69", "70-79"],
+        labels=["17-29", "30-39", "40-49", "50-59", "60-69", "70-79"],
         right=True,
-    ).astype(str)
+    )
 
+    # Group by test and recruitment year
+    grouped = df.groupby(["test", "recruitment_year"])
 
-    data: dict[str, Any] = {
-        "age_binned": [],
-        "gender": [],
-    }
-    for key, val in data.items():
-        for _, g_data in df.groupby(["test", "recruitment_year"]):
-            dict_data = {
-                "test": g_data.loc[:, "test"].iloc[0],
-                "recruitment_year": g_data.loc[:, "recruitment_year"].iloc[0],
-                key: str(g_data[key]
-                         .value_counts()
-                         .to_dict())[1:-1]
-                         .replace("'","")
-                         .replace(",", " | ")
-                         .replace(":", " &rarr; "),
-                "counts": int(g_data.shape[0]),
-            }
-            val.append(dict_data)
+    # Create data for report
+    data = (pd.concat([
+        grouped["gender"].apply(_stringify_value_counts),
+        grouped["age_binned"].apply(_stringify_value_counts),
+        grouped.size().rename("counts"),
+        ], axis=1).reset_index(names=["test", "recruitment_year"]))
 
     # Load data
     try:
