@@ -1,6 +1,6 @@
 {
     "id": "sit_ups_males",
-    "title": "Addominali - maschi",
+    "title": "addominali - maschi",
     "source_type": "db",
     "stratification": {
         "recruitment_type": {
@@ -37,7 +37,7 @@
     "montecarlo_n_size": 300,
     "random_state": 50,
     "report": {
-        "header_letter": "A",
-        "initial_page": 8
+        "header_letter": "H",
+        "initial_page": 34
     }
 }

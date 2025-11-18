@@ -37,7 +37,7 @@
     "montecarlo_n_size": 300,
     "random_state": 50,
     "report": {
-        "header_letter": "B",
-        "initial_page": 12
+        "header_letter": "J",
+        "initial_page": 42
     }
 }

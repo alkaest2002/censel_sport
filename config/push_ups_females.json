@@ -1,6 +1,6 @@
 {
     "id": "push_ups_females",
-    "title": "Flessioni - femmine",
+    "title": "flessioni - femmine",
     "source_type": "db",
     "stratification": {
         "recruitment_type": {
@@ -37,7 +37,7 @@
     "montecarlo_n_size": 300,
     "random_state": 50,
     "report": {
-        "header_letter": "A",
-        "initial_page": 8
+        "header_letter": "G",
+        "initial_page": 30
     }
 }
