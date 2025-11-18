@@ -23,7 +23,10 @@ def _natural_key(s: str) -> list:
     Returns:
         A list of integers and lowercase strings for comparison.
     """
+    # Split string into numeric and non-numeric parts
     parts: list[str] = re.split(r"(\d+)", s)
+
+    # Convert parts to int where possible, else lowercase string
     return [int(p) if p.isdigit() else p.lower() for p in parts]
 
 
@@ -44,7 +47,7 @@ def _collect_pdfs(folder: Path, out_name: str) -> list[Path]:
     # Glob pdfs
     candidates = folder.glob("*.pdf")
 
-    # lowercase final_report.pdf
+    # Lowercase output file name for comparison
     out_name_lower: str = out_name.lower()
 
     # Collect pdfs except the output file
@@ -72,21 +75,20 @@ def merge_pdfs(pdf_paths: list[Path], output_path: Path) -> int:
     Returns:
         Exit code: 0 for success, 1 if no files were found.
     """
-    # Raise error, if there no pdfs
+    # Raise error, if there are no PDFs to merge
     if not pdf_paths:
         print("No PDF files found to merge.", file=sys.stderr)
         return 1
 
-    # Initialize PDF merger
-    merger: PdfWriter = PdfWriter()
+    # Initialize PDF writer
+    pdf_writer: PdfWriter = PdfWriter()
 
-    # Append pds to merger
+    # Append PDFs to writer
     for p in pdf_paths:
-        merger.append(str(p))
-        print(f"Appended: {p}")
+        pdf_writer.append(str(p))
 
     # Finalize PDF creation
-    merger.write(str(output_path))
+    pdf_writer.write(str(output_path))
     print(f"Merged {len(pdf_paths)} files into: {output_path}")
 
     return 0
@@ -101,12 +103,18 @@ def main() -> int:
     Returns:
         Exit code: 0 for success, 1 for merge errors, 2 for invalid directory.
     """
+    # Define input folder
     folder: Path = Path("./data_out/_report").resolve()
+
+    # Raise error, if folder is invalid
     if not folder.exists() or not folder.is_dir():
         print(f"Not a directory: {folder}", file=sys.stderr)
         return 2
 
+    # Define output path and collect PDFs
     output_path: Path = folder / "final_report.pdf"
+
+    # Collect PDFs to merge
     pdfs: list[Path] = _collect_pdfs(folder, output_path.name)
 
     return merge_pdfs(pdfs, output_path)
