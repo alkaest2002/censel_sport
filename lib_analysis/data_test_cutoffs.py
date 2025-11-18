@@ -39,8 +39,8 @@ def _apply_cutoffs(
     # Initialize random generator
     rng: np.random.Generator = np.random.default_rng(random_state)
 
-    # Create expected percentiles: i.e., [5, 20, 25, 25, 20, 5]
-    expected_percentile: list[float] =\
+    # Create expected percentile proportions
+    expected_percentile_proportions: list[float] =\
         np.subtract(
             np.array([*requested_percentiles, 100]),
             np.array([0, *requested_percentiles]),
@@ -59,12 +59,12 @@ def _apply_cutoffs(
         for _ in range(1000):
 
             # randomly sample n data points
-            sampled_data: NDArray[np.number[Any]] = rng.choice(data, size=n, replace=True).tolist()
+            sampled_data: NDArray[np.number[Any]] = rng.choice(data, size=n, replace=True)
 
             # Compute standardized scores
             collected_current_sample_size_data.append(
                 apply_standardization(
-                    data_to_standardize=np.array(sampled_data),
+                    data_to_standardize=sampled_data,
                     cutoffs=cutoffs,
                     higher_is_better=higher_is_better,
                 )
@@ -92,13 +92,13 @@ def _apply_cutoffs(
             .groupby(["sample_size", "perc_step"], as_index=False)
             .agg({
                 "value": [
-                    ("p10", lambda x: round(x.quantile(0.10)*100,2)),  # type: ignore[list-item]
+                    ("p10", lambda x: round(x.quantile(0.10)*100,2)), # type: ignore[list-item]
                     ("p90", lambda x: round(x.quantile(0.90)*100,2)), # type: ignore[list-item]
                     ("p50", lambda x: round(x.quantile(0.50)*100,2)), # type: ignore[list-item]
                 ],
             })
             .assign(perc_expected=
-                lambda df: df["perc_step"].apply(lambda x: expected_percentile[int(x) - 1]))
+                lambda df: df["perc_step"].apply(lambda x: expected_percentile_proportions[int(x) - 1]))
         )
 
     # Better columns names
