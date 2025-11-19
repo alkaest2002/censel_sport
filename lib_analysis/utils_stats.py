@@ -207,29 +207,18 @@ def compute_sample_size(
             Expected keys include:
             - metric_config: Configuration for database query
             - clean: Dictionary containing cleaned data array
-            - bootstrap_n_replicate_size: Bootstrap replication size
-            - montecarlo_n_size: Monte Carlo simulation size
+            - bootstrap_sample_size: Bootstrap replication size
+            - motnecarlo_sample_size: Monte Carlo simulation size
 
     Returns:
         float: Computed sample size as the minimum of available size measures.
-
-    Example:
-        >>> data_dict = {
-        ...     "metric_config": {"table": "fitness_data"},
-        ...     "clean": {"data": np.array([1, 2, 3, 4, 5])},
-        ...     "bootstrap_n_replicate_size": 1000,
-        ...     "montecarlo_n_size": 500
-        ... }
-        >>> sample_size = compute_sample_size(data_dict)
-        >>> isinstance(sample_size, float)
-        True
     """
     # Extract data from dictionary
     query_from_db: pd.DataFrame = data_dict.get("query_from_db", pd.DataFrame())
     clean: dict[str, Any] = data_dict.get("clean", {})
     data: NDArray[np.number[Any]] = clean.get("data", np.array([]))
-    bootstrap_n_replicate_size: int = data_dict.get("bootstrap_n_replicate_size", data.size)
-    montecarlo_n_size: int = data_dict.get("montecarlo_n_size", data.size)
+    bootstrap_sample_size: int = data_dict.get("bootstrap_sample_size", data.size)
+    motnecarlo_sample_size: int = data_dict.get("motnecarlo_sample_size", data.size)
 
 
     # Compute median sample size from groups
@@ -242,6 +231,6 @@ def compute_sample_size(
         median_sample_size = math.floor(median_sample_size_raw / 50) * 50
 
     # Compute sample size as the minimum of the three sizes
-    sample_size: float = float(min(montecarlo_n_size, bootstrap_n_replicate_size, median_sample_size))
+    sample_size: float = float(min(motnecarlo_sample_size, bootstrap_sample_size, median_sample_size))
 
     return sample_size
