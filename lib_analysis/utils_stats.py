@@ -7,6 +7,8 @@ import numpy as np
 from numpy.typing import NDArray
 import pandas as pd
 
+from lib_analysis.utils_generic import query_from_db
+
 from . import MT100, MT1000, PUSHUPS, SITUPS, SWIM25
 
 
@@ -16,14 +18,18 @@ def generate_synthetic_data(
         random_state: int = 42) -> NDArray[np.number]:
     """Generate synthetic performance data for testing purposes.
 
+    This function creates realistic synthetic performance data based on predefined
+    distributions for different fitness metrics. The data is generated using
+    multiple normal distributions to simulate real-world performance variations.
+
     Args:
-        metric_type: Type of metric to generate data for. Must be one of the
+        metric_type (str): Type of metric to generate data for. Must be one of the
             predefined metric types (SWIM25, MT100, MT1000, SITUPS, PUSHUPS).
-        n_samples: Number of samples to generate. Defaults to 300.
-        random_state: Random seed for reproducibility. Defaults to 42.
+        n_samples (int, optional): Number of samples to generate. Defaults to 300.
+        random_state (int, optional): Random seed for reproducibility. Defaults to 42.
 
     Returns:
-        Generated performance data as a numpy array.
+        NDArray[np.number]: Generated performance data as a numpy array.
 
     Raises:
         ValueError: If metric_type is not a recognized metric type.
@@ -97,13 +103,15 @@ def generate_synthetic_data(
     # Generate data from multiple distributions
     data_parts: list[NDArray[np.number[Any]]] = []
     for func, params, proportion in config["distributions"]:
-        size = int(n_samples * proportion)
+        size: int = int(n_samples * proportion)
         data_parts.append(func(*params, size))
 
     # Concatenate data
     data: NDArray[np.number[Any]] = np.concatenate(data_parts)
 
     # Apply bounds
+    lower: float | None
+    upper: float | None
     lower, upper = config["bounds"]
     if lower is not None:
         data = data[data > lower]
@@ -119,24 +127,28 @@ def generate_synthetic_data(
 
 def apply_standardization(
         data_to_standardize: NDArray[np.number[Any]],
-        cutoffs: list[tuple],
+        cutoffs: list[tuple[float, float]],
         higher_is_better: bool = False,
     ) -> pd.DataFrame:
     """Apply standardization to data using percentile cutoffs.
 
     This function standardizes data by assigning scores based on percentile ranges.
     The scoring direction depends on whether higher values indicate better performance.
+    Each data point is assigned a standardized score corresponding to its percentile
+    range.
 
     Args:
-        data_to_standardize: Numerical data array to be standardized.
-        cutoffs: List of tuples containing percentile cutoff ranges. Each tuple
-            should contain (lower_bound, upper_bound) for a score category.
-        higher_is_better: Whether higher values indicate better performance.
-            If True, higher scores are assigned to better performance ranges.
-            Defaults to False.
+        data_to_standardize (NDArray[np.number[Any]]): Numerical data array to be
+            standardized.
+        cutoffs (list[tuple[float, float]]): List of tuples containing percentile
+            cutoff ranges. Each tuple should contain (lower_bound, upper_bound) for
+            a score category.
+        higher_is_better (bool, optional): Whether higher values indicate better
+            performance. If True, higher scores are assigned to better performance
+            ranges. Defaults to False.
 
     Returns:
-        DataFrame with three columns:
+        pd.DataFrame: DataFrame with three columns:
             - original_value: The original data values
             - standardized_value: The assigned standardized scores
             - standardized_value_bounds: The cutoff ranges for each score category.
@@ -146,7 +158,7 @@ def apply_standardization(
 
     # Add inclusive bounds to cutoffs
     # First cutoff is inclusive on both sides, others only on the right
-    cutoffs_with_inclusive: list[tuple[tuple, str]] =\
+    cutoffs_with_inclusive: list[tuple[tuple[float, float], str]] = \
         list(zip(cutoffs, ["both", *["right"] * (len(cutoffs) - 1)], strict=True))
 
     # Initialize counter based on whether higher values denotes better performance
@@ -179,3 +191,54 @@ def apply_standardization(
         keys=["original_value", "standardized_value", "standardized_value_bounds"],
         axis=1,
     )
+
+
+def compute_sample_size(
+    data_dict: dict[str, Any],
+) -> float:
+    """Compute sample size for statistical analysis.
+
+    This function computes the appropriate sample size by taking the minimum
+    value among bootstrap replicate size, Monte Carlo size, and median sample
+    size from database groups. It queries the database to get group sizes
+    and returns the most conservative estimate.
+
+    Args:
+        data_dict (dict[str, Any]): Dictionary containing configuration and data.
+            Expected keys include:
+            - metric_config: Configuration for database query
+            - clean: Dictionary containing cleaned data array
+            - bootstrap_n_replicate_size: Bootstrap replication size
+            - montecarlo_n_size: Monte Carlo simulation size
+
+    Returns:
+        float: Computed sample size as the minimum of available size measures.
+
+    Example:
+        >>> data_dict = {
+        ...     "metric_config": {"table": "fitness_data"},
+        ...     "clean": {"data": np.array([1, 2, 3, 4, 5])},
+        ...     "bootstrap_n_replicate_size": 1000,
+        ...     "montecarlo_n_size": 500
+        ... }
+        >>> sample_size = compute_sample_size(data_dict)
+        >>> isinstance(sample_size, float)
+        True
+    """
+    # Extract data from dictionary
+    metric_config: dict[str, Any] = data_dict.get("metric_config", {})
+    clean: dict[str, Any] = data_dict.get("clean", {})
+    data: NDArray[np.number[Any]] = clean.get("data", np.array([]))
+    bootstrap_n_replicate_size: int = data_dict.get("bootstrap_n_replicate_size", data.size)
+    montecarlo_n_size: int = data_dict.get("montecarlo_n_size", data.size)
+
+    # Query data from database
+    df: pd.DataFrame = query_from_db(metric_config)
+
+    # Compute median sample size from groups
+    median_sample_size: float = df.groupby(["recruitment_year", "recruitment_type"]).size().median()
+
+    # Compute sample size as the minimum of the three sizes
+    sample_size: float = float(min(montecarlo_n_size, bootstrap_n_replicate_size, median_sample_size))
+
+    return sample_size

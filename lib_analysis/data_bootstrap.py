@@ -7,6 +7,7 @@ from numpy.typing import NDArray
 from scipy.stats import iqr
 
 from lib_analysis.utils_generic import is_falsy
+from lib_analysis.utils_stats import compute_sample_size
 
 
 def _compute_cutoffs(
@@ -149,7 +150,6 @@ def compute_bootstrap_percentiles(
     data: NDArray[np.number[Any]] = clean.get("data", np.array([]))
     requested_percentiles: list[float] = sorted(metric_config.get("requested_percentiles", [5, 25, 50, 75, 95]))
     n_replicates: int = metric_config.get("bootstrap_n_replicates", 10000)
-    n_replicate_size: int = metric_config.get("bootstrap_n_replicate_size", data.size)
     ci_level: float = metric_config.get("bootstrap_ci_level", 0.95)
     metric_type: str | None = metric_config.get("metric_type")
     metric_precision: int = metric_config.get("metric_precision", 2)
@@ -161,6 +161,9 @@ def compute_bootstrap_percentiles(
 
     # Initialize random generator
     rng = np.random.default_rng(random_state)
+
+    # Comptue sample size based on data
+    n_replicate_size = int(compute_sample_size(data_dict))
 
     # Define percentile method based on metric_precision
     percentile_method: str = "linear" if metric_type == "continuous" else "nearest"

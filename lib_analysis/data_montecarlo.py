@@ -7,6 +7,7 @@ from numpy.typing import NDArray
 from lib_analysis.utils_distributions_continuous import get_continuous_distributions
 from lib_analysis.utils_distributions_discrete import get_discrete_distributions
 from lib_analysis.utils_generic import is_falsy
+from lib_analysis.utils_stats import compute_sample_size
 
 if TYPE_CHECKING:
     from scipy import stats
@@ -49,7 +50,6 @@ def monte_carlo_validation(
     metric_type: Literal["continuous", "discrete"] | None = metric_config.get("metric_type")
     data: NDArray[np.number[Any]] = clean.get("data", [])
     montecarlo_n_samples: int = metric_config.get("montecarlo_n_samples", 0)
-    montecarlo_n_size: int = metric_config.get("montecarlo_n_size", data.size)
     random_state: int = metric_config.get("random_state", 42)
     bootstrap_requested_percentiles: list[dict[str, Any]] = bootstrap.get("requested_percentiles", [])
     best_model: dict[str, Any] = fitted_distributions.get("best_model", {})
@@ -65,13 +65,15 @@ def monte_carlo_validation(
             data,
             metric_type,
             montecarlo_n_samples,
-            montecarlo_n_size,
             bootstrap_requested_percentiles,
             fitted_distributions,
             best_model,
         ),
     )):
         raise ValueError("---> The data dictionary does not contain all required parts.")
+
+    # Compute sample size based on data
+    montecarlo_n_size = int(compute_sample_size(data_dict))
 
     # Get distributions
     distributions: dict[str, stats.rv_continuous | stats.rv_discrete] =\
