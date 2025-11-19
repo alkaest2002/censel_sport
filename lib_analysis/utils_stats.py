@@ -142,17 +142,18 @@ def apply_standardization(
             - standardized_value_bounds: The cutoff ranges for each score category.
     """
     # Convert data to pandas Series for easier manipulation
-    data = pd.Series(data_to_standardize)
+    data: pd.Series = pd.Series(data_to_standardize)
 
     # Add inclusive bounds to cutoffs
     # First cutoff is inclusive on both sides, others only on the right
-    cutoffs_with_inclusive = list(zip(cutoffs, ["both", *["right"] * (len(cutoffs) - 1)], strict=True))
+    cutoffs_with_inclusive: list[tuple[tuple, str]] =\
+        list(zip(cutoffs, ["both", *["right"] * (len(cutoffs) - 1)], strict=True))
 
     # Initialize counter based on whether higher values denotes better performance
-    counter = count(start=1, step=1) if higher_is_better else count(start=len(cutoffs), step=-1)
+    counter: count = count(start=1, step=1) if higher_is_better else count(start=len(cutoffs), step=-1)
 
     # Compute standardized scores
-    standardized_scores = data.case_when(
+    standardized_scores: pd.Series = data.case_when(
         [
             (lambda x, cutoffs=cutoffs, inclusive=inclusive:
                 x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), next(counter))
@@ -161,7 +162,7 @@ def apply_standardization(
     )
 
     # Compute standardized scores lower bounds for data
-    standardized_bounds = data.case_when(
+    standardized_bounds: pd.Series = data.case_when(
         [
             (lambda x, cutoffs=cutoffs, inclusive=inclusive:
                 x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), f"{cutoffs[0]} - {cutoffs[1]}")
