@@ -50,6 +50,7 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
         print(e)
         return {
             "metric_config": metric_config,
+            "query_from_db": None,
             "load": {
                 "data": np.array([]),
                 "descriptive_stats": {},
@@ -63,6 +64,7 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
     else:
         return {
             "metric_config": metric_config,
+            "query_from_db": df,
             "load": {
                 "data": raw_data,
                 "descriptive_stats": descriptive_stats,
@@ -111,6 +113,7 @@ def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
 
     return {
         "metric_config": metric_config,
+        "query_from_db": None,
         "load": {
             "data": raw_data,
             "descriptive_stats": descriptive_stats,
