@@ -25,7 +25,7 @@ def monte_carlo_validation(
     Args:
         data_dict: Dictionary containing analysis data with the following required keys:
             - metric_config: Configuration parameters including metric_type,
-              montecarlo_n_samples, montecarlo_n_size, and random_state
+              montecarlo_n_samples, montecarlo_sample_size, and random_state
             - clean: Cleaned data containing the original dataset
             - bootstrap: Bootstrap results with requested percentiles
             - fit: Distribution fitting results with best model information
@@ -73,7 +73,7 @@ def monte_carlo_validation(
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Compute sample size based on data
-    montecarlo_n_size = int(compute_sample_size(data_dict))
+    montecarlo_sample_size = int(compute_sample_size(data_dict))
 
     # Get distributions
     distributions: dict[str, stats.rv_continuous | stats.rv_discrete] =\
@@ -104,7 +104,7 @@ def monte_carlo_validation(
     for i in range(montecarlo_n_samples):
 
         # Generate synthetic dataset from fitted distribution
-        synthetic_data: NDArray[np.number[Any]] = model.rvs(size=montecarlo_n_size, random_state=random_state + i)
+        synthetic_data: NDArray[np.number[Any]] = model.rvs(size=montecarlo_sample_size, random_state=random_state + i)
 
         # Append sample to list
         montecarlo_samples.append(synthetic_data)
@@ -153,8 +153,8 @@ def monte_carlo_validation(
             "coverage_%": coverage,
         })
 
-     # Update metric config with montecarlo_n_size
-    data_dict["metric_config"]["montecarlo_n_size"] = montecarlo_n_size
+     # Update metric config with montecarlo_sample_size
+    data_dict["metric_config"]["montecarlo_sample_size"] = montecarlo_sample_size
 
     # Update data dictionary
     data_dict["montecarlo"] = {

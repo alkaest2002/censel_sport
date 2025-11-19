@@ -149,7 +149,7 @@ def compute_bootstrap_percentiles(
     clean: dict[str, Any] = data_dict.get("clean", {})
     data: NDArray[np.number[Any]] = clean.get("data", np.array([]))
     requested_percentiles: list[float] = sorted(metric_config.get("requested_percentiles", [5, 25, 50, 75, 95]))
-    n_replicates: int = metric_config.get("bootstrap_n_replicates", 10000)
+    n_replicates: int = metric_config.get("bootstrap_n_samples", 10000)
     ci_level: float = metric_config.get("bootstrap_ci_level", 0.95)
     metric_type: str | None = metric_config.get("metric_type")
     metric_precision: int = metric_config.get("metric_precision", 2)
@@ -163,7 +163,7 @@ def compute_bootstrap_percentiles(
     rng = np.random.default_rng(random_state)
 
     # Comptue sample size based on data
-    n_replicate_size = int(compute_sample_size(data_dict))
+    bootstrap_sample_size = int(compute_sample_size(data_dict))
 
     # Define percentile method based on metric_precision
     percentile_method: str = "linear" if metric_type == "continuous" else "nearest"
@@ -181,7 +181,7 @@ def compute_bootstrap_percentiles(
     for _ in range(n_replicates):
 
         # Generate bootstrap sample
-        bootstrap_sample = rng.choice(data, size=n_replicate_size, replace=True)
+        bootstrap_sample = rng.choice(data, size=bootstrap_sample_size, replace=True)
 
         # Store bootstrap sample for further analysis if needed
         bootstrap_samples.append(bootstrap_sample)
@@ -213,8 +213,8 @@ def compute_bootstrap_percentiles(
     # Compute cutoffs for normative tables based on requested percentiles
     percentile_cutoffs = _compute_cutoffs(requested_bootstrap_percentiles, metric_precision=metric_precision)
 
-    # Update metric config with n_replicate_size
-    data_dict["metric_config"]["bootstrap_n_replicate_size"] = n_replicate_size
+    # Update metric config with bootstrap_sample_size
+    data_dict["metric_config"]["bootstrap_sample_size"] = bootstrap_sample_size
 
     # Store results in data dictionary
     data_dict["bootstrap"] = {
