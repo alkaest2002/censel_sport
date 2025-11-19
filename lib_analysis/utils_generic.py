@@ -10,8 +10,7 @@ def query_from_db(metric_config: dict[str, Any]) -> pd.DataFrame:
     """Query data from a CSV database file based on metric configuration.
 
     Args:
-        metric_config: Dictionary containing metric configuration with 'id' key
-            and optional 'stratification' key for filtering data.
+        metric_config: Dictionary containing metric configuration.
 
     Returns:
         Filtered pandas DataFrame based on the query criteria.
@@ -38,13 +37,13 @@ def query_from_db(metric_config: dict[str, Any]) -> pd.DataFrame:
 
     # Add stratification filters to db_query
     db_filter: dict[str, Any]
-    for db_filter in stratification.values():
-        # Extract query (assuming db_filter has two values, we need the second one)
-        filter_values: list[Any] = list(db_filter.values())
-        query: str = filter_values[1] if len(filter_values) > 1 else ""
 
+    # Iterate over stratification filters
+    for db_filter in stratification.values():
+        # Get query part
+        filter_condition: str = db_filter.get("query", "")
         # Append to db_query
-        db_query += f" and {query}" if query else ""
+        db_query += f" and {filter_condition}" if filter_condition else ""
 
     # Filter data with query
     return df.query(db_query)
