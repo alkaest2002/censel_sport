@@ -71,6 +71,14 @@ def save_analysis_results(
             # Write svg to file
             f.write(b64decode(plot_str).decode("utf-8"))
 
+    # Convert query_from_db to a serializable format
+    if "query_from_db" in data_dict:
+        query_df = data_dict["query_from_db"]
+        if query_df is not None:
+            data_dict["query_from_db"] = query_df.to_dict(orient="records")
+        else:
+            data_dict["query_from_db"] = None
+
     # Write data analysis to JSON file
     analysis_output_path: Path = output_path / f"{metric_id}_analysis.json"
     with analysis_output_path.open("w") as f:
