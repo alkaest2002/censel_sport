@@ -67,7 +67,7 @@ def main() -> int:
         page_number: int = data.get("metric_config", {}).get("report", {}).get("initial_page", 1)
 
         # Get report template
-        template: jinja2.Template = jinja_env.get_template("report.html")
+        template: jinja2.Template = jinja_env.get_template("report_annex.html")
 
         # Build output paths
         output_pdf: Path =\
