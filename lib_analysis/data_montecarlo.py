@@ -153,6 +153,9 @@ def monte_carlo_validation(
             "coverage_%": coverage,
         })
 
+     # Update metric config with montecarlo_n_size
+    data_dict["metric_config"]["montecarlo_n_size"] = montecarlo_n_size
+
     # Update data dictionary
     data_dict["montecarlo"] = {
         "results": montecarlo_results,

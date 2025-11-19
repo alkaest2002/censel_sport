@@ -213,6 +213,9 @@ def compute_bootstrap_percentiles(
     # Compute cutoffs for normative tables based on requested percentiles
     percentile_cutoffs = _compute_cutoffs(requested_bootstrap_percentiles, metric_precision=metric_precision)
 
+    # Update metric config with n_replicate_size
+    data_dict["metric_config"]["bootstrap_n_replicate_size"] = n_replicate_size
+
     # Store results in data dictionary
     data_dict["bootstrap"] = {
         "all_percentiles": all_bootstrap_percentiles,
