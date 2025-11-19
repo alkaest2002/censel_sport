@@ -1,13 +1,12 @@
 # mypy: disable-error-code="misc"
 
 from itertools import count
+import math
 from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
 import pandas as pd
-
-from lib_analysis.utils_generic import query_from_db
 
 from . import MT100, MT1000, PUSHUPS, SITUPS, SWIM25
 
@@ -226,17 +225,21 @@ def compute_sample_size(
         True
     """
     # Extract data from dictionary
-    metric_config: dict[str, Any] = data_dict.get("metric_config", {})
+    query_from_db: pd.DataFrame = data_dict.get("query_from_db", pd.DataFrame())
     clean: dict[str, Any] = data_dict.get("clean", {})
     data: NDArray[np.number[Any]] = clean.get("data", np.array([]))
     bootstrap_n_replicate_size: int = data_dict.get("bootstrap_n_replicate_size", data.size)
     montecarlo_n_size: int = data_dict.get("montecarlo_n_size", data.size)
 
-    # Query data from database
-    df: pd.DataFrame = query_from_db(metric_config)
 
     # Compute median sample size from groups
-    median_sample_size: float = df.groupby(["recruitment_year", "recruitment_type"]).size().median()
+    # The final number should be rounded down to the nearest 50
+    # Examples: 274 -> 300, 225 -> 200
+    if query_from_db.empty:
+        median_sample_size = data.size
+    else:
+        median_sample_size_raw = query_from_db.groupby(["recruitment_year", "recruitment_type"]).size().median()
+        median_sample_size = math.floor(median_sample_size_raw / 50) * 50
 
     # Compute sample size as the minimum of the three sizes
     sample_size: float = float(min(montecarlo_n_size, bootstrap_n_replicate_size, median_sample_size))
