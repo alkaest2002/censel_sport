@@ -1,13 +1,60 @@
 # mypy: disable-error-code="misc"
 
+from pathlib import Path
 from typing import Any, cast
+
+import pandas as pd
+
+
+def query_from_db(metric_config: dict[str, Any]) -> pd.DataFrame:
+    """Query data from a CSV database file based on metric configuration.
+
+    Args:
+        metric_config: Dictionary containing metric configuration with 'id' key
+            and optional 'stratification' key for filtering data.
+
+    Returns:
+        Filtered pandas DataFrame based on the query criteria.
+
+    Raises:
+        FileNotFoundError: If the database file does not exist.
+    """
+    # If file does not exist
+    filepath: Path = Path("./db") / "db.csv"
+
+    # Check if file exists
+    if not filepath.exists():
+        raise FileNotFoundError(f"File {filepath.name} not found")
+
+    # Read csv file
+    df: pd.DataFrame = pd.read_csv(filepath)
+
+    # Extract data from metric_config
+    metric_id: str = "_".join(metric_config["id"].split("_")[:2])
+    stratification: dict[str, Any] = metric_config.get("stratification", {})
+
+    # Build db_query
+    db_query: str = f"test=='{metric_id}'"
+
+    # Add stratification filters to db_query
+    db_filter: dict[str, Any]
+    for db_filter in stratification.values():
+        # Extract query (assuming db_filter has two values, we need the second one)
+        filter_values: list[Any] = list(db_filter.values())
+        query: str = filter_values[1] if len(filter_values) > 1 else ""
+
+        # Append to db_query
+        db_query += f" and {query}" if query else ""
+
+    # Filter data with query
+    return df.query(db_query)
 
 
 def is_falsy(value: Any) -> bool:
     """Check if a value is falsy with support for numpy arrays and custom logic.
 
     Args:
-        value: The value to check.
+        value: The value to check for falsiness.
 
     Returns:
         True if the value is falsy, False otherwise.
@@ -45,23 +92,30 @@ def format_seconds(seconds: float) -> str:
         Formatted time string in HH:MM:SS.sss format.
     """
     # Separate whole seconds and fractional part
-    whole_seconds = int(seconds)
-    fractional_part = seconds - whole_seconds
+    whole_seconds: int = int(seconds)
+    fractional_part: float = seconds - whole_seconds
 
     # Use divmod to get hours, minutes, and seconds
+    hours: int
+    remainder: int
     hours, remainder = divmod(whole_seconds, 3600)
+
+    minutes: int
+    secs: int
     minutes, secs = divmod(remainder, 60)
 
     # Format with fractional seconds
     return f"{hours:02d}:{minutes:02d}:{secs + fractional_part:05.2f}"
 
+
 def format_title(title: str) -> str:
-    """Format a title string by capitalizing each word.
+    """Format a title string by capitalizing the first letter and lowercasing the rest.
 
     Args:
         title: The title string to format.
 
     Returns:
-        Formatted title string with each word capitalized.
+        Formatted title string with first letter capitalized and rest lowercase.
+        Returns empty string if input is empty.
     """
     return title[0].upper() + title[1:].lower() if title else ""

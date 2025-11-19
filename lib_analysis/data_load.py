@@ -1,10 +1,10 @@
-from pathlib import Path
 from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
 import pandas as pd
 
+from lib_analysis.utils_generic import query_from_db
 from lib_analysis.utils_stats import generate_synthetic_data
 
 
@@ -34,41 +34,13 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
     Raises:
         FileNotFoundError: If the database CSV file does not exist.
     """
-    # If file does not exist
-    filepath: Path = Path("./db") / "db.csv"
-
-    # Check if file exists
-    if not filepath.exists():
-        raise FileNotFoundError(f"File {filepath.name} not found")
-
-    # Extract data from metric_config
-    metric_id: str = "_".join(metric_config["id"].split("_")[:2])
-    stratification: dict[str, Any] = metric_config.get("stratification", {})
 
     try:
-        # Read csv file
-        df: pd.DataFrame = pd.read_csv(filepath)
-
-        # Build db_query
-        db_query: str = f"test=='{metric_id}'"
-
-        # Type hint for db_filter
-        db_filter: dict[str, Any]
-
-        # Add stratification filters to db_query
-        for db_filter in stratification.values():
-
-            # Extract query
-            _, query = db_filter.values()
-
-            # Append to db_query
-            db_query += f" and {query}" if query else ""
-
-        # Filter data with query
-        df_query: pd.DataFrame = df.query(db_query)
+        # Load data from database
+        df: pd.DataFrame = query_from_db(metric_config)
 
         # Enforce data to be numeric
-        raw_data: np.ndarray = pd.to_numeric(df_query.loc[:, "value"], downcast="integer").to_numpy()
+        raw_data: np.ndarray = pd.to_numeric(df.loc[:, "value"], downcast="integer").to_numpy()
 
         # Generate descriptive statistics from data
         descriptive_stats: dict[str, float] = _get_descriptive_stats(raw_data)
