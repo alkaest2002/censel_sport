@@ -194,7 +194,7 @@ def apply_standardization(
 
 def compute_sample_size(
     data_dict: dict[str, Any],
-) -> float:
+) -> int:
     """Compute sample size for statistical analysis.
 
     This function computes the appropriate sample size by taking the minimum
@@ -208,29 +208,37 @@ def compute_sample_size(
             - metric_config: Configuration for database query
             - clean: Dictionary containing cleaned data array
             - bootstrap_sample_size: Bootstrap replication size
-            - motnecarlo_sample_size: Monte Carlo simulation size
+            - montecarlo_sample_size: Monte Carlo simulation size
 
     Returns:
-        float: Computed sample size as the minimum of available size measures.
+        int: Computed sample size as the minimum of available size measures.
     """
     # Extract data from dictionary
     query_from_db: pd.DataFrame = data_dict.get("query_from_db", pd.DataFrame())
     clean: dict[str, Any] = data_dict.get("clean", {})
     data: NDArray[np.number[Any]] = clean.get("data", np.array([]))
-    bootstrap_sample_size: int = data_dict.get("bootstrap_sample_size", data.size)
-    motnecarlo_sample_size: int = data_dict.get("motnecarlo_sample_size", data.size)
+    metric_config: dict[str, Any] = data_dict.get("metric_config", {})
+    fixed_sample_size: int | None = metric_config.get("fixed_sample_size")
+    bootstrap_sample_size: int | None = metric_config.get("bootstrap_sample_size")
 
+    # If fixed sample size is provided, use it
+    if fixed_sample_size is not None:
+        return fixed_sample_size
 
-    # Compute median sample size from groups
-    # The final number should be rounded down to the nearest 50
-    # Examples: 274 -> 300, 225 -> 200
+    # if bootstrap sampe size is set, use it
+    if bootstrap_sample_size is not None:
+        return bootstrap_sample_size
+
+    # If no data in DB, use data size
     if query_from_db.empty:
-        median_sample_size = data.size
+        sample_size_from_db: float = data.size
     else:
-        median_sample_size_raw = query_from_db.groupby(["recruitment_year", "recruitment_type"]).size().median()
-        median_sample_size = math.floor(median_sample_size_raw / 50) * 50
+        sample_size_from_db = query_from_db.groupby(["recruitment_year", "recruitment_type"]).size().median()
 
     # Compute sample size as the minimum of the three sizes
-    sample_size: float = float(min(motnecarlo_sample_size, bootstrap_sample_size, median_sample_size))
+    sample_size: int  = int(sample_size_from_db)
 
-    return sample_size
+    # The final number should be rounded down to the nearest 50
+    # Examples: 274 -> 300, 225 -> 200
+    return  math.floor(sample_size / 50) * 50
+
