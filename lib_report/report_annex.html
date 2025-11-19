@@ -283,15 +283,15 @@
                             <p>
                                 In questa pagina viene presentata la tecnica di stima dei percentili campionari
                                 attraverso repliche <span class="text-italic">Bootstrap</span>; tale tecnica rappresenta
-                                un approccio non parametrico e cioè libero da assunzioni teoriche relative alla
+                                un approccio non parametrico libero da assunzioni teoriche relative alla
                                 distribuzione dei dati.
                             </p>
                             <p>
                                 Più precisamente, vengono generate {{ data.metric_config.bootstrap_n_replicates }}
                                 repliche dal <span class="text-italic">dataset</span> originario attraverso
                                 ricampionamento casuale con reimmissione. Per ciascuna replica si calcolano i percentili
-                                di interesse, ottenendo una distribuzione di valori. La stima finale di ogni percentile è
-                                rappresentata dalla mediana della relativa distribuzione.
+                                di interesse, ottenendo una distribuzione di valori. La stima finale dei percentili è
+                                rappresentata dalla mediana delle relative distribuzioni.
                             </p>
                         </li>
                         <li>
@@ -306,14 +306,16 @@
                                 Una volta selezionato il modello ottimale e stimati i parametri, si procede alla
                                 generazione di {{ data.metric_config.montecarlo_n_samples }} campioni teorici mediante
                                 simulazione  <span class="text-italic">Monte Carlo</span>. Per ogni campione sintetico vengono calcolati gli stessi
-                                percentili della tecnica <span class="text-italic">Bootstrap</span>, creando una
-                                distribuzione teorica di riferimento.
+                                percentili della tecnica <span class="text-italic">Bootstrap</span>.
                             </p>
                             <p>
                                 Il confronto tra percentili <span class="text-italic">Bootstrap</span> e percentli <span class="text-italic">Monte Carlo</span>
                                 avviene attraverso analisi statistiche e grafici. Una buona concordanza indica che le stime percentiliche
                                 ottenute con la tecnica <span class="text-italic">Bootstrap</span> sono generalizzabili.
                             </p>
+                        </li>
+                        <li>
+                            Data la natura della popolazione concorsuale impiegata, si è deciso di impostare la numerosità delle repliche <span class="text-italic">Bootstrap</span> e dei campioni <span class="text-italic">Monte Carlo</span> a {{ data.metric_config.bootstrap_n_replicate_size }} osservazioni.
                         </li>
                     </ul>
                 </div>
@@ -503,7 +505,7 @@
             <div class="mb-xxl">
                 <div class="header">
                     <h1 class="mb-xs">{{ data.metric_config.title | upper }}</h1>
-                    <p>Allegato {{ header }}3</p>
+                    <p>Allegato {{ header }}4</p>
                 </div>
             </div>
             
@@ -515,7 +517,7 @@
                     <ul>
                         <li>
                             <p>
-                                In questa pagina viene presentata un'analisi della stabilità della tavola di conversione quando applicata a campioni di diversa consistenza numerica ({{data.bootstrap.cutoffs_test.sample_sizes | join(", ")}} osservazioni).
+                                In questa pagina viene presentata un'analisi della stabilità della tavola di conversione (cfr all. {{ header }}3, pag. {{ page + 2 }}) quando applicata a campioni di diversa consistenza numerica ({{data.bootstrap.cutoffs_test.sample_sizes | join(", ")}} osservazioni).
                             </p>
                             <p>
                                 Per ciascuna delle {{ data.bootstrap.cutoffs_test.sample_sizes | length }} numerosità considerate, sono stati generati 1000 campioni derivati dal <span class="text-italic">dataset</span> originario. Il ricampionamento causale con reimmissione consente di mantenere le caratteristiche distributive dei dati osservati.
