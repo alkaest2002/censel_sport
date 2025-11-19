@@ -233,7 +233,12 @@ def compute_sample_size(
     if query_from_db.empty:
         sample_size_from_db: float = data.size
     else:
-        sample_size_from_db = query_from_db.groupby(["recruitment_year", "recruitment_type"]).size().median()
+        sample_size_from_db =(
+            query_from_db
+                .groupby(["recruitment_year", "recruitment_type"])
+                .size()
+                .quantile(.5, interpolation="nearest")
+        )
 
     # Compute sample size as the minimum of the three sizes
     sample_size: int  = int(sample_size_from_db)
