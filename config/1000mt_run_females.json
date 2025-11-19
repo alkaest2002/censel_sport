@@ -30,11 +30,9 @@
     "requested_percentiles": [5, 25, 50, 75, 95],
     "awarded_scores": [1, 0.8, 0.6, 0.4, 0.2, 0],
     "bootstrap_n_replicates": 10000,
-    "bootstrap_n_replicate_size": null,
     "bootstrap_ci_level": 0.95,
     "distribution_best_criterion": null,
     "montecarlo_n_samples": 10000,
-    "montecarlo_n_size": 300,
     "random_state": 50,
     "report": {
         "header_letter": "E",
