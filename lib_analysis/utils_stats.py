@@ -221,18 +221,20 @@ def compute_sample_size(
     fixed_sample_size: int | None = metric_config.get("fixed_sample_size")
     bootstrap_sample_size: int | None = metric_config.get("bootstrap_sample_size")
 
-    # If fixed sample size is provided, use it
+    # If fixed sample size is set, use it
     if fixed_sample_size is not None:
         return fixed_sample_size
 
-    # if bootstrap sampe size is set, use it
+    # if bootstrap sample size is set, use it
     if bootstrap_sample_size is not None:
         return bootstrap_sample_size
 
-    # If no data in DB, use data size
+    # Compute sample size from database
     if query_from_db.empty:
+        # If no data from DB, use size of cleaned data
         sample_size_from_db: float = data.size
     else:
+        # Compute median sample size from recruitment year and type groups
         sample_size_from_db =(
             query_from_db
                 .groupby(["recruitment_year", "recruitment_type"])
@@ -241,9 +243,9 @@ def compute_sample_size(
         )
 
     # Compute sample size as the minimum of the three sizes
-    sample_size: int  = int(sample_size_from_db)
+    final_sample_size: int  = int(sample_size_from_db)
 
     # The final number should be rounded down to the nearest 50
-    # Examples: 274 -> 300, 225 -> 200
-    return  math.floor(sample_size / 50) * 50
+    # Examples: 274 -> 250, 225 -> 200
+    return  math.floor(final_sample_size / 50) * 50
 
