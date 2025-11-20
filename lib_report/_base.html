@@ -1,17 +1,17 @@
 {% macro get_test_label(test_type) %}
-    {% if test_type == "1000mt_run" %}
+    {% if "1000mt_run" in test_type %}
         corsa 1000 mt
     {% endif %}
-    {% if test_type == "100mt_run" %}
+    {% if "100mt_run" in test_type %}
         corsa 100 mt
     {% endif %}
-    {% if test_type == "25mt_swim" %}
+    {% if "25mt_swim" in test_type %}
         nuoto 25mt
     {% endif %}
-    {% if test_type == "push_ups" %}
+    {% if "push_ups" in test_type %}
         piegamenti sulle braccia
     {% endif %}
-    {% if test_type == "sit_ups" %}
+    {% if "sit_ups" in test_type %}
         addominali
     {% endif %}
 {% endmacro %}
