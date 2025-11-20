@@ -126,6 +126,7 @@ def generate_synthetic_data(
 def apply_standardization(
         data_to_standardize: NDArray[np.number[Any]],
         cutoffs: list[tuple[float, float]],
+        awarded_scores: list[float],
         higher_is_better: bool = False,
     ) -> pd.DataFrame:
     """Apply standardization to data using percentile cutoffs.
@@ -141,6 +142,7 @@ def apply_standardization(
         cutoffs (list[tuple[float, float]]): List of tuples containing percentile
             cutoff ranges. Each tuple should contain (lower_bound, upper_bound) for
             a score category.
+        awarded_scores (list[float]): List of scores to assign for each cutoff range.
         higher_is_better (bool, optional): Whether higher values indicate better
             performance. If True, higher scores are assigned to better performance
             ranges. Defaults to False.
@@ -159,20 +161,22 @@ def apply_standardization(
     cutoffs_with_inclusive: list[tuple[tuple[float, float], str]] = \
         list(zip(cutoffs, ["both", *["right"] * (len(cutoffs) - 1)], strict=True))
 
-    # Initialize list of standardized steps, from 1 to length of cutoffs
-    standard_steps: list = list(range(1, len(cutoffs)+1))
-
-    # Reverse standardized steps if it's the case
-    standard_steps = standard_steps if higher_is_better else standard_steps[::-1]
-
     # Compute standardized scores
-    standardized_scores: pd.Series = data.case_when(
+    standardized_steps: pd.Series = data.case_when(
         [
             (lambda x, cutoffs=cutoffs, inclusive=inclusive:
-                x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), standard_steps[i])
-            for i, (cutoffs, inclusive) in enumerate(cutoffs_with_inclusive)
+                x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), i)
+            for i, (cutoffs, inclusive) in enumerate(cutoffs_with_inclusive, start=1)
         ],
     ).astype(int)
+
+    # Compute standardize steps
+    standardized_values: pd.Series =\
+        standardized_steps if higher_is_better else standardized_steps.rsub(len(cutoffs)+1)
+
+    # Compute awarded scores
+    mapping = dict(zip(range(1, len(cutoffs)+1), awarded_scores, strict=True))
+    standardized_awarded_scores: pd.Series = standardized_steps.map(mapping).astype(float)
 
     # Compute standardized scores lower bounds for data
     standardized_bounds: pd.Series = data.case_when(
@@ -186,10 +190,17 @@ def apply_standardization(
     return pd.concat(
         [
             data,
-            standardized_scores,
+            standardized_steps,
+            standardized_values,
+            standardized_awarded_scores,
             standardized_bounds,
         ],
-        keys=["original_value", "standardized_value", "standardized_value_bounds"],
+        keys=[
+            "original_value",
+            "standardized_step",
+            "standardized_value",
+            "standardized_awarded_scores",
+            "standardized_value_bounds"],
         axis=1,
     )
 
