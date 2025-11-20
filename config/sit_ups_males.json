@@ -3,14 +3,6 @@
     "title": "addominali - maschi",
     "source_type": "db",
     "stratification": {
-        "recruitment_type": {
-            "label": null,
-            "query": null
-        },
-        "recruitment_year": {
-            "label": null,
-            "query": null
-        },
         "gender": {
             "label": "Genere: maschile",
             "query": "gender=='M'"
