@@ -103,7 +103,7 @@
                     <tbody>
                         <tr>
                             <td class="text-left">Metrica</td>
-                            <td class="text-center">{{ data.metric_config.title | lower }}</td>
+                            <td class="text-center">{{ get_test_label(data.metric_config.id) }}</td>
                         </tr>
                         <tr>
                             <td class="text-left">Tipo di metrica</td>
@@ -137,30 +137,6 @@
                                 <td class="text-center">{{ age }}</td>
                             </tr>
                         {% endif %}
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="4">
-                                <div class="caption">
-                                    <span>Tabella {{ header }}1.1</span>
-                                    <span>
-                                        Il tipo di metrica oggetto di studio (continua o discreta) comporta delle differenze nelle distribuzioni teoriche e nei grafici impiegati.
-                                    </span>
-                                </div>
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-
-            <div class="mb-xl">
-                <h3 class="mb-lg background">STATISTICHE DESCRITTIVE</h3>
-                <table class="table-bordered full-width">
-                    <thead>
-                        <th class="text-left" style="width: 60%;">STATISTICA</th>
-                        <th class="text-center">VALORE</th>
-                    </thead>
-                    <tbody>
                         <tr>
                             <td class="text-left">Media</td>
                             <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.mean) }}</td>
@@ -168,6 +144,15 @@
                         <tr>
                             <td class="text-left">Mediana</td>
                             <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats["50%"]) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Deviazione standard</td>
+                            <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats["std"]) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Range interquartilico</td>
+                            {% set iqr = data.clean.descriptive_stats["75%"] -  data.clean.descriptive_stats["25%"] %}
+                            <td class="text-center">{{ format_float_number | format(iqr) }}</td>
                         </tr>
                         <tr>
                             <td class="text-left">Minimo</td>
@@ -180,11 +165,11 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="2">
+                            <td colspan="4">
                                 <div class="caption">
-                                    <span>Tabella {{ header }}1.2</span>
+                                    <span>Tabella {{ header }}1.1</span>
                                     <span>
-                                        IQR = Interquartile Range (differenza tra 75° e 25° percentile).
+                                        Il tipo di metrica oggetto di studio (continua o discreta) comporta delle differenze nelle distribuzioni teoriche e nei grafici impiegati.
                                     </span>
                                 </div>
                             </td>
