@@ -71,10 +71,12 @@ def _apply_cutoffs(
                 .drop(["standardized_value_bounds"], axis=1)
                 .loc[:, "standardized_value"]
                     .value_counts(normalize=True)
-                .rename("value")
-                .to_frame()
-                .sort_index()
-                .reset_index(drop=False, names="perc_step"))
+                    .reindex(range(1, len(cutoffs)+1)) # Make sure every standardize step is in
+                    .fillna(0)
+                    .rename("value")
+                    .to_frame()
+                    .sort_index()
+                    .reset_index(drop=False, names="perc_step"))
 
         # Convert collected data to DataFrame
         current_sample_size_df: pd.DataFrame = (
