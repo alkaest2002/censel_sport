@@ -111,13 +111,13 @@ def monte_carlo_validation(
         montecarlo_estimates.append(
             np.percentile(synthetic_data, requested_percentiles, method=percentile_method))
 
-    # Convert estimates to nupmy array for better indexing
+    # Convert percentiles estimates distributions to numpy array for better indexing
     montecarlo_estimates_array: NDArray[np.number[Any]] = np.vstack(montecarlo_estimates)
 
-    # Iterate over requested percentiles to compute validation statistics
+    # Iterate over requested percentiles to compute statistics
     for i, percentile_data in enumerate(bootstrap_requested_percentiles):
 
-        # Extract bootstrap statistics
+        # Extract bootstrap percentiles statistics
         percentile: float = percentile_data["percentile"]
         bootstrap_value: float = percentile_data["value"]
         bootstrap_ci_lower: float = percentile_data["ci_lower"]
@@ -126,7 +126,7 @@ def monte_carlo_validation(
         # Get synthetic percentile estimates distribution
         montecarlo_values: NDArray[np.number[Any]] = montecarlo_estimates_array[:, i]
 
-        # Compute montecarlo values
+        # Compute montecarlo statistics
         montecarlo_value: float = np.percentile(montecarlo_values, 50, method=percentile_method)
         montecarlo_min: float = np.min(montecarlo_values)
         montecarlo_max: float = np.max(montecarlo_values)
@@ -138,6 +138,7 @@ def monte_carlo_validation(
         coverage: float = (np.mean((montecarlo_values >= bootstrap_ci_lower) &
             (montecarlo_values <= bootstrap_ci_upper)) * 100).astype(float)
 
+        # Append results to list
         montecarlo_results.append({
             "percentile": percentile,
             "value": montecarlo_value,
@@ -154,7 +155,7 @@ def monte_carlo_validation(
      # Update metric config with montecarlo_sample_size
     data_dict["metric_config"]["montecarlo_sample_size"] = montecarlo_sample_size
 
-    # Update data dictionary
+    # Update data dictionary with montecarlo results
     data_dict["montecarlo"] = {
         "results": montecarlo_results,
     }
