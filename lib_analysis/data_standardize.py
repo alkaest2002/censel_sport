@@ -37,13 +37,13 @@ def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
     """
     # Extract data from dictionary
     clean: dict[str, Any] = data_dict.get("clean", {})
-    bootstrap: dict[str, Any] = data_dict.get("bootstrap", {})
     data: NDArray[np.number[Any]] = clean.get("data", [])
+    bootstrap: dict[str, Any] = data_dict.get("bootstrap", {})
     cutoffs: list[tuple[float, float]] = bootstrap.get("cutoffs", [])
 
     # Raise error if something is missing
-    if any(map(is_falsy, (clean, bootstrap, data, cutoffs))):
-        raise ValueError("The data dictionary does not contain all required parts.")
+    if any(map(is_falsy, (clean, data, bootstrap, cutoffs))):
+        raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Compute standardization scores
     scores: list[dict[Hashable, Any]] = (
