@@ -13,6 +13,7 @@ def _apply_cutoffs(
     requested_percentiles: list[float],
     cutoffs: list[tuple],
     data: NDArray[np.number[Any]],
+    awarded_scores: list[float],
     higher_is_better: bool,
     sample_sizes: list[int],
     random_state: int,
@@ -27,6 +28,7 @@ def _apply_cutoffs(
         requested_percentiles: List of percentile thresholds for cutoffs.
         cutoffs: List of tuples defining the cutoff boundaries.
         data: Array of numerical data to sample from.
+        awarded_scores: List of scores to assign for each cutoff range.
         higher_is_better: Whether higher values indicate better performance.
         sample_sizes: List of sample sizes to test.
         random_state: Seed for random number generation.
@@ -66,13 +68,12 @@ def _apply_cutoffs(
                 apply_standardization(
                     data_to_standardize=sampled_data,
                     cutoffs=cutoffs,
+                    awarded_scores=awarded_scores,
                     higher_is_better=higher_is_better,
                 )
-                .drop(["standardized_value_bounds"], axis=1)
-                .loc[:, "standardized_value"]
+                .loc[:, "standardized_step"]
                     .value_counts(normalize=True)
-                    .reindex(range(1, len(cutoffs)+1)) # Make sure every standardize step is in
-                    .fillna(0)
+                    .reindex(range(1, len(cutoffs)+1), fill_value=0) # Make sure every standardize step is in
                     .rename("value")
                     .to_frame()
                     .sort_index()
@@ -148,15 +149,16 @@ def bootstrap_test_cutoffs(
     # Extract data from dictionary
     metric_config: dict[str, Any] =  data_dict.get("metric_config", {})
     clean: dict[str, Any] = data_dict.get("clean", {})
-    bootstrap: dict[str, Any] = data_dict.get("bootstrap", {})
     data: NDArray[np.number[Any]] = clean.get("data", np.array([]))
+    bootstrap: dict[str, Any] = data_dict.get("bootstrap", {})
     cutoffs = bootstrap.get("cutoffs", {})
+    awarded_scores: list[float] = metric_config.get("awarded_scores", [])
     higher_is_better: bool = metric_config.get("higher_is_better", False)
     requested_percentiles: list[float] = sorted(metric_config.get("requested_percentiles", []))
     random_state: int = metric_config.get("random_state", 42)
 
     # Raise error if something is missing
-    if any(map(is_falsy, (data, cutoffs, requested_percentiles))):
+    if any(map(is_falsy, (metric_config, clean, data, bootstrap, cutoffs, requested_percentiles))):
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Define base sample_sizes
@@ -170,6 +172,7 @@ def bootstrap_test_cutoffs(
         requested_percentiles=requested_percentiles,
         cutoffs=cutoffs,
         data=data,
+        awarded_scores=awarded_scores,
         higher_is_better=higher_is_better,
         sample_sizes=sample_sizes,
         random_state=random_state,
