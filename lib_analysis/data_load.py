@@ -37,10 +37,10 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
 
     try:
         # Load data from database
-        df: pd.DataFrame = query_from_db(metric_config)
+        db_df: pd.DataFrame = query_from_db(metric_config)
 
         # Enforce data to be numeric
-        raw_data: np.ndarray = pd.to_numeric(df.loc[:, "value"], downcast="integer").to_numpy()
+        raw_data: np.ndarray = pd.to_numeric(db_df.loc[:, "value"], downcast="integer").to_numpy()
 
         # Generate descriptive statistics from data
         descriptive_stats: dict[str, float] = _get_descriptive_stats(raw_data)
@@ -64,12 +64,12 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
     else:
         return {
             "metric_config": metric_config,
-            "query_from_db": df,
+            "query_from_db": db_df,
             "load": {
                 "data": raw_data,
                 "descriptive_stats": descriptive_stats,
                 "metadata": {
-                    "original_size": len(df),
+                    "original_size": len(db_df),
                     "valid_records": len(raw_data),
                     "error": None,
                 },
