@@ -249,5 +249,5 @@ def compute_sample_size(
 
     # The final number should be rounded down to the nearest 50
     # Examples: 274 -> 250, 225 -> 200
-    return  math.floor(final_sample_size / 50) * 50
+    return  max(50, math.floor(final_sample_size / 50) * 50)
 
