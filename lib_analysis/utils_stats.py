@@ -1,6 +1,5 @@
 # mypy: disable-error-code="misc"
 
-from itertools import count
 import math
 from typing import Any
 
@@ -160,17 +159,20 @@ def apply_standardization(
     cutoffs_with_inclusive: list[tuple[tuple[float, float], str]] = \
         list(zip(cutoffs, ["both", *["right"] * (len(cutoffs) - 1)], strict=True))
 
-    # Initialize counter based on whether higher values denotes better performance
-    counter: count = count(start=1, step=1) if higher_is_better else count(start=len(cutoffs), step=-1)
+    # Initialize list of standardized steps, from 1 to length of cutoffs
+    standard_steps: list = list(range(1, len(cutoffs)+1))
+
+    # Reverse standardized steps if it's the case
+    standard_steps = standard_steps if higher_is_better else standard_steps[::-1]
 
     # Compute standardized scores
     standardized_scores: pd.Series = data.case_when(
         [
             (lambda x, cutoffs=cutoffs, inclusive=inclusive:
-                x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), next(counter))
-            for (cutoffs, inclusive) in cutoffs_with_inclusive
+                x.between(cutoffs[0], cutoffs[1], inclusive=inclusive), standard_steps[i])
+            for i, (cutoffs, inclusive) in enumerate(cutoffs_with_inclusive)
         ],
-    )
+    ).astype(int)
 
     # Compute standardized scores lower bounds for data
     standardized_bounds: pd.Series = data.case_when(
