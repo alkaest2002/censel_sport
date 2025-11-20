@@ -415,12 +415,19 @@
             <!-- Page Content -->
             <h2 class="mb-xl">Tavola di conversione percentilica</h2>
             <div class="mb-xl text-small">
+                <p>Tipo di prova = {{ get_test_label(data.metric_config.id) }}</p>
                 <p>Numerosità del campione: {{ data.clean.descriptive_stats.count | int }}</p>
                 {% set strat = data.metric_config.stratification %}
-                {% if strat.gender.label %}
+                {% if "recruitment_year" in strat %}
+                    <p>{{ strat.recruitment_year.label }}</p>
+                {% endif %}
+                {% if "recruitment_type" in strat %}
+                    <p>{{ strat.recruitment_type.label }}</p>
+                {% endif %}
+                {% if "gender" in strat %}
                     <p>{{ strat.gender.label }}</p>
                 {% endif %}
-                {% if strat.age.label %}
+                {% if "age" in strat %}
                     <p>{{ strat.age.label }}</p>
                 {% endif %}
             </div>
