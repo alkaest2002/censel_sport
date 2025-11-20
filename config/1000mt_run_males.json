@@ -3,6 +3,10 @@
     "title": "corsa 1000 mt piani - maschi",
     "source_type": "db",
    "stratification": {
+        "recruitment_year": {
+            "label": "Storicità: 2023, 2024",
+            "query": "recruitment_year.between(2023, 2024, inclusive='both')"
+        },
         "gender": {
             "label": "Genere: maschile",
             "query": "gender=='M'"
