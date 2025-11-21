@@ -14,10 +14,6 @@ def clean_data(
 ) -> dict[str, Any]:
     """Clean performance data by removing outliers and invalid values.
 
-    This function processes performance data by removing non-positive values, NaNs,
-    and optionally outliers based on the IQR method. It also computes descriptive
-    statistics and quantiles for the cleaned data.
-
     Args:
         data_dict: Dictionary containing data.
 
