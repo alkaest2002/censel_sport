@@ -357,11 +357,11 @@
                             {% for pct in data.montecarlo.results %}
                             <tr>
                                 <td class="text-left">{{ pct.percentile | title }}</td>
-                                <td class="text-center">{{ format_float_number | format(pct.value) }}</td>
+                                <td class="text-center">{{ format_float_number | format(pct.value_montecarlo) }}</td>
                                 <td class="text-center">
-                                    {{ format_float_number | format(data.bootstrap.requested_percentiles[loop.index0].value) }}
+                                    {{ format_float_number | format(pct.value_bootstrap) }}
                                 </td>
-                                <td class="text-center">{{ format_float_number | format(pct['coverage_%']) }}%</td>
+                                <td class="text-center">{{ format_float_number | format(pct.coverage) }}%</td>
                             </tr>
                             {% endfor %}
                         </tbody>
