@@ -538,7 +538,7 @@
                                     {% if row.sample_size == sample_size %}
                                         <tr>
                                             <td class="text-center">{{ row.perc_step | int }}</td>
-                                            <td class="text-center">{{ row.perc_expected }}</td>
+                                            <td class="text-center">{{ "%.2f" | format(row.perc_expected) }}</td>
                                             <td class="text-center">{{ "%.2f" | format(row.p50) }}</td>
                                             <td class="text-center">{{ "%.2f" | format(row.p90 - row.p10) }}</td>
                                             <td class="text-center">[ {{ "%05.2f" | format(row.p10) }} &mdash; {{ "%05.2f" | format(row.p90) }} ]</td>
