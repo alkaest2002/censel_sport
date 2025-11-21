@@ -47,7 +47,7 @@ class DistributionFitter:
         distribution_best_criterion: Literal["aic", "bic", "cramer_von_mises"] | None =\
             self.data_dict.get("distribution_best_criterion", None)
 
-        # Raise error if something is missing
+        # Raise error if something crucial is missing
         if any(map(is_falsy, (metric_config, clean, data, metric_type))):
             raise ValueError("---> The data dictionary does not contain all required parts.")
 
@@ -68,12 +68,12 @@ class DistributionFitter:
         fitted_models: dict[str, Any] = {}
         failed_models: list[str] = []
 
+        # Pre-sort data for efficiency
+        sorted_data: NDArray[np.number[Any]] = np.sort(data)
+
         # Get distributions
         distributions: dict[str, type[stats.rv_discrete | stats.rv_continuous]] =\
             get_continuous_distributions() if metric_type == "continuous" else get_discrete_distributions()
-
-        # Pre-sort data for efficiency
-        sorted_data: NDArray[np.number[Any]] = np.sort(data)
 
         # Iterate over distributions
         for dist_name, dist_class in distributions.items():
@@ -97,7 +97,7 @@ class DistributionFitter:
                 # Create distribution object
                 dist_obj: stats.rv_discrete | stats.rv_continuous = dist_class(*parameters)
 
-                # Compute metrics
+                # Compute distribution metrics
                 metrics: dict[str, float | None] =\
                     self._compute_metrics(dist_obj, data, sorted_data, data.size, metric_type)
 
@@ -120,7 +120,7 @@ class DistributionFitter:
         if len(failed_models) == len(distributions):
             raise ValueError(f"All distributions failed to fit. Errors: {failed_models}")
 
-        # Determine best model
+        # Determine best distribution model
         best_model: dict[str, Any] = self._get_best_model(fitted_models, distribution_best_criterion)
 
         # Update data dict with fitted distributions
@@ -249,7 +249,7 @@ class DistributionFitter:
         # It is possible to have ties here
         winners: list[str] = [name for name, win_count in wins.items() if win_count == max_wins]
 
-        # Determine best model name
+        # Determine best model name, breaking ties if necessary
         best_model_name: str = winners[0] if len(winners) == 1 else self._break_tie(winners, valid_models, criteria)
 
         return {
