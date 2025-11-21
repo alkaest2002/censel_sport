@@ -26,9 +26,6 @@ def get_base_parser() -> argparse.ArgumentParser:
 def get_report_parser() -> argparse.ArgumentParser:
     """Create a comprehensive argument parser for data analysis and reporting.
 
-    Combines base parser functionality with report-specific options including
-    header letter, page number, and recompute flag.
-
     Returns:
         argparse.ArgumentParser: Configured argument parser with all required
             arguments for data analysis and report generation.
