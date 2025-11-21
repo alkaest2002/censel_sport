@@ -320,9 +320,9 @@
                             {% for pct in data.bootstrap.requested_percentiles %}
                             <tr>
                                 <td class="text-left">{{ pct.percentile | title }}</td>
-                                <td class="text-center">{{ format_float_number | format(pct.value) }}</td>
-                                <td class="text-center">{{ format_float_number | format(pct.ci_lower) }}</td>
-                                <td class="text-center">{{ format_float_number | format(pct.ci_upper) }}</td>
+                                <td class="text-center">{{ format_float_number | format(pct.bootstrap_value) }}</td>
+                                <td class="text-center">{{ format_float_number | format(pct.bootstrap_ci_lower) }}</td>
+                                <td class="text-center">{{ format_float_number | format(pct.bootstrap_ci_upper) }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -357,9 +357,9 @@
                             {% for pct in data.montecarlo.results %}
                             <tr>
                                 <td class="text-left">{{ pct.percentile | title }}</td>
-                                <td class="text-center">{{ format_float_number | format(pct.value_montecarlo) }}</td>
+                                <td class="text-center">{{ format_float_number | format(pct.montecarlo_value) }}</td>
                                 <td class="text-center">
-                                    {{ format_float_number | format(pct.value_bootstrap) }}
+                                    {{ format_float_number | format(pct.bootstrap_value) }}
                                 </td>
                                 <td class="text-center">{{ format_float_number | format(pct.coverage) }}%</td>
                             </tr>
