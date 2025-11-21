@@ -101,7 +101,7 @@ def main() -> int:
         print(f"Error while generating report: {e}", file=sys.stderr)
         return 1
 
-    print(f"Data loaded and validated successfully. Percentage of duplicates {duplicated}%")
+    print(f"Report db correctly generated. Percentage of duplicates {duplicated}%")
     return 0
 
 
