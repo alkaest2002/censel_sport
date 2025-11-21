@@ -21,10 +21,6 @@ if TYPE_CHECKING:
 def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
     """Create plots for the analysis results.
 
-    This function generates various statistical plots based on the analysis results
-    contained in the input dictionary, including histograms, Q-Q plots, rootograms,
-    and comparison plots between Monte Carlo and bootstrap methods.
-
     Args:
         data_dict: Dictionary containing data.
 
