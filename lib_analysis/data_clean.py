@@ -66,16 +66,10 @@ def clean_data(
     final_data: NDArray[np.number[Any]] = clean_data[outlier_mask]
 
     # Compute descriptive statistics on cleaned data
-    statistics: dict[Any, Any] = (
-        pd.DataFrame(final_data)
-            .describe()
-            .squeeze()
-            .to_dict() # type: ignore[union-attr]
-    )
+    statistics: pd.DataFrame = pd.DataFrame(final_data).describe()
 
-    # Add kurtosis and skewness to statistics
-    statistics["kurtosis"] = pd.Series(final_data).kurtosis()
-    statistics["skewness"] = pd.Series(final_data).skew()
+    # Add skewness and kurtosis
+    statistics = pd.concat([statistics, pd.Series(final_data).agg(["skew", "kurtosis"])])
 
     # Update data dictionary
     data_dict["clean"] = {
