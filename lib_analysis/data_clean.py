@@ -19,10 +19,7 @@ def clean_data(
     statistics and quantiles for the cleaned data.
 
     Args:
-        data_dict: Dictionary containing performance data with the following structure:
-            - "metric_config": Configuration dictionary with cleaning parameters
-            - "load": Dictionary containing the raw data array
-            - "data": NumPy array of performance measurements
+        data_dict: Dictionary containing data.
 
     Returns:
         Updated data dictionary with a new "clean" key containing:
@@ -39,13 +36,9 @@ def clean_data(
     load: dict[str, Any] = data_dict.get("load", {})
     data: NDArray[np.number[Any]] = load.get("data", np.array([]))
 
-    # Raise error if something is missing
+    # Raise error if something crucial is missing
     if any(map(is_falsy, (metric_config, load, data))):
         raise ValueError("---> The data dictionary does not contain all required parts.")
-
-    # Get cleaning parameters
-    remove_outliers: bool = metric_config.get("remove_outliers", False)
-    outlier_factor: float = metric_config.get("outlier_factor", 3)
 
     # Remove non-positive values and NaNs
     valid_mask: NDArray[np.bool_] = (data > 0) & np.isfinite(data)
@@ -53,6 +46,10 @@ def clean_data(
 
     # Count invalid
     removed_invalid: int = len(data) - len(clean_data)
+
+    # Get outlier removal parameters
+    remove_outliers: bool = metric_config.get("remove_outliers", False)
+    outlier_factor: float = metric_config.get("outlier_factor", 3)
 
     # Remove outliers if requested
     if remove_outliers:
@@ -66,13 +63,21 @@ def clean_data(
         # No outlier method, keep everything
         outlier_mask = np.ones(len(clean_data), dtype=bool)
 
+    # Count outliers removed
     removed_outliers: int = len(clean_data) - np.sum(outlier_mask).astype(int)
+
+    # Get final cleaned data
     final_data: NDArray[np.number[Any]] = clean_data[outlier_mask]
 
-    # Compute descriptive statistics
-    statistics: dict[Any, Any] = pd.DataFrame(final_data).describe().squeeze().to_dict() # type: ignore[union-attr]
+    # Compute descriptive statistics on cleaned data
+    statistics: dict[Any, Any] = (
+        pd.DataFrame(final_data)
+            .describe()
+            .squeeze()
+            .to_dict() # type: ignore[union-attr]
+    )
 
-    # Add kurtosis and skewness
+    # Add kurtosis and skewness to statistics
     statistics["kurtosis"] = pd.Series(final_data).kurtosis()
     statistics["skewness"] = pd.Series(final_data).skew()
 
