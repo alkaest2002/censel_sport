@@ -121,10 +121,6 @@ def compute_bootstrap_percentiles(
     """
     Compute bootstrap percentiles and confidence intervals from data.
 
-    This function performs bootstrap resampling to estimate percentiles and their
-    confidence intervals. It computes both all percentiles (0-100 in steps of 5)
-    and user-requested percentiles, then creates normative table cutoffs.
-
     Args:
         data_dict: Dictionary containing data.
 
