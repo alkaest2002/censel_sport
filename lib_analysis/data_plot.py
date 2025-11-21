@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Any, Literal
 
 import numpy as np
+import pandas as pd
 
 from lib_analysis.utils_distributions_continuous import get_continuous_distributions
 from lib_analysis.utils_distributions_discrete import get_discrete_distributions
@@ -40,12 +41,12 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
     fit: dict[str, Any] = data_dict.get("fit", {})
     metric_type: Literal["continuous", "discrete"] | None = metric_config.get("metric_type")
     data: NDArray[np.number[Any]] = clean.get("data", np.array([]))
-    bootstrap_requested_percentiles: list[dict[str, Any]] = bootstrap.get("requested_percentiles", [])
-    bootstrap_all_percentiles: list[dict[str, Any]] = bootstrap.get("all_percentiles", [])
+    bootstrap_requested_percentiles: pd.DataFrame = bootstrap.get("requested_percentiles", pd.DataFrame())
+    bootstrap_all_percentiles: pd.DataFrame = bootstrap.get("all_percentiles", pd.DataFrame())
+    montecarlo_percentiles: pd.DataFrame = montecarlo.get("results", pd.DataFrame())
     best_model: dict[str, Any] = fit.get("best_model", {})
     best_model_name: str = best_model.get("name", "")
     best_model_parameters: list[float] = best_model.get("parameters", [])
-    montecarlo_percentiles: list[dict[str, Any]] = montecarlo.get("results", [])
 
     # Raise error if something crucial is missing
     if any(map(is_falsy,
@@ -100,7 +101,9 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
         },
         {
             "name": "monte_carlo_vs_bootstrap_requested_percentiles",
-            "svg": plot_montecarlo_vs_bootstrap(bootstrap_requested_percentiles, montecarlo_percentiles),
+            "svg": plot_montecarlo_vs_bootstrap(
+                bootstrap_requested_percentiles,
+                montecarlo_percentiles),
         },
     ]
 
