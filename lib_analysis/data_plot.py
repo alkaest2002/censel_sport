@@ -44,6 +44,7 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
     bootstrap_requested_percentiles: pd.DataFrame = bootstrap.get("requested_percentiles", pd.DataFrame())
     bootstrap_all_percentiles: pd.DataFrame = bootstrap.get("all_percentiles", pd.DataFrame())
     montecarlo_percentiles: pd.DataFrame = montecarlo.get("results", pd.DataFrame())
+    bootstrap_ci_level: float = metric_config.get("bootstrap_ci_level", 0.95)
     best_model: dict[str, Any] = fit.get("best_model", {})
     best_model_name: str = best_model.get("name", "")
     best_model_parameters: list[float] = best_model.get("parameters", [])
@@ -97,6 +98,7 @@ def create_plots(data_dict: dict[str, Any]) -> dict[str, Any]:
             "svg": plot_bootstrap_percentile_with_ci(
                 bootstrap_requested_percentiles,
                 bootstrap_all_percentiles,
+                bootstrap_ci_level,
             ),
         },
         {
