@@ -3,67 +3,57 @@
 import argparse
 
 
-def get_base_parser() -> argparse.ArgumentParser:
-    """Create a base argument parser for data analysis.
+def create_parser(
+    filepath: bool = False,
+    page_number: bool = False,
+    header_letter: bool = False,
+    recompute: bool = False,
+) -> argparse.ArgumentParser:
+    """Create a customizable argument parser with specified parameters.
+
+    Args:
+        filepath: Include --filepath argument.
+        page_number: Include --page-number argument.
+        header_letter: Include --header-letter argument.
+        recompute: Include --recompute argument.
 
     Returns:
-        argparse.ArgumentParser: Configured argument parser with filepath argument.
+        argparse.ArgumentParser: Configured argument parser.
     """
     parser = argparse.ArgumentParser(
-        description="Generate statistical analysis and reporting from data file",
+        description="Parser",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
-    parser.add_argument(
-        "--filepath", "-f",
-        required=True,
-        type=str,
-        help="Path to the data file to analyze/report",
-    )
+    if filepath:
+        parser.add_argument(
+            "--filepath", "-f",
+            required=True,
+            type=str,
+            help="Path to the data file",
+        )
 
-    return parser
+    if page_number:
+        parser.add_argument(
+            "--page-number", "-n",
+            required=True,
+            type=int,
+            help="Starting page number for report pages (e.g., 1)",
+        )
 
-def get_report_parser() -> argparse.ArgumentParser:
-    """Create a comprehensive argument parser for data analysis and reporting.
+    if header_letter:
+        parser.add_argument(
+            "--header-letter", "-l",
+            required=True,
+            type=str,
+            help="Letter for report header section (e.g., 'A')",
+        )
 
-    Returns:
-        argparse.ArgumentParser: Configured argument parser with all required
-            arguments for data analysis and report generation.
-    """
-    parser = get_base_parser()
-
-    parser.add_argument(
-        "--recompute", "-x",
-        action="store_true",
-        help="Re-run analysis",
-    )
-
-    return parser
-
-def get_db_report_parser() -> argparse.ArgumentParser:
-    """Create a base argument parser for report generation.
-
-    Returns:
-        argparse.ArgumentParser: Configured argument parser with header letter
-            and page number arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description="Generate db statistics report",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-
-    parser.add_argument(
-        "--header-letter", "-l",
-        required=True,
-        type=str,
-        help="Letter for report header section (e.g., 'A')",
-    )
-
-    parser.add_argument(
-        "--page-number", "-n",
-        required=True,
-        type=int,
-        help="Starting page number for report pages (e.g., 1)",
-    )
+    if recompute:
+        parser.add_argument(
+            "--recompute", "-r",
+            action="store_true",
+            help="Force recomputation of cached results",
+        )
 
     return parser

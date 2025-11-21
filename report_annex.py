@@ -1,11 +1,12 @@
 from pathlib import Path
+import re
 import subprocess
 import sys
 from typing import TYPE_CHECKING, Any
 
 from weasyprint import HTML  # type: ignore[import-untyped]
 
-from lib_parser.parser import get_report_parser
+from lib_parser.parser import create_parser
 from lib_parser.utils_parser import load_configuration_data, validate_file_path
 from lib_report.jinja_environment import jinja_env, templates_dir
 
@@ -29,7 +30,7 @@ def main() -> int:
         Exception: For any other errors during report generation.
     """
     # Get report parser
-    parser: argparse.ArgumentParser = get_report_parser()
+    parser: argparse.ArgumentParser = create_parser(filepath=True, recompute=True)
 
     # Parse arguments
     args: argparse.Namespace = parser.parse_args()

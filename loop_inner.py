@@ -11,7 +11,7 @@ from lib_analysis.data_plot import create_plots
 from lib_analysis.data_save import save_analysis_results
 from lib_analysis.data_standardize import compute_standard_scores
 from lib_analysis.data_test_cutoffs import bootstrap_test_cutoffs
-from lib_parser.parser import get_base_parser
+from lib_parser.parser import create_parser
 from lib_parser.utils_parser import load_configuration_data, validate_file_path
 
 if TYPE_CHECKING:
@@ -27,7 +27,7 @@ def main() -> int:
             - 1: Error in file validation, loading, or processing
     """
     # Parse command line arguments
-    parser: argparse.ArgumentParser = get_base_parser()
+    parser: argparse.ArgumentParser = create_parser(filepath=True)
     args: argparse.Namespace = parser.parse_args()
 
     try:

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 import orjson
 from weasyprint import HTML  # type: ignore[import-untyped]
 
-from lib_parser.parser import get_db_report_parser
+from lib_parser.parser import create_parser
 from lib_report.jinja_environment import jinja_env, templates_dir
 
 if TYPE_CHECKING:
@@ -22,7 +22,7 @@ def main() -> int:
             - 1: Rendering or PDF generation error
     """
     # Get report parser
-    parser: argparse.ArgumentParser = get_db_report_parser()
+    parser: argparse.ArgumentParser = create_parser(page_number=True)
 
     # Parse arguments
     args: argparse.Namespace = parser.parse_args()
@@ -59,7 +59,7 @@ def main() -> int:
 
         # Render template
         rendered_html: str =\
-            template.render(toc=toc, header=args.header_letter, page=args.page_number)
+            template.render(toc=toc, page=args.page_number)
 
         # Write PDF file
         HTML(string=rendered_html, base_url=str(templates_dir)).write_pdf(str(output_pdf))
