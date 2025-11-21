@@ -19,7 +19,7 @@ def _compute_cutoffs(
     Compute normative table cutoffs based on bootstrap percentiles.
 
     Args:
-        bootstrap_percentiles:  pd.Series containing bootstrap percentiles.
+        bootstrap_percentiles: pd.Series containing bootstrap percentiles.
         metric_precision: Decimal precision for rounding cutoffs. Defaults to 2.
 
     Returns:
@@ -37,9 +37,9 @@ def _compute_cutoffs(
     return cutoffs_pairs
 
 def _create_percentile_statistics(
-        percentiles: list[float | int],
+        percentiles: list[float],
         percentiles_estimates: list[NDArray[np.number[Any]]],
-        percentile_method: str,
+        interpolation_method: str,
         ci_level: float,
     ) -> pd.DataFrame:
     """
@@ -49,27 +49,32 @@ def _create_percentile_statistics(
         percentiles: List of percentiles being analyzed.
         percentiles_estimates: List of numpy arrays containing bootstrap estimates
             for each percentile.
-        percentile_method: Method used for percentile calculation (e.g., 'linear', 'nearest').
+        interpolation_method: Method used for percentile calculation (e.g., 'linear', 'nearest').
         ci_level: Confidence interval level (e.g., 0.95 for 95% CI).
 
     Returns:
         pandas DataFrame where each row contains statistics for a specific percentile.
     """
 
+    # Compute upper and lower bounds for confidence intervals
+    alpha: float = 1 - ci_level
+    lower_bound: float = alpha / 2
+    upper_bound: float = 1 - (alpha / 2)
+
     # Convert boostrap percentiles estimates to DataFrame for easier aggregation
     bootstrap_df: pd.DataFrame = pd.DataFrame(percentiles_estimates, columns=percentiles)
 
-    # Compute statistics for each percentile
+    # Compute statistics for each boostrap percentile
     bootstrap_stats: pd.DataFrame = (pd.DataFrame({
             "percentile": bootstrap_df.columns,
-            "value": bootstrap_df.quantile(0.5, interpolation=percentile_method),
+            "value": bootstrap_df.quantile(0.5, interpolation=interpolation_method),
             "min": bootstrap_df.min(),
             "max": bootstrap_df.max(),
             "iqr": bootstrap_df.agg(lambda x: iqr(x)),
-            "first_quartile": bootstrap_df.quantile(0.25, interpolation=percentile_method),
-            "third_quartile": bootstrap_df.quantile(0.75, interpolation=percentile_method),
-            "ci_lower": bootstrap_df.quantile((1 - ci_level) / 2, interpolation=percentile_method),
-            "ci_upper": bootstrap_df.quantile(1 - (1 - ci_level) / 2, interpolation=percentile_method),
+            "first_quartile": bootstrap_df.quantile(0.25, interpolation=interpolation_method),
+            "third_quartile": bootstrap_df.quantile(0.75, interpolation=interpolation_method),
+            "ci_lower": bootstrap_df.quantile(lower_bound, interpolation=interpolation_method),
+            "ci_upper": bootstrap_df.quantile(upper_bound, interpolation=interpolation_method),
         })
         .assign(ci_level=ci_level)
         .reset_index(drop=True)
@@ -117,7 +122,7 @@ def compute_bootstrap_percentiles(
     bootstrap_sample_size: int = compute_sample_size(data_dict)
 
     # Define percentile method based on type of metric (either 'continuous' or 'discrete')
-    percentile_method: str = "linear" if metric_type == "continuous" else "nearest"
+    interpolation_method: str = "linear" if metric_type == "continuous" else "nearest"
 
     # Generate all percentiles from 0 to 100 in steps of 5
     all_percentiles: list[float] = list(range(0, 101, 5))
@@ -139,17 +144,17 @@ def compute_bootstrap_percentiles(
 
         # Compute all percentiles for current bootstrap sample and add to list
         computed_all_percentiles\
-            .append(np.percentile(bootstrap_sample, all_percentiles, method=percentile_method))
+            .append(np.percentile(bootstrap_sample, all_percentiles, method=interpolation_method))
 
         # Compute requested percentiles for current bootstrap sample and add to list
         computed_requested_percentiles\
-            .append(np.percentile(bootstrap_sample, requested_percentiles, method=percentile_method))
+            .append(np.percentile(bootstrap_sample, requested_percentiles, method=interpolation_method))
 
     # Create list for all bootstrap percentile statistics
     all_bootstrap_percentiles: pd.DataFrame = _create_percentile_statistics(
         percentiles=all_percentiles,
         percentiles_estimates=computed_all_percentiles,
-        percentile_method=percentile_method,
+        interpolation_method=interpolation_method,
         ci_level=ci_level,
     )
 
@@ -157,7 +162,7 @@ def compute_bootstrap_percentiles(
     requested_bootstrap_percentiles: pd.DataFrame = _create_percentile_statistics(
         percentiles=requested_percentiles,
         percentiles_estimates=computed_requested_percentiles,
-        percentile_method=percentile_method,
+        interpolation_method=interpolation_method,
         ci_level=ci_level,
     )
 
