@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 def main() -> int:  # noqa: PLR0911
     """
-    Run the full data analysis pipeline.
+    Run the outer pipeline.
 
     Returns:
     --------

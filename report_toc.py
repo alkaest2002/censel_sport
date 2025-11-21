@@ -16,10 +16,6 @@ if TYPE_CHECKING:
 def main() -> int:
     """Generate database statistics report.
 
-    This function reads a CSV database file, processes the data to compute
-    statistics including duplicates percentage and age-binned summaries,
-    then generates both HTML and PDF reports using Jinja templates.
-
     Returns:
         int: Process exit status code:
             - 0: Success

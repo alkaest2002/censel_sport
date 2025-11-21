@@ -17,10 +17,6 @@ if TYPE_CHECKING:
 def main() -> int:
     """Generate report for given data analysis.
 
-    This function parses command line arguments, validates the input file path,
-    optionally re-runs analysis, loads data, renders an HTML template using Jinja2,
-    and generates both HTML and PDF output files using WeasyPrint.
-
     Returns:
         int: Process exit status code:
             - 0: Success

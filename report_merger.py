@@ -1,9 +1,3 @@
-"""PDF Merger utility for combining multiple PDF files into a single document.
-
-This module provides functionality to merge PDF files from a specified directory,
-with support for recursive searching and natural sorting of filenames.
-"""
-
 from pathlib import Path
 import re
 import sys
@@ -13,9 +7,6 @@ from pypdf import PdfWriter
 
 def _natural_key(s: str) -> list:
     """Convert a string into a list for natural sorting.
-
-    Splits the string into numeric and non-numeric parts to enable
-    natural (human-friendly) sorting where '2' comes before '10'.
 
     Args:
         s: The string to convert for natural sorting.
@@ -32,10 +23,6 @@ def _natural_key(s: str) -> list:
 
 def _collect_pdfs(folder: Path, out_name: str) -> list[Path]:
     """Collect PDF files from the specified folder.
-
-    Searches for PDF files in the given folder, optionally recursively,
-    and excludes the output file from the list. Files are sorted using
-    natural sorting order.
 
     Args:
         folder: The directory path to search for PDF files.
@@ -64,9 +51,6 @@ def _collect_pdfs(folder: Path, out_name: str) -> list[Path]:
 
 def merge_pdfs(pdf_paths: list[Path], output_path: Path) -> int:
     """Merge multiple PDF files into a single output file.
-
-    Attempts to merge all PDF files in the list, handling encrypted PDFs
-    by trying an empty password. Skips files that cannot be processed.
 
     Args:
         pdf_paths: list of Path objects pointing to PDF files to merge.
@@ -97,11 +81,11 @@ def merge_pdfs(pdf_paths: list[Path], output_path: Path) -> int:
 def main() -> int:
     """Main entry point for the PDF merger CLI.
 
-    Parses command-line arguments, validates inputs, and orchestrates
-    the PDF merging process.
-
     Returns:
-        Exit code: 0 for success, 1 for merge errors, 2 for invalid directory.
+        int: Process exit status code:
+            - 0: Success
+            - 1: for merge errors
+            - 2: for invalid directory
     """
     # Define input folder
     folder: Path = Path("./data_out/_report").resolve()

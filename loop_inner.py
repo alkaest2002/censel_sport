@@ -19,11 +19,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 def main() -> int:
-    """Run the full data analysis pipeline.
-
-    This function executes a comprehensive data analysis workflow including:
-    data loading, cleaning, distribution fitting, bootstrap analysis,
-    Monte Carlo simulation, plotting, standardization, and result saving.
+    """Run the inner pipeline.
 
     Returns:
         int: Process exit status code.
