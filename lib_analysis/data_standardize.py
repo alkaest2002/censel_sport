@@ -12,15 +12,8 @@ if TYPE_CHECKING:
 def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
     """Compute standardized scores from analysis data using normative cutoffs.
 
-    Takes a data dictionary containing clean data and bootstrap cutoffs,
-    applies standardization to compute standard scores, and calculates
-    percentage distributions of standardized values.
-
     Args:
-        data_dict: Dictionary containing analysis data with the following
-            expected structure:
-            - "clean": Dict containing "data" key with numerical array
-            - "bootstrap": Dict containing "cutoffs" key with cutoff values
+        data_dict: Dictionary containing data.
 
     Returns:
         Updated data dictionary with added "standardize" key containing:
@@ -41,7 +34,7 @@ def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
     awarded_scores: list[float] = metric_config.get("awarded_scores", [])
     higher_is_better: bool = metric_config.get("higher_is_better", False)
 
-    # Raise error if something is missing
+    # Raise error if something crucial is missing
     if any(map(is_falsy, (metric_config, clean, data, bootstrap, cutoffs, awarded_scores))):
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
@@ -60,7 +53,7 @@ def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
         standardized_scores["standardized_step"]
             # Compute value counts as percentage
             .value_counts(normalize=True, sort=False)
-            # Reindex to ensure all steps are present
+            # Reindex to ensure all standardized steps are present
             .reindex(range(1, len(cutoffs)+1), fill_value=0)
             # Multiply by 100 to get percentage
             .mul(100)
