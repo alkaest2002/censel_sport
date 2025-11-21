@@ -3,10 +3,43 @@ from pathlib import Path
 from typing import Any
 
 import orjson
+import pandas as pd
 
 from lib_analysis.utils_generic import is_falsy
 
 data_out = Path("./data_out")
+
+def _default(obj: Any) -> Any:
+    """Default function for orjson serialization.
+
+    Args:
+        obj: object to serialize
+
+    Returns:
+        dict: serialized object
+
+    Raises:
+        TypeError: If the object type is not supported for serialization.
+    """
+    if isinstance(obj, pd.DataFrame):
+        # Single column DataFrame -> treat as Series
+        if obj.shape[1] == 1:
+            obj = obj.squeeze()
+            # Fall through to Series handling below
+        else:
+            return obj.to_dict(orient="records")
+
+    if isinstance(obj, pd.Series):
+        # Single element Series -> return scalar
+        if obj.shape[0] == 1:
+            return obj.item()
+        # Multi-element Series -> return dict
+        # Make sure index is string for JSON serialization
+        obj.index = obj.index.map(str)
+
+        return obj.to_dict()
+
+    raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
 def save_analysis_results(
     data_dict: dict[str, Any],
@@ -60,28 +93,20 @@ def save_analysis_results(
             # Write svg to file
             f.write(b64decode(plot_str).decode("utf-8"))
 
-    # Convert query_from_db to a serializable format
-    if "query_from_db" in data_dict:
-        query_df = data_dict["query_from_db"]
-        if query_df is not None:
-            data_dict["query_from_db"] = query_df.to_dict(orient="records")
-        else:
-            data_dict["query_from_db"] = None
-
     # Write data analysis to JSON file
     analysis_output_path: Path = output_path / f"{metric_id}_analysis.json"
     with analysis_output_path.open("w") as f:
         orjson_options: int = orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2
-        f.write(orjson.dumps(data_dict, option=orjson_options).decode("utf-8"))
+        f.write(orjson.dumps(data_dict, option=orjson_options, default=_default).decode("utf-8"))
 
     # Write bootstrap samples to JSON file
     bootstrap_output_path: Path = output_path / f"{metric_id}_bootstrap_samples.json"
     with bootstrap_output_path.open("w") as f:
         orjson_options = orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2
-        f.write(orjson.dumps(bootstrap_samples, option=orjson_options).decode("utf-8"))
+        f.write(orjson.dumps(bootstrap_samples, option=orjson_options, default=_default).decode("utf-8"))
 
     # Write Monte Carlo samples to JSON file
     montecarlo_output_path: Path = output_path / f"{metric_id}_montecarlo_samples.json"
     with montecarlo_output_path.open("w") as f:
         orjson_options = orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2
-        f.write(orjson.dumps(simulation_samples, option=orjson_options).decode("utf-8"))
+        f.write(orjson.dumps(simulation_samples, option=orjson_options, default=_default).decode("utf-8"))
