@@ -18,10 +18,6 @@ def monte_carlo_validation(
 ) -> tuple[dict[str, Any], list[NDArray[np.number[Any]]]]:
     """Validate bootstrap percentiles using Monte Carlo simulation from fitted distribution.
 
-    This function performs Monte Carlo validation by generating synthetic datasets
-    from the best-fitted distribution and computing validation statistics to assess
-    the quality of bootstrap percentile estimates.
-
     Args:
         data_dict: Dictionary containing data.
 
