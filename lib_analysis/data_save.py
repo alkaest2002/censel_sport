@@ -20,9 +20,7 @@ def save_analysis_results(
     simulation samples. All files are saved to a directory named after the metric ID.
 
     Args:
-        data_dict: Dictionary containing analysis data with required keys:
-            - 'metric_config': Configuration dictionary containing metric metadata
-            - 'plots': List of plot dictionaries with 'name' and 'svg' keys
+        data_dict: Dictionary containing data.
         bootstrap_samples: List containing bootstrap samples for statistical analysis.
         simulation_samples: List containing Monte Carlo simulation samples.
 
@@ -32,19 +30,13 @@ def save_analysis_results(
     Raises:
         ValueError: If data_dict is missing required keys ('metric_config', 'plots')
             or if metric_config is missing the 'id' key.
-
-    Note:
-        - Creates output directory structure under ./data_out/{metric_id}/
-        - Removes existing files in the output directory before writing new ones
-        - SVG plots are decoded from base64 format before saving
-        - All JSON files are formatted with indentation for readability
     """
     # Extract data from dictionary
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
     plots: list[dict[str, str]] = data_dict.get("plots", {})
     metric_id: str = metric_config.get("id", "")
 
-    # Raise error if something is missing
+    # Raise error if something crucial is missing
     if any(map(is_falsy, (metric_config, plots, metric_id))):
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
@@ -61,6 +53,7 @@ def save_analysis_results(
 
     # Write plots to SVG files
     for plot in plots:
+
         # Create output path for plot
         plot_output_path: Path = output_path / f"{metric_id}_{plot['name']}.svg"
 
