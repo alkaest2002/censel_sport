@@ -8,16 +8,16 @@ from lib_analysis.utils_generic import query_from_db
 from lib_analysis.utils_stats import generate_synthetic_data
 
 
-def _get_descriptive_stats(data: NDArray[np.number[Any]]) -> dict[Any, Any]:
+def _get_descriptive_stats(data: NDArray[np.number[Any]]) -> pd.DataFrame:
     """Compute descriptive statistics for the given data.
 
     Args:
         data: Numpy array of performance data.
 
     Returns:
-        Dictionary containing descriptive statistics.
+         pd.DataFrame: dataframe containing descriptive statistics.
     """
-    return pd.DataFrame(data).describe().squeeze().to_dict()  # type: ignore[union-attr]
+    return pd.DataFrame(data).describe()
 
 def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
     """Load performance data from a CSV file.
@@ -43,7 +43,7 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
         raw_data: np.ndarray = pd.to_numeric(db_df.loc[:, "value"], downcast="integer").to_numpy()
 
         # Generate descriptive statistics from data
-        descriptive_stats: dict[str, float] = _get_descriptive_stats(raw_data)
+        descriptive_stats: pd.DataFrame = _get_descriptive_stats(raw_data)
 
     # Catch exceptions
     except Exception as e:  # noqa: BLE001
@@ -105,7 +105,7 @@ def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
     raw_data: NDArray[np.number[Any]] = generate_synthetic_data(metric_id, n_samples, random_state)
 
     # Generate descriptive statistics from data
-    descriptive_stats: dict[str, float] = _get_descriptive_stats(raw_data)
+    descriptive_stats: pd.DataFrame = _get_descriptive_stats(raw_data)
 
     return {
         "metric_config": metric_config,
