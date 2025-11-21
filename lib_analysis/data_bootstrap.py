@@ -67,16 +67,15 @@ def _create_percentile_statistics(
     # Compute statistics for each boostrap percentile
     bootstrap_stats: pd.DataFrame = (pd.DataFrame({
             "percentile": bootstrap_df.columns,
-            "value": bootstrap_df.quantile(0.5, interpolation=interpolation_method),
-            "min": bootstrap_df.min(),
-            "max": bootstrap_df.max(),
-            "iqr": bootstrap_df.agg(lambda x: iqr(x)),
-            "first_quartile": bootstrap_df.quantile(0.25, interpolation=interpolation_method),
-            "third_quartile": bootstrap_df.quantile(0.75, interpolation=interpolation_method),
-            "ci_lower": bootstrap_df.quantile(lower_bound, interpolation=interpolation_method),
-            "ci_upper": bootstrap_df.quantile(upper_bound, interpolation=interpolation_method),
+            "bootstrap_value": bootstrap_df.quantile(0.5, interpolation=interpolation_method),
+            "bootstrap_min": bootstrap_df.min(),
+            "bootstrap_max": bootstrap_df.max(),
+            "bootstrap_iqr": bootstrap_df.agg(lambda x: iqr(x)),
+            "bootstrap_first_quartile": bootstrap_df.quantile(0.25, interpolation=interpolation_method),
+            "bootstrap_third_quartile": bootstrap_df.quantile(0.75, interpolation=interpolation_method),
+            "bootstrap_ci_lower": bootstrap_df.quantile(lower_bound, interpolation=interpolation_method),
+            "bootstrap_ci_upper": bootstrap_df.quantile(upper_bound, interpolation=interpolation_method),
         })
-        .assign(ci_level=ci_level)
         .reset_index(drop=True)
     )
 
@@ -167,7 +166,8 @@ def compute_bootstrap_percentiles(
     )
 
     # Compute cutoffs based on requested percentiles
-    percentile_cutoffs = _compute_cutoffs(requested_bootstrap_percentiles["value"], metric_precision=metric_precision)
+    percentile_cutoffs = _compute_cutoffs(
+        requested_bootstrap_percentiles["bootstrap_value"], metric_precision=metric_precision)
 
     # Update metric config by adding bootstrap_sample_size
     data_dict["metric_config"]["bootstrap_sample_size"] = bootstrap_sample_size
