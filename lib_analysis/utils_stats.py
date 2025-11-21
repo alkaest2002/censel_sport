@@ -16,10 +16,6 @@ def generate_synthetic_data(
         random_state: int = 42) -> NDArray[np.number]:
     """Generate synthetic performance data for testing purposes.
 
-    This function creates realistic synthetic performance data based on predefined
-    distributions for different fitness metrics. The data is generated using
-    multiple normal distributions to simulate real-world performance variations.
-
     Args:
         metric_type (str): Type of metric to generate data for. Must be one of the
             predefined metric types (SWIM25, MT100, MT1000, SITUPS, PUSHUPS).
@@ -131,27 +127,15 @@ def apply_standardization(
     ) -> pd.DataFrame:
     """Apply standardization to data using percentile cutoffs.
 
-    This function standardizes data by assigning scores based on percentile ranges.
-    The scoring direction depends on whether higher values indicate better performance.
-    Each data point is assigned a standardized score corresponding to its percentile
-    range.
-
     Args:
-        data_to_standardize (NDArray[np.number[Any]]): Numerical data array to be
-            standardized.
-        cutoffs (list[tuple[float, float]]): List of tuples containing percentile
-            cutoff ranges. Each tuple should contain (lower_bound, upper_bound) for
-            a score category.
-        awarded_scores (list[float]): List of scores to assign for each cutoff range.
-        higher_is_better (bool, optional): Whether higher values indicate better
-            performance. If True, higher scores are assigned to better performance
-            ranges. Defaults to False.
+        data_to_standardize: Numerical data array to be standardized.
+        cutoffs: List of tuples containing percentile cutoff ranges.
+        awarded_scores: List of scores to assign for each cutoff range.
+        higher_is_better: Whether higher values indicate better performance.
+            If True, higher scores are assigned to better performance ranges. Defaults to False.
 
     Returns:
-        pd.DataFrame: DataFrame with three columns:
-            - original_value: The original data values
-            - standardized_value: The assigned standardized scores
-            - standardized_value_bounds: The cutoff ranges for each score category.
+        pd.DataFrame: DataFrame with standadization results.
     """
     # Convert data to pandas Series for easier manipulation
     data: pd.Series = pd.Series(data_to_standardize)
@@ -210,18 +194,8 @@ def compute_sample_size(
 ) -> int:
     """Compute sample size for statistical analysis.
 
-    This function computes the appropriate sample size by taking the minimum
-    value among bootstrap replicate size, Monte Carlo size, and median sample
-    size from database groups. It queries the database to get group sizes
-    and returns the most conservative estimate.
-
     Args:
-        data_dict (dict[str, Any]): Dictionary containing configuration and data.
-            Expected keys include:
-            - metric_config: Configuration for database query
-            - clean: Dictionary containing cleaned data array
-            - bootstrap_sample_size: Bootstrap replication size
-            - montecarlo_sample_size: Monte Carlo simulation size
+        data_dict: Dictionary containing data.
 
     Returns:
         int: Computed sample size as the minimum of available size measures.

@@ -5,10 +5,7 @@ def get_continuous_distributions() -> dict[str, type[stats.rv_continuous | stats
     """Get a mapping of distribution names to their corresponding SciPy distribution objects.
 
     Returns:
-        dict[str, stats.rv_continuous | stats.rv_discrete]: A dictionary mapping
-            distribution names (str) to their corresponding SciPy distribution
-            class objects. Currently includes exponential, skew normal, log normal,
-            gamma, and Weibull distributions.
+        dict: Mapping of distribution names to distribution classes.
     """
     return {
         "exponential": stats.expon,
