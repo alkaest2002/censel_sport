@@ -53,7 +53,7 @@ def create_parser(
         parser.add_argument(
             "--recompute", "-x",
             action="store_true",
-            help="Force recomputation of cached results",
+            help="Force recomputation of analysis data",
         )
 
     return parser
