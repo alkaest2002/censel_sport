@@ -64,8 +64,8 @@ def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
 
     # Update data dict
     data_dict["standardize"] = {
-        "scores": standardized_scores.to_dict(orient="records"),
-        "step_perc": value_counts_perc.to_dict(),
+        "scores": standardized_scores,
+        "step_perc": value_counts_perc,
     }
 
     return data_dict
