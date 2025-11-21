@@ -1,11 +1,3 @@
-"""Generate synthetic data for military fitness tests and save to CSV.
-
-This module creates fake data for various military fitness tests across different
-recruitment years, types, and demographics, then saves the combined dataset to a CSV file.
-Justification: This module is intended to test data analysis and reporting functionalities
-by providing a comprehensive synthetic dataset.
-"""
-
 from itertools import product
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -22,10 +14,6 @@ if TYPE_CHECKING:
 
 def _generate_fake_military_data() -> pd.DataFrame:
     """Generate synthetic military fitness test data for multiple subsets.
-
-    Creates fake data for all combinations of recruitment years (2022-2024),
-    recruitment types (hd, mlli), fitness tests, and genders. Each subset
-    contains 300 samples with ages normally distributed around 20 years.
 
     Returns:
         pd.DataFrame: Combined dataframe containing synthetic data with columns:
