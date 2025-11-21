@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
 import pandas as pd
+from scipy import stats
 
 # Constants
 MIN_DATA_POINTS = 3
@@ -246,7 +247,7 @@ def plot_histogram_with_fitted_model(
 def plot_qq_plot(
         data: NDArray[np.number[Any]],
         model_name: str,
-        model: Any,
+        model: stats.rv_continuous,
     ) -> str:
     """Create a Q-Q (quantile-quantile) plot comparing sample data to a fitted distribution.
 
@@ -301,7 +302,7 @@ def plot_qq_plot(
 def plot_hanging_rootogram(
         data: NDArray[np.number[Any]],
         model_name: str,
-        model: Any,
+        model: stats.rv_discrete,
         max_count: int | None = None,
     ) -> str:
     """Create a hanging rootogram for discrete data.
@@ -408,14 +409,14 @@ def plot_bootstrap_percentile_with_ci(
     visualizing the uncertainty in percentile estimates from bootstrap sampling.
 
     Args:
-        bootstrap_requested_percentiles: List of requested percentiles with estimates.
-        bootstrap_all_percentiles: List of all percentiles from 1 to 99.
+        bootstrap_requested_percentiles: pd.DataFrame of requested percentiles with estimates.
+        bootstrap_all_percentiles: pd.DataFrame of all percentiles from 1 to 99.
         bootstrap_ci_level: Confidence interval level (e.g., 0.95 for 95% CI).
 
     Returns:
         SVG string of the generated percentile plot with confidence intervals.
     """
-    # Extract data arrays
+    # Use shorter variable names for clarity
     all_df = bootstrap_all_percentiles
     requested_df = bootstrap_requested_percentiles
 
@@ -466,8 +467,8 @@ def plot_montecarlo_vs_bootstrap(
     of the distribution characteristics between bootstrap and Monte Carlo methods.
 
     Args:
-        bootstrap_percentiles: DataFrame of bootstrap percentile statistics.
-        montecarlo_percentiles: DataFrame of Monte Carlo percentile statistics.
+        bootstrap_percentiles: pd.DataFrame of bootstrap percentile statistics.
+        montecarlo_percentiles: pd.DataFrame of Monte Carlo percentile statistics.
 
     Returns:
         SVG string of the generated Monte Carlo comparison plot.
