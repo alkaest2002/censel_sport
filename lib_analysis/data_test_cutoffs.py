@@ -17,7 +17,7 @@ def _apply_cutoffs(
     higher_is_better: bool,
     sample_sizes: list[int],
     random_state: int,
-) -> list:
+) -> pd.DataFrame:
     """Apply cutoffs to several random samples of different sizes and collect results.
 
     Args:
@@ -104,9 +104,7 @@ def _apply_cutoffs(
     results.columns=[ s if s else f for f,s in results.columns.to_flat_index() ]
 
 
-    return (results.loc[:, ["sample_size", "perc_step", "perc_expected", "p50", "p10", "p90"]]
-        .to_dict(orient="records")
-    )
+    return results.loc[:, ["sample_size", "perc_step", "perc_expected", "p50", "p10", "p90"]]
 
 
 def bootstrap_test_cutoffs(
@@ -159,7 +157,7 @@ def bootstrap_test_cutoffs(
     percentile_bands: list[tuple[float, float]] = list(pairwise([0, *requested_percentiles, 100]))
 
     # Apply cutoffs to data
-    final_data: list[dict[str, Any]] = _apply_cutoffs(
+    final_data: pd.DataFrame = _apply_cutoffs(
         requested_percentiles=requested_percentiles,
         cutoffs=cutoffs,
         data=data,
