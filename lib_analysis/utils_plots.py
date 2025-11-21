@@ -400,6 +400,7 @@ def plot_hanging_rootogram(
 def plot_bootstrap_percentile_with_ci(
         bootstrap_requested_percentiles: pd.DataFrame,
         bootstrap_all_percentiles: pd.DataFrame,
+        bootstrap_ci_level: float,
     ) -> str:
     """Create a plot of bootstrap percentile estimates with confidence intervals.
 
@@ -409,6 +410,7 @@ def plot_bootstrap_percentile_with_ci(
     Args:
         bootstrap_requested_percentiles: List of requested percentiles with estimates.
         bootstrap_all_percentiles: List of all percentiles from 1 to 99.
+        bootstrap_ci_level: Confidence interval level (e.g., 0.95 for 95% CI).
 
     Returns:
         SVG string of the generated percentile plot with confidence intervals.
@@ -416,27 +418,26 @@ def plot_bootstrap_percentile_with_ci(
     # Extract data arrays
     all_df = bootstrap_all_percentiles
     requested_df = bootstrap_requested_percentiles
-    ci_level: float = bootstrap_all_percentiles.iloc[0]["ci_level"]
 
     # Create the plot
     figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
 
     ax.fill_between(
         x=all_df["percentile"],
-        y1=all_df["ci_lower"],
-        y2=all_df["ci_upper"],
+        y1=all_df["bootstrap_ci_lower"],
+        y2=all_df["bootstrap_ci_upper"],
         alpha=BASE_ALPHA, color="lightblue",
-        label=f"Intervallo di Confidenza {ci_level * 100}%",
+        label=f"Intervallo di Confidenza {bootstrap_ci_level * 100}%",
     )
 
     # Plot percentile estimates as points connected by lines
-    ax.plot(requested_df["percentile"], requested_df["value"], color=PRIMARY_COLOR, linewidth=0,
+    ax.plot(requested_df["percentile"], requested_df["bootstrap_value"], color=PRIMARY_COLOR, linewidth=0,
         marker="o", markersize=6, markerfacecolor=PRIMARY_COLOR,
         markeredgecolor=PRIMARY_COLOR, markeredgewidth=2,
         label="Stime Percentili")
 
     # plot a vertical line for each requested percentile
-    for rp, rv in zip(requested_df["percentile"], requested_df["value"], strict=True):
+    for rp, rv in zip(requested_df["percentile"], requested_df["bootstrap_value"], strict=True):
         ax.vlines(rp, ymin=0, ymax=rv, colors=PRIMARY_COLOR, linewidth=1)
 
     # Formatting
@@ -465,18 +466,8 @@ def plot_montecarlo_vs_bootstrap(
     of the distribution characteristics between bootstrap and Monte Carlo methods.
 
     Args:
-        bootstrap_percentiles: List of dictionaries, each containing:
-            - "percentile": percentile value (0-100)
-            - "first_quartile": first quartile of bootstrap distribution
-            - "third_quartile": third quartile of bootstrap distribution
-            - "min": minimum value of bootstrap distribution
-            - "max": maximum value of bootstrap distribution
-        montecarlo_percentiles: List of dictionaries, each containing:
-            - "percentile": percentile value (0-100)
-            - "first_quartile": first quartile of Monte Carlo distribution
-            - "third_quartile": third quartile of Monte Carlo distribution
-            - "min": minimum value of Monte Carlo distribution
-            - "max": maximum value of Monte Carlo distribution
+        bootstrap_percentiles: DataFrame of bootstrap percentile statistics.
+        montecarlo_percentiles: DataFrame of Monte Carlo percentile statistics.
 
     Returns:
         SVG string of the generated Monte Carlo comparison plot.
@@ -503,10 +494,10 @@ def plot_montecarlo_vs_bootstrap(
         montecarlo_pos = center_position + offset
 
         # === BOOTSTRAP BOX PLOT ===
-        bootstrap_q1 = bootstrap_perc["first_quartile"]
-        bootstrap_q3 = bootstrap_perc["third_quartile"]
-        bootstrap_min = bootstrap_perc["min"]
-        bootstrap_max = bootstrap_perc["max"]
+        bootstrap_q1 = bootstrap_perc["bootstrap_first_quartile"]
+        bootstrap_q3 = bootstrap_perc["bootstrap_third_quartile"]
+        bootstrap_min = bootstrap_perc["bootstrap_min"]
+        bootstrap_max = bootstrap_perc["bootstrap_max"]
 
         # Draw bootstrap box
         bootstrap_box_height = bootstrap_q3 - bootstrap_q1
@@ -528,10 +519,10 @@ def plot_montecarlo_vs_bootstrap(
         # === MONTE CARLO BOX PLOT ===
         # Get corresponding Monte Carlo data
         mc_data = montecarlo_percentiles.iloc[row_index] # type: ignore[call-overload]
-        mc_q1 = mc_data["first_quartile"]
-        mc_q3 =mc_data["third_quartile"]
-        mc_min = mc_data["min"]
-        mc_max = mc_data["max"]
+        mc_q1 = mc_data["montecarlo_first_quartile"]
+        mc_q3 =mc_data["montecarlo_third_quartile"]
+        mc_min = mc_data["montecarlo_min"]
+        mc_max = mc_data["montecarlo_max"]
 
         # Draw Monte Carlo box
         mc_box_height = mc_q3 - mc_q1
