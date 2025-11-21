@@ -398,8 +398,8 @@ def plot_hanging_rootogram(
 
 
 def plot_bootstrap_percentile_with_ci(
-        bootstrap_requested_percentiles: list[dict[str, Any]],
-        bootstrap_all_percentiles: list[dict[str, Any]],
+        bootstrap_requested_percentiles: pd.DataFrame,
+        bootstrap_all_percentiles: pd.DataFrame,
     ) -> str:
     """Create a plot of bootstrap percentile estimates with confidence intervals.
 
@@ -414,9 +414,9 @@ def plot_bootstrap_percentile_with_ci(
         SVG string of the generated percentile plot with confidence intervals.
     """
     # Extract data arrays
-    all_df = pd.DataFrame(bootstrap_all_percentiles)
-    requested_df = pd.DataFrame(bootstrap_requested_percentiles)
-    ci_level: float = bootstrap_all_percentiles[0]["ci_level"]
+    all_df = bootstrap_all_percentiles
+    requested_df = bootstrap_requested_percentiles
+    ci_level: float = bootstrap_all_percentiles.iloc[0]["ci_level"]
 
     # Create the plot
     figure, ax = plt.subplots(figsize=BASE_FIGURE_SIZE)
@@ -456,8 +456,8 @@ def plot_bootstrap_percentile_with_ci(
 
 
 def plot_montecarlo_vs_bootstrap(
-        bootstrap_percentiles: list[dict[str, Any]],
-        montecarlo_percentiles: list[dict[str, Any]],
+        bootstrap_percentiles: pd.DataFrame,
+        montecarlo_percentiles: pd.DataFrame,
     ) -> str:
     """Create a box plot comparing bootstrap and Monte Carlo percentile distributions.
 
@@ -490,7 +490,7 @@ def plot_montecarlo_vs_bootstrap(
     box_width = 0.1
     offset = 0.1  # Distance between paired boxes
 
-    for i, bootstrap_perc in enumerate(bootstrap_percentiles):
+    for i, (row_index, bootstrap_perc) in enumerate(bootstrap_percentiles.iterrows()):
         percentile = bootstrap_perc["percentile"]
         percentile_labels.append(f"{percentile}")
 
@@ -527,7 +527,7 @@ def plot_montecarlo_vs_bootstrap(
 
         # === MONTE CARLO BOX PLOT ===
         # Get corresponding Monte Carlo data
-        mc_data = montecarlo_percentiles[i]
+        mc_data = montecarlo_percentiles.iloc[row_index] # type: ignore[call-overload]
         mc_q1 = mc_data["first_quartile"]
         mc_q3 =mc_data["third_quartile"]
         mc_min = mc_data["min"]
