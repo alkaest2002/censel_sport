@@ -15,10 +15,6 @@ def save_analysis_results(
 ) -> None:
     """Save analysis results and bootstrap estimates to JSON files.
 
-    This function extracts analysis data from a dictionary and saves it to multiple
-    files including SVG plots, analysis results, bootstrap samples, and Monte Carlo
-    simulation samples. All files are saved to a directory named after the metric ID.
-
     Args:
         data_dict: Dictionary containing data.
         bootstrap_samples: List containing bootstrap samples for statistical analysis.
