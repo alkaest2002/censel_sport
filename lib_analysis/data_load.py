@@ -80,10 +80,6 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
 def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
     """Load performance data from synthetic sources.
 
-    Generates synthetic performance data based on the metric configuration.
-    Uses the metric ID to determine the data generation pattern and applies
-    the specified random seed for reproducibility.
-
     Args:
         metric_config: Configuration dictionary containing:
             - id: Metric identifier
@@ -128,10 +124,6 @@ def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
 
 def load_data(metric_config: dict[str, Any]) -> dict[str, Any]:
     """Load performance data based on the metric configuration.
-
-    Dispatches data loading to the appropriate function based on the source_type
-    specified in the metric configuration. Supports loading from database files
-    or generating synthetic data.
 
     Args:
         metric_config: Configuration dictionary that must contain a 'source_type'
