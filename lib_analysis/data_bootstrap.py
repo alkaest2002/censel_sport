@@ -4,6 +4,7 @@ from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
+import pandas as pd
 from scipy.stats import iqr
 
 from lib_analysis.utils_generic import is_falsy
@@ -11,21 +12,21 @@ from lib_analysis.utils_stats import compute_sample_size
 
 
 def _compute_cutoffs(
-        bootstrap_percentiles: list[dict[str, Any]],
+        bootstrap_percentiles: pd.Series,
         metric_precision: int = 2,
     ) -> list[tuple[float, float]]:
     """
     Compute normative table cutoffs based on bootstrap percentiles.
 
     Args:
-        bootstrap_percentiles: List of dictionaries containing bootstrap percentile data.
+        bootstrap_percentiles:  pd.Series containing bootstrap percentiles.
         metric_precision: Decimal precision for rounding cutoffs. Defaults to 2.
 
     Returns:
         A list of tuples containing the normative table cutoffs as (lower_bound, upper_bound) pairs.
     """
-    # Extract percentile values and sort them
-    percentiles_values: list[float] = sorted([percentile["value"] for percentile in bootstrap_percentiles])
+    # Sort percentiles values and convert to list
+    percentiles_values: list[float] = bootstrap_percentiles.sort_values().tolist()
 
     # Define cutoffs array adding 0 and a large number at the right end
     cutoffs: NDArray[np.number[Any]] = np.round([0, *percentiles_values, 1e10], metric_precision)
@@ -35,49 +36,12 @@ def _compute_cutoffs(
 
     return cutoffs_pairs
 
-def _compute_percentile_statistics(
-        percentile: float,
-        percentile_estimates: NDArray[np.number[Any]],
-        percentile_method: str,
-        ci_level: float,
-    ) -> dict[str, Any]:
-    """
-    Compute statistics for a given percentile from bootstrap estimates.
-
-    Args:
-        percentile: The percentile being analyzed.
-        percentile_estimates: Array of bootstrap estimates for the percentile.
-        percentile_method: Method used for percentile calculation.
-        ci_level: Confidence interval level (e.g., 0.95 for 95% CI).
-
-    Returns:
-        Dictionary containing computed statistics for the percentile including value,
-        confidence intervals, quartiles, min/max, and IQR.
-    """
-    # Compute confidence interval bounds
-    alpha: float = 1 - ci_level
-    lower_ci: float = (alpha / 2) * 100
-    upper_ci: float = (1 - alpha / 2) * 100
-
-    return {
-        "percentile": percentile,
-        "value": np.percentile(percentile_estimates, 50, method=percentile_method),
-        "min": np.min(percentile_estimates),
-        "max": np.max(percentile_estimates),
-        "iqr": iqr(percentile_estimates, interpolation=percentile_method),
-        "first_quartile": np.percentile(percentile_estimates, 25, method=percentile_method),
-        "third_quartile": np.percentile(percentile_estimates, 75, method=percentile_method),
-        "ci_lower": np.percentile(percentile_estimates, lower_ci, method=percentile_method),
-        "ci_upper": np.percentile(percentile_estimates, upper_ci, method=percentile_method),
-        "ci_level": ci_level,
-    }
-
-def _create_percentile_statistics_list(
+def _create_percentile_statistics(
         percentiles: list[float | int],
         percentiles_estimates: list[NDArray[np.number[Any]]],
         percentile_method: str,
         ci_level: float,
-    ) -> list[dict[str, Any]]:
+    ) -> pd.DataFrame:
     """
     Create a list of percentile statistics dictionaries from bootstrap estimates.
 
@@ -89,30 +53,29 @@ def _create_percentile_statistics_list(
         ci_level: Confidence interval level (e.g., 0.95 for 95% CI).
 
     Returns:
-        List of dictionaries, where each dictionary contains statistics for a specific percentile.
+        pandas DataFrame where each row contains statistics for a specific percentile.
     """
 
-    # Initialize dictionary
-    results: list[dict[str, Any]] = []
+    # Convert boostrap percentiles estimates to DataFrame for easier aggregation
+    bootstrap_df: pd.DataFrame = pd.DataFrame(percentiles_estimates, columns=percentiles)
 
-    # Convert percentiles estimates list into numpy array for better indexing
-    percentiles_estimates_stack: NDArray[np.number[Any]] =  np.vstack(percentiles_estimates)
+    # Compute statistics for each percentile
+    bootstrap_stats: pd.DataFrame = (pd.DataFrame({
+            "percentile": bootstrap_df.columns,
+            "value": bootstrap_df.quantile(0.5, interpolation=percentile_method),
+            "min": bootstrap_df.min(),
+            "max": bootstrap_df.max(),
+            "iqr": bootstrap_df.agg(lambda x: iqr(x)),
+            "first_quartile": bootstrap_df.quantile(0.25, interpolation=percentile_method),
+            "third_quartile": bootstrap_df.quantile(0.75, interpolation=percentile_method),
+            "ci_lower": bootstrap_df.quantile((1 - ci_level) / 2, interpolation=percentile_method),
+            "ci_upper": bootstrap_df.quantile(1 - (1 - ci_level) / 2, interpolation=percentile_method),
+        })
+        .assign(ci_level=ci_level)
+        .reset_index(drop=True)
+    )
 
-    # Iterate over percentiles and compute statistics
-    for i, p in enumerate(percentiles):
-
-        # Get estimates for current percentile
-        percentile_estimates: NDArray[np.number[Any]] = percentiles_estimates_stack[:, i]
-
-        # Compute and store statistics
-        results.append(_compute_percentile_statistics(
-            percentile=p,
-            percentile_estimates=percentile_estimates,
-            percentile_method=percentile_method,
-            ci_level=ci_level,
-        ))
-
-    return results
+    return bootstrap_stats
 
 
 def compute_bootstrap_percentiles(
@@ -183,7 +146,7 @@ def compute_bootstrap_percentiles(
             .append(np.percentile(bootstrap_sample, requested_percentiles, method=percentile_method))
 
     # Create list for all bootstrap percentile statistics
-    all_bootstrap_percentiles: list[dict[str, Any]] = _create_percentile_statistics_list(
+    all_bootstrap_percentiles: pd.DataFrame = _create_percentile_statistics(
         percentiles=all_percentiles,
         percentiles_estimates=computed_all_percentiles,
         percentile_method=percentile_method,
@@ -191,7 +154,7 @@ def compute_bootstrap_percentiles(
     )
 
     # Create list for requested bootstrap percentile statistics
-    requested_bootstrap_percentiles: list[dict[str, Any]] = _create_percentile_statistics_list(
+    requested_bootstrap_percentiles: pd.DataFrame = _create_percentile_statistics(
         percentiles=requested_percentiles,
         percentiles_estimates=computed_requested_percentiles,
         percentile_method=percentile_method,
@@ -199,7 +162,7 @@ def compute_bootstrap_percentiles(
     )
 
     # Compute cutoffs based on requested percentiles
-    percentile_cutoffs = _compute_cutoffs(requested_bootstrap_percentiles, metric_precision=metric_precision)
+    percentile_cutoffs = _compute_cutoffs(requested_bootstrap_percentiles["value"], metric_precision=metric_precision)
 
     # Update metric config by adding bootstrap_sample_size
     data_dict["metric_config"]["bootstrap_sample_size"] = bootstrap_sample_size
