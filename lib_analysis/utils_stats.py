@@ -161,7 +161,7 @@ def apply_standardization(
     cutoffs_with_inclusive: list[tuple[tuple[float, float], str]] = \
         list(zip(cutoffs, ["both", *["right"] * (len(cutoffs) - 1)], strict=True))
 
-    # Compute standardized scores
+    # Compute standardized steps
     standardized_steps: pd.Series = data.case_when(
         [
             (lambda x, cutoffs=cutoffs, inclusive=inclusive:
@@ -170,7 +170,7 @@ def apply_standardization(
         ],
     ).astype(int)
 
-    # Compute standardize steps
+    # Compute standardized values based on performance direction
     standardized_values: pd.Series =\
         standardized_steps if higher_is_better else standardized_steps.rsub(len(cutoffs)+1)
 
@@ -199,7 +199,7 @@ def apply_standardization(
             "original_value",
             "standardized_step",
             "standardized_value",
-            "standardized_awarded_scores",
+            "standardized_awarded_score",
             "standardized_value_bounds"],
         axis=1,
     )
