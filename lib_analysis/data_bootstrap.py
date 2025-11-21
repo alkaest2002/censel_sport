@@ -40,7 +40,7 @@ def _create_percentile_statistics(
         percentiles: list[float],
         percentiles_estimates: list[NDArray[np.number[Any]]],
         interpolation_method: str,
-        ci_level: float,
+        bootstrap_ci_level: float,
     ) -> pd.DataFrame:
     """
     Create a list of percentile statistics dictionaries from bootstrap estimates.
@@ -50,14 +50,14 @@ def _create_percentile_statistics(
         percentiles_estimates: List of numpy arrays containing bootstrap estimates
             for each percentile.
         interpolation_method: Method used for percentile calculation (e.g., 'linear', 'nearest').
-        ci_level: Confidence interval level (e.g., 0.95 for 95% CI).
+        bootstrap_ci_level: Confidence interval level (e.g., 0.95 for 95% CI).
 
     Returns:
         pandas DataFrame where each row contains statistics for a specific percentile.
     """
 
     # Compute upper and lower bounds for confidence intervals
-    alpha: float = 1 - ci_level
+    alpha: float = 1 - bootstrap_ci_level
     lower_bound: float = alpha / 2
     upper_bound: float = 1 - (alpha / 2)
 
@@ -105,7 +105,7 @@ def compute_bootstrap_percentiles(
     data: NDArray[np.number[Any]] = clean.get("data", np.array([]))
     requested_percentiles: list[float] = sorted(metric_config.get("requested_percentiles", [5, 25, 50, 75, 95]))
     n_replicates: int = metric_config.get("bootstrap_n_samples", 10000)
-    ci_level: float = metric_config.get("bootstrap_ci_level", 0.95)
+    bootstrap_ci_level: float = metric_config.get("bootstrap_ci_level", 0.95)
     metric_type: str | None = metric_config.get("metric_type")
     metric_precision: int = metric_config.get("metric_precision", 2)
     random_state: int = metric_config.get("random_state", 42)
@@ -154,7 +154,7 @@ def compute_bootstrap_percentiles(
         percentiles=all_percentiles,
         percentiles_estimates=computed_all_percentiles,
         interpolation_method=interpolation_method,
-        ci_level=ci_level,
+        bootstrap_ci_level=bootstrap_ci_level,
     )
 
     # Create list for requested bootstrap percentile statistics
@@ -162,7 +162,7 @@ def compute_bootstrap_percentiles(
         percentiles=requested_percentiles,
         percentiles_estimates=computed_requested_percentiles,
         interpolation_method=interpolation_method,
-        ci_level=ci_level,
+        bootstrap_ci_level=bootstrap_ci_level,
     )
 
     # Compute cutoffs based on requested percentiles
