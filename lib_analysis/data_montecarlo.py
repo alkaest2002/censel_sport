@@ -80,7 +80,7 @@ def monte_carlo_validation(
     montecarlo_estimates: list[NDArray[np.number[Any]]] = []
 
     # Define percentile method based on metric_typetype of metric (either 'continuous' or 'discrete')
-    percentile_method: Literal["linear", "nearest"] = "linear" if metric_type == "continuous" else "nearest"
+    interpolation_method: Literal["linear", "nearest"] = "linear" if metric_type == "continuous" else "nearest"
 
     # Run Monte Carlo simulations
     for i in range(montecarlo_n_samples):
@@ -93,7 +93,7 @@ def monte_carlo_validation(
 
         # Compute requested percentiles on synthetic data
         montecarlo_estimates.append(
-            np.percentile(synthetic_data, requested_percentiles, method=percentile_method))
+            np.percentile(synthetic_data, requested_percentiles, method=interpolation_method))
 
     # Convert Monte Carlo percentiles estimates to DataFrame for easier aggregation
     montecarlo_df: pd.DataFrame = pd.DataFrame(montecarlo_estimates, columns=requested_percentiles)
@@ -102,34 +102,34 @@ def monte_carlo_validation(
     montecarlo_stats: pd.DataFrame = (
         pd.DataFrame({
             "percentile": montecarlo_df.columns,
-            "value": montecarlo_df.quantile(0.5, interpolation=percentile_method),
-            "min": montecarlo_df.min(),
-            "max": montecarlo_df.max(),
-            "iqr": montecarlo_df.agg(lambda x: stats.iqr(x)),
-            "first_quartile": montecarlo_df.quantile(0.25, interpolation=percentile_method),
-            "third_quartile": montecarlo_df.quantile(0.75, interpolation=percentile_method),
+            "montecarlo_value": montecarlo_df.quantile(0.5, interpolation=interpolation_method),
+            "montecarlo_min": montecarlo_df.min(),
+            "montecarlo_max": montecarlo_df.max(),
+            "montecarlo_iqr": montecarlo_df.agg(lambda x: stats.iqr(x)),
+            "montecarlo_first_quartile": montecarlo_df.quantile(0.25, interpolation=interpolation_method),
+            "montecarlo_third_quartile": montecarlo_df.quantile(0.75, interpolation=interpolation_method),
         })
-        .reset_index(drop=True)
         .merge(
-            bootstrap_requested_percentiles.loc[:, ["percentile", "value", "ci_lower", "ci_upper"]],
+            bootstrap_requested_percentiles
+                .loc[:, ["percentile", "bootstrap_value", "bootstrap_ci_lower", "bootstrap_ci_upper"]],
             on="percentile",
-            suffixes=("_montecarlo", "_bootstrap"),
         )
         .assign(
-            bias=lambda df: df["value_montecarlo"] - df["value_bootstrap"],
-            relative_bias=lambda df: df["bias"].div(df["value_bootstrap"]).mul(100).fillna(0),
+            bias=lambda df: df["montecarlo_value"] - df["bootstrap_value"],
+            relative_bias=lambda df: df["bias"].div(df["bootstrap_value"]).mul(100).fillna(0),
             coverage=lambda df: [
                 montecarlo_df[row["percentile"]].between(
-                    row["ci_lower"],
-                    row["ci_upper"],
+                    row["bootstrap_ci_lower"],
+                    row["bootstrap_ci_upper"],
                 ).mean() * 100
                 for _, row in df.iterrows()
             ],
         )
+        .reset_index(drop=True)
     )
 
 
-    # Update metric config with montecarlo_sample_size
+    # Update metric config with montecarlo sample_size
     data_dict["metric_config"]["montecarlo_sample_size"] = montecarlo_sample_size
 
     # Update data dictionary with montecarlo results
