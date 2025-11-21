@@ -22,7 +22,6 @@ def validate_file_path(filepath: str, type_of_request: Literal["analysis", "repo
         Path("./data_out") / filepath / f"{filepath}_analysis.json" if type_of_request == "report"
         else Path("./config") / f"{Path(filepath)}.json"
     )
-    print(file_path)
 
     if not file_path.exists():
         raise FileNotFoundError(f"File not found: {filepath}")
