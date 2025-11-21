@@ -23,11 +23,7 @@ def monte_carlo_validation(
     the quality of bootstrap percentile estimates.
 
     Args:
-        data_dict: Dictionary containing analysis data with the following required keys:
-            - metric_config: Configuration parameters for the metric analysis
-            - clean: Cleaned data containing the original dataset
-            - bootstrap: Bootstrap results with requested percentiles
-            - fit: Distribution fitting results with best model information
+        data_dict: Dictionary containing data.
 
     Returns:
         A tuple containing:
@@ -36,10 +32,6 @@ def monte_carlo_validation(
 
     Raises:
         ValueError: If any required data dictionary components are missing or empty.
-
-    Note:
-        The function uses different percentile computation methods based on metric type:
-        'linear' for continuous metrics and 'nearest' for discrete metrics.
     """
     # Extract data from dictionary
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
@@ -56,7 +48,7 @@ def monte_carlo_validation(
     best_model_name: str = best_model.get("name", "")
     best_model_parameters: list[float] = best_model.get("parameters", [])
 
-    # Raise error if something is missing
+    # Raise error if something crucial is missing
     if any(map(is_falsy,
         (
             metric_config,
@@ -74,7 +66,7 @@ def monte_carlo_validation(
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Compute sample size based on data
-    montecarlo_sample_size = int(compute_sample_size(data_dict))
+    montecarlo_sample_size: int = compute_sample_size(data_dict)
 
     # Get distributions
     distributions: dict[str, stats.rv_continuous | stats.rv_discrete] =\
@@ -95,7 +87,7 @@ def monte_carlo_validation(
     # Initialize list to store montecarlo percentile estimates metrics
     montecarlo_results: list[dict[str, Any]] = []
 
-    # Define percentile method based on metric_type
+    # Define percentile method based on metric_typetype of metric (either 'continuous' or 'discrete')
     percentile_method: Literal["linear", "nearest"] = "linear" if metric_type == "continuous" else "nearest"
 
     # Run Monte Carlo simulations
