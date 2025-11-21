@@ -54,6 +54,7 @@ def _compute_percentile_statistics(
         Dictionary containing computed statistics for the percentile including value,
         confidence intervals, quartiles, min/max, and IQR.
     """
+    # Compute confidence interval bounds
     alpha: float = 1 - ci_level
     lower_ci: float = (alpha / 2) * 100
     upper_ci: float = (1 - alpha / 2) * 100
@@ -94,7 +95,7 @@ def _create_percentile_statistics_list(
     # Initialize dictionary
     results: list[dict[str, Any]] = []
 
-    # Convert list into numpy array for better indexing
+    # Convert percentiles estimates list into numpy array for better indexing
     percentiles_estimates_stack: NDArray[np.number[Any]] =  np.vstack(percentiles_estimates)
 
     # Iterate over percentiles and compute statistics
@@ -125,10 +126,7 @@ def compute_bootstrap_percentiles(
     and user-requested percentiles, then creates normative table cutoffs.
 
     Args:
-        data_dict: Dictionary containing the following required keys:
-            - 'metric_config': Configuration parameters including percentiles to compute,
-              bootstrap parameters, and random state
-            - 'clean': Dictionary with 'data' key containing the numpy array of clean data
+        data_dict: Dictionary containing data.
 
     Returns:
         A tuple containing:
@@ -137,12 +135,6 @@ def compute_bootstrap_percentiles(
 
     Raises:
         ValueError: If required data (metric_config, clean, or data) is missing or falsy.
-
-    Note:
-        The function adds a 'bootstrap' key to data_dict containing:
-        - 'all_percentiles': Statistics for percentiles 0-100 (step 5)
-        - 'requested_percentiles': Statistics for user-requested percentiles
-        - 'cutoffs': Normative table cutoff ranges
     """
     # Extract data from dictionary
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
@@ -163,15 +155,15 @@ def compute_bootstrap_percentiles(
     rng = np.random.default_rng(random_state)
 
     # Comptue sample size based on data
-    bootstrap_sample_size = int(compute_sample_size(data_dict))
+    bootstrap_sample_size: int = compute_sample_size(data_dict)
 
-    # Define percentile method based on metric_precision
+    # Define percentile method based on type of metric (either 'continuous' or 'discrete')
     percentile_method: str = "linear" if metric_type == "continuous" else "nearest"
 
     # Generate all percentiles from 0 to 100 in steps of 5
     all_percentiles: list[float] = list(range(0, 101, 5))
 
-    # Initialize lists
+    # Initialize lists that will hold bootstrap results
     bootstrap_samples: list[NDArray[np.number[Any]]] = []
     bootstrap_sample: NDArray[np.number[Any]] = np.array([])
     computed_all_percentiles: list[NDArray[np.number[Any]]] = []
@@ -210,13 +202,13 @@ def compute_bootstrap_percentiles(
         ci_level=ci_level,
     )
 
-    # Compute cutoffs for normative tables based on requested percentiles
+    # Compute cutoffs based on requested percentiles
     percentile_cutoffs = _compute_cutoffs(requested_bootstrap_percentiles, metric_precision=metric_precision)
 
-    # Update metric config with bootstrap_sample_size
+    # Update metric config by adding bootstrap_sample_size
     data_dict["metric_config"]["bootstrap_sample_size"] = bootstrap_sample_size
 
-    # Store results in data dictionary
+    # Update data dictionary
     data_dict["bootstrap"] = {
         "all_percentiles": all_bootstrap_percentiles,
         "requested_percentiles": requested_bootstrap_percentiles,
