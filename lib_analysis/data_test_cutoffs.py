@@ -20,10 +20,6 @@ def _apply_cutoffs(
 ) -> list:
     """Apply cutoffs to several random samples of different sizes and collect results.
 
-    This function generates random samples of various sizes from the provided data,
-    applies standardization with the given cutoffs, and collects statistical results
-    about the distribution of standardized values.
-
     Args:
         requested_percentiles: List of percentile thresholds for cutoffs.
         cutoffs: List of tuples defining the cutoff boundaries.
@@ -118,11 +114,6 @@ def bootstrap_test_cutoffs(
 ) -> dict[str, Any]:
     """Bootstrap test cutoffs using different sample sizes.
 
-    This function performs a bootstrap analysis to test the stability and accuracy
-    of cutoff values across different sample sizes. It extracts data from the
-    provided dictionary, applies cutoffs to multiple random samples of varying
-    sizes, and collects statistical results.
-
     Args:
         data_dict: Dictionary containing data and configuration parameters.
                   Must include 'metric_config', 'clean', and 'bootstrap' sections.
@@ -157,7 +148,7 @@ def bootstrap_test_cutoffs(
     requested_percentiles: list[float] = sorted(metric_config.get("requested_percentiles", []))
     random_state: int = metric_config.get("random_state", 42)
 
-    # Raise error if something is missing
+    # Raise error if something crucial is missing
     if any(map(is_falsy, (metric_config, clean, data, bootstrap, cutoffs, requested_percentiles))):
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
