@@ -39,7 +39,7 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
         # Load data from database
         db_df: pd.DataFrame = query_from_db(metric_config)
 
-        # Enforce data to be numeric
+        # Enforce value column to be numeric
         raw_data: np.ndarray = pd.to_numeric(db_df.loc[:, "value"], downcast="integer").to_numpy()
 
         # Generate descriptive statistics from data
