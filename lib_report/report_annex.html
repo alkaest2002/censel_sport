@@ -511,11 +511,15 @@
                             <p>
                                 In questa pagina viene presentata un'analisi della stabilità della tavola di conversione (cfr all. {{ header }}3, pag. {{ page + 2 }}) quando applicata a campioni di diversa consistenza numerica ({{data.bootstrap.cutoffs_test.sample_sizes | join(", ")}} osservazioni).
                             </p>
+                        </li>
+                        <li>
                             <p>
-                                Per ciascuna delle {{ data.bootstrap.cutoffs_test.sample_sizes | length }} numerosità considerate, sono stati generati 1000 campioni derivati dal <span class="text-italic">dataset</span> originario. Il ricampionamento causale con reimmissione consente di mantenere le caratteristiche distributive dei dati osservati.
+                                Per ciascuna delle {{ data.bootstrap.cutoffs_test.sample_sizes | length }} numerosità considerate, vengono generati 1000 campioni derivati dal <span class="text-italic">dataset</span> originario. Viene quindi applicata la tavola di conversione ai punteggi grezzi di ogni campione, calcolando la proporzione di osservazioni che ricade in ciascuna fascia percentilica. Si ottiene così una distribuzione di proporzioni per ogni fascia e numerosità campionaria.
                             </p>
+                        </li>
+                        <li>
                             <p>
-                                Su ogni campione viene applicata la tavola di conversione, trasformando i punteggi grezzi in fasce percentiliche e calcolando la proporzione di osservazioni ricadente in ciascuna fascia.
+                                <span class="text-bold">Attenzione</span>: la somma <span class="text-italic">between</span> dei valori OS non ha significato poiché ogni dato corrisponde alla mediana <span class="text-italic">within</span> delle distribuzioni osservate.
                             </p>
                         </li>
                     </ul>
@@ -552,7 +556,7 @@
                                         <div class="caption">
                                             <span>Tabella {{ header }}4.{{ loop.index }}</span>
                                             <span>
-                                                FA = Fascia, AT = Percentile atteso, OS = Percentile osservato, AM = Ampiezza intervallo di fluttuazione, IF = Intervallo di fluttuazione 10%-90%. 
+                                                FA = Fascia, AT = Percentile atteso, OS = Percentile osservato, AM = Ampiezza intervallo di fluttuazione, IF = Intervallo di fluttuazione 10%-90%.
                                             </span>
                                         </div>
                                     </td>
