@@ -70,7 +70,7 @@ def _apply_cutoffs(
                 .loc[:, "standardized_step"]
                     .value_counts(normalize=True)
                     .reindex(range(1, len(cutoffs)+1), fill_value=0) # Make sure every standardize step is in
-                    .rename("value")
+                    .rename("observed_proportion")
                     .to_frame()
                     .sort_index()
                     .reset_index(drop=False, names="perc_step"))
@@ -79,7 +79,7 @@ def _apply_cutoffs(
         current_sample_size_df: pd.DataFrame = (
             pd.concat(collected_current_sample_size_data)
                 .assign(sample_size=n)
-                .loc[:, ["sample_size", "perc_step", "value"]]
+                .loc[:, ["sample_size", "perc_step", "observed_proportion"]]
             )
 
         # append current sample size data to collected data
@@ -90,13 +90,13 @@ def _apply_cutoffs(
         pd.concat(collected_data)
             .groupby(["sample_size", "perc_step"], as_index=False)
             .agg({
-                "value": [
+                "observed_proportion": [
                     ("p10", lambda x: round(x.quantile(0.10)*100,2)), # type: ignore[list-item]
                     ("p90", lambda x: round(x.quantile(0.90)*100,2)), # type: ignore[list-item]
                     ("p50", lambda x: round(x.quantile(0.50)*100,2)), # type: ignore[list-item]
                 ],
             })
-            .assign(perc_expected=
+            .assign(expected_proportion=
                 lambda df: df["perc_step"].apply(lambda x: expected_percentile_proportions[int(x) - 1]))
         )
 
@@ -104,7 +104,7 @@ def _apply_cutoffs(
     results.columns=[ s if s else f for f,s in results.columns.to_flat_index() ]
 
 
-    return results.loc[:, ["sample_size", "perc_step", "perc_expected", "p50", "p10", "p90"]]
+    return results.loc[:, ["sample_size", "perc_step", "expected_proportion", "p50", "p10", "p90"]]
 
 
 def bootstrap_test_cutoffs(
