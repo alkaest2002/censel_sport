@@ -20,6 +20,7 @@
     "metric_subtype": "time",
     "metric_unit": "secondi",
     "metric_precision": 2,
+    "metric_precision_label": "centesimi di secondo",
     "higher_is_better": false,
     "remove_outliers": false,
     "requested_percentiles": [5, 25, 50, 75, 95],

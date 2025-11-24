@@ -15,6 +15,7 @@
     "metric_type": "discrete",
     "metric_subtype": "count",
     "metric_unit": "numero di ripetizioni",
+    "metric_precision_label": "unità",
     "metric_precision": 0,
     "higher_is_better": true,
     "remove_outliers": false,
