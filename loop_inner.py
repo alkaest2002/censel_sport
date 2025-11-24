@@ -11,6 +11,7 @@ from lib_analysis.data_plot import create_plots
 from lib_analysis.data_save import save_analysis_results
 from lib_analysis.data_standardize import compute_standard_scores
 from lib_analysis.data_test_cutoffs import bootstrap_test_cutoffs
+from lib_analysis.logger import logger_decorator
 from lib_parser.parser import create_parser
 from lib_parser.utils_parser import load_configuration_data, validate_file_path
 
@@ -18,6 +19,7 @@ if TYPE_CHECKING:
     import argparse
     from pathlib import Path
 
+@logger_decorator
 def main() -> int:
     """Run the inner pipeline.
 
