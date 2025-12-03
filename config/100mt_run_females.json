@@ -8,19 +8,33 @@
             "query": "gender=='F'"
         },
         "age": {
-            "label": "Fascia di età: 18-25 anni",
-            "query": "age >= 18 and age <= 25"
+            "label": "Fascia di età: 17-29 anni",
+            "query": "age>=17 and age<=29"
         }
     },
     "metric_type": "continuous",
     "metric_subtype": "time",
     "metric_unit": "secondi",
-    "metric_precision_label": "centesimi di secondo",
-    "metric_precision": 2,
+    "metric_precision": 1,
+    "metric_precision_label": "decimi di secondo",
     "higher_is_better": false,
-    "remove_outliers": false,
-    "requested_percentiles": [5, 25, 50, 75, 95],
-    "awarded_scores": [1, 0.8, 0.6, 0.4, 0.2, 0],
+    "remove_outliers": true,
+    "outlier_factor": 3,
+    "requested_percentiles": [
+        5,
+        25,
+        50,
+        75,
+        95
+    ],
+    "awarded_scores": [
+        1,
+        0.8,
+        0.6,
+        0.4,
+        0.2,
+        0
+    ],
     "bootstrap_ci_level": 0.95,
     "bootstrap_n_samples": 10000,
     "montecarlo_n_samples": 10000,
