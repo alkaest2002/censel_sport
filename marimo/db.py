@@ -8,7 +8,7 @@ app = marimo.App(width="full")
 def _():
     import polars as pl
     import pandas as pd
-    return (pd,)
+    return pd, pl
 
 
 @app.cell
@@ -62,8 +62,7 @@ def _(db_mapped):
 @app.cell
 def _(db_mapped):
     db_cleaned = (
-        db_mapped
-            .loc[db_mapped.gender.ne("8"), :]
+        db_mapped.replace({"gender": {"8": "F"}})
     )
 
     db_cleaned.head()
@@ -109,6 +108,13 @@ def _(db_cleaned):
 @app.cell
 def _(db_cleaned):
     db_cleaned.to_csv("./db/db.csv", index=False)
+    return
+
+
+@app.cell
+def _(pl):
+    df = pl.DataFrame({"gender": ["M", "M", "8"]})
+    df.select(pl.col)
     return
 
 
