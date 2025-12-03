@@ -105,7 +105,7 @@ def format_seconds(seconds: float, precision: int) -> str:
     minutes, secs = divmod(remainder, 60)
 
     # Format with fractional seconds
-    return f"{hours:02d}:{minutes:02d}:{secs + fractional_part:05.{precision}f}"
+    return f"{hours:02d}:{minutes:02d}:{secs + fractional_part:{3+precision}.{precision}f}"
 
 
 def format_title(title: str) -> str:
