@@ -101,7 +101,7 @@ def _(db_cleaned):
 
 @app.cell
 def _(db_cleaned):
-    db_cleaned.groupby(["test"])["value"].describe()
+    db_cleaned.groupby(["recruitment_year","test", "gender"])["value"].count()
     return
 
 
@@ -112,9 +112,9 @@ def _(db_cleaned):
 
 
 @app.cell
-def _(pl):
-    df = pl.DataFrame({"gender": ["M", "M", "8"]})
-    df.select(pl.col)
+def _(db_mapped, pl):
+    df = pl.from_pandas(db_mapped)
+    df.filter(pl.col("gender") == "8")
     return
 
 
