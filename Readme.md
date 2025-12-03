@@ -2,7 +2,7 @@
 
 A two-stage data analysis pipeline for processing and analyzing performance test data with statistical validation, distribution fitting, and visualization capabilities.
 
-Authors: Pierpaolo Calanna, Gaetano Buonaiuto, Marco Silverstrini
+Authors: Pierpaolo Calanna, Marco Silverstrini, Gaetano Buonaiuto, Christian Plazza
 
 ## Overview
 
