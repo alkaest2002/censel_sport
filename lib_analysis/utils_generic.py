@@ -81,11 +81,12 @@ def is_falsy(value: Any) -> bool:
         return not bool(value)
 
 
-def format_seconds(seconds: float) -> str:
+def format_seconds(seconds: float, precision: int) -> str:
     """Format seconds into a human-readable string (HH:MM:SS.sss).
 
     Args:
         seconds: The time in seconds to format.
+        precision: Number of decimal places for fractional seconds.
 
     Returns:
         Formatted time string in HH:MM:SS.sss format.
@@ -104,7 +105,7 @@ def format_seconds(seconds: float) -> str:
     minutes, secs = divmod(remainder, 60)
 
     # Format with fractional seconds
-    return f"{hours:02d}:{minutes:02d}:{secs + fractional_part:05.2f}"
+    return f"{hours:02d}:{minutes:02d}:{secs + fractional_part:05.{precision}f}"
 
 
 def format_title(title: str) -> str:
