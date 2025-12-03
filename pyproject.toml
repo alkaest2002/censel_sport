@@ -3,6 +3,15 @@ name = "sporty"
 version = "0.1.0"
 description = "A sports tracking application"
 requires-python = ">=3.13"
+dependencies = [
+    "jinja2>=3.1.6",
+    "matplotlib>=3.10.7",
+    "orjson>=3.11.4",
+    "pandas>=2.3.3",
+    "scipy>=1.16.3",
+    "statsmodels>=0.14.5",
+    "weasyprint>=67.0",
+]
 
 [dependency-groups]
 dev = [
