@@ -4,9 +4,11 @@ version = "0.1.0"
 description = "A sports tracking application"
 requires-python = ">=3.13"
 dependencies = [
+    "fastexcel>=0.18.0",
     "jinja2>=3.1.6",
     "marimo>=0.18.1",
     "matplotlib>=3.10.7",
+    "openpyxl>=3.1.5",
     "orjson>=3.11.4",
     "pandas>=2.3.3",
     "polars>=1.35.2",
