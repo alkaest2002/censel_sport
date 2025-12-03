@@ -18,7 +18,150 @@
       "console": []
     },
     {
-      "id": "wbkc",
+      "id": "MJUe",
+      "code_hash": "2d245728d251dc3ead78afa314ecc8d8",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "650b0cf1a6b58f3df9cc5df0284c711e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "rgkQ",
+      "code_hash": "0121465485a1ada12c3c9fb70d93390a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='rgkQ-0' random-id='7bf50060-31c5-74bb-3d4c-bbaba3eb5704'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;gender&#92;&quot;:false},{&#92;&quot;gender&#92;&quot;:false},{&#92;&quot;gender&#92;&quot;:false},{&#92;&quot;gender&#92;&quot;:false},{&#92;&quot;gender&#92;&quot;:false},{&#92;&quot;gender&#92;&quot;:false},{&#92;&quot;gender&#92;&quot;:false},{&#92;&quot;gender&#92;&quot;:false},{&#92;&quot;gender&#92;&quot;:false},{&#92;&quot;gender&#92;&quot;:false}]&quot;' data-total-rows='17466' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;gender&quot;,[&quot;boolean&quot;,&quot;bool&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='true' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "15fceb9eb4aeb1089ceadfc5164199a7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='bkHC-0' random-id='5ab93a45-c513-6575-0674-dedf49eabd67'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;&#92;&quot;:0,&#92;&quot;recruitment_year&#92;&quot;:2025,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;25mt_swim&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;M&#92;&quot;,&#92;&quot;age&#92;&quot;:19,&#92;&quot;value&#92;&quot;:24.7999992370605},{&#92;&quot;&#92;&quot;:1,&#92;&quot;recruitment_year&#92;&quot;:2025,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;25mt_swim&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;M&#92;&quot;,&#92;&quot;age&#92;&quot;:20,&#92;&quot;value&#92;&quot;:14.8000001907349},{&#92;&quot;&#92;&quot;:2,&#92;&quot;recruitment_year&#92;&quot;:2025,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;25mt_swim&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;M&#92;&quot;,&#92;&quot;age&#92;&quot;:21,&#92;&quot;value&#92;&quot;:17.0},{&#92;&quot;&#92;&quot;:3,&#92;&quot;recruitment_year&#92;&quot;:2025,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;25mt_swim&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;M&#92;&quot;,&#92;&quot;age&#92;&quot;:19,&#92;&quot;value&#92;&quot;:24.7000007629395},{&#92;&quot;&#92;&quot;:4,&#92;&quot;recruitment_year&#92;&quot;:2025,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;25mt_swim&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;F&#92;&quot;,&#92;&quot;age&#92;&quot;:19,&#92;&quot;value&#92;&quot;:22.7999992370605}]&quot;' data-total-rows='5' data-total-columns='6' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;recruitment_year&quot;,[&quot;integer&quot;,&quot;int64&quot;]],[&quot;recruitment_type&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;test&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;gender&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;age&quot;,[&quot;integer&quot;,&quot;int64&quot;]],[&quot;value&quot;,[&quot;number&quot;,&quot;float64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[[&quot;&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "c3c22df12174a2a6025a7d6059e43c16",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='lEQa-0' random-id='1e925bb0-0736-f7b8-d953-0b84c278e494'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;recruitment_year&#92;&quot;:2024,&#92;&quot;count&#92;&quot;:5261},{&#92;&quot;recruitment_year&#92;&quot;:2025,&#92;&quot;count&#92;&quot;:4045},{&#92;&quot;recruitment_year&#92;&quot;:2021,&#92;&quot;count&#92;&quot;:3336},{&#92;&quot;recruitment_year&#92;&quot;:2023,&#92;&quot;count&#92;&quot;:2680},{&#92;&quot;recruitment_year&#92;&quot;:2022,&#92;&quot;count&#92;&quot;:2140}]&quot;' data-total-rows='5' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;count&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[[&quot;recruitment_year&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "7fba0814664fec1c3e2438c4a5d9d9c7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='PKri-0' random-id='6212e7b5-9477-2f5e-7862-32a3f5243b12'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;count&#92;&quot;:9250},{&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;mlli&#92;&quot;,&#92;&quot;count&#92;&quot;:8212}]&quot;' data-total-rows='2' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;count&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[[&quot;recruitment_type&quot;,[&quot;string&quot;,&quot;object&quot;]]]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "62ec9b6550b4c87e943edc05bd54b782",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='SFPL-0' random-id='1941149e-9c02-6da2-0279-1c480b98043c'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;test&#92;&quot;:&#92;&quot;100mt_run&#92;&quot;,&#92;&quot;count&#92;&quot;:1530},{&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;count&#92;&quot;:4841},{&#92;&quot;test&#92;&quot;:&#92;&quot;25mt_swim&#92;&quot;,&#92;&quot;count&#92;&quot;:3433},{&#92;&quot;test&#92;&quot;:&#92;&quot;sit_ups&#92;&quot;,&#92;&quot;count&#92;&quot;:3830},{&#92;&quot;test&#92;&quot;:&#92;&quot;push_ups&#92;&quot;,&#92;&quot;count&#92;&quot;:3828}]&quot;' data-total-rows='5' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;count&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[[&quot;test&quot;,[&quot;string&quot;,&quot;object&quot;]]]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "907cfdf76a39c01f5805a021a60bab61",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='BYtC-0' random-id='a6361f29-8f26-c093-8183-5bed37544806'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;gender&#92;&quot;:&#92;&quot;M&#92;&quot;,&#92;&quot;count&#92;&quot;:13561},{&#92;&quot;gender&#92;&quot;:&#92;&quot;F&#92;&quot;,&#92;&quot;count&#92;&quot;:3901}]&quot;' data-total-rows='2' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;count&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[[&quot;gender&quot;,[&quot;string&quot;,&quot;object&quot;]]]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "f49adef2ad07c584df79f3d1c6769baf",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='emfo-0' random-id='ce6e6c2b-f2e9-09b9-0b35-61d82d1fbbb9'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;age&#92;&quot;:19,&#92;&quot;count&#92;&quot;:4565},{&#92;&quot;age&#92;&quot;:20,&#92;&quot;count&#92;&quot;:3966},{&#92;&quot;age&#92;&quot;:21,&#92;&quot;count&#92;&quot;:2699},{&#92;&quot;age&#92;&quot;:22,&#92;&quot;count&#92;&quot;:1992},{&#92;&quot;age&#92;&quot;:23,&#92;&quot;count&#92;&quot;:1149},{&#92;&quot;age&#92;&quot;:18,&#92;&quot;count&#92;&quot;:1130},{&#92;&quot;age&#92;&quot;:24,&#92;&quot;count&#92;&quot;:772},{&#92;&quot;age&#92;&quot;:25,&#92;&quot;count&#92;&quot;:521},{&#92;&quot;age&#92;&quot;:26,&#92;&quot;count&#92;&quot;:394},{&#92;&quot;age&#92;&quot;:27,&#92;&quot;count&#92;&quot;:181}]&quot;' data-total-rows='12' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;count&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='true' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[[&quot;age&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "62b99aa19be5daf70cf559f2ec5f9305",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='Hstk-0' random-id='e24d9dac-e763-01c5-4e5d-0f875f97577d'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;count&#92;&quot;:4841.0,&#92;&quot;mean&#92;&quot;:240.42503623592043,&#92;&quot;std&#92;&quot;:35.134134949768864,&#92;&quot;min&#92;&quot;:171.800003051758,&#92;&quot;25%&#92;&quot;:215.800003051758,&#92;&quot;50%&#92;&quot;:231.699996948242,&#92;&quot;75%&#92;&quot;:257.899993896484,&#92;&quot;max&#92;&quot;:491.100006103516},{&#92;&quot;test&#92;&quot;:&#92;&quot;100mt_run&#92;&quot;,&#92;&quot;count&#92;&quot;:1530.0,&#92;&quot;mean&#92;&quot;:14.514379089330536,&#92;&quot;std&#92;&quot;:1.6708135217954119,&#92;&quot;min&#92;&quot;:11.8999996185303,&#92;&quot;25%&#92;&quot;:13.3000001907349,&#92;&quot;50%&#92;&quot;:14.1000003814697,&#92;&quot;75%&#92;&quot;:15.3999996185303,&#92;&quot;max&#92;&quot;:27.6000003814697},{&#92;&quot;test&#92;&quot;:&#92;&quot;25mt_swim&#92;&quot;,&#92;&quot;count&#92;&quot;:3433.0,&#92;&quot;mean&#92;&quot;:18.59609670219566,&#92;&quot;std&#92;&quot;:4.125158997078465,&#92;&quot;min&#92;&quot;:11.5,&#92;&quot;25%&#92;&quot;:15.8999996185303,&#92;&quot;50%&#92;&quot;:17.7999992370605,&#92;&quot;75%&#92;&quot;:20.3999996185303,&#92;&quot;max&#92;&quot;:77.5},{&#92;&quot;test&#92;&quot;:&#92;&quot;push_ups&#92;&quot;,&#92;&quot;count&#92;&quot;:3828.0,&#92;&quot;mean&#92;&quot;:25.958725182863112,&#92;&quot;std&#92;&quot;:12.940896767227121,&#92;&quot;min&#92;&quot;:0.0,&#92;&quot;25%&#92;&quot;:17.0,&#92;&quot;50%&#92;&quot;:26.0,&#92;&quot;75%&#92;&quot;:34.0,&#92;&quot;max&#92;&quot;:68.0},{&#92;&quot;test&#92;&quot;:&#92;&quot;sit_ups&#92;&quot;,&#92;&quot;count&#92;&quot;:3830.0,&#92;&quot;mean&#92;&quot;:52.74334203655352,&#92;&quot;std&#92;&quot;:14.07910258488442,&#92;&quot;min&#92;&quot;:0.0,&#92;&quot;25%&#92;&quot;:45.0,&#92;&quot;50%&#92;&quot;:53.0,&#92;&quot;75%&#92;&quot;:61.0,&#92;&quot;max&#92;&quot;:103.0}]&quot;' data-total-rows='5' data-total-columns='8' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;count&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;mean&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;std&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;min&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;25%&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;50%&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;75%&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;max&quot;,[&quot;number&quot;,&quot;float64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[[&quot;test&quot;,[&quot;string&quot;,&quot;object&quot;]]]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RQpx",
+      "code_hash": "1fe839dc9f640ace327697fd7592a875",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "sKQR",
       "code_hash": null,
       "outputs": [],
       "console": []
