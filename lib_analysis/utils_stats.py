@@ -208,11 +208,11 @@ def compute_sample_size(
     fixed_sample_size: int | None = metric_config.get("fixed_sample_size")
     bootstrap_sample_size: int | None = metric_config.get("bootstrap_sample_size")
 
-    # If fixed sample size is set, use it
+    # If fixed sample size is set (in metric config), use it
     if fixed_sample_size is not None:
         return fixed_sample_size
 
-    # if bootstrap sample size is set, use it
+    # if bootstrap sample size is set (via computation), use it
     if bootstrap_sample_size is not None:
         return bootstrap_sample_size
 
