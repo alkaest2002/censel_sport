@@ -454,33 +454,32 @@
                             </td>
                             <td class="text-center">
                                 {% if loop.first %}
-                                &mdash;
+                                    &mdash;
                                 {% else %}
-                                {% if data.metric_config.metric_type == "continuous" %}
-                                {% if data.metric_config.metric_subtype == "time" %}
-                                da {{ (cutoff[0] + (1 / (10 ** data.metric_config.metric_precision))) | format_seconds
-                                }}
-                                {% else %}
-                                da {{ (cutoff[0] + (1 / (10 ** data.metric_config.metric_precision))) }}
-                                {% endif %}
-                                {% else %}
-                                da {{ format_float_number | format(cutoff[0] + 1) }}
-                                {% endif %}
+                                    {% if data.metric_config.metric_type == "continuous" %}
+                                        {% if data.metric_config.metric_subtype == "time" %}
+                                            da {{ (cutoff[0] + (1 / (10 ** data.metric_config.metric_precision))) | format_seconds(data.metric_config.metric_precision) }}
+                                        {% else %}
+                                            da {{ (cutoff[0] + (1 / (10 ** data.metric_config.metric_precision))) | round(data.metric_config.metric_precision) }}
+                                        {% endif %}
+                                    {% else %}
+                                        da {{ format_float_number | format(cutoff[0] + 1) }}
+                                    {% endif %}
                                 {% endif %}
                             </td>
                             <td class="text-center">
                                 {% if loop.last %}
                                 &mdash;
                                 {% else %}
-                                {% if data.metric_config.metric_type == "continuous" %}
-                                {% if data.metric_config.metric_subtype == "time" %}
-                                fino a {{ cutoff[1] | format_seconds }}
-                                {% else %}
-                                fino a {{ format_float_number | format(cutoff[1]) }}
-                                {% endif %}
-                                {% else %}
-                                fino a {{ format_float_number | format(cutoff[1]) }}
-                                {% endif %}
+                                    {% if data.metric_config.metric_type == "continuous" %}
+                                        {% if data.metric_config.metric_subtype == "time" %}
+                                            fino a {{ cutoff[1] | format_seconds(data.metric_config.metric_precision) }}
+                                        {% else %}
+                                            fino a {{ format_float_number | format(cutoff[1]) | round(data.metric_config.metric_precision) }}
+                                        {% endif %}
+                                    {% else %}
+                                        fino a {{ format_float_number | format(cutoff[1]) }}
+                                    {% endif %}
                                 {% endif %}
                             </td>
                         </tr>
