@@ -5,9 +5,11 @@ description = "A sports tracking application"
 requires-python = ">=3.13"
 dependencies = [
     "jinja2>=3.1.6",
+    "marimo>=0.18.1",
     "matplotlib>=3.10.7",
     "orjson>=3.11.4",
     "pandas>=2.3.3",
+    "polars>=1.35.2",
     "scipy>=1.16.3",
     "statsmodels>=0.14.5",
     "weasyprint>=67.0",
