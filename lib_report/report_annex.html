@@ -124,8 +124,16 @@
                             <td class="text-center">{{ data.metric_config.metric_precision_label }}</td>
                         </tr>
                         <tr>
-                            <td class="text-left">Numerosità</td>
-                            <td class="text-center">{{ data.clean.descriptive_stats.count | int }}</td>
+                            <td class="text-left">Numerosità originaria</td>
+                            <td class="text-center">{{ data.load.descriptive_stats.count | int }}</td>
+                        </tr>
+                         <tr>
+                            <td class="text-left">Numerosità dopo rimozione outlier</td>
+                            <td class="text-center">{{ data.clean.metadata.final_size | int }}</td>
+                        </tr>
+                         <tr>
+                            <td class="text-left">Numero di outlier</td>
+                            <td class="text-center">{{ data.clean.metadata.removed_outliers | int }}</td>
                         </tr>
                         {% if data.metric_config.stratification.gender.label %}
                             <tr>
