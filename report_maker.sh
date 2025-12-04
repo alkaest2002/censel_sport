@@ -3,25 +3,6 @@
 # Default folder path
 FOLDER_PATH="./config"
 
-# Parse command line arguments
-while [[ $# -gt 0 ]]; do
-    case $1 in
-        -d|--directory)
-            FOLDER_PATH="$2"
-            shift 2
-            ;;
-        -h|--help)
-            echo "Usage: $0 [-d|--directory FOLDER_PATH]"
-            echo "Run loop_inner.py and report_annex.py on all JSON files in the specified directory"
-            exit 0
-            ;;
-        *)
-            echo "Unknown option $1"
-            exit 1
-            ;;
-    esac
-done
-
 # Check if directory exists
 if [ ! -d "$FOLDER_PATH" ]; then
     echo "Error: Directory '$FOLDER_PATH' does not exist"
@@ -50,4 +31,9 @@ for json_file in "$FOLDER_PATH"/*.json; do
     echo "---"
 done
 
-echo "All files processed!"
+echo "All individual files processed!"
+echo ""
+echo "Running report merger..."
+python report_merger.py
+
+echo "✅ All processing complete - reports merged!"
