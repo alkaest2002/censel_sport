@@ -3,6 +3,25 @@
 # Default folder path
 FOLDER_PATH="./config"
 
+# Flag to control whether to run loop_inner.py
+RUN_LOOP_INNER=true
+
+# Parse command line arguments
+while getopts "s" opt; do
+    case $opt in
+        s)
+            RUN_LOOP_INNER=false
+            echo "Skipping loop_inner.py execution"
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            echo "Usage: $0 [-s]"
+            echo "  -s: Skip loop_inner.py execution"
+            exit 1
+            ;;
+    esac
+done
+
 # Check if directory exists
 if [ ! -d "$FOLDER_PATH" ]; then
     echo "Error: Directory '$FOLDER_PATH' does not exist"
@@ -19,9 +38,13 @@ for json_file in "$FOLDER_PATH"/*.json; do
     
     echo "Processing: $filename"
     
-    # Run first script
-    echo "  Running loop_inner.py..."
-    python loop_inner.py -f "$filename"
+    # Conditionally run first script
+    if [ "$RUN_LOOP_INNER" = true ]; then
+        echo "  Running loop_inner.py..."
+        python loop_inner.py -f "$filename"
+    else
+        echo "  Skipping loop_inner.py..."
+    fi
     
     # Run second script
     echo "  Running report_annex.py..."
