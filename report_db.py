@@ -46,7 +46,7 @@ def main() -> int:
             - 1: Rendering or PDF generation error
     """
     # Get parser
-    parser: argparse.ArgumentParser = create_parser(header_letter=True, page_number=True)
+    parser: argparse.ArgumentParser = create_parser(page_number=True)
 
     # Parse arguments
     args: argparse.Namespace = parser.parse_args()
