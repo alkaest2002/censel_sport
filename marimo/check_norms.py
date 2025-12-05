@@ -87,14 +87,12 @@ def _(Path, orjson):
 def _(apply_standardization, db, norms_dict, pd):
     results = {}
 
-    for group_label, group_data in db.groupby(
-        ["test","recruitment_type","recruitment_year","gender"]):
+    for group_label, group_data in db.groupby(["test", "recruitment_type", "recruitment_year", "gender"]):
         key = "_".join(map(str,group_label))
         values = group_data["value"].to_numpy()
         cutoffs = norms_dict.get(group_data.iloc[0].loc["norms"])
         results[key] = (
-            apply_standardization(data_to_standardize=values, cutoffs=cutoffs)
-                ["standardized_step"]
+            apply_standardization(data_to_standardize=values, cutoffs=cutoffs)["standardized_step"]
                 .value_counts(normalize=True, sort=False)
                 .mul(100)
                 .round(1)
@@ -120,7 +118,7 @@ def _(np, pd, results_df):
             columns=["prova","concorso","anno","genere","step1","step2","step3","step4","step5","step6"]
         )
         .replace({
-            "concorso": {"hd": "accademia", "mlli": "maresicalli"},
+            "concorso": {"hd": "accademia", "mlli": "marescialli"},
             "prova": {
                 "1000mt_run": "corsa 1000 metri",
                 "100mt_run": "corso 100 metri",
