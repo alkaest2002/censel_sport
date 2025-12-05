@@ -138,7 +138,7 @@ def _(np, pd, results_df):
 
 @app.cell
 def _(final):
-    final.iloc[39:,:]
+    final.head()
     return
 
 
