@@ -66,7 +66,6 @@ def _(pd):
     db = pd.read_csv("./db/db.csv")
     db["gender"] = db["gender"].str.replace("M", "males").str.replace("F","females")
     db["norms"] = db["test"] + "_" + db["gender"]
-
     db.head()
     return (db,)
 
@@ -132,14 +131,9 @@ def _(np, pd, results_df):
     )
 
     final = final.sort_values(by=["anno","concorso","prova","genere"])
-    return (final,)
-
-
-@app.cell
-def _(final):
     final.to_csv("./db/new_norms_applied_to_db_results.csv")
     final.to_json("./db/new_norms_applied_to_db_results.json")
-    return
+    return (final,)
 
 
 @app.cell
