@@ -54,6 +54,18 @@ for json_file in "$FOLDER_PATH"/*.json; do
     echo "---"
 done
 
+# Process TOC
+echo "Running report_toc.py..."
+python report_toc.py -n 10
+
+# Proceess DB stats
+echo "Running report_db.py..."
+python report_db_stats.py -n 11
+
+# Process DB norms
+echo "Running report_db_norms.py..."
+python report_db_norms.py -l L -n 51
+
 echo "All individual files processed!"
 echo ""
 echo "Running report merger..."
