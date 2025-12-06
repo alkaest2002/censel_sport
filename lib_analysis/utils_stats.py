@@ -122,7 +122,7 @@ def generate_synthetic_data(
 def apply_standardization(
         data_to_standardize: NDArray[np.number[Any]],
         cutoffs: list[tuple[float, float]],
-        awarded_scores: list[float],
+        awarded_scores: list[float] | None = None,
         higher_is_better: bool = False,
     ) -> pd.DataFrame:
     """Apply standardization to data using percentile cutoffs.
@@ -137,6 +137,10 @@ def apply_standardization(
     Returns:
         pd.DataFrame: DataFrame with standadization results.
     """
+    # If awarded_scores not provided, use default sequential scores
+    if awarded_scores is None:
+        awarded_scores = list(range(1, len(cutoffs) + 1))
+
     # Convert data to pandas Series for easier manipulation
     data: pd.Series = pd.Series(data_to_standardize)
 
