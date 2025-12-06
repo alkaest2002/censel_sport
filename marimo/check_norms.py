@@ -101,44 +101,7 @@ def _(apply_standardization, db, norms_dict, pd):
         )
 
     results_df = pd.DataFrame(results).fillna(0).T
-    return (results_df,)
-
-
-@app.cell
-def _(np, pd, results_df):
-    final = (
-        pd.DataFrame(
-            np.hstack(
-                [
-                    pd.Series(results_df.index).str.rsplit("_", n=3, expand=True).to_numpy(),
-                    results_df.to_numpy()
-                ]
-            ),
-            columns=["prova","concorso","anno","genere","step1","step2","step3","step4","step5","step6"]
-        )
-        .replace({
-            "concorso": {"hd": "accademia", "mlli": "marescialli"},
-            "prova": {
-                "1000mt_run": "corsa 1000 metri",
-                "100mt_run": "corso 100 metri",
-                "25mt_swim": "nuoto 25 metri",
-                "sit_ups": "addominali",
-                "push_ups": "piegamenti",
-            
-            },
-            "genere": {"males":"maschi","females":"femmine"}
-        })
-    )
-
-    final = final.sort_values(by=["anno","concorso","prova","genere"])
-    final.to_csv("./db/new_norms_applied_to_db_results.csv")
-    final.to_json("./db/new_norms_applied_to_db_results.json")
-    return (final,)
-
-
-@app.cell
-def _(final):
-    final.head()
+    results_df
     return
 
 
