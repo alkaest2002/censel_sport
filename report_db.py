@@ -82,7 +82,7 @@ def main() -> int:
 
     try:
         # Get db report template
-        template: jinja2.Template = jinja_env.get_template("db_stats.html")
+        template: jinja2.Template = jinja_env.get_template("report_db_stats.html")
 
         # Build output path
         base_path: Path = Path("./data_out/_report/A_db_stats")
@@ -90,7 +90,7 @@ def main() -> int:
 
         # Render template with data
         rendered_html: str =\
-            template.render(data=data, header=args.header_letter, page=args.page_number)
+            template.render(data=data, header="A", page=args.page_number)
 
         # Write PDF file
         HTML(string=rendered_html, base_url=str(templates_dir)).write_pdf(str(output_pdf))
