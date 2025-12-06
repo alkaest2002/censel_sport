@@ -51,7 +51,7 @@ def main() -> int:
 
     try:
         # Get report template
-        template: jinja2.Template = jinja_env.get_template("toc.html")
+        template: jinja2.Template = jinja_env.get_template("report_toc.html")
 
         # Build output paths
         base_path: Path = Path("./data_out/_report/1_toc")
