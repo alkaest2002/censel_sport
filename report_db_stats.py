@@ -77,6 +77,7 @@ def main() -> int:
     data = (pd.concat([
         grouped["gender"].apply(_stringify_value_counts),
         grouped["age_binned"].apply(_stringify_value_counts),
+        grouped["recruitment_type"].apply(_stringify_value_counts),
         grouped.size().rename("counts"),
         ], axis=1).reset_index(names=["test", "recruitment_year"]))
 

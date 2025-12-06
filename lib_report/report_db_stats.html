@@ -33,6 +33,7 @@
                         <tr>
                             <th class="text-center">Prova sportiva</th>
                             <th class="text-center">Anni</th>
+                            <th class="text-center">Tipo di reclutamento</th>
                             <th class="text-center">Genere</th>
                             <th class="text-center">Fasce d'età</th>
                             <th class="text-center">Totale</th>
@@ -48,6 +49,7 @@
                                         <td class="text-center" rowspan="{{ test_data | length }}">{{ get_test_label(test) }}</td>
                                     {% endif %}
                                     <td class="text-center">{{ row.recruitment_year }}</td>
+                                    <td class="text-center">{{ row.recruitment_type | safe }}</td>
                                     <td class="text-center">{{ row.gender | safe }}</td>
                                     <td class="text-center">{{ row.age_binned | safe }}</td>
                                     <td class="text-center">{{ row.counts }}</td>
