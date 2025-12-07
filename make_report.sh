@@ -22,11 +22,6 @@ while getopts "s" opt; do
     esac
 done
 
-# Check if directory exists
-if [ ! -d "$FOLDER_PATH" ]; then
-    echo "Error: Directory '$FOLDER_PATH' does not exist"
-    exit 1
-fi
 
 # Process each JSON file
 for json_file in "$FOLDER_PATH"/*.json; do
@@ -36,22 +31,14 @@ for json_file in "$FOLDER_PATH"/*.json; do
     # Extract filename without path and extension
     filename=$(basename "$json_file" .json)
     
-    echo "Processing: $filename"
-    
     # Conditionally run first script
     if [ "$RUN_LOOP_INNER" = true ]; then
-        echo "  Running loop_inner.py..."
         python loop_inner.py -f "$filename"
-    else
-        echo "  Skipping loop_inner.py..."
     fi
     
     # Run second script
-    echo "  Running report_annex.py..."
     python report_annex.py -f "$filename"
     
-    echo "  Completed: $filename"
-    echo "---"
 done
 
 # Process TOC
