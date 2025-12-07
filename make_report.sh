@@ -22,7 +22,6 @@ while getopts "s" opt; do
     esac
 done
 
-
 # Process each JSON file
 for json_file in "$FOLDER_PATH"/*.json; do
     # Check if any JSON files exist
