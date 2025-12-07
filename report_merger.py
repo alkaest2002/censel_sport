@@ -49,37 +49,6 @@ def _collect_pdfs(folder: Path, out_name: str) -> list[Path]:
     return pdfs
 
 
-def merge_pdfs(pdf_paths: list[Path], output_path: Path) -> int:
-    """Merge multiple PDF files into a single output file.
-
-    Args:
-        pdf_paths: list of Path objects pointing to PDF files to merge.
-        output_path: Path where the merged PDF will be written.
-
-    Returns:
-        Exit code:
-            - 0: for success
-            - 1: if no files were found.
-    """
-    # Raise error, if there are no PDFs to merge
-    if not pdf_paths:
-        print("No PDF files found to merge.", file=sys.stderr)
-        return 1
-
-    # Initialize PDF writer
-    pdf_writer: PdfWriter = PdfWriter()
-
-    # Append PDFs to writer
-    for p in pdf_paths:
-        pdf_writer.append(str(p))
-
-    # Finalize PDF creation
-    pdf_writer.write(str(output_path))
-    print(f"Merged {len(pdf_paths)} files into: {output_path}")
-
-    return 0
-
-
 def main() -> int:
     """Main entry point for the PDF merger CLI.
 
@@ -97,13 +66,29 @@ def main() -> int:
         print(f"Not a directory: {folder}", file=sys.stderr)
         return 2
 
-    # Define output path and collect PDFs
+    # Define output path
     output_path: Path = folder / "final_report.pdf"
 
     # Collect PDFs to merge
     pdfs: list[Path] = _collect_pdfs(folder, output_path.name)
 
-    return merge_pdfs(pdfs, output_path)
+    # Check if there are PDFs to merge
+    if not pdfs:
+        print("No PDF files found to merge.", file=sys.stderr)
+        return 1
+
+    # Initialize PDF writer
+    pdf_writer: PdfWriter = PdfWriter()
+
+    # Append PDFs to writer
+    for p in pdfs:
+        pdf_writer.append(str(p))
+
+    # Finalize PDF creation
+    pdf_writer.write(str(output_path))
+    print(f"Merged {len(pdfs)} files into: {output_path}")
+
+    return 0
 
 
 if __name__ == "__main__":
