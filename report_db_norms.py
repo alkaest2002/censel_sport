@@ -70,7 +70,7 @@ def main() -> int:
                 .mul(100)
                 .round(1)
                 .sort_index()
-                .add_prefix("step_")
+                .add_prefix("step")
                 .to_dict()
         )
 
