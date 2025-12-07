@@ -42,11 +42,11 @@ done
 
 # Process TOC
 echo "Running report_toc.py..."
-python report_toc.py -n 10
+python report_toc.py -n 9
 
 # Proceess DB stats
 echo "Running report_db.py..."
-python report_db_stats.py -n 11
+python report_db_stats.py -n 10
 
 # Process DB norms
 echo "Running report_db_norms.py..."
