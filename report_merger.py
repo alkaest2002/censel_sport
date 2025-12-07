@@ -57,7 +57,9 @@ def merge_pdfs(pdf_paths: list[Path], output_path: Path) -> int:
         output_path: Path where the merged PDF will be written.
 
     Returns:
-        Exit code: 0 for success, 1 if no files were found.
+        Exit code:
+            - 0: for success
+            - 1: if no files were found.
     """
     # Raise error, if there are no PDFs to merge
     if not pdf_paths:
