@@ -1,7 +1,7 @@
 [project]
 name = "sporty"
 version = "0.1.0"
-description = "A sports tracking application"
+description = "A sports data analysis and reporting tool"
 requires-python = ">=3.13"
 dependencies = [
     "fastexcel>=0.18.0",
