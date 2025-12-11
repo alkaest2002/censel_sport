@@ -66,6 +66,7 @@ exclude = [
     "node_modules",
     "venv",
     "*.egg-info",
+    "marimo"
 ]
 
 [tool.ruff.lint]
@@ -239,10 +240,6 @@ ignore = [
     "S607",
     # Mutable class attributes should be annotated with `typing.ClassVar`
     "RUF012",
-    # Missing type annotation for `self` in method
-    "ANN101",
-    # Missing type annotation for `cls` in classmethod
-    "ANN102",
     # Dynamically typed expressions (typing.Any) are disallowed
     "ANN401",
     # Found `print` statement
