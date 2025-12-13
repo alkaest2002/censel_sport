@@ -1,0 +1,105 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.18.1"
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "7a0e1205f3635540388f25dadee1546a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "daec",
+      "code_hash": "a2a21b9c77f95d856d0ff6e90e07959f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MWDY",
+      "code_hash": "7e40995f528304adecfb2325c6bffeca",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "NnsA",
+      "code_hash": "acbbfdca9a12aed1d51a983d890821d4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "application/json": "[\"text/plain:[['TABELLA DEI PUNTEGGI PER I CONCORRENTI DI SESSO MASCHILE' None None]\\n ['punti/esito' 'corsa piana metri 1000' 'addominali tempo massimo 2\\u2019']\\n ['2' 'inferiore a 3\\u2019 e 30,1\\u201d' 'oltre 85 ripetizioni']\\n ['1,6' 'da 3\\u2019 e 30,1\\u201d a 3\\u2019 e 40\\u201d' 'da 71 a 85 ripetizioni']\\n ['1,2' 'da 3\\u2019 e 40,1\\u201d a 4\\u2019' 'da 56 a 70 ripetizioni']\\n ['0,8' 'da 4\\u2019 e 0,1\\u201d a 4\\u2019 e 10\\u201d' 'da 41 a 55 ripetizioni']\\n ['0,4' 'da 4\\u2019 e 10,1\\u201d a 4\\u2019 e 20\\u201d' 'da 30 a 40 ripetizioni']\\n ['0' '///' 'meno di 30 ripetizioni']\\n ['esito sfavorevole' 'superiore a 4\\u2019 e 20\\u201d' '///']\\n ['punti/esito' 'corsa piana metri 100'\\n  'piegamenti sulle braccia tempo massimo 2\\u2019']\\n ['1' 'inferiore a 12,6\\u201d' 'oltre 50 ripetizioni']\\n ['0,8' 'da 12,6\\u201d a 13\\u201d' 'da 46 a 50 ripetizioni']\\n ['0,6' 'da 13,1\\u201d a 13,5\\u201d' 'da 40 a 45 ripetizioni']\\n ['0,4' 'da 13,6\\u201d a 14\\u201d' 'da 30 a 39 ripetizioni']\\n ['0,2' 'da 14,1\\u201d a 15,5\\u201d' 'da 20 a 29 ripetizioni']\\n ['0' 'maggiore di 15,5\\u201d' 'meno di 20 ripetizioni']]\", \"text/plain:[['TABELLA DEI PUNTEGGI PER I CONCORRENTI DI SESSO FEMMINILE' None None]\\n ['punti/esito' 'corsa piana metri 1000' 'addominali tempo massimo 2\\u2019']\\n ['2' 'inferiore a 4\\u2019 e 0,1\\u201d' 'oltre 70 ripetizioni']\\n ['1,6' 'da 4\\u2019 e 0,1\\u201d a 4\\u2019 e 10\\u201d' 'da 56 a 70 ripetizioni']\\n ['1,2' 'da 4\\u2019 e 10,1\\u201d a 4\\u2019 e 20\\u201d' 'da 41 a 55 ripetizioni']]\", \"text/plain:[['0,8' 'da 4\\u2019 e 20,1\\u201d a 4\\u2019 e 40\\u201d' 'da 31 a 40 ripetizioni']\\n ['0,4' 'da 4\\u2019 e 40,1\\u201d a 5\\u2019' 'da 20 a 30 ripetizioni']\\n ['0' '///' 'inferiore a 20 ripetizioni']\\n ['esito sfavorevole' 'maggiore di 5\\u2019' '///']\\n ['punti/esito' 'corsa piana metri 100'\\n  'piegamenti sulle braccia tempo massimo 2\\u2019']\\n ['1' 'inferiore a 15,1\\u201d' 'oltre 35 ripetizioni']\\n ['0,8' 'da 15,1\\u201d a 16\\u201d' 'da 30 a 35 ripetizioni']\\n ['0,6' 'da 16,1\\u201d 17\\u201d' 'da 25 a 29 ripetizioni']\\n ['0,4' 'da 17,1\\u201d a 18\\u201d' 'da 20 a 24 ripetizioni']\\n ['0,2' 'da 18,1\\u201d a 19\\u201d' 'da 15 a 19 ripetizioni']\\n ['0' 'maggiore di 19\\u201d' 'meno di 15 ripetizioni']]\"]"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BjsD",
+      "code_hash": "ad50817a1862b6a36e3ad383e9552efa",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "aGCe",
+      "code_hash": "2ebbd8475a32565b684bb63503e6f3b3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "hwhK",
+      "code_hash": "355385f61059383873f1ce35b4e4196d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ErfL",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    }
+  ]
+}
