@@ -1,0 +1,49 @@
+recrutiment_year,recruitment_type,test,gender,value,awarded_score
+2021,hd,1000mt_run,m,"inferiore a 3’ e 30,1”",2
+2021,hd,1000mt_run,m,"da 3’ e 30,1” a 3’ e 40”","1,6"
+2021,hd,1000mt_run,m,"da 3’ e 40,1” a 4’","1,2"
+2021,hd,1000mt_run,m,"da 4’ e 0,1” a 4’ e 10”","0,8"
+2021,hd,1000mt_run,m,"da 4’ e 10,1” a 4’ e 20”","0,4"
+2021,hd,1000mt_run,m,superiore a 4’ e 20”,0
+2021,hd,1000mt_run,m,corsa piana metri 100,punti/esito
+2021,hd,sit_ups,m,oltre 85 ripetizioni,2
+2021,hd,sit_ups,m,da 71 a 85 ripetizioni,"1,6"
+2021,hd,sit_ups,m,da 56 a 70 ripetizioni,"1,2"
+2021,hd,sit_ups,m,da 41 a 55 ripetizioni,"0,8"
+2021,hd,sit_ups,m,da 30 a 40 ripetizioni,"0,4"
+2021,hd,sit_ups,m,meno di 30 ripetizioni,0
+2021,hd,sit_ups,m,piegamenti sulle braccia tempo massimo 2’,punti/esito
+2021,hd,100mt_run,m,"da 12,6” a 13”","0,8"
+2021,hd,100mt_run,m,"da 13,1” a 13,5”","0,6"
+2021,hd,100mt_run,m,"da 13,6” a 14”","0,4"
+2021,hd,100mt_run,m,"da 14,1” a 15,5”","0,2"
+2021,hd,100mt_run,m,"maggiore di 15,5”",0
+2021,hd,push_ups,m,da 40 a 46 ripetizioni,"0,8"
+2021,hd,push_ups,m,da 30 a 39 ripetizioni,"0,6"
+2021,hd,push_ups,m,da 20 a 29 ripetizioni,"0,4"
+2021,hd,push_ups,m,da 13 a 19 ripetizioni,"0,2"
+2021,hd,push_ups,m,meno di 13 ripetizioni,0
+2021,hd,1000mt_run,f,"inferiore a 4’ e 0,1”",2
+2021,hd,1000mt_run,f,"da 4’ e 0,1” a 4’ e 10”","1,6"
+2021,hd,1000mt_run,f,"da 4’ e 10,1” a 4’ e 20”","1,2"
+2021,hd,1000mt_run,f,"da 4’ e 20,1” a 4’ e 40”","0,8"
+2021,hd,1000mt_run,f,"da 4’ e 40,1” a 5’","0,4"
+2021,hd,1000mt_run,f,maggiore di 5’,0
+2021,hd,1000mt_run,f,corsa piana metri 100,punti/esito
+2021,hd,sit_ups,f,oltre 70 ripetizioni,2
+2021,hd,sit_ups,f,da 56 a 70 ripetizioni,"1,6"
+2021,hd,sit_ups,f,da 41 a 55 ripetizioni,"1,2"
+2021,hd,sit_ups,f,da 31 a 40 ripetizioni,"0,8"
+2021,hd,sit_ups,f,da 20 a 30 ripetizioni,"0,4"
+2021,hd,sit_ups,f,inferiore a 20 ripetizioni,0
+2021,hd,sit_ups,f,piegamenti sulle braccia tempo massimo 2’,punti/esito
+2021,hd,100mt_run,f,"da 15,1” a 16”","0,8"
+2021,hd,100mt_run,f,"da 16,1” 17”","0,6"
+2021,hd,100mt_run,f,"da 17,1” a 18”","0,4"
+2021,hd,100mt_run,f,"da 18,1” a 19”","0,2"
+2021,hd,100mt_run,f,maggiore di 19”,0
+2021,hd,push_ups,f,da 25 a 29 ripetizioni,"0,8"
+2021,hd,push_ups,f,da 20 a 24 ripetizioni,"0,6"
+2021,hd,push_ups,f,da 15 a 19 ripetizioni,"0,4"
+2021,hd,push_ups,f,da 11 a 14 ripetizioni,"0,2"
+2021,hd,push_ups,f,meno di 11 ripetizioni,0
