@@ -142,6 +142,13 @@
                                 <td class="text-center">{{ gender }}</td>
                             </tr>
                         {% endif %}
+                         {% if data.metric_config.stratification.recruitment_year.label %}
+                            <tr>
+                                <td class="text-left">Anni di riferimento</td>
+                                {% set recruitment_year = data.metric_config.stratification.recruitment_year.label.split(':')[-1] %}
+                                <td class="text-center">{{ recruitment_year }}</td>
+                            </tr>
+                        {% endif %}
                         {% if data.metric_config.stratification.age.label %}
                             <tr>
                                 <td class="text-left">Fascia d'età</td>
