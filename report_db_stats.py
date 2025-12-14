@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any
 import pandas as pd
 from weasyprint import HTML  # type: ignore[import-untyped]
 
+from lib_analysis.utils_generic import query_from_db
 from lib_parser.parser import create_parser
 from lib_report.jinja_environment import jinja_env, templates_dir
 
@@ -51,27 +52,29 @@ def main() -> int:
     # Parse arguments
     args: argparse.Namespace = parser.parse_args()
 
-    # Define db file path
-    filepath: Path = Path("db/db.csv")
-
-    # Read db file into DataFrame
-    df: pd.DataFrame = pd.read_csv(filepath)
+    # Retriev db
+    db: pd.DataFrame = query_from_db({
+        "recruitment_year": {
+            "label": "Anno di reclutamento: 2023, 2024, 2025",
+            "query": "recruitment_year.between(2023,2025)",
+        },
+    })
 
     # Compute percentage of duplicates
-    duplicated: float = round((df.duplicated().sum() / df.shape[0]) * (100), 2)
+    duplicated: float = round((db.duplicated().sum() / db.shape[0]) * (100), 2)
 
     # Define bin ages
     age_bins: list[int] = [13, 29, 39, 49, 59, 69, 79]
 
     # Bin age
-    df["age_binned"] = pd.cut(
-        df["age"], bins=age_bins,
+    db["age_binned"] = pd.cut(
+        db["age"], bins=age_bins,
         labels=["17-29", "30-39", "40-49", "50-59", "60-69", "70-79"],
         right=True,
     )
 
     # Group db by test and recruitment year
-    grouped = df.groupby(["test", "recruitment_year"])
+    grouped = db.groupby(["test", "recruitment_year"])
 
     # Create data for db report
     data = (pd.concat([
