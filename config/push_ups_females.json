@@ -3,13 +3,21 @@
     "title": "flessioni - femmine",
     "source_type": "db",
     "stratification": {
+        "test": {
+            "label": "Prova: flessioni",
+            "query": "test=='push_ups'"
+        },
         "gender": {
             "label": "Genere: femminile",
             "query": "gender=='F'"
         },
         "age": {
             "label": "Fascia di età: 17-29 anni",
-            "query": "age>=17 and age<=29"
+            "query": "age.between(17,29)"
+        },
+        "recruitment_year": {
+            "label": "Anno di reclutamento: 2023, 2024, 2025",
+            "query": "recruitment_year.between(2023,2025)"
         }
     },
     "metric_type": "discrete",
