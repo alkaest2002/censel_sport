@@ -1,0 +1,49 @@
+recrutiment_year,recruitment_type,test,gender,value,awarded_score
+2021,mlli,25mt_swim,m,"<13,6”",2
+2021,mlli,25mt_swim,m,"da 13,6” a 15,5”","1,6"
+2021,mlli,25mt_swim,m,"da 15,6” a 17,5”","1,2"
+2021,mlli,25mt_swim,m,"da 17,6” a 21”","0,8"
+2021,mlli,25mt_swim,m,"da 21,1” a 30”","0,4"
+2021,mlli,25mt_swim,m,>30”,0
+2021,mlli,1000mt_run,m,<3’ 30’’1,2
+2021,mlli,1000mt_run,m,da 3’30’’1 a 3’40’’0,"1,6"
+2021,mlli,1000mt_run,m,da 3’40’’1 a 4’00’’0,"1,2"
+2021,mlli,1000mt_run,m,da 4’00’’1 a 4’10’’0,"0,8"
+2021,mlli,1000mt_run,m,da 4’10’’1 a 4’20’’0,"0,4"
+2021,mlli,1000mt_run,m,>4’20’’0,0
+2021,mlli,push_ups,m,>46,1
+2021,mlli,push_ups,m,da 40 a 46,"0,8"
+2021,mlli,push_ups,m,da 30 a 39,"0,6"
+2021,mlli,push_ups,m,da 20 a 29,"0,4"
+2021,mlli,push_ups,m,da 13 a 19,"0,2"
+2021,mlli,push_ups,m,<13,0
+2021,mlli,sit_ups,m,>85,2
+2021,mlli,sit_ups,m,da 71 a 85,"1,6"
+2021,mlli,sit_ups,m,da 56 a 70,"1,2"
+2021,mlli,sit_ups,m,da 41 a 55,"0,8"
+2021,mlli,sit_ups,m,da 30 a 40,"0,4"
+2021,mlli,sit_ups,m,<30,0
+2021,mlli,25mt_swim,f,"<18,6”",2
+2021,mlli,25mt_swim,f,"da 18,6” a 20,5”","1,6"
+2021,mlli,25mt_swim,f,"da 20,6” a 24”","1,2"
+2021,mlli,25mt_swim,f,"da 24,1” a 28”","0,8"
+2021,mlli,25mt_swim,f,"da 28,1” a 35”","0,4"
+2021,mlli,25mt_swim,f,>35”,0
+2021,mlli,1000mt_run,f,<4’ 00’’1,2
+2021,mlli,1000mt_run,f,da 4’00’’1 a 4’10’’0,"1,6"
+2021,mlli,1000mt_run,f,da 4’10’’1 a 4’20’’0,"1,2"
+2021,mlli,1000mt_run,f,da 4’20’’1 a 4’40’’0,"0,8"
+2021,mlli,1000mt_run,f,da 4’40’’1 a 5’00’’0,"0,4"
+2021,mlli,1000mt_run,f,>5’00’’0,0
+2021,mlli,push_ups,f,>29,1
+2021,mlli,push_ups,f,da 25 a 29,"0,8"
+2021,mlli,push_ups,f,da 20 a 24,"0,6"
+2021,mlli,push_ups,f,da 15 a 19,"0,4"
+2021,mlli,push_ups,f,da 11 a 14,"0,2"
+2021,mlli,push_ups,f,<11,0
+2021,mlli,sit_ups,f,>70,2
+2021,mlli,sit_ups,f,da 56 a 70,"1,6"
+2021,mlli,sit_ups,f,da 41 a 55,"1,2"
+2021,mlli,sit_ups,f,da 31 a 40,"0,8"
+2021,mlli,sit_ups,f,da 20 a 30,"0,4"
+2021,mlli,sit_ups,f,<20,0
