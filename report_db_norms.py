@@ -7,6 +7,7 @@ import orjson
 import pandas as pd
 from weasyprint import HTML  # type: ignore[import-untyped]
 
+from lib_analysis.utils_generic import query_from_db
 from lib_analysis.utils_stats import apply_standardization
 from lib_parser.parser import create_parser
 from lib_report.jinja_environment import jinja_env, templates_dir
@@ -31,13 +32,15 @@ def main() -> int:
     # Parse arguments
     args: argparse.Namespace = parser.parse_args()
 
-    # Define db file path
-    filepath: Path = Path("db/db.csv")
+    # Retriev db
+    db: pd.DataFrame = query_from_db({
+        "recruitment_year": {
+            "label": "Anno di reclutamento: 2023, 2024, 2025",
+            "query": "recruitment_year.between(2023,2025)",
+        },
+    })
 
-    # Read db file into DataFrame
-    db: pd.DataFrame = pd.read_csv(filepath)
-
-    # Aadd norms column
+    # Add norms column
     db["norms"] = db["test"] + "_" + db["gender"].str.replace("M", "males").str.replace("F","females")
 
     # Initialize dictionary to hold norms data
