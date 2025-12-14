@@ -37,7 +37,7 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
 
     try:
         # Load data from database
-        db_df: pd.DataFrame = query_from_db(metric_config)
+        db_df: pd.DataFrame = query_from_db(metric_config.get("stratification", {}))
 
         # Enforce value column to be numeric
         raw_data: np.ndarray = pd.to_numeric(db_df.loc[:, "value"], downcast="integer").to_numpy()
@@ -98,11 +98,11 @@ def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
     # Set random seed for reproducibility
     random_state: int = metric_config.get("random_state", 42)
 
-    # Get metric id, Keep only first suffix (denoted by underscore)
-    metric_id: str = "_".join(metric_config["id"].split("_")[:2])
+    # Get test name
+    test: str = "_".join(metric_config["id"].split("_")[:2])
 
     # Generate synthetic data
-    raw_data: NDArray[np.number[Any]] = generate_synthetic_data(metric_id, n_samples, random_state)
+    raw_data: NDArray[np.number[Any]] = generate_synthetic_data(test, n_samples, random_state)
 
     # Generate descriptive statistics from data
     descriptive_stats: pd.DataFrame = _get_descriptive_stats(raw_data)
@@ -147,3 +147,4 @@ def load_data(metric_config: dict[str, Any]) -> dict[str, Any]:
         _load_from_db(metric_config) if source_type == "db"
             else _load_from_synthetic(metric_config)
     )
+
