@@ -1,0 +1,66 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.18.1"
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "5231e8c7711ca70b955d1ea728a276da",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "b85db3bae9c97512d823ae7ef166f384",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "16af5f84ade00517967e12fcac1874b5",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='bkHC-0' random-id='96a60791-e816-4756-111b-d2cd0e5be1c4'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;inferiore a 3&#92;&#92;u2019 e 30,1&#92;&#92;u201d&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:&#92;&quot;2&#92;&quot;,&#92;&quot;must_pass&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 3&#92;&#92;u2019 e 30,1&#92;&#92;u201d a 3&#92;&#92;u2019 e 40&#92;&#92;u201d&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:&#92;&quot;1,6&#92;&quot;,&#92;&quot;must_pass&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 3&#92;&#92;u2019 e 40,1&#92;&#92;u201d a 4&#92;&#92;u2019&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:&#92;&quot;1,2&#92;&quot;,&#92;&quot;must_pass&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 4&#92;&#92;u2019 e 0,1&#92;&#92;u201d a 4&#92;&#92;u2019 e 10&#92;&#92;u201d&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:&#92;&quot;0,8&#92;&quot;,&#92;&quot;must_pass&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 4&#92;&#92;u2019 e 10,1&#92;&#92;u201d a 4&#92;&#92;u2019 e 20&#92;&#92;u201d&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:&#92;&quot;0,4&#92;&quot;,&#92;&quot;must_pass&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;superiore a 4&#92;&#92;u2019 e 20&#92;&#92;u201d&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;must_pass&#92;&quot;:true},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;sit_ups&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;oltre 85 ripetizioni&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:&#92;&quot;2&#92;&quot;,&#92;&quot;must_pass&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;sit_ups&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 71 a 85 ripetizioni&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:&#92;&quot;1,6&#92;&quot;,&#92;&quot;must_pass&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;sit_ups&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 56 a 70 ripetizioni&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:&#92;&quot;1,2&#92;&quot;,&#92;&quot;must_pass&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;sit_ups&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 41 a 55 ripetizioni&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:&#92;&quot;0,8&#92;&quot;,&#92;&quot;must_pass&#92;&quot;:null}]&quot;' data-total-rows='528' data-total-columns='7' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;recrutiment_year&quot;,[&quot;integer&quot;,&quot;i64&quot;]],[&quot;recruitment_type&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;test&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;gender&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;value&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;awarded_score&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;must_pass&quot;,[&quot;boolean&quot;,&quot;bool&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='true' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": null,
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "FRpx",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    }
+  ]
+}

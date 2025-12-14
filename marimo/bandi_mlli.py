@@ -19,10 +19,13 @@ def _():
 
 @app.cell
 def _(pd, pdfplumber):
-    def document_to_parse(document, pages):
+    def document_to_parse(document, pages = None):
         results = []
         with pdfplumber.open(document) as pdf:
-            pages_to_extract = [pdf.pages[idx] for idx in pages ]
+            if pages:
+                pages_to_extract = [pdf.pages[idx] for idx in pages ]
+            else:
+                pages_to_extract = pdf.pages
             for page in pages_to_extract:
                 results.append(page.extract_tables())
         return results
@@ -30,10 +33,19 @@ def _(pd, pdfplumber):
     def convert_to_df(tables):
         df = pd.DataFrame()
         for t_gender, t_label, t_data in tables:
-            t_df = pd.DataFrame(t_data[1:], columns=["awarded_score","value"])
+            t_df = pd.DataFrame(t_data[1:], columns=["value","awarded_score"])
             t_df = t_df.assign(test=t_label, gender=t_gender)
             df = pd.concat([df, t_df], ignore_index=True)
-        df = df.assign(recruitment_type="hd", recrutiment_year=2021)
+        df = df.assign(recruitment_type="mlli", recrutiment_year=2021)
+        df["awarded_score"] = (
+            df["awarded_score"]
+                    .str.replace(r"\n\r", "")
+                    .str.replace("""0
+    (non idoneo solo per la Cat/Spec.
+    Operazioni/Op. di Bordo)""", "0")
+            .str.replace("""esito
+    sfavorevole""", "esito sfavorevole")
+        )
         return df.loc[:, ["recrutiment_year", "recruitment_type", "test", "gender", "value", "awarded_score"]]
     return convert_to_df, document_to_parse
 
@@ -47,7 +59,7 @@ def _(Path):
 
 @app.cell
 def _(document_to_parse, mlli_2021, np):
-    pages_2021 = document_to_parse(mlli_2021, [90])
+    pages_2021 = document_to_parse(mlli_2021)
     t_2021 = [np.asarray(t) for p in pages_2021 for t in p][:3]
     t_2021_0 = t_2021[0]
     t_2021_1 = t_2021[1]
@@ -71,7 +83,7 @@ def _(np, t_2021_0, t_2021_1):
 @app.cell
 def _(convert_to_df, output_path, tables_2021):
     df_2021 = convert_to_df(tables_2021)
-    df_2021.to_csv(output_path / "2021_mlli_tavole.csv", index=False)
+    df_2021.to_csv(output_path / "2021_mlli_tables.csv", index=False)
     return
 
 
@@ -84,7 +96,7 @@ def _(Path):
 
 @app.cell
 def _(document_to_parse, mlli_2022, np):
-    pages_2022 = document_to_parse(mlli_2022, [91,92,93])
+    pages_2022 = document_to_parse(mlli_2022)
     t_2022 = [np.asarray(t) for p in pages_2022 for t in p]
     return (t_2022,)
 
@@ -106,7 +118,7 @@ def _(t_2022):
 @app.cell
 def _(convert_to_df, output_path, tables_2022):
     df_2022 = convert_to_df(tables_2022)
-    df_2022.to_csv(output_path / "2022_mlli_tavole.csv", index=False)
+    df_2022.to_csv(output_path / "2022_mlli_tables.csv", index=False)
     return
 
 
@@ -119,7 +131,7 @@ def _(Path):
 
 @app.cell
 def _(document_to_parse, mlli_2023, np):
-    pages_2023 = document_to_parse(mlli_2023, [49,50,51,52])
+    pages_2023 = document_to_parse(mlli_2023)
     t_2023 = [np.asarray(t) for p in pages_2023 for t in p][:-1]
     return (t_2023,)
 
@@ -143,7 +155,7 @@ def _(t_2023):
 @app.cell
 def _(convert_to_df, output_path, tables_2023):
     df_2023 = convert_to_df(tables_2023)
-    df_2023.to_csv(output_path / "2023_mlli_tavole.csv", index=False)
+    df_2023.to_csv(output_path / "2023_mlli_tables.csv", index=False)
     return
 
 
@@ -156,7 +168,7 @@ def _(Path):
 
 @app.cell
 def _(document_to_parse, mlli_2024, np):
-    pages_2024 = document_to_parse(mlli_2024, [47, 48, 49])
+    pages_2024 = document_to_parse(mlli_2024)
     t_2024 = [np.asarray(t) for p in pages_2024 for t in p][:-1]
     t_2024_0 = t_2024[0]
     t_2024_1 = t_2024[1]
@@ -205,7 +217,7 @@ def _(
 @app.cell
 def _(convert_to_df, output_path, tables_2024):
     df_2024 = convert_to_df(tables_2024)
-    df_2024.to_csv(output_path / "2024_mlli_tavole.csv", index=False)
+    df_2024.to_csv(output_path / "2024_mlli_tables.csv", index=False)
     return
 
 
@@ -218,7 +230,7 @@ def _(Path):
 
 @app.cell
 def _(document_to_parse, mlli_2025, np, t_2024):
-    pages_2025 = document_to_parse(mlli_2025, [47, 48, 49])
+    pages_2025 = document_to_parse(mlli_2025)
     t_2025 = [np.asarray(t) for p in pages_2025 for t in p][:-1]
     t_2025_0 = t_2024[0]
     t_2025_1 = t_2024[1]
@@ -266,7 +278,12 @@ def _(
 @app.cell
 def _(convert_to_df, output_path, tables_2025):
     df_2025 = convert_to_df(tables_2025)
-    df_2025.to_csv(output_path / "2025_mlli_tavole.csv", index=False)
+    df_2025.to_csv(output_path / "2025_mlli_tables.csv", index=False)
+    return
+
+
+@app.cell
+def _():
     return
 
 
