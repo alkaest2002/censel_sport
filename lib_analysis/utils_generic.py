@@ -6,11 +6,11 @@ from typing import Any, cast
 import pandas as pd
 
 
-def query_from_db(metric_config: dict[str, Any]) -> pd.DataFrame:
+def query_from_db(stratification: dict[str, Any] | None) -> pd.DataFrame:
     """Query data from a CSV database file based on metric configuration.
 
     Args:
-        metric_config: Dictionary containing metric configuration.
+        stratification: Dictionary containing stratification or None.
 
     Returns:
         Filtered pandas DataFrame based on the query criteria.
@@ -24,30 +24,25 @@ def query_from_db(metric_config: dict[str, Any]) -> pd.DataFrame:
     # Check if file exists
     if not filepath.exists():
         raise FileNotFoundError(f"File {filepath.name} not found")
-
     # Read csv file
     df: pd.DataFrame = pd.read_csv(filepath)
 
-    # Extract data from metric_config
-    metric_id: str = "_".join(metric_config["id"].split("_")[:2])
-    stratification: dict[str, Any] = metric_config.get("stratification", {})
+    # If no filter logic provided, return full DataFrame
+    if stratification is None:
+        return df
 
-    # Build db_query
-    db_query: str = f"test=='{metric_id}'"
-
-    # Add stratification filters to db_query
-    db_filter: dict[str, Any]
+    # Build db_query (i.e., filtering conditions)
+    db_query: list[str] = []
 
     # Iterate over stratification filters
     for db_filter in stratification.values():
         # Get query part
         filter_condition: str = db_filter.get("query", "")
         # Append to db_query
-        db_query += f" and {filter_condition}" if filter_condition else ""
+        db_query.append(filter_condition)
 
     # Filter data with query
-    return df.query(db_query)
-
+    return df.query(" and ".join(db_query))
 
 def is_falsy(value: Any) -> bool:
     """Check if a value is falsy with support for numpy arrays and custom logic.
