@@ -30,13 +30,13 @@ def _(pd, pdfplumber):
                 results.append(page.extract_tables())
         return results
 
-    def convert_to_df(tables):
+    def convert_to_df(tables, recrutiment_year):
         df = pd.DataFrame()
         for t_gender, t_label, t_data in tables:
             t_df = pd.DataFrame(t_data[1:], columns=["value","awarded_score"])
             t_df = t_df.assign(test=t_label, gender=t_gender)
             df = pd.concat([df, t_df], ignore_index=True)
-        df = df.assign(recruitment_type="mlli", recrutiment_year=2021)
+        df = df.assign(recruitment_type="mlli", recrutiment_year=recrutiment_year)
         df["awarded_score"] = (
             df["awarded_score"]
                     .str.replace(r"\n\r", "")
@@ -82,7 +82,7 @@ def _(np, t_2021_0, t_2021_1):
 
 @app.cell
 def _(convert_to_df, output_path, tables_2021):
-    df_2021 = convert_to_df(tables_2021)
+    df_2021 = convert_to_df(tables_2021, 2021)
     df_2021.to_csv(output_path / "2021_mlli_tables.csv", index=False)
     return
 
@@ -117,7 +117,7 @@ def _(t_2022):
 
 @app.cell
 def _(convert_to_df, output_path, tables_2022):
-    df_2022 = convert_to_df(tables_2022)
+    df_2022 = convert_to_df(tables_2022, 2022)
     df_2022.to_csv(output_path / "2022_mlli_tables.csv", index=False)
     return
 
@@ -154,7 +154,7 @@ def _(t_2023):
 
 @app.cell
 def _(convert_to_df, output_path, tables_2023):
-    df_2023 = convert_to_df(tables_2023)
+    df_2023 = convert_to_df(tables_2023, 2023)
     df_2023.to_csv(output_path / "2023_mlli_tables.csv", index=False)
     return
 
@@ -216,7 +216,7 @@ def _(
 
 @app.cell
 def _(convert_to_df, output_path, tables_2024):
-    df_2024 = convert_to_df(tables_2024)
+    df_2024 = convert_to_df(tables_2024, 2024)
     df_2024.to_csv(output_path / "2024_mlli_tables.csv", index=False)
     return
 
@@ -277,7 +277,7 @@ def _(
 
 @app.cell
 def _(convert_to_df, output_path, tables_2025):
-    df_2025 = convert_to_df(tables_2025)
+    df_2025 = convert_to_df(tables_2025, 2025)
     df_2025.to_csv(output_path / "2025_mlli_tables.csv", index=False)
     return
 
