@@ -26,14 +26,14 @@
             </div>
 
             <!-- Page Content -->
-            <h2 class="mb-xl">Composizione del dataset</h2>
             <div class="mb-xxl">
-                <table class="table-bordered full-width">
+                {% for dataset in data %}
+                <div class="mt-lg mb-xs">{% if loop.first%}Dati Accademia{% else %}Dati Marescialli{% endif %}</div>
+                <table class="table-bordered full-width mb-xl">
                     <thead>
                         <tr>
                             <th class="text-center">Prova sportiva</th>
                             <th class="text-center">Anni</th>
-                            <th class="text-center">Tipo di reclutamento</th>
                             <th class="text-center">Genere</th>
                             <th class="text-center">Fasce d'età</th>
                             <th class="text-center">Totale</th>
@@ -41,7 +41,7 @@
                     </thead>
                     <tbody>
                         {% set current_test = "" %}
-                        {% for test, test_data in data.to_dict('records') | groupby('test') %}
+                        {% for test, test_data in dataset.to_dict('records') | groupby('test') %}
                             {% set parent_loop = loop %}
                             {% for row in test_data %}
                                 <tr {% if loop.last and not parent_loop.last %}style="border-bottom:1px dotted #888"{% endif %}>
@@ -49,7 +49,6 @@
                                         <td class="text-center" rowspan="{{ test_data | length }}">{{ get_test_label(test) }}</td>
                                     {% endif %}
                                     <td class="text-center">{{ row.recruitment_year }}</td>
-                                    <td class="text-center">{{ row.recruitment_type | safe }}</td>
                                     <td class="text-center">{{ row.gender | safe }}</td>
                                     <td class="text-center">{{ row.age_binned | safe }}</td>
                                     <td class="text-center">{{ row.counts }}</td>
@@ -70,6 +69,7 @@
                         </tr>
                     </tfoot>
                 </table>
+                {% endfor%}
             </div>
         </div>
         <div class="footer">{{ page }}</div>

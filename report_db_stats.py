@@ -55,8 +55,8 @@ def main() -> int:
     # Retriev db
     db: pd.DataFrame = query_from_db({
         "recruitment_year": {
-            "label": "Anno di reclutamento: 2023, 2024, 2025",
-            "query": "recruitment_year.between(2023,2025)",
+            "label": "Anno di reclutamento: 2021, 2002, 2023, 2024, 2025",
+            "query": "recruitment_year.between(2021,2025)",
         },
     })
 
@@ -74,15 +74,21 @@ def main() -> int:
     )
 
     # Group db by test and recruitment year
-    grouped = db.groupby(["test", "recruitment_year"])
+    hd_grouped: pd.DataFrame = db.loc[db["recruitment_type"].eq("hd")].groupby(["test", "recruitment_year"])
+    mlli_grouped: pd.DataFrame = db.loc[db["recruitment_type"].eq("mlli")].groupby(["test", "recruitment_year"])
 
-    # Create data for db report
-    data = (pd.concat([
-        grouped["gender"].apply(_stringify_value_counts),
-        grouped["age_binned"].apply(_stringify_value_counts),
-        grouped["recruitment_type"].apply(_stringify_value_counts),
-        grouped.size().rename("counts"),
-        ], axis=1).reset_index(names=["test", "recruitment_year"]))
+    # Prepare data for the report
+    data: list[pd.DataFrame] = []
+    for grouped in (hd_grouped, mlli_grouped):
+        data.append(  # noqa: PERF401
+            pd.concat(
+                [
+                    grouped["gender"].apply(_stringify_value_counts),
+                    grouped["age_binned"].apply(_stringify_value_counts),
+                    grouped.size().rename("counts"),
+                ]
+            , axis=1)
+            .reset_index(names=["test", "recruitment_year"]))
 
     try:
         # Get db report template
@@ -94,7 +100,9 @@ def main() -> int:
 
         # Render template with data
         rendered_html: str =\
-            template.render(data=data, header="A", page=args.page_number)
+            template.render(
+                data=data, header="A", page=args.page_number,
+            )
 
         # Write PDF file
         HTML(string=rendered_html, base_url=str(templates_dir)).write_pdf(str(output_pdf))
