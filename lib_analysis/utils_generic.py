@@ -6,12 +6,12 @@ from typing import Any, cast
 import pandas as pd
 
 
-def query_from_db(db: pd.DataFrame | None, stratification: dict[str, Any] | None) -> pd.DataFrame:
+def query_from_db(stratification: dict[str, Any] | None, db: pd.DataFrame | None = None) -> pd.DataFrame:
     """Query data from a CSV database file based on metric configuration.
 
     Args:
-        db: pandas DataFrame representing the database or None.
         stratification: Dictionary containing stratification or None.
+        db: pandas DataFrame representing the database or None.
 
     Returns:
         Filtered pandas DataFrame based on the query criteria.
