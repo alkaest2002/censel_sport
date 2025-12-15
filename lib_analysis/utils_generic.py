@@ -6,10 +6,11 @@ from typing import Any, cast
 import pandas as pd
 
 
-def query_from_db(stratification: dict[str, Any] | None) -> pd.DataFrame:
+def query_from_db(db: pd.DataFrame | None, stratification: dict[str, Any] | None) -> pd.DataFrame:
     """Query data from a CSV database file based on metric configuration.
 
     Args:
+        db: pandas DataFrame representing the database or None.
         stratification: Dictionary containing stratification or None.
 
     Returns:
@@ -17,19 +18,27 @@ def query_from_db(stratification: dict[str, Any] | None) -> pd.DataFrame:
 
     Raises:
         FileNotFoundError: If the database file does not exist.
+        ValueError: If the provided db is not a pandas DataFrame.
     """
-    # If file does not exist
-    filepath: Path = Path("./db") / "db.csv"
+    # If DataFrame is not provided, load it
+    if db is None:
 
-    # Check if file exists
-    if not filepath.exists():
-        raise FileNotFoundError(f"File {filepath.name} not found")
-    # Read csv file
-    df: pd.DataFrame = pd.read_csv(filepath)
+        # Get database file path
+        filepath: Path = Path("./db") / "db.csv"
+
+        # Check if file exists
+        if not filepath.exists():
+            raise FileNotFoundError(f"File {filepath.name} not found")
+
+        # Read csv file
+        db: pd.DataFrame = pd.read_csv(filepath)
+
+    if isinstance(db, pd.DataFrame) is False:
+        raise ValueError("db must be a pandas DataFrame")
 
     # If no filter logic provided, return full DataFrame
     if stratification is None:
-        return df
+        return db
 
     # Build db_query (i.e., filtering conditions)
     db_query: list[str] = []
@@ -42,7 +51,7 @@ def query_from_db(stratification: dict[str, Any] | None) -> pd.DataFrame:
         db_query.append(filter_condition)
 
     # Filter data with query
-    return df.query(" and ".join(db_query))
+    return db.query(" and ".join(db_query))
 
 def is_falsy(value: Any) -> bool:
     """Check if a value is falsy with support for numpy arrays and custom logic.
