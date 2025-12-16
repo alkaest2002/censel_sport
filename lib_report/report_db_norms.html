@@ -9,6 +9,10 @@
     table tr td {
         padding: 3px;
     }
+
+    .separator:not(:first-of-type) td {
+        border-top: .5px solid var(--base-border-color);
+    }
 </style>
 {% endblock %}
 
@@ -29,9 +33,9 @@
                 <table class="table-bordered table-striped full-width">
                     <thead>
                         <tr>
-                            <th class="text-center">Anno</th>
                             <th class="text-center">Concorso</th>
                             <th class="text-center">Prova sportiva</th>
+                            <th class="text-center">Anno</th>
                             <th class="text-center">Genere</th>
                             <th class="text-center">F1</th>
                             <th class="text-center">F2</th>
@@ -42,12 +46,14 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% set test = namespace(name="") %}
                         {% for _, row in table_data.iterrows() %}
-                            <tr>
-                                <td class="text-center">{{ row.recruitment_year }}</td>
+                            <tr class="{% if test.name != row.test %}separator{% endif %}">
+                                {% set test.name = row.test %}
                                 <td class="text-center">{{ row.recruitment_type }}</td>
                                 <td class="text-center">{{ get_test_label(row.test) }}</td>
-                                <td class="text-center">{{ row.gender }}</td>
+                                <td class="text-center">{{ row.recruitment_year }}</td>
+                                <td class="text-center">{{ row.gender | upper }}</td>
                                 <td class="text-center">{{ row.step1 }}</td>
                                 <td class="text-center">{{ row.step2 }}</td>
                                 <td class="text-center">{{ row.step3 }}</td>
