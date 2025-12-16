@@ -16,8 +16,8 @@
             "query": "age.between(17,29)"
         },
         "recruitment_year": {
-            "label": "Anni di reclutamento: 2021-2025",
-            "query": "recruitment_year.between(2021,2025)"
+            "label": "Anni di reclutamento: 2023-2025",
+            "query": "recruitment_year.between(2023,2025)"
         }
     },
     "metric_type": "continuous",
