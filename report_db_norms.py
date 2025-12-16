@@ -76,6 +76,8 @@ def main() -> int:
                     .add_prefix("step")
                     .to_dict()
             )
+            # Add total count
+            results[key]["total_count"] = len(values)
 
     # Convert results to DataFrame
     results_df: pd.DataFrame = pd.DataFrame(results).fillna(0).T
@@ -89,7 +91,7 @@ def main() -> int:
                     results_df.to_numpy(),
                 ],
             ),
-            columns=["test","recruitment_type","recruitment_year","gender","step1","step2","step3","step4","step5","step6"],
+            columns=["test","recruitment_type","recruitment_year","gender","step1","step2","step3","step4","step5","step6","total_count"],
         )
         .replace({ "recruitment_type": {"hd": "Accademia", "mlli": "Marescialli"} })
         .sort_values(by=["test", "recruitment_type","gender","recruitment_year"])

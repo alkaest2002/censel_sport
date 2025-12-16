@@ -37,6 +37,7 @@
                             <th class="text-center">Concorso</th>
                             <th class="text-center">Anno</th>
                             <th class="text-center">Genere</th>
+                            <th class="text-center">N</th>
                             <th class="text-center">F1</th>
                             <th class="text-center">F2</th>
                             <th class="text-center">F3</th>
@@ -54,6 +55,7 @@
                                 <td class="text-center">{{ row.recruitment_type }}</td>
                                 <td class="text-center">{{ row.recruitment_year }}</td>
                                 <td class="text-center">{{ row.gender | upper }}</td>
+                                <td class="text-center">{{ row.total_count | int }}</td>
                                 <td class="text-center">{{ row.step1 }}</td>
                                 <td class="text-center">{{ row.step2 }}</td>
                                 <td class="text-center">{{ row.step3 }}</td>
@@ -65,11 +67,11 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="10">
+                            <td colspan="11">
                                 <div class="caption">
                                     <span>Tabella {{ header }}.{{loop.index0+1}}:</span>
                                     <span>
-                                        Il dataset analizzato è quello originale, fornito dal Centro di Selezione. F1 = Prima fascia di punteggio standardizzato, F2 = Seconda fascia di punteggio standardizzato, F3 = Terza fascia di punteggio standardizzato, F4 = Quarta fascia di punteggio standardizzato, F5 = Quinta fascia di punteggio standardizzato, F6 = Sesta fascia di punteggio standardizzato.
+                                        Il dataset analizzato è quello originale, fornito dal Centro di Selezione. N = Numerosità del campion F1 = Prima fascia di punteggio standardizzato, F2 = Seconda fascia di punteggio standardizzato, F3 = Terza fascia di punteggio standardizzato, F4 = Quarta fascia di punteggio standardizzato, F5 = Quinta fascia di punteggio standardizzato, F6 = Sesta fascia di punteggio standardizzato.
                                     </span>
                                 </div>
                             </td>

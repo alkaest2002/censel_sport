@@ -26,9 +26,9 @@
             </div>
 
             <!-- Page Content -->
-            <div class="mb-xxl">
+            <div>
                 {% for dataset in data %}
-                <div class="mt-lg mb-xs">{% if loop.first%}Dati Accademia{% else %}Dati Marescialli{% endif %}</div>
+                <div class="mb-xs">{% if loop.first%}Dati Accademia{% else %}Dati Marescialli{% endif %}</div>
                 <table class="table-bordered full-width mb-xl">
                     <thead>
                         <tr>
@@ -56,18 +56,20 @@
                             {% endfor %}
                         {% endfor %}
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="4">
-                                <div class="caption">
-                                    <span>Tabella {{ header }}.1:</span>
-                                    <span>
-                                        Il dataset analizzato è quello originale, prima dell'applicaizone dei due <span class="text-italic">loop</span> di analisi.
-                                    </span>
-                                </div>
-                            </td>
-                        </tr>
-                    </tfoot>
+                    {% if loop.last %}
+                        <tfoot>
+                            <tr>
+                                <td colspan="4">
+                                    <div class="caption">
+                                        <span>Tabella {{ header }}.1:</span>
+                                        <span>
+                                            Il dataset analizzato è quello originale, prima dell'applicaizone dei due <span class="text-italic">loop</span> di analisi.
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    {% endif %}
                 </table>
                 {% endfor%}
             </div>
