@@ -1,6 +1,6 @@
 from pathlib import Path
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import orjson
@@ -32,50 +32,50 @@ def main() -> int:
     # Parse arguments
     args: argparse.Namespace = parser.parse_args()
 
-    # Retriev db
-    db: pd.DataFrame = query_from_db({
-        "recruitment_year": {
-            "label": "Anno di reclutamento: 2021, 2022, 2023, 2024, 2025",
-            "query": "recruitment_year.between(2021,2025)",
-        },
-    })
-
-    # Add norms column
-    db["norms"] = db["test"] + "_" + db["gender"].str.replace("M", "males").str.replace("F","females")
-
-    # Initialize dictionary to hold norms data
-    norms_dict: dict[str, any] = {}
-
-    # Read analysis JSON files and populate norms_dict
+    # Globally find all analysis JSON files
     json_files = list(Path("./data_out").glob("**/*_analysis.json"))
 
-    # Load norms data from JSON files
-    for file in json_files:
-        with Path(file).open("r") as fin:
-            data = orjson.loads(fin.read())
-            norms_dict[data["metric_config"]["id"]] = data["bootstrap"]["cutoffs"]
+    # Load db
+    db: pd.DataFrame = pd.read_csv(Path("./db") / "db.csv")
 
     # Initialize results dictionary
     results = {}
 
-    # Process each group in the database
-    for group_label, group_data in db.groupby(["test", "recruitment_type", "recruitment_year", "gender"]):
-        # Create a unique key for the group
-        key = "_".join(map(str, group_label))
-        # Extract values to standardize
-        values = group_data["value"].to_numpy()
-        # Get cutoffs for the group's norms
-        cutoffs = norms_dict.get(group_data.iloc[0].loc["norms"])
-        # Apply standardization and compute step distribution
-        results[key] = (
-            apply_standardization(data_to_standardize=values, cutoffs=cutoffs)["standardized_step"]
-                .value_counts(normalize=True, sort=False)
-                .mul(100)
-                .round(1)
-                .sort_index()
-                .add_prefix("step")
-                .to_dict()
-        )
+    # Iterate over each JSON file
+    for file in json_files:
+
+        # Load JSON data
+        with Path(file).open("r") as fin:
+            data: dict[str, Any] = orjson.loads(fin.read())
+
+        # Get metric config
+        metric_config: dict[str, Any] = data["metric_config"]
+
+        # Get stratification
+        stratification: dict[str, Any] = metric_config["stratification"]
+
+        # Filter database data
+        filtered_db: pd.DataFrame = query_from_db(stratification, db)
+
+        # Store bootstrap cutoffs in norms dictionary
+        cutoffs: list[list[float, float]] = data["bootstrap"]["cutoffs"]
+
+        # Process each group in the database
+        for group_label, group_data in filtered_db.groupby(["test", "recruitment_type", "recruitment_year", "gender"]):
+            # Create a unique key for the group
+            key = "_".join(str(x).lower() for x in group_label)
+            # Extract values to standardize from the group
+            values = group_data["value"].to_numpy()
+            # Apply standardization and compute step distribution
+            results[key] = (
+                apply_standardization(data_to_standardize=values, cutoffs=cutoffs)["standardized_step"]
+                    .value_counts(normalize=True, sort=False)
+                    .mul(100)
+                    .round(1)
+                    .sort_index()
+                    .add_prefix("step")
+                    .to_dict()
+            )
 
     # Convert results to DataFrame
     results_df: pd.DataFrame = pd.DataFrame(results).fillna(0).T
@@ -92,6 +92,7 @@ def main() -> int:
             columns=["test","recruitment_type","recruitment_year","gender","step1","step2","step3","step4","step5","step6"],
         )
         .replace({ "recruitment_type": {"hd": "Accademia", "mlli": "Marescialli"} })
+        .sort_values(by=["test", "recruitment_type","gender","recruitment_year"])
     )
 
     try:
@@ -106,8 +107,8 @@ def main() -> int:
         rendered_html: str =\
             template.render(
                 tables_data=[
-                    report_data.iloc[:39, :],
-                    report_data.iloc[39:, :],
+                    report_data.iloc[:38, :],
+                    report_data.iloc[38:, :],
                 ],
                 header=args.header_letter,
                 page=args.page_number,
