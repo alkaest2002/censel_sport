@@ -107,8 +107,8 @@ def main() -> int:
         rendered_html: str =\
             template.render(
                 tables_data=[
-                    report_data.iloc[:38, :],
-                    report_data.iloc[38:, :],
+                    report_data.iloc[:36, :],
+                    report_data.iloc[36:, :],
                 ],
                 header=args.header_letter,
                 page=args.page_number,
