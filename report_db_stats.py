@@ -84,7 +84,9 @@ def main() -> int:
     )
 
     # Prepare data for the report
-    data: list[pd.DataFrame] = []
+    tables_data: list[pd.DataFrame] = []
+
+    # Iterate over HD and Mlli groups
     for grouped in (hd_grouped, mlli_grouped):
         # List to collect grouped stats
         grouped_stats: list[pd.DataFrame] = []
@@ -112,7 +114,7 @@ def main() -> int:
             grouped_stats.append(grouped_agg)
 
         # Concatenate all grouped stats and append to data
-        data.append(pd.concat(grouped_stats, axis=0, ignore_index=True))
+        tables_data.append(pd.concat(grouped_stats, axis=0, ignore_index=True))
 
     try:
         # Get db report template
@@ -125,7 +127,7 @@ def main() -> int:
         # Render template with data
         rendered_html: str =\
             template.render(
-                data=data, header="A", page=args.page_number,
+                tables_data=tables_data, header="A", page=args.page_number,
             )
 
         # Write PDF file

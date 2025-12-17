@@ -27,23 +27,22 @@
 
             <!-- Page Content -->
             <div>
-                {% for dataset in data %}
+                {% for table in tables_data %}
                 <div class="mb-xs">{% if loop.first%}Dati Accademia{% else %}Dati Marescialli{% endif %}</div>
-                <table class="table-bordered full-width mb-xl">
+                <table class="table-bordered full-width mb-lg">
                     <thead>
                         <tr>
                             <th class="text-center">Prova sportiva</th>
-                            <th class="text-center" style="width: 10%;">Anni</th>
+                            <th class="text-center" style="width: 10%;">Concorso</th>
                             <th class="text-center" style="width: 10%;">M</th>
                             <th class="text-center" style="width: 10%;">F</th>
-                            <th class="text-center" style="width: 10%;">Età: 17-23</th>
-                            <th class="text-center" style="width: 10%;">Età: 24-29</th>
+                            <th class="text-center" style="width: 10%;">17-23 anni</th>
+                            <th class="text-center" style="width: 10%;">24-29 anni</th>
                             <th class="text-center" style="width: 10%;">Totale</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% set current_test = "" %}
-                        {% for test, test_data in dataset.to_dict('records') | groupby('test') %}
+                        {% for test, test_data in table.to_dict('records') | groupby('test') %}
                             {% set parent_loop = loop %}
                             {% for row in test_data %}
                                 <tr {% if loop.last and not parent_loop.last %}style="border-bottom:1px dotted #888"{% endif %}>
@@ -60,20 +59,18 @@
                             {% endfor %}
                         {% endfor %}
                     </tbody>
-                    {% if loop.last %}
-                        <tfoot>
-                            <tr>
-                                <td colspan="4">
-                                    <div class="caption">
-                                        <span>Tabella {{ header }}.1:</span>
-                                        <span>
-                                            Il dataset analizzato è quello originale, prima dell'applicaizone dei due <span class="text-italic">loop</span> di analisi.
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    {% endif %}
+                    <tfoot>
+                        <tr>
+                            <td colspan="4">
+                                <div class="caption">
+                                    <span>Tabella {{ header }}.{{ loop.index}}:</span>
+                                    <span>
+                                        Il dataset analizzato è quello originale, prima dell'applicaizone dei due <span class="text-italic">loop</span> di analisi.
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
                 </table>
                 {% endfor%}
             </div>
