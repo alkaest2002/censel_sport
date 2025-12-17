@@ -60,9 +60,6 @@ def main() -> int:
         },
     })
 
-    # Compute percentage of duplicates
-    duplicated: float = round((db.duplicated().sum() / db.shape[0]) * (100), 2)
-
     # Define bin ages
     age_bins: list[int] = [13, 23, 29]
 
@@ -139,7 +136,7 @@ def main() -> int:
         print(f"Error while generating report: {e}", file=sys.stderr)
         return 1
 
-    print(f"Report db correctly generated. Percentage of duplicates {duplicated}%")
+    print("Report db correctly generated.")
     return 0
 
 
