@@ -72,15 +72,22 @@ def main() -> int:
             values = group_data["value"].to_numpy()
 
             # Apply standardization and compute step distribution
-            results[key] = (
+            standardized_stats = (
                 apply_standardization(data_to_standardize=values, cutoffs=cutoffs)["standardized_step"]
                     .value_counts(normalize=True, sort=False)
                     .mul(100)
                     .round(1)
+                    .reindex(range(1, len(metric_config["requested_percentiles"])+2), fill_value=0)
                     .sort_index()
                     .add_prefix("step")
-                    .to_dict()
             )
+
+            # Add rif to results and store as dictionary
+            results[key] = (
+                pd.concat([
+                    standardized_stats,
+                    pd.Series({"rif": f"{metric_config['report']['header_letter']}3"}),
+                ]).to_dict())
 
     # Convert results to DataFrame
     results_df: pd.DataFrame = pd.DataFrame(results).fillna(0).T
@@ -105,6 +112,7 @@ def main() -> int:
                 "step4",
                 "step5",
                 "step6",
+                "rif",
             ],
         )
         .sort_values(by=["test", "recruitment_type","gender","recruitment_year"])
@@ -119,8 +127,8 @@ def main() -> int:
 
     # Create dictionary of tests
     tests_labels: dict[str, str] = ({
-        MT100: "Corsa 100 mt",
-        MT1000: "Corsa 1000 mt",
+        MT100: "Corsa piana 100 mt",
+        MT1000: "Corsa piana 1000 mt",
         SWIM25: "Nuoto 25 mt",
         SITUPS: "Addominali",
         PUSHUPS: "Piegamenti sulle braccia",
@@ -128,8 +136,8 @@ def main() -> int:
 
     # Iterate over tables (one for hd, the other for mlli)
     for table in (
-        data.loc[data.recruitment_type == "hd", :],
-        data.loc[data.recruitment_type == "mlli", :],
+        data.loc[data.recruitment_type == "hd", :].drop(columns=["recruitment_type"]),
+        data.loc[data.recruitment_type == "mlli", :].drop(columns=["recruitment_type"]),
     ):
         # Create indexed table
         table_with_index: pd.DataFrame = (
@@ -143,10 +151,9 @@ def main() -> int:
             table_with_index
                 .style
                     .format(precision=1)
-                    .hide(subset=["recruitment_type"], axis=1)
                     .set_table_attributes('class="table-bordered full-width mb-xs"')
                     .relabel_index([(tests_labels[i[0]], i[1].upper()) for i in table_with_index.index], axis=0)
-                    .relabel_index(["Concorso", "F1", "F2", "F3", "F4", "F5", "F6"], axis=1)
+                    .relabel_index(["Concorso", "F1", "F2", "F3", "F4", "F5", "F6", "T"], axis=1)
         )
 
         # Add global styles
