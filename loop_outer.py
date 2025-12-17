@@ -24,11 +24,12 @@ def main() -> int:  # noqa: PLR0911
         - 0: Success
         - 1: Error in file validation or loading
     """
-    # Define file path
-    filepath: Path = Path("db/db.csv")
+    # Define file paths
+    db_original_filepath: Path = Path("db/db_original.csv")
+    db_filepath: Path = Path("db/db.csv")
 
     # Read CSV file into DataFrame
-    df: pd.DataFrame = pd.read_csv(filepath)
+    db: pd.DataFrame = pd.read_csv(db_original_filepath)
 
     ######################################################################
     # Basic Sanity checks
@@ -39,10 +40,10 @@ def main() -> int:  # noqa: PLR0911
 
     # Year column
     conditions: list[bool | np.bool[builtins.bool]] = [
-        "recruitment_year" in df.columns,
-        df["recruitment_year"].notna().all(),
-        df["recruitment_year"].dtype == "int64",
-        df["recruitment_year"].between(2000, datetime.now(ZoneInfo("Europe/Rome")).year).all(),
+        "recruitment_year" in db.columns,
+        db["recruitment_year"].notna().all(),
+        db["recruitment_year"].dtype == "int64",
+        db["recruitment_year"].between(2000, datetime.now(ZoneInfo("Europe/Rome")).year).all(),
     ]
 
     # Raise error if any condition fails
@@ -52,10 +53,10 @@ def main() -> int:  # noqa: PLR0911
 
     # Recruitment Type column
     conditions = [
-        "recruitment_type" in df.columns,
-        df["recruitment_type"].notna().all(),
-        df["recruitment_type"].dtype == "object",
-        df["recruitment_type"].isin(["hd", "mlli"]).all(),
+        "recruitment_type" in db.columns,
+        db["recruitment_type"].notna().all(),
+        db["recruitment_type"].dtype == "object",
+        db["recruitment_type"].isin(["hd", "mlli"]).all(),
     ]
 
     # Raise error if any condition fails
@@ -65,10 +66,10 @@ def main() -> int:  # noqa: PLR0911
 
     # Test column
     conditions = [
-        "test" in df.columns,
-        df["test"].notna().all(),
-        df["test"].dtype == "object",
-        df["test"].isin([MT100, MT1000, SWIM25, SITUPS, PUSHUPS]).all(),
+        "test" in db.columns,
+        db["test"].notna().all(),
+        db["test"].dtype == "object",
+        db["test"].isin([MT100, MT1000, SWIM25, SITUPS, PUSHUPS]).all(),
     ]
 
     # Raise error if any condition fails
@@ -78,10 +79,10 @@ def main() -> int:  # noqa: PLR0911
 
     # Gender column
     conditions = [
-        "gender" in df.columns,
-        df["gender"].notna().all(),
-        df["gender"].dtype == "object",
-        df["gender"].isin(["M", "F"]).all(),
+        "gender" in db.columns,
+        db["gender"].notna().all(),
+        db["gender"].dtype == "object",
+        db["gender"].isin(["M", "F"]).all(),
     ]
 
     # Raise error if any condition fails
@@ -91,10 +92,10 @@ def main() -> int:  # noqa: PLR0911
 
     # Age column
     conditions = [
-        "age" in df.columns,
-        df["age"].notna().all(),
-        df["age"].dtype == "int64",
-        df["age"].between(14, 79).all(),
+        "age" in db.columns,
+        db["age"].notna().all(),
+        db["age"].dtype == "int64",
+        db["age"].between(17, 28).all(),
     ]
 
     # Raise error if any condition failsß
@@ -104,11 +105,11 @@ def main() -> int:  # noqa: PLR0911
 
     # Value column
     conditions = [
-        "value" in df.columns,
-        df["value"].notna().all(),
-        df["value"].dtype == "float64",
-        np.isfinite(df["value"]).all(),
-        (df["value"] >= 0).all(),
+        "value" in db.columns,
+        db["value"].notna().all(),
+        db["value"].dtype == "float64",
+        np.isfinite(db["value"]).all(),
+        (db["value"] >= 0).all(),
     ]
 
     # Raise error if any condition fails
@@ -117,6 +118,30 @@ def main() -> int:  # noqa: PLR0911
         return 1
 
     print("DB Data validated successfully.")
+
+
+    # ##############################################################################
+    # In italian: elimina dal db tutte le prove obblicatorie a sbarramento
+    # ##############################################################################
+
+    # Base conditions
+    c_mt1000: pd.Series = db["test"] == MT1000
+
+    # Drop year 2021 for all tests
+    drop_year_2021: pd.Series = db["recruitment_year"].eq(2021)
+
+    # Drop MT1000 for all years before 2023
+    drop_mt_1000: pd.Series = c_mt1000 & db["recruitment_year"].lt(2023)
+
+    # Combine all drop conditions
+    drop: pd.Series = (drop_year_2021 | drop_mt_1000)
+
+    # Drop rows matching the conditions
+    filterd_db: pd.DataFrame = db[~drop]
+
+    # Save filtered DataFrame to a new CSV file
+    filterd_db.to_csv(db_filepath, index=False)
+
     return 0
 
 if __name__ == "__main__":
