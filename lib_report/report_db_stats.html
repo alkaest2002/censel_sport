@@ -33,10 +33,12 @@
                     <thead>
                         <tr>
                             <th class="text-center">Prova sportiva</th>
-                            <th class="text-center">Anni</th>
-                            <th class="text-center">Genere</th>
-                            <th class="text-center">Fasce d'età</th>
-                            <th class="text-center">Totale</th>
+                            <th class="text-center" style="width: 10%;">Anni</th>
+                            <th class="text-center" style="width: 10%;">M</th>
+                            <th class="text-center" style="width: 10%;">F</th>
+                            <th class="text-center" style="width: 10%;">Età: 17-23</th>
+                            <th class="text-center" style="width: 10%;">Età: 24-29</th>
+                            <th class="text-center" style="width: 10%;">Totale</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,9 +51,11 @@
                                         <td class="text-center" rowspan="{{ test_data | length }}">{{ get_test_label(test) }}</td>
                                     {% endif %}
                                     <td class="text-center">{{ row.recruitment_year }}</td>
-                                    <td class="text-center">{{ row.gender | safe }}</td>
-                                    <td class="text-center">{{ row.age_binned | safe }}</td>
-                                    <td class="text-center">{{ row.counts }}</td>
+                                    <td class="text-center">{{ row.M | int }}</td>
+                                    <td class="text-center">{{ row.F | int }}</td>
+                                    <td class="text-center">{{ row["17-23"] | int }}</td>
+                                    <td class="text-center">{{ row["24-29"] | int }}</td>
+                                    <td class="text-center">{{ row.total_count | int }}</td>
                                 </tr>
                             {% endfor %}
                         {% endfor %}

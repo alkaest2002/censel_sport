@@ -64,31 +64,55 @@ def main() -> int:
     duplicated: float = round((db.duplicated().sum() / db.shape[0]) * (100), 2)
 
     # Define bin ages
-    age_bins: list[int] = [13, 29, 39, 49, 59, 69, 79]
+    age_bins: list[int] = [13, 23, 29]
 
     # Bin age
     db["age_binned"] = pd.cut(
         db["age"], bins=age_bins,
-        labels=["17-29", "30-39", "40-49", "50-59", "60-69", "70-79"],
+        labels=["17-23", "24-29"],
         right=True,
     )
 
     # Group db by test and recruitment year
-    hd_grouped: pd.DataFrame = db.loc[db["recruitment_type"].eq("hd")].groupby(["test", "recruitment_year"])
-    mlli_grouped: pd.DataFrame = db.loc[db["recruitment_type"].eq("mlli")].groupby(["test", "recruitment_year"])
+    hd_grouped: pd.DataFrame = (
+        db.loc[db["recruitment_type"].eq("hd")]
+            .groupby(["test", "recruitment_year"])
+    )
+    mlli_grouped: pd.DataFrame = (
+        db.loc[db["recruitment_type"].eq("mlli")]
+        .groupby(["test", "recruitment_year"])
+    )
 
     # Prepare data for the report
     data: list[pd.DataFrame] = []
     for grouped in (hd_grouped, mlli_grouped):
-        data.append(  # noqa: PERF401
-            pd.concat(
-                [
-                    grouped["gender"].apply(_stringify_value_counts),
-                    grouped["age_binned"].apply(_stringify_value_counts),
-                    grouped.size().rename("counts"),
-                ]
-            , axis=1)
-            .reset_index(names=["test", "recruitment_year"]))
+        # List to collect grouped stats
+        grouped_stats: list[pd.DataFrame] = []
+
+        # Iterate over each group
+        for _, grouped_data in grouped:
+            grouped_agg = (
+                pd.concat([
+                    grouped_data[["test", "recruitment_year", "gender"]]
+                        .value_counts()
+                        .reset_index(drop=False)
+                        .pivot_table(index=["test", "recruitment_year"], columns="gender", observed=True),
+                    grouped_data[["test", "recruitment_year", "age_binned"]]
+                        .value_counts()
+                        .reset_index(drop=False)
+                        .pivot_table(index=["test", "recruitment_year"], columns="age_binned", observed=True),
+                ], axis=1)
+                .droplevel(level=0, axis=1)
+                .reset_index(drop=False)
+            )
+            # Add total count by summing the last two columns
+            grouped_agg = grouped_agg.assign(total_count=grouped_agg.iloc[:, -2:].sum(axis=1))
+
+            # Append
+            grouped_stats.append(grouped_agg)
+
+        # Concatenate all grouped stats and append to data
+        data.append(pd.concat(grouped_stats, axis=0, ignore_index=True))
 
     try:
         # Get db report template
