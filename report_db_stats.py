@@ -55,8 +55,8 @@ def main() -> int:
     # Retriev db
     db: pd.DataFrame = query_from_db({
         "recruitment_year": {
-            "label": "Anni di reclutamento: 22023, 2024, 2025",
-            "query": "recruitment_year.between(2023,2025)",
+            "label": "Anni di reclutamento: 2022, 2023, 2024, 2025",
+            "query": "recruitment_year.between(2022,2025)",
         },
     })
 
