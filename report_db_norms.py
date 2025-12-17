@@ -98,6 +98,11 @@ def main() -> int:
     )
 
     try:
+        # Save report data to CSV
+        csv_output_path: Path = Path("./db/db_norms.csv")
+        report_data.to_csv(csv_output_path, index=False)
+        print(f"Report data saved to CSV: {csv_output_path}")
+
         # Get db report template
         template: jinja2.Template = jinja_env.get_template("report_db_norms.html")
 
