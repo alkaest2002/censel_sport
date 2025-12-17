@@ -82,9 +82,6 @@ def main() -> int:
                     .to_dict()
             )
 
-            # Add total count
-            results[key]["total_count"] = len(values)
-
     # Convert results to DataFrame
     results_df: pd.DataFrame = pd.DataFrame(results).fillna(0).T
 
@@ -108,7 +105,7 @@ def main() -> int:
                 "step4",
                 "step5",
                 "step6",
-                "total_count"],
+            ],
         )
         .sort_values(by=["test", "recruitment_type","gender","recruitment_year"])
     )
@@ -149,7 +146,7 @@ def main() -> int:
                     .hide(subset=["recruitment_type"], axis=1)
                     .set_table_attributes('class="table-bordered full-width mb-xs"')
                     .relabel_index([(tests_labels[i[0]], i[1].upper()) for i in table_with_index.index], axis=0)
-                    .relabel_index(["Concorso", "F1", "F2", "F3", "F4", "F5", "F6", "Tot"], axis=1)
+                    .relabel_index(["Concorso", "F1", "F2", "F3", "F4", "F5", "F6"], axis=1)
         )
 
         # Add global styles
