@@ -62,7 +62,7 @@ def main() -> int:
         # Store bootstrap cutoffs
         cutoffs: list[list[float, float]] = data["bootstrap"]["cutoffs"]
 
-        # Process each group in the filtered database
+        # Process each group in the filtered data
         for group_label, group_data in filtered_db.groupby(["test", "recruitment_type", "recruitment_year", "gender"]):
 
             # Create a unique key for the group
@@ -82,7 +82,7 @@ def main() -> int:
                     .add_prefix("step")
             )
 
-            # Add rif to results and store as dictionary
+            # Add rif and store as dictionary
             results[key] = (
                 pd.concat([
                     standardized_stats,
