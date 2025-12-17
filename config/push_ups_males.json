@@ -1,10 +1,10 @@
 {
     "id": "push_ups_males",
-    "title": "flessioni - maschi",
+    "title": "piegamenti sulle braccia - maschi",
     "source_type": "db",
     "stratification": {
         "test": {
-            "label": "Prova: flessioni",
+            "label": "Prova: piegamenti sulle braccia",
             "query": "test=='push_ups'"
         },
         "gender": {
