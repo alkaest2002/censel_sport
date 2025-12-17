@@ -61,7 +61,7 @@ def main() -> int:
     })
 
     # Define bin ages
-    age_bins: list[int] = [13, 23, 29]
+    age_bins: list[int] = [13, 22, 29]
 
     # Bin age
     db["age_binned"] = pd.cut(
@@ -85,7 +85,8 @@ def main() -> int:
 
     # Iterate over HD and Mlli groups
     for grouped in (hd_grouped, mlli_grouped):
-        # List to collect grouped stats
+
+        # Initiliaze list to collect grouped stats
         grouped_stats: list[pd.DataFrame] = []
 
         # Iterate over each group
