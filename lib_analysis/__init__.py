@@ -16,7 +16,7 @@ TEST: dict[str, str] = {
 }
 
 RECRUITMENT_TYPE: dict[str, str] = {
-    HD: "Allievi Accademia",
-    MLLI: "Allievi Marescialli",
+    HD: "Accademia",
+    MLLI: "Scuola M.lli",
 }
 
