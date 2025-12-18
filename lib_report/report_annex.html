@@ -19,8 +19,12 @@
     }
 
     .table-padded th,
-    .table-padded td {
-        padding: 0.3rem 1rem;
+    .table-padded tbody td {
+        padding: 0.8rem 1rem;
+    }
+
+    .standardization-table tbody td {
+        border-bottom: .5px solid var(--base-border-color);
     }
 </style>
 {% endblock %}
@@ -328,17 +332,19 @@
                     <h3 class="mb-lg background">STIMA BOOTSTRAP DEI PERCENTILI</h3>
                     <table class="table-bordered full-width">
                         <thead>
-                            <th class="text-left">PERC.LE</th>
-                            <th class="text-center">STIMA BOOTSTRAP</th>
-                            <th class="text-center">{{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}%
-                                LB</th>
-                            <th class="text-center">{{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}%
-                                UB</th>
+                            <th class="text-center" style="width: 25%;">PERC.LE</th>
+                            <th class="text-center" style="width: 25%;">BOOTSTRAP</th>
+                            <th class="text-center" style="width: 25%;">
+                                {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% LB
+                            </th>
+                            <th class="text-center" style="width: 25%;">
+                                {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% UB
+                            </th>
                         </thead>
                         <tbody>
                             {% for pct in data.bootstrap.requested_percentiles %}
                             <tr>
-                                <td class="text-left">{{ pct.percentile | title }}</td>
+                                <td class="text-center">{{ pct.percentile | title }}</td>
                                 <td class="text-center">{{ format_float_number | format(pct.bootstrap_value) }}</td>
                                 <td class="text-center">{{ format_float_number | format(pct.bootstrap_ci_lower) }}</td>
                                 <td class="text-center">{{ format_float_number | format(pct.bootstrap_ci_upper) }}</td>
@@ -367,19 +373,19 @@
                     <h3 class="mb-lg background">VALIDAZIONE MONTE CARLO</h3>
                     <table class="table-bordered full-width">
                         <thead>
-                            <th class="text-left">PERC.LE</th>
-                            <th class="text-center">MONTE CARLO</th>
-                            <th class="text-center">BOOTSTRAP</th>
-                            <th class="text-center">COPERTURA</th>
+                            <th class="text-center" style="width: 25%;">PERC.LE</th>
+                            <th class="text-center" style="width: 25%;">BOOTSTRAP</th>
+                            <th class="text-center" style="width: 25%;">MONTE CARLO</th>
+                            <th class="text-center" style="width: 25%;">COPERTURA</th>
                         </thead>
                         <tbody>
                             {% for pct in data.montecarlo.results %}
                             <tr>
-                                <td class="text-left">{{ pct.percentile | title }}</td>
-                                <td class="text-center">{{ format_float_number | format(pct.montecarlo_value) }}</td>
+                                <td class="text-center">{{ pct.percentile | title }}</td>
                                 <td class="text-center">
                                     {{ format_float_number | format(pct.bootstrap_value) }}
                                 </td>
+                                <td class="text-center">{{ format_float_number | format(pct.montecarlo_value) }}</td>
                                 <td class="text-center">{{ format_float_number | format(pct.coverage) }}%</td>
                             </tr>
                             {% endfor %}
@@ -444,14 +450,14 @@
                     <p>{{ strat.recruitment_type.label }}</p>
                 {% endif %}
                 {% if "gender" in strat %}
-                    <p>{{ strat.gender.label }}</p>
+                    <p>{{ strat.gender.label | title }}</p>
                 {% endif %}
                 {% if "age" in strat %}
                     <p>{{ strat.age.label }}</p>
                 {% endif %}
             </div>
             <div class="mb-xl">
-                <table class="table-bordered table-striped table-padded">
+                <table class="table-bordered table-padded standardization-table">
                     <thead>
                         <th class="text-center">FASCIA</th>
                         <th class="text-center">PUNTEGGIO</th>
@@ -461,8 +467,8 @@
                     <tbody>
                         {% for cutoff in data.bootstrap.cutoffs %}
                         <tr>
-                            <td class="text-center">
-                                {{ loop.index | int }}
+                            <td class="text-center text-bold">
+                                F{{ loop.index | int }}
                             </td>
                             <td class="text-center">
                                 {{ "%.2f" | format(data.metric_config.awarded_scores[loop.index0]) }}
@@ -500,6 +506,24 @@
                         </tr>
                         {% endfor %}
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4">
+                                <div class="caption">
+                                    <span>Tabella {{ header }}3.1:</span>
+                                    <span>
+                                        Precisione: {{ data.metric_config.metric_precision_label }}{% if data.metric_config.metric_subtype == "time" %};
+                                        <span>
+                                            formato: 00:00:00.0 (ore:minuti:secondi.decimi).        
+                                        </span>
+                                        {% else %}.
+                                        {% endif %}
+                                    </span>
+                                   
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
@@ -559,7 +583,7 @@
                                 {% for row in data.bootstrap.cutoffs_test.results %}
                                     {% if row.sample_size == sample_size %}
                                         <tr>
-                                            <td class="text-center">{{ row.perc_step | int }}</td>
+                                            <td class="text-center text-bold">F{{ row.perc_step | int }}</td>
                                             <td class="text-center">{{ "%.2f" | format(row.expected_proportion) }}</td>
                                             <td class="text-center">{{ "%.2f" | format(row.p50) }}</td>
                                             <td class="text-center">{{ "%.2f" | format(row.p90 - row.p10) }}</td>
