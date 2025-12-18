@@ -8,7 +8,6 @@ import pandas as pd
 from weasyprint import HTML  # type: ignore[import-untyped]
 
 from lib_analysis import HD, MLLI, TEST
-from lib_analysis.utils_generic import query_from_db
 from lib_analysis.utils_stats import apply_standardization
 from lib_parser.parser import create_parser
 from lib_report.jinja_environment import jinja_env, templates_dir
@@ -37,11 +36,8 @@ def main() -> int:
     # Globally find all analysis JSON files
     json_files = list(Path("./data_out").glob("**/*_analysis.json"))
 
-    # Load db
-    db: pd.DataFrame = pd.read_csv(Path("./db") / "db.csv")
-
     # Initialize results dictionary
-    results = {}
+    results: dict[str, dict[str, float]] = {}
 
     # Iterate over each JSON file
     for file in json_files:
@@ -53,11 +49,11 @@ def main() -> int:
         # Get metric config
         metric_config: dict[str, Any] = data["metric_config"]
 
-        # Get stratification
-        stratification: dict[str, Any] = metric_config["stratification"]
+        # Get queried data
+        query_from_db: list[dict[str, Any]] = data["query_from_db"]
 
         # Filter database data
-        filtered_db: pd.DataFrame = query_from_db(stratification, db)
+        filtered_db: pd.DataFrame = pd.DataFrame(query_from_db)
 
         # Store bootstrap cutoffs
         cutoffs: list[list[float, float]] = data["bootstrap"]["cutoffs"]
