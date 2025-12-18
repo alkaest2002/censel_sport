@@ -26,6 +26,7 @@
     "metric_precision": 0,
     "metric_precision_label": "unità",
     "higher_is_better": true,
+    "must_pass": false,
     "remove_outliers": true,
     "outlier_factor": 3,
     "requested_percentiles": [

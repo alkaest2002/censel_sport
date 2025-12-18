@@ -26,6 +26,7 @@
     "metric_precision": 1,
     "metric_precision_label": "decimi di secondo",
     "higher_is_better": false,
+    "must_pass": true,
     "remove_outliers": true,
     "outlier_factor": 3,
     "requested_percentiles": [
