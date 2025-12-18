@@ -63,7 +63,7 @@ def save_analysis_results(
     # Extract data from dictionary
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
     plots: list[dict[str, str]] = data_dict.get("plots", {})
-    metric_id: str = metric_config.get("id", "")
+    metric_id: str = metric_config.get("metric_id", "")
 
     # Raise error if something crucial is missing
     if any(map(is_falsy, (metric_config, plots, metric_id))):
