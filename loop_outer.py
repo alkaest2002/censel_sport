@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 import numpy as np
 import pandas as pd
 
-from lib_analysis import MT100, MT1000, PUSHUPS, SITUPS, SWIM25
+from lib_analysis import MT1000, RECRUITMENT_TYPE, TEST
 
 if TYPE_CHECKING:
     import builtins
@@ -56,7 +56,7 @@ def main() -> int:  # noqa: PLR0911
         "recruitment_type" in db.columns,
         db["recruitment_type"].notna().all(),
         db["recruitment_type"].dtype == "object",
-        db["recruitment_type"].isin(["hd", "mlli"]).all(),
+        db["recruitment_type"].isin(list(RECRUITMENT_TYPE.keys())).all(),
     ]
 
     # Raise error if any condition fails
@@ -69,7 +69,7 @@ def main() -> int:  # noqa: PLR0911
         "test" in db.columns,
         db["test"].notna().all(),
         db["test"].dtype == "object",
-        db["test"].isin([MT100, MT1000, SWIM25, SITUPS, PUSHUPS]).all(),
+        db["test"].isin(list(TEST.keys())).all(),
     ]
 
     # Raise error if any condition fails

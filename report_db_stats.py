@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any
 import pandas as pd
 from weasyprint import HTML  # type: ignore[import-untyped]
 
+from lib_analysis import HD, MLLI
 from lib_analysis.utils_generic import query_from_db
 from lib_parser.parser import create_parser
 from lib_report.jinja_environment import jinja_env, templates_dir
@@ -72,11 +73,11 @@ def main() -> int:
 
     # Group db by test and recruitment year
     hd_grouped: pd.DataFrame = (
-        db.loc[db["recruitment_type"].eq("hd")]
+        db.loc[db["recruitment_type"].eq(HD)]
             .groupby(["test", "recruitment_year"])
     )
     mlli_grouped: pd.DataFrame = (
-        db.loc[db["recruitment_type"].eq("mlli")]
+        db.loc[db["recruitment_type"].eq(MLLI)]
         .groupby(["test", "recruitment_year"])
     )
 

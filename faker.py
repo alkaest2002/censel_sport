@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 import pandas as pd
 
-from lib_analysis import MT100, MT1000, PUSHUPS, SITUPS, SWIM25
+from lib_analysis import HD, MLLI, TEST
 from lib_analysis.utils_stats import generate_synthetic_data
 
 if TYPE_CHECKING:
@@ -18,7 +18,7 @@ def _generate_fake_military_data() -> pd.DataFrame:
     Returns:
         pd.DataFrame: Combined dataframe containing synthetic data with columns:
             - recruitment_year: Year of recruitment (2022, 2023, or 2024)
-            - recruitment_type: Type of recruitment ("hd" or "mlli")
+            - recruitment_type: Type of recruitment (HD or MLLI)
             - test: Fitness test type (MT100, MT1000, SWIM25, PUSHUPS, or SITUPS)
             - gender: Gender ("M" or "F")
             - age: Age (integer, normally distributed around 20)
@@ -27,8 +27,8 @@ def _generate_fake_military_data() -> pd.DataFrame:
     # Define all possible combinations of parameters
     subsets: list[tuple[int, str, str, str]] = list(product(
         [2024, 2023, 2022],
-        ["hd", "mlli"],
-        [MT100, MT1000, SWIM25, PUSHUPS, SITUPS],
+        [HD, MLLI],
+        list(TEST.keys()),
         ["M", "F"],
     ))
 
