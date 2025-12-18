@@ -1,6 +1,7 @@
 import sys
 from typing import TYPE_CHECKING, Any
 
+import pandas as pd
 from weasyprint import HTML  # type: ignore[import-untyped]
 
 from lib_parser.parser import create_parser
@@ -57,6 +58,7 @@ def main() -> int:
         rendered_html: str =\
             template.render(
                 data=data,
+                query_from_db=pd.DataFrame(data.get("query_from_db", {})),
                 header=header_letter,
                 page=page_number,
             )
