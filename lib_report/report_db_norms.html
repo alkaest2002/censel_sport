@@ -6,7 +6,7 @@
         padding: 6px;
     }
 
-    tbody tr td {
+    tbody tbody td {
         padding: 3px;
     }
 
@@ -29,12 +29,12 @@
 
             <!-- Page Content -->
             <div class="mb-xxl">
-                <div class="mb-xs">Dati Accademia</div>
+                <div class="text-bold mb-sm">Dati Allievi Accademia</div>
                 {{ tables_data[0] | safe }}
                  <div class="caption">
                     <span>Tabella {{ header }}.1:</span>
                     <span>
-                        Il dataset analizzato è quello originale, prima dell'applicaizone dei due <span class="text-italic">loop</span> di analisi. F1, ..., F6 = percentuali di dati ricadenti in ogni fascia percentilica delle tavole di conversione. T = riferimento tavola di conversione utilizzata.
+                        F1, ..., F6 = percentuali di dati ricadenti in ogni fascia percentilica delle tavole di conversione, T = riferimento tavola di conversione utilizzata.
                     </span>
                 </div>
             </div>
@@ -54,12 +54,12 @@
 
             <!-- Page Content -->
             <div class="mb-xxl">
-                <div class="mb-xs">Dati Marescialli</div>
+                <div class="text-bold mb-sm">Dati Allievi Marescialli</div>
                 {{ tables_data[1] | safe }}
                 <div class="caption">
                     <span>Tabella {{ header }}.2:</span>
                     <span>
-                        Il dataset analizzato è quello originale, prima dell'applicaizone dei due <span class="text-italic">loop</span> di analisi. F1, ..., F6 rappresentano la percentuali di dati ricadenti in ogni fascia percentilica delle tavole di conversione.
+                        F1, ..., F6 = percentuali percentuali di dati ricadenti in ogni fascia percentilica delle tavole di conversione, T = riferimento tavola di conversione utilizzata.
                     </span>
                 </div>
             </div>

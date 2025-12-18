@@ -7,7 +7,7 @@ import orjson
 import pandas as pd
 from weasyprint import HTML  # type: ignore[import-untyped]
 
-from lib_analysis import HD, MLLI, TESTS
+from lib_analysis import HD, MLLI, TEST
 from lib_analysis.utils_generic import query_from_db
 from lib_analysis.utils_stats import apply_standardization
 from lib_parser.parser import create_parser
@@ -143,7 +143,7 @@ def main() -> int:
                 .style
                     .format(precision=1)
                     .set_table_attributes('class="table-bordered full-width mb-xs"')
-                    .relabel_index([(TESTS[i[0]], i[1].upper()) for i in table_with_index.index], axis=0)
+                    .relabel_index([(TEST[i[0]], i[1].upper()) for i in table_with_index.index], axis=0)
                     .relabel_index(["Concorso", "F1", "F2", "F3", "F4", "F5", "F6", "T"], axis=1)
         )
 
