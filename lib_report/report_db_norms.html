@@ -29,7 +29,7 @@
 
             <!-- Page Content -->
             <div class="mb-xxl">
-                <div class="text-bold mb-sm">Dati Allievi Accademia</div>
+                <div class="text-bold mb-sm">Dati {{ 'hd' | recruitment_type_label | title }}</div>
                 {{ tables_data[0] | safe }}
                  <div class="caption">
                     <span>Tabella {{ header }}.1</span>
@@ -54,7 +54,7 @@
 
             <!-- Page Content -->
             <div class="mb-xxl">
-                <div class="text-bold mb-sm">Dati Allievi Marescialli</div>
+                <div class="text-bold mb-sm">Dati {{ 'mlli' | recruitment_type_label | title }}</div>
                 {{ tables_data[1] | safe }}
                 <div class="caption">
                     <span>Tabella {{ header }}.2</span>

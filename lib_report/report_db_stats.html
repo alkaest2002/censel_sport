@@ -29,7 +29,13 @@
             <!-- Page Content -->
             <div>
                 {% for table in tables_data %}
-                <div class="text-bold mb-sm">{% if loop.first%}Dati Allievi Accademia{% else %}Dati Allievi Marescialli{% endif %}</div>
+                <div class="text-bold mb-sm">
+                    {% if loop.first%}
+                        Dati {{ 'hd' | recruitment_type_label | title }}
+                    {% else %}
+                        Dati {{ 'mlli' | recruitment_type_label | title }}
+                    {% endif %}
+                </div>
                 <table class="table-bordered full-width mb-xxl">
                     <thead>
                         <tr>
