@@ -121,7 +121,7 @@ def main() -> int:
     # Initialize tables list
     tables: list[Styler] = []
 
-    # Iterate over tables (one for hd, the other for mlli)
+    # Iterate over tables (one for Hd, the other for Mlli)
     for table in (
         data.loc[data.recruitment_type == HD, :].drop(columns=["recruitment_type"]),
         data.loc[data.recruitment_type == MLLI, :].drop(columns=["recruitment_type"]),
