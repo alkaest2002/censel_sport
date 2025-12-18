@@ -1,5 +1,4 @@
 {
-    "id": "25mt_swim_females",
     "title": "nuoto 25 metri - femmine",
     "source_type": "db",
     "stratification": {
@@ -24,6 +23,8 @@
             "query": "recruitment_year.between(2023,2025)"
         }
     },
+    "test_id": "25mt_swim",
+    "metric_id": "25mt_swim_females",
     "metric_type": "continuous",
     "metric_subtype": "time",
     "metric_unit": "secondi",

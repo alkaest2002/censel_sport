@@ -1,5 +1,4 @@
 {
-    "id": "push_ups_females",
     "title": "piegamenti sulle braccia - femmine",
     "source_type": "db",
     "stratification": {
@@ -24,6 +23,8 @@
             "query": "recruitment_year.between(2023,2025)"
         }
     },
+    "test_id": "push_ups",
+    "metric_id": "push_ups_females",
     "metric_type": "discrete",
     "metric_subtype": "count",
     "metric_unit": "numero di ripetizioni",

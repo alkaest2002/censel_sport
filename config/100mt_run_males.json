@@ -1,5 +1,4 @@
 {
-    "id": "100mt_run_males",
     "title": "corsa 100 mt piani - maschi",
     "source_type": "db",
     "stratification": {
@@ -24,6 +23,8 @@
             "query": "recruitment_year.between(2022,2025)"
         }
     },
+    "test_id": "100mt_run",
+    "metric_id": "100mt_run_males",
     "metric_type": "continuous",
     "metric_subtype": "time",
     "metric_unit": "secondi",

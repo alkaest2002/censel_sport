@@ -1,5 +1,4 @@
 {
-    "id": "sit_ups_males",
     "title": "addominali - maschi",
     "source_type": "db",
     "stratification": {
@@ -24,6 +23,8 @@
             "query": "recruitment_year.between(2023,2025)"
         }
     },
+    "test_id": "sit_ups",
+    "metric_id": "sit_ups_males",
     "metric_type": "discrete",
     "metric_subtype": "count",
     "metric_unit": "numero di ripetizioni",

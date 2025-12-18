@@ -1,5 +1,4 @@
 {
-    "id": "1000mt_run_females",
     "title": "corsa 1000 mt piani - femmine",
     "source_type": "db",
     "stratification": {
@@ -24,6 +23,8 @@
             "query": "recruitment_year.between(2023,2025)"
         }
     },
+    "test_id": "1000mt_run",
+    "metric_id": "1000mt_run_females",
     "metric_type": "continuous",
     "metric_subtype": "time",
     "metric_unit": "secondi",
