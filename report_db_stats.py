@@ -92,7 +92,9 @@ def main() -> int:
 
         # Iterate over each group
         for _, grouped_data in grouped:
-            grouped_agg = (
+
+            # Aggregate statistics
+            grouped_agg: pd.DataFrame = (
                 pd.concat([
                     grouped_data[["test", "recruitment_year", "gender"]]
                         .value_counts()
@@ -106,6 +108,7 @@ def main() -> int:
                 .droplevel(level=0, axis=1)
                 .reset_index(drop=False)
             )
+
             # Add total count by summing the last two columns
             grouped_agg = grouped_agg.assign(total_count=grouped_agg.iloc[:, -2:].sum(axis=1))
 
