@@ -355,7 +355,7 @@
                             <tr>
                                 <td colspan="4">
                                     <div class="caption">
-                                        <span>Tabella {{ header }}2.1:</span>
+                                        <span>Tabella {{ header }}2.1</span>
                                         <span>
                                             {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% LB =
                                             Limite di confidenza inferiore,
@@ -394,7 +394,7 @@
                             <tr>
                                 <td colspan="5">
                                     <div class="caption">
-                                        <span>Tabella {{ header }}2.2:</span>
+                                        <span>Tabella {{ header }}2.2</span>
                                         <span>
                                             MONTE CARLO = Percentile calcolato con simulazione Monte Carlo,
                                             BOOTSTRAP = Percentile stimato con tecnica Bootstrap, COPERTURA = Percentuale
@@ -440,7 +440,7 @@
             <!-- Page Content -->
             <h2 class="mb-xl">Tavola di conversione percentilica</h2>
             <div class="mb-xl text-small">
-                <p>Tipo di prova = {{ data.metric_config.id | test_label }}</p>
+                <p>Modalità = prova obbligatoria {% if data.metric_config.must_pass %}con sbarramento{% else %}senza sbarramento{% endif %}</p>
                 <p>Numerosità del campione: {{ data.clean.descriptive_stats.count | int }}</p>
                 {% set strat = data.metric_config.stratification %}
                 {% if "recruitment_year" in strat %}
@@ -510,16 +510,17 @@
                         <tr>
                             <td colspan="4">
                                 <div class="caption">
-                                    <span>Tabella {{ header }}3.1:</span>
-                                    <span>
-                                        Precisione: {{ data.metric_config.metric_precision_label }}{% if data.metric_config.metric_subtype == "time" %};
+                                    <span>Tabella {{ header }}3.1</span>
+                                    {% if data.metric_config.metric_subtype == "time" %}
                                         <span>
-                                            formato: 00:00:00.0 (ore:minuti:secondi.decimi).        
+                                            precisione = {{ data.metric_config.metric_precision_label }};
+                                                <span>
+                                                    formato = ore:minuti:secondi.decimi.        
+                                                </span>
                                         </span>
-                                        {% else %}.
-                                        {% endif %}
-                                    </span>
-                                   
+                                    {% else %}
+                                        precisione = {{ data.metric_config.metric_precision_label }}.
+                                    {% endif %}
                                 </div>
                             </td>
                         </tr>
