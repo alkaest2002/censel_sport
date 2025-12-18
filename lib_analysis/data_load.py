@@ -99,10 +99,10 @@ def _load_from_synthetic(metric_config: dict[str, Any]) -> dict[str, Any]:
     random_state: int = metric_config.get("random_state", 42)
 
     # Get test name
-    test: str = "_".join(metric_config["id"].split("_")[:2])
+    test_id: str = metric_config["test_id"]
 
     # Generate synthetic data
-    raw_data: NDArray[np.number[Any]] = generate_synthetic_data(test, n_samples, random_state)
+    raw_data: NDArray[np.number[Any]] = generate_synthetic_data(test_id, n_samples, random_state)
 
     # Generate descriptive statistics from data
     descriptive_stats: pd.DataFrame = _get_descriptive_stats(raw_data)

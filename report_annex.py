@@ -47,7 +47,7 @@ def main() -> int:
     try:
         # Load and extratct data
         data: dict[str, Any] = load_configuration_data(validated_path)
-        metric_id: str = data.get("metric_config", {}).get("id", "unknown_metric")
+        metric_id: str = data.get("metric_config", {}).get("metric_id", "unknown_metric")
         header_letter: str = data.get("metric_config", {}).get("report", {}).get("header_letter", "A")
         page_number: int = data.get("metric_config", {}).get("report", {}).get("initial_page", 1)
 

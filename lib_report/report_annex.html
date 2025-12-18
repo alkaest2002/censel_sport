@@ -107,7 +107,7 @@
                     <tbody>
                         <tr>
                             <td class="text-left">Metrica</td>
-                            <td class="text-center">{{ data.metric_config.id | test_label }}</td>
+                            <td class="text-center">{{ data.metric_config.test_id | test_label }}</td>
                         </tr>
                         <tr>
                             <td class="text-left">Tipo di metrica</td>
@@ -139,21 +139,28 @@
                             <td class="text-left">Numero di outlier</td>
                             <td class="text-center">{{ data.clean.metadata.removed_outliers | int }}</td>
                         </tr>
-                        {% if data.metric_config.stratification.gender.label %}
+                        {% if "gender" in data.metric_config.stratification %}
                             <tr>
                                 <td class="text-left">Genere</td>
-                                {% set gender = data.metric_config.stratification.gender.label.split(':')[-1] %}
+                                {% set gender = query_from_db.gender.unique() | join(", ") | upper %}
                                 <td class="text-center">{{ gender }}</td>
                             </tr>
                         {% endif %}
-                         {% if data.metric_config.stratification.recruitment_year.label %}
+                        {% if "recruitment_type" in data.metric_config.stratification %}
+                            <tr>
+                                <td class="text-left">Tipo di reclutamento</td>
+                                {% set recruitment_type = query_from_db.recruitment_type.unique() | sort | map('recruitment_type_label') | map('title') | map('test_label') | join(", ") %}
+                                <td class="text-center">{{ recruitment_type }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if "recruitment_year" in data.metric_config.stratification %}
                             <tr>
                                 <td class="text-left">Anni di riferimento</td>
-                                {% set recruitment_year = data.metric_config.stratification.recruitment_year.label.split(':')[-1] %}
+                                {% set recruitment_year = query_from_db.recruitment_year.unique() | sort | join(", ") %}
                                 <td class="text-center">{{ recruitment_year }}</td>
                             </tr>
                         {% endif %}
-                        {% if data.metric_config.stratification.age.label %}
+                        {% if "age" in data.metric_config.stratification %}
                             <tr>
                                 <td class="text-left">Fascia d'età</td>
                                 {% set age = data.metric_config.stratification.age.label.split(':')[-1] %}
@@ -440,15 +447,18 @@
             <!-- Page Content -->
             <h2 class="mb-xl">Tavola di conversione percentilica</h2>
             <div class="mb-xl text-small">
-                <p>Modalità = prova obbligatoria {% if data.metric_config.must_pass %}con sbarramento{% else %}senza sbarramento{% endif %}</p>
-                <p>Numerosità del campione: {{ data.clean.descriptive_stats.count | int }}</p>
                 {% set strat = data.metric_config.stratification %}
-                {% if "recruitment_year" in strat %}
-                    <p>{{ strat.recruitment_year.label }}</p>
-                {% endif %}
                 {% if "recruitment_type" in strat %}
-                    <p>{{ strat.recruitment_type.label }}</p>
+                    <p>Tipo di reclutamento: {{ query_from_db.recruitment_type.unique() | sort | map('recruitment_type_label') | map('title') | join(", ") }}
+                    </p>
                 {% endif %}
+                {% if "recruitment_year" in strat %}
+                    <p>Anni di reclutamento: {{ query_from_db.recruitment_year.unique()| sort | join(", ") }}</p>
+                {% endif %}
+                <p>
+                    Modalità: prova obbligatoria {% if data.metric_config.must_pass %}con sbarramento{% else %}senza sbarramento{% endif %}
+                </p>
+                <p>Numerosità del campione: {{ data.clean.descriptive_stats.count | int }}</p>
                 {% if "gender" in strat %}
                     <p>{{ strat.gender.label | title }}</p>
                 {% endif %}
