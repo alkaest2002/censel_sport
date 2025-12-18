@@ -15,6 +15,10 @@
             "label": "Fascia di età: 17-29 anni",
             "query": "age.between(17,29)"
         },
+        "recruitment_type": {
+            "label": "Tipo di reclutamento: Allievi Accademia, Allievi Marescialli",
+            "query": "recruitment_type.isin(['hd', 'mlli'])"
+        },
         "recruitment_year": {
             "label": "Anni di reclutamento: 2023-2025",
             "query": "recruitment_year.between(2023,2025)"
