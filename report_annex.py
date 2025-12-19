@@ -25,9 +25,6 @@ def main() -> int:
         ValueError: If the file path validation fails.
         Exception: For any other errors during report generation.
     """
-    # Render HTML
-    render_html: bool = False
-
     # Get report parser
     parser: argparse.ArgumentParser = create_parser(filepath=True)
 
@@ -53,7 +50,7 @@ def main() -> int:
             jinja_template_name="report_annex.html",
             output_folder=validated_path.parent.parent / "_report",
             output_filename=f"{header_letter}_{metric_id}",
-            output_formats=["pdf"] + (["html"] if render_html else []),
+            output_formats=["pdf"],
             data=data,
             query_from_db=pd.DataFrame(data.get("query_from_db", {})),
             header=header_letter,
