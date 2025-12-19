@@ -34,6 +34,8 @@ def main() -> int:
     # Validate the file path
     try:
         validated_path: Path = validate_file_path(args.filepath, "report")
+
+    # Handle file validation errors
     except (FileNotFoundError, ValueError) as e:
         print(f"Error: {e}")
         return 1
