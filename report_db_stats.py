@@ -3,17 +3,14 @@ import sys
 from typing import TYPE_CHECKING, Any
 
 import pandas as pd
-from weasyprint import HTML  # type: ignore[import-untyped]
 
 from lib_analysis import HD, MLLI
 from lib_analysis.utils_generic import query_from_db
 from lib_parser.parser import create_parser
-from lib_report.jinja_environment import jinja_env, templates_dir
+from lib_report.utils_report import render_template
 
 if TYPE_CHECKING:
     import argparse
-
-    import jinja2
 
 
 def _stringify_value_counts(x: pd.Series) -> str:
@@ -119,29 +116,25 @@ def main() -> int:
         tables_data.append(pd.concat(grouped_stats, axis=0, ignore_index=True))
 
     try:
-        # Get db report template
-        template: jinja2.Template = jinja_env.get_template("report_db_stats.html")
 
-        # Build output path
-        base_path: Path = Path("./data_out/_report/A_db_stats")
-        output_pdf: Path = base_path.with_suffix(".pdf")
+        _: dict[str, Path] = render_template(
+            jinja_template_name="report_db_stats.html",
+            output_folder=Path("./data_out/_report"),
+            output_filename="A_db_stats",
+            output_formats=["pdf"],
+            data=tables_data,
+            header="A",
+            page=args.page_number,
+        )
 
-        # Render template with data
-        rendered_html: str =\
-            template.render(
-                tables_data=tables_data, header="A", page=args.page_number,
-            )
-
-        # Write PDF file
-        HTML(string=rendered_html, base_url=str(templates_dir)).write_pdf(str(output_pdf))
-        print(f"Report generated: {output_pdf}")
+        # Print success message
+        print("Database statistics report generated successfully.")
 
     # Handle exceptions
     except Exception as e:  # noqa: BLE001
         print(f"Error while generating report: {e}", file=sys.stderr)
         return 1
 
-    print("Report db correctly generated.")
     return 0
 
 

@@ -3,15 +3,12 @@ import sys
 from typing import TYPE_CHECKING, Any
 
 import orjson
-from weasyprint import HTML  # type: ignore[import-untyped]
 
 from lib_parser.parser import create_parser
-from lib_report.jinja_environment import jinja_env, templates_dir
+from lib_report.utils_report import render_template
 
 if TYPE_CHECKING:
     import argparse
-
-    import jinja2
 
 def main() -> int:
     """Generate database statistics report.
@@ -50,27 +47,25 @@ def main() -> int:
     toc.sort(key=lambda x: x["initial_page"])
 
     try:
-        # Get report template
-        template: jinja2.Template = jinja_env.get_template("report_toc.html")
 
-        # Build output paths
-        base_path: Path = Path("./data_out/_report/1_toc")
-        output_pdf: Path = base_path.with_suffix(".pdf")
-
-        # Render template
-        rendered_html: str =\
-            template.render(toc=toc, page=args.page_number)
-
-        # Write PDF file
-        HTML(string=rendered_html, base_url=str(templates_dir)).write_pdf(str(output_pdf))
-        print(f"TOC generated: {output_pdf}")
+        # Render template with data
+        _: dict[str, Path] = render_template(
+            jinja_template_name="report_toc.html",
+            output_folder=Path("./data_out/_report"),
+            output_filename="1_toc",
+            output_formats=["pdf"],
+            data={"toc": toc},
+            page=args.page_number,
+        )
 
     # Handle exceptions
     except Exception as e:  # noqa: BLE001
         print(f"Error while generating TOC: {e}")
         return 1
 
+    # Print success message
     print("TOC was generated successfully.")
+
     return 0
 
 

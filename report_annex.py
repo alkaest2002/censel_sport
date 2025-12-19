@@ -2,17 +2,14 @@ import sys
 from typing import TYPE_CHECKING, Any
 
 import pandas as pd
-from weasyprint import HTML  # type: ignore[import-untyped]
 
 from lib_parser.parser import create_parser
 from lib_parser.utils_parser import load_configuration_data, validate_file_path
-from lib_report.jinja_environment import jinja_env, templates_dir
+from lib_report.utils_report import render_template
 
 if TYPE_CHECKING:
     import argparse
     from pathlib import Path
-
-    import jinja2
 
 def main() -> int:
     """Generate report for given data analysis.
@@ -51,39 +48,24 @@ def main() -> int:
         header_letter: str = data.get("metric_config", {}).get("report", {}).get("header_letter", "A")
         page_number: int = data.get("metric_config", {}).get("report", {}).get("initial_page", 1)
 
-        # Get report template
-        template: jinja2.Template = jinja_env.get_template("report_annex.html")
-
-        # Render template
-        rendered_html: str =\
-            template.render(
-                data=data,
-                query_from_db=pd.DataFrame(data.get("query_from_db", {})),
-                header=header_letter,
-                page=page_number,
-            )
-
-        # Build output path
-        output_pdf: Path =\
-            (validated_path.parent.parent / "_report" / f"{header_letter}_{metric_id}").with_suffix(".pdf")
-
-        # Write template to PDF file
-        HTML(string=rendered_html, base_url=str(templates_dir)).write_pdf(str(output_pdf))
-
-        if render_html:
-            # Build HTML output path
-            output_html: Path = validated_path.with_suffix(".html")
-
-            # Write template to HTML file
-            with output_html.open("w") as fout:
-                fout.write(rendered_html)
+        # Render template and generate outputs
+        output_paths: dict[str, Path] = render_template(
+            jinja_template_name="report_annex.html",
+            output_folder=validated_path.parent.parent / "_report",
+            output_filename=f"{header_letter}_{metric_id}",
+            output_formats=["pdf"] + (["html"] if render_html else []),
+            data=data,
+            query_from_db=pd.DataFrame(data.get("query_from_db", {})),
+            header=header_letter,
+            page=page_number,
+        )
 
     # Handle exceptions
     except Exception as e:  # noqa: BLE001
         print(f"Error while generating report: {e}", file=sys.stderr)
         return 2
 
-    print(f"Report generated: {output_pdf}")
+    print(f"Report generated: {output_paths.get('pdf', 'No PDF generated')}")
     return 0
 
 if __name__ == "__main__":

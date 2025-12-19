@@ -5,17 +5,15 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 import orjson
 import pandas as pd
-from weasyprint import HTML  # type: ignore[import-untyped]
 
 from lib_analysis import HD, MLLI, TEST
 from lib_analysis.utils_stats import apply_standardization
 from lib_parser.parser import create_parser
-from lib_report.jinja_environment import jinja_env, templates_dir
+from lib_report.utils_report import render_template
 
 if TYPE_CHECKING:
     import argparse
 
-    import jinja2
     from pd.io.formats.style import Styler
 
 
@@ -167,20 +165,19 @@ def main() -> int:
 
     try:
 
-        # Get db report template
-        template: jinja2.Template = jinja_env.get_template("report_db_norms.html")
+        # Rendered template with data
+        _: dict[str, Path] = render_template(
+            jinja_template_name="report_db_norms.html",
+            output_folder=Path("./data_out/_report"),
+            output_filename=f"{args.header_letter}_db_norms",
+            output_formats=["pdf"],
+            data=tables_data,
+            header=args.header_letter,
+            page=args.page_number,
+        )
 
-        # Build output path
-        base_path: Path = Path(f"./data_out/_report/{args.header_letter}_db_norms")
-        output_pdf: Path = base_path.with_suffix(".pdf")
-
-        # Render template with data
-        rendered_html: str =\
-            template.render(tables_data=tables_data, header=args.header_letter, page=args.page_number)
-
-        # Write PDF file
-        HTML(string=rendered_html, base_url=str(templates_dir)).write_pdf(str(output_pdf))
-        print(f"Report generated: {output_pdf}")
+        # Print success message
+        print("Database norms report generated successfully.")
 
     # Handle exceptions
     except Exception as e:  # noqa: BLE001
