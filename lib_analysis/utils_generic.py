@@ -95,21 +95,17 @@ def format_seconds(seconds: float, precision: int) -> str:
     Returns:
         Formatted time string in HH:MM:SS.sss format.
     """
-    # Separate whole seconds and fractional part
-    whole_seconds: int = int(seconds)
-    fractional_part: float = seconds - whole_seconds
+    # Calculate hours, minutes, and seconds
+    hours = int(seconds // 3600)
+    minutes = int((seconds % 3600) // 60)
+    secs = seconds % 60
 
-    # Use divmod to get hours, minutes, and seconds
-    hours: int
-    remainder: int
-    hours, remainder = divmod(whole_seconds, 3600)
+    # Format the result with proper width for seconds
+    if precision > 0:
+        width = 3 + precision  # 2 digits + decimal point + precision digits
+        return f"{hours:02d}:{minutes:02d}:{secs:0{width}.{precision}f}"
 
-    minutes: int
-    secs: int
-    minutes, secs = divmod(remainder, 60)
-
-    # Format with fractional seconds
-    return f"{hours:02d}:{minutes:02d}:{secs + fractional_part:{3+precision}.{precision}f}"
+    return f"{hours:02d}:{minutes:02d}:{int(secs):02d}"
 
 
 def format_title(title: str) -> str:
