@@ -48,7 +48,7 @@ def main() -> int:
         header_letter: str = data.get("metric_config", {}).get("report", {}).get("header_letter", "A")
         page_number: int = data.get("metric_config", {}).get("report", {}).get("initial_page", 1)
 
-        # Render template and generate outputs
+        # Render template with data
         output_paths: dict[str, Path] = render_template(
             jinja_template_name="report_annex.html",
             output_folder=validated_path.parent.parent / "_report",

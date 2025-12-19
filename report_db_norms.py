@@ -165,7 +165,7 @@ def main() -> int:
 
     try:
 
-        # Rendered template with data
+        # Render template with data
         _: dict[str, Path] = render_template(
             jinja_template_name="report_db_norms.html",
             output_folder=Path("./data_out/_report"),
