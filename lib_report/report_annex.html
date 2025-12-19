@@ -129,15 +129,17 @@
                         </tr>
                         <tr>
                             <td class="text-left">Numerosità originaria</td>
-                            <td class="text-center">{{ data.load.descriptive_stats.count | int }}</td>
+                            {% set original_size = data.load.descriptive_stats.count | int %}
+                            <td class="text-center">{{ original_size }}</td>
                         </tr>
                          <tr>
                             <td class="text-left">Numerosità dopo rimozione outlier</td>
-                            <td class="text-center">{{ data.clean.metadata.final_size | int }}</td>
+                            {% set final_size = data.clean.metadata.final_size %}
+                            <td class="text-center">{{ final_size | int }}</td>
                         </tr>
                          <tr>
-                            <td class="text-left">Numero di outlier</td>
-                            <td class="text-center">{{ data.clean.metadata.removed_outliers | int }}</td>
+                            <td class="text-left">Numero di dati esclausi</td>
+                            <td class="text-center">{{ (original_size - final_size) | int }}</td>
                         </tr>
                         {% if "gender" in data.metric_config.stratification %}
                             <tr>
