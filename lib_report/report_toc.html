@@ -72,7 +72,7 @@
                             <span class="toc-page">pag. {{ page + 1 }}</span>
                         </a>
                     </li>
-                    {% for t in toc %}
+                    {% for t in data.toc %}
                         <li>
                             <a href="#link_to_heading">
                                 <span class="title">{{ t.header_letter | upper }}. {{ t.title | format_title }}</span>
@@ -83,10 +83,10 @@
                     {% endfor %}
                     <li>
                         <a href="#link_to_heading">
-                            {% set letter = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[(toc|length) + 1] %}
+                            {% set letter = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[(data.toc|length) + 1] %}
                             <span class="title">{{ letter }}. Verifica delle nuove tavole di conversione</span>
                             <span class="leaders"></span>
-                            <span class="toc-page">pag. {{ page + (toc|length)*4 + 2 }}</span>
+                            <span class="toc-page">pag. {{ page + (data.toc|length)*4 + 2 }}</span>
                         </a>
                     </li>
                 </ul>
