@@ -25,7 +25,7 @@ def main() -> int:  # noqa: PLR0911
         - 1: Error in file validation or loading
     """
     # Define file paths
-    db_original_filepath: Path = Path("db/db_original.csv")
+    db_original_filepath: Path = Path("db/db_original2.csv")
     db_filepath: Path = Path("db/db.csv")
 
     # Read CSV file into DataFrame
@@ -43,7 +43,7 @@ def main() -> int:  # noqa: PLR0911
         "recruitment_year" in db.columns,
         db["recruitment_year"].notna().all(),
         db["recruitment_year"].dtype == "int64",
-        db["recruitment_year"].between(2000, datetime.now(ZoneInfo("Europe/Rome")).year).all(),
+        db["recruitment_year"].between(2021, datetime.now(ZoneInfo("Europe/Rome")).year).all(),
     ]
 
     # Raise error if any condition fails
