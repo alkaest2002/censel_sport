@@ -138,8 +138,10 @@ def apply_standardization(
         pd.DataFrame: DataFrame with standadization results.
     """
     # If awarded_scores not provided, use default sequential scores
+    # Reverse if higher_is_better is False
     if awarded_scores is None:
-        awarded_scores = list(range(1, len(cutoffs) + 1))
+        rng: list[int] = list(range(1, len(cutoffs) + 1))
+        awarded_scores: list[int] = rng if higher_is_better else rng[::-1]
 
     # Convert data to pandas Series for easier manipulation
     data: pd.Series = pd.Series(data_to_standardize)
@@ -158,14 +160,6 @@ def apply_standardization(
         ],
     ).astype(int)
 
-    # Compute standardized values based on performance direction
-    standardized_values: pd.Series =\
-        standardized_steps if higher_is_better else standardized_steps.rsub(len(cutoffs)+1)
-
-    # Compute awarded scores
-    mapping = dict(zip(range(1, len(cutoffs)+1), awarded_scores, strict=True))
-    standardized_awarded_scores: pd.Series = standardized_steps.map(mapping).astype(float)
-
     # Compute standardized scores lower bounds for data
     standardized_bounds: pd.Series = data.case_when(
         [
@@ -175,20 +169,23 @@ def apply_standardization(
         ],
     )
 
+    # Compute awarded scores
+    mapping = dict(zip(range(1, len(cutoffs)+1), awarded_scores, strict=True))
+    standardized_awarded_scores: pd.Series = standardized_steps.map(mapping).astype(float)
+
     return pd.concat(
         [
             data,
             standardized_steps,
-            standardized_values,
             standardized_awarded_scores,
             standardized_bounds,
         ],
         keys=[
             "original_value",
             "standardized_step",
-            "standardized_value",
             "standardized_awarded_score",
-            "standardized_value_bounds"],
+            "standardized_value_bounds",
+        ],
         axis=1,
     )
 
