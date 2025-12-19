@@ -48,30 +48,30 @@ def render_template(
     output_paths: dict[OutputFormat, Path] = {}
 
     # Prepare template context
-    template_context = {"data": data, **template_kwargs }
+    template_context: dict[str, Any] = { "data": data, **template_kwargs }
 
     # Get Jinja template
     jinja_template: jinja2.Template = jinja_env.get_template(jinja_template_name)
 
     # Render template
-    rendered_html = jinja_template.render(**template_context)
+    rendered_html: str = jinja_template.render(**template_context)
 
     # Write HTML if requested
     if "html" in output_formats:
-        output_html_path = (output_folder / output_filename).with_suffix(".html")
+        output_html_path: Path = (output_folder / output_filename).with_suffix(".html")
         with output_html_path.open("w", encoding="utf-8") as fout:
             fout.write(rendered_html)
         output_paths["html"] = output_html_path
 
     # Write PDF if requested
     if "pdf" in output_formats:
-        output_pdf_path = (output_folder / output_filename).with_suffix(".pdf")
+        output_pdf_path: Path = (output_folder / output_filename).with_suffix(".pdf")
         HTML(string=rendered_html, base_url=str(templates_dir)).write_pdf(str(output_pdf_path))
         output_paths["pdf"] = output_pdf_path
 
     # Handle data export formats
     if "json" in output_formats:
-        output_json_path = (output_folder / output_filename).with_suffix(".json")
+        output_json_path: Path = (output_folder / output_filename).with_suffix(".json")
         with output_json_path.open("wb") as fout:
             fout.write(orjson.dumps(data))
         output_paths["json"] = output_json_path
