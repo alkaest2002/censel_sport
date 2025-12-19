@@ -19,12 +19,12 @@
             "query": "recruitment_type.isin(['hd', 'mlli'])"
         },
         "recruitment_year": {
-            "label": "Anni di reclutamento: 2023-2025",
-            "query": "recruitment_year.between(2023,2025)"
+            "label": "Anni di reclutamento: 2022-2025",
+            "query": "recruitment_year.between(2022,2025)"
         }
     },
     "test_id": "push_ups",
-    "metric_": "push_ups_males",
+    "metric_id": "push_ups_males",
     "metric_type": "discrete",
     "metric_subtype": "count",
     "metric_unit": "numero di ripetizioni",

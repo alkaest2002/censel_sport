@@ -24,7 +24,7 @@
         }
     },
     "test_id": "100mt_run",
-    "mteric_id": "100mt_run_females",
+    "metric_id": "100mt_run_females",
     "metric_type": "continuous",
     "metric_subtype": "time",
     "metric_unit": "secondi",
