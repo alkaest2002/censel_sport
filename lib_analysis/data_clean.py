@@ -65,6 +65,9 @@ def clean_data(
     # Get final cleaned data
     final_data: NDArray[np.number[Any]] = clean_data[outlier_mask]
 
+    # Sort final data
+    final_data = np.sort(final_data)
+
     # Compute descriptive statistics on cleaned data
     statistics: pd.DataFrame = pd.DataFrame(final_data).describe()
 
