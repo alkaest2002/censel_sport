@@ -83,39 +83,3 @@ def is_falsy(value: Any) -> bool:
     except TypeError:
         # For objects without __len__, use standard truthiness
         return not bool(value)
-
-
-def format_seconds(seconds: float, precision: int) -> str:
-    """Format seconds into a human-readable string (HH:MM:SS.sss).
-
-    Args:
-        seconds: The time in seconds to format.
-        precision: Number of decimal places for fractional seconds.
-
-    Returns:
-        Formatted time string in HH:MM:SS.sss format.
-    """
-    # Calculate hours, minutes, and seconds
-    hours = int(seconds // 3600)
-    minutes = int((seconds % 3600) // 60)
-    secs = seconds % 60
-
-    # Format the result with proper width for seconds
-    if precision > 0:
-        width = 3 + precision  # 2 digits + decimal point + precision digits
-        return f"{hours:02d}:{minutes:02d}:{secs:0{width}.{precision}f}"
-
-    return f"{hours:02d}:{minutes:02d}:{int(secs):02d}"
-
-
-def format_title(title: str) -> str:
-    """Format a title string by capitalizing the first letter and lowercasing the rest.
-
-    Args:
-        title: The title string to format.
-
-    Returns:
-        Formatted title string with first letter capitalized and rest lowercase.
-        Returns empty string if input is empty.
-    """
-    return title[0].upper() + title[1:].lower() if title else ""
