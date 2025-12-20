@@ -13,108 +13,46 @@ def _():
 
 @app.cell
 def _(pd):
-    db_original = pd.read_excel("./db/db.xlsx")
-    return (db_original,)
+    db = pd.read_csv("./db/db.csv")
+    db.head()
+    return (db,)
 
 
 @app.cell
-def _(db_original):
-    columns_mapper = { 
-        "Anno_ril": "recruitment_year", 
-        "Concorso": "recruitment_type", 
-        "Prova": "test", 
-        "Genere": "gender", 
-        "Età": "age",
-        "Performance": "value"
-    }
-
-    recrutiment_type_mapper = {
-        "ACCADEMIA": "hd", 
-        "Marescialli": "mlli"
-    }
-
-    test_mapper = {
-        "100 m": "100mt_run",
-        "1000 m": "1000mt_run",
-        "Nuoto 25 m": "25mt_swim",
-        "Pieg. addominali": "sit_ups",
-        "Pieg. sulle braccia": "push_ups"
-    }
-
-    db_mapped = (
-        db_original
-            .rename(columns=columns_mapper)
-            .loc[: , columns_mapper.values()]
-            .replace({
-                "recruitment_type": recrutiment_type_mapper,
-                "test": test_mapper
-            })
-    )
-    return db_mapped, test_mapper
-
-
-@app.cell
-def _(db_mapped):
-    db_mapped.gender.eq("8")
+def _(db):
+    pushups_f_2022 = db.query("""
+        recruitment_year.eq(2022) & recruitment_type.eq('mlli') & test.eq('push_ups') & gender.eq('F')
+    """).sort_values(by="value")
+    pushups_f_2022.loc[:, ["value"]].eq(0).sum()/pushups_f_2022.shape[0]
     return
 
 
 @app.cell
-def _(db_mapped):
-    db_cleaned = (
-        db_mapped.replace({"gender": {"8": "F"}})
+def _(db, pl):
+    dbl = pl.from_pandas(db)
+    dbl.head()
+    return (dbl,)
+
+
+@app.cell
+def _(dbl, pl):
+    pushups_f_2022_pl = (
+        dbl.filter(
+            (pl.col("recruitment_year") == 2022) &
+            (pl.col("recruitment_type") == "mlli") &
+            (pl.col("test") == "push_ups") &
+            (pl.col("gender") == "F")
+        )
+        .sort("value")
     )
 
-    db_cleaned.head()
-    return (db_cleaned,)
-
-
-@app.cell
-def _(db_cleaned):
-    db_cleaned.recruitment_year.value_counts()
+    # Calculate the proportion of zeros
+    (pushups_f_2022_pl["value"] == 0).sum() / pushups_f_2022_pl.height
     return
 
 
 @app.cell
-def _(db_cleaned):
-    db_cleaned.recruitment_type.value_counts()
-    return
-
-
-@app.cell
-def _(db_cleaned, test_mapper):
-    db_cleaned.test.value_counts().reindex(test_mapper.values())
-    return
-
-
-@app.cell
-def _(db_cleaned):
-    db_cleaned.gender.value_counts()
-    return
-
-
-@app.cell
-def _(db_cleaned):
-    db_cleaned.age.value_counts()
-    return
-
-
-@app.cell
-def _(db_cleaned):
-    db_cleaned.groupby(["recruitment_year","test", "gender"])["value"].count()
-    return
-
-
-@app.cell
-def _(db_cleaned):
-    db_cleaned.to_csv("./db/db.csv", index=False)
-    return
-
-
-@app.cell
-def _(db_mapped, pl):
-    df = pl.from_pandas(db_mapped)
-    df.filter(pl.col("gender") == "8")
+def _():
     return
 
 
