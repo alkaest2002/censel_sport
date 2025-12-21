@@ -1,6 +1,56 @@
+import locale
 from typing import Any
 
 from lib_analysis import RECRUITMENT_TYPE, TEST
+
+
+def format_number_locale(
+    value: float | str | None,
+    precision: int = 2,
+    locale_name: str = "it_IT.UTF-8",
+) -> str:
+    """
+    Format a number using locale-aware formatting with European conventions.
+
+    Uses comma as decimal separator and dot as thousands separator by default.
+    Raises an exception if the specified locale is not available.
+
+    Args:
+        value: The number to format. Can be int, float, string representation
+               of a number, or None.
+        precision: Number of decimal places to display. Defaults to 2.
+        locale_name: Locale string to use for formatting. Defaults to 'de_DE.UTF-8'
+                    (German locale). Other options: 'fr_FR.UTF-8', 'it_IT.UTF-8', etc.
+
+    Returns:
+        Formatted number string with European number formatting.
+        Returns empty string if value is None.
+
+    Raises:
+        ValueError: If value cannot be converted to float.
+        locale.Error: If the specified locale is not available on the system.
+    """
+    if value is None:
+        return ""
+
+    try:
+        numeric_value = float(value)
+    except (ValueError, TypeError) as e:
+        raise ValueError(f"Cannot convert value '{value}' to float") from e
+
+    # Store current locale to restore later
+    current_locale = locale.getlocale(locale.LC_NUMERIC)
+
+    try:
+        # Set European locale
+        locale.setlocale(locale.LC_NUMERIC, locale_name)
+
+        # Format number with locale-aware formatting
+        return locale.format_string(f"%.{precision}f", numeric_value, grouping=True)
+
+    finally:
+        # Always restore original locale, even if an error occurred
+        locale.setlocale(locale.LC_NUMERIC, current_locale)
 
 
 def format_seconds(seconds: float, precision: int) -> str:
@@ -21,7 +71,7 @@ def format_seconds(seconds: float, precision: int) -> str:
     # Format the result with proper width for seconds
     if precision > 0:
         width: int = 3 + precision  # 2 digits + decimal point + precision digits
-        return f"{hours:02d}:{minutes:02d}:{secs:0{width}.{precision}f}"
+        return f"{hours:02d}:{minutes:02d}:{secs:0{width}.{precision}f}".replace(".", ",")
 
     return f"{hours:02d}:{minutes:02d}:{int(secs):02d}"
 

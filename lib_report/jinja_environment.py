@@ -2,7 +2,13 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
 
-from lib_report.utils_jinja import format_seconds, format_title, get_recruitment_type_label, get_test_label
+from lib_report.utils_jinja import (
+    format_number_locale,
+    format_seconds,
+    format_title,
+    get_recruitment_type_label,
+    get_test_label,
+)
 
 
 def _get_templates_directory() -> Path:
@@ -44,3 +50,4 @@ jinja_env.filters["format_seconds"] = format_seconds
 jinja_env.filters["format_title"] = format_title
 jinja_env.filters["test_label"] = get_test_label
 jinja_env.filters["recruitment_type_label"] = get_recruitment_type_label
+jinja_env.filters["format_number_locale"] = format_number_locale

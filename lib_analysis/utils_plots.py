@@ -452,6 +452,7 @@ def plot_bootstrap_percentile_with_ci(
     # Set reasonable x-axis limits and ticks
     ax.set_xlim(max(0, requested_df["percentile"].min() - 5), min(100, requested_df["percentile"].max() + 5))
     ax.set_xticks(requested_df["percentile"])
+    ax.set_xticklabels([f"{p:g}%" for p in requested_df["percentile"]])
     ax.yaxis.set_ticks_position("both")
 
     return figure_to_svg_string(figure)
@@ -484,7 +485,7 @@ def plot_montecarlo_vs_bootstrap(
 
     for i, (row_index, bootstrap_perc) in enumerate(bootstrap_percentiles.iterrows()):
         percentile = bootstrap_perc["percentile"]
-        percentile_labels.append(f"{percentile}")
+        percentile_labels.append(f"{percentile:g}%")
 
         # Center position for this percentile group
         center_position = i + 1
@@ -547,10 +548,15 @@ def plot_montecarlo_vs_bootstrap(
     ax.set_xticks(positions)
     ax.set_xticklabels(percentile_labels)
     ax.set_xlabel("Percentili", fontsize=BASE_FONTSIZE)
-    ax.set_ylabel("Valori", fontsize=BASE_FONTSIZE)
 
     # Position y-axis ticks on both sides following utils_plots
     ax.yaxis.set_ticks_position("both")
+
+    # replace dot with comma in ytick labels with list comprehension
+    ax.set_yticks(ax.get_yticks())
+    ytick_labels = [str(ytick_label).replace(".", ",") for ytick_label in ax.get_yticklabels()]
+    ax.set_yticklabels(ytick_labels)
+    ax.set_ylabel("Valori", fontsize=BASE_FONTSIZE)
 
     # Create legend following utils_plots style (frameon=False)
     legend_elements = [

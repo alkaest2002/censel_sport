@@ -30,7 +30,8 @@
 {% endblock %}
 
 {% block body %}
-{% set format_float_number = "%." + data.metric_config.metric_precision | string + "f" %}
+{% set precision = data.metric_config.metric_precision %}
+
 <!-- FIRST PAGE -->
 <div class="page">
     <div class="content">
@@ -84,8 +85,7 @@
                                 loop.last %}, {% endif %}{% endfor %}</span>).</p>
                         <p>
                             La distribuzione con migliore adattamento (<span class="text-italic">fit</span>) sarà
-                            utilizzata
-                            per confermare la generalizzabilità della tavola di conversione
+                            utilizzata per confermare la generalizzabilità della tavola di conversione
                             attraverso il metodo della simulazione Monte Carlo (cfr all. {{ header }}2, pag. {{ page + 1 }}).
                         </p>
                         <p>
@@ -128,18 +128,18 @@
                             <td class="text-center">{{ data.metric_config.metric_precision_label }}</td>
                         </tr>
                         <tr>
+                            {% set original_size = data.load.descriptive_stats.count %}
                             <td class="text-left">Numerosità originaria</td>
-                            {% set original_size = data.load.descriptive_stats.count | int %}
-                            <td class="text-center">{{ original_size }}</td>
+                            <td class="text-center">{{ original_size | format_number_locale(precision=0) }}</td>
                         </tr>
                          <tr>
                             <td class="text-left">Numerosità dopo rimozione outlier</td>
                             {% set final_size = data.clean.metadata.final_size %}
-                            <td class="text-center">{{ final_size | int }}</td>
+                            <td class="text-center">{{ final_size | format_number_locale(precision=0) }}</td>
                         </tr>
                          <tr>
                             <td class="text-left">Numero di dati esclausi</td>
-                            <td class="text-center">{{ (original_size - final_size) | int }}</td>
+                            <td class="text-center">{{ (original_size - final_size) | format_number_locale(precision=0) }}</td>
                         </tr>
                         {% if "gender" in data.metric_config.stratification %}
                             <tr>
@@ -171,28 +171,28 @@
                         {% endif %}
                         <tr>
                             <td class="text-left">Media</td>
-                            <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.mean) }}</td>
+                            <td class="text-center">{{ data.clean.descriptive_stats.mean | format_number_locale(precision=precision) }}</td>
                         </tr>
                         <tr>
                             <td class="text-left">Mediana</td>
-                            <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats["50%"]) }}</td>
+                            <td class="text-center">{{ data.clean.descriptive_stats["50%"] | format_number_locale(precision=precision) }}</td>
                         </tr>
                         <tr>
                             <td class="text-left">Deviazione standard</td>
-                            <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats["std"]) }}</td>
+                            <td class="text-center">{{ data.clean.descriptive_stats["std"] | format_number_locale(precision=precision) }}</td>
                         </tr>
                         <tr>
                             <td class="text-left">Range interquartilico</td>
                             {% set iqr = data.clean.descriptive_stats["75%"] -  data.clean.descriptive_stats["25%"] %}
-                            <td class="text-center">{{ format_float_number | format(iqr) }}</td>
+                            <td class="text-center">{{ iqr | format_number_locale(precision=precision) }}</td>
                         </tr>
                         <tr>
                             <td class="text-left">Minimo</td>
-                            <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.min) }}</td>
+                            <td class="text-center">{{ data.clean.descriptive_stats.min | format_number_locale(precision=precision) }}</td>
                         </tr>
                         <tr>
                             <td class="text-left">Massimo</td>
-                            <td class="text-center">{{ format_float_number | format(data.clean.descriptive_stats.max) }}</td>
+                            <td class="text-center">{{ data.clean.descriptive_stats.max | format_number_locale(precision=precision) }}</td>
                         </tr>
                     </tbody>
                     <tfoot>
@@ -230,12 +230,12 @@
                                     <span class="text-italic">&rarr; fit migliore</span>
                                 {% endif %}
                             </td>
-                            <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.aic) }}</td>
-                            <td class="text-center">{{ "%.2f" | format(model_data.goodness_of_fit.bic) }}</td>
+                            <td class="text-center">{{ model_data.goodness_of_fit.aic | format_number_locale(precision=precision) }}</td>
+                            <td class="text-center">{{ model_data.goodness_of_fit.bic | format_number_locale(precision=precision) }}</td>
                             <td class="text-center">
-                                {{ "%.2f" | format(model_data.goodness_of_fit.cramer_von_mises) }}
+                                {{ model_data.goodness_of_fit.cramer_von_mises | format_number_locale(precision=precision) }}
                                 {% if model_data.goodness_of_fit.cvm_pvalue is not none %}
-                                (p={{ "%.3f" | format(model_data.goodness_of_fit.cvm_pvalue) }})
+                                (p={{ model_data.goodness_of_fit.cvm_pvalue | format_number_locale(precision=3) }})
                                 {% endif %}
                             </td>
                         </tr>
@@ -304,7 +304,7 @@
                                 distribuzione dei dati.
                             </p>
                             <p>
-                                Più precisamente, vengono generate {{ data.metric_config.bootstrap_n_samples }}
+                                Più precisamente, vengono generate {{ data.metric_config.bootstrap_n_samples | format_number_locale(precision=0) }}
                                 repliche dal <span class="text-italic">dataset</span> originario attraverso
                                 ricampionamento casuale con reimmissione. Per ciascuna replica si calcolano i percentili
                                 di interesse, ottenendo una distribuzione di valori. La stima finale dei percentili è
@@ -321,7 +321,7 @@
                                 Il processo inizia identificando la distribuzione probabilistica che meglio descrive i
                                 dati osservati. (cfr all. {{ header }}1, pag. {{ page }}).
                                 Una volta selezionato il modello ottimale e stimati i parametri, si procede alla
-                                generazione di {{ data.metric_config.montecarlo_n_samples }} campioni teorici mediante
+                                generazione di {{ data.metric_config.montecarlo_n_samples | format_number_locale(precision=0) }} campioni teorici mediante
                                 simulazione  <span class="text-italic">Monte Carlo</span>. Per ogni campione sintetico vengono calcolati gli stessi
                                 percentili della tecnica <span class="text-italic">Bootstrap</span>.
                             </p>
@@ -354,9 +354,9 @@
                             {% for pct in data.bootstrap.requested_percentiles %}
                             <tr>
                                 <td class="text-center">{{ pct.percentile | title }}</td>
-                                <td class="text-center">{{ format_float_number | format(pct.bootstrap_value) }}</td>
-                                <td class="text-center">{{ format_float_number | format(pct.bootstrap_ci_lower) }}</td>
-                                <td class="text-center">{{ format_float_number | format(pct.bootstrap_ci_upper) }}</td>
+                                <td class="text-center">{{ pct.bootstrap_value | format_number_locale(precision=precision)}}</td>
+                                <td class="text-center">{{ pct.bootstrap_ci_lower | format_number_locale(precision=precision)}}</td>
+                                <td class="text-center">{{ pct.bootstrap_ci_upper | format_number_locale(precision=precision)}}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -392,10 +392,10 @@
                             <tr>
                                 <td class="text-center">{{ pct.percentile | title }}</td>
                                 <td class="text-center">
-                                    {{ format_float_number | format(pct.bootstrap_value) }}
+                                    {{ pct.bootstrap_value | format_number_locale(precision=precision)}}
                                 </td>
-                                <td class="text-center">{{ format_float_number | format(pct.montecarlo_value) }}</td>
-                                <td class="text-center">{{ format_float_number | format(pct.coverage) }}%</td>
+                                <td class="text-center">{{ pct.montecarlo_value | format_number_locale(precision=precision)}}</td>
+                                <td class="text-center">{{ pct.coverage | format_number_locale(precision=precision)}}%</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -460,7 +460,7 @@
                 <p>
                     Modalità: prova obbligatoria {% if data.metric_config.must_pass %}con sbarramento{% else %}senza sbarramento{% endif %}
                 </p>
-                <p>Numerosità del campione: {{ data.clean.descriptive_stats.count | int }}</p>
+                <p>Numerosità del campione: {{ data.clean.descriptive_stats.count | format_number_locale(precision=0) }}</p>
                 {% if "gender" in strat %}
                     <p>{{ strat.gender.label | title }}</p>
                 {% endif %}
@@ -483,7 +483,7 @@
                                 F{{ loop.index | int }}
                             </td>
                             <td class="text-center">
-                                {{ "%.2f" | format(data.metric_config.awarded_scores[loop.index0]) }}
+                                {{ data.metric_config.awarded_scores[loop.index0] | format_number_locale(precision=2) }}
                             </td>
                             <td class="text-center">
                                 {% if loop.first %}
@@ -496,7 +496,7 @@
                                             da {{ (cutoff[0] + (1 / (10 ** data.metric_config.metric_precision))) | round(data.metric_config.metric_precision) }}
                                         {% endif %}
                                     {% else %}
-                                        da {{ format_float_number | format(cutoff[0] + 1) }}
+                                        da {{ (cutoff[0] + 1) | format_number_locale(precision=precision)}}
                                     {% endif %}
                                 {% endif %}
                             </td>
@@ -508,10 +508,10 @@
                                         {% if data.metric_config.metric_subtype == "time" %}
                                             fino a {{ cutoff[1] | format_seconds(data.metric_config.metric_precision) }}
                                         {% else %}
-                                            fino a {{ format_float_number | format(cutoff[1]) | round(data.metric_config.metric_precision) }}
+                                            fino a {{ cutoff[1] | format_number_locale(precision=precision)}}
                                         {% endif %}
                                     {% else %}
-                                        fino a {{ format_float_number | format(cutoff[1]) }}
+                                        fino a {{ cutoff[1] | format_number_locale(precision=precision)}}
                                     {% endif %}
                                 {% endif %}
                             </td>
@@ -527,7 +527,7 @@
                                         <span>
                                             precisione = {{ data.metric_config.metric_precision_label }};
                                                 <span>
-                                                    formato = ore:minuti:secondi.decimi.        
+                                                    formato = ore:minuti:secondi,decimi.        
                                                 </span>
                                         </span>
                                     {% else %}
@@ -569,7 +569,7 @@
                         </li>
                         <li>
                             <p>
-                                Per ciascuna delle {{ data.bootstrap.cutoffs_test.sample_sizes | length }} numerosità considerate, vengono generati 1000 campioni derivati dal <span class="text-italic">dataset</span> originario. Viene quindi applicata la tavola di conversione ai punteggi grezzi di ogni campione, calcolando la proporzione di osservazioni che ricade in ciascuna fascia percentilica. Si ottiene così una distribuzione di proporzioni per ogni fascia e numerosità campionaria.
+                                Per ciascuna delle {{ data.bootstrap.cutoffs_test.sample_sizes | length }} numerosità considerate, vengono generati 1.000 campioni derivati dal <span class="text-italic">dataset</span> originario. Viene quindi applicata la tavola di conversione ai punteggi grezzi di ogni campione, calcolando la proporzione di osservazioni che ricade in ciascuna fascia percentilica. Si ottiene così una distribuzione di proporzioni per ogni fascia e numerosità campionaria.
                             </p>
                         </li>
                         <li>
@@ -597,10 +597,10 @@
                                     {% if row.sample_size == sample_size %}
                                         <tr>
                                             <td class="text-center text-bold">F{{ row.perc_step | int }}</td>
-                                            <td class="text-center">{{ "%.2f" | format(row.expected_proportion) }}</td>
-                                            <td class="text-center">{{ "%.2f" | format(row.p50) }}</td>
-                                            <td class="text-center">{{ "%.2f" | format(row.p90 - row.p10) }}</td>
-                                            <td class="text-center">[ {{ "%05.2f" | format(row.p10) }} &mdash; {{ "%05.2f" | format(row.p90) }} ]</td>
+                                            <td class="text-center">{{ row.expected_proportion | format_number_locale(precision=2) }}</td>
+                                            <td class="text-center">{{ row.p50 | format_number_locale(precision=2) }}</td>
+                                            <td class="text-center">{{ (row.p90 - row.p10) | format_number_locale(precision=2) }}</td>
+                                            <td class="text-center">[ {{ row.p10 | format_number_locale(precision=2) }} &mdash; {{ row.p90 | format_number_locale(precision=2) }} ]</td>
                                         </tr>
                                     {% endif %}
                                 {% endfor %}
