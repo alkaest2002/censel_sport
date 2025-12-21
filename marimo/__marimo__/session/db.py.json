@@ -31,7 +31,7 @@
       "console": []
     },
     {
-      "id": "nWHF",
+      "id": "vblA",
       "code_hash": "0fcb58c57da18d00754879b4a0c4ac7a",
       "outputs": [
         {
@@ -44,7 +44,7 @@
       "console": []
     },
     {
-      "id": "Qprw",
+      "id": "bkHC",
       "code_hash": "67ed183d52ad5f7bc5d644a5e33bd828",
       "outputs": [
         {
@@ -57,7 +57,7 @@
       "console": []
     },
     {
-      "id": "tzGj",
+      "id": "lEQa",
       "code_hash": "e6fe06d3aa67b316696d10c0f5d256e1",
       "outputs": [
         {
@@ -67,25 +67,6 @@
           }
         }
       ],
-      "console": []
-    },
-    {
-      "id": "ACIz",
-      "code_hash": null,
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
-      "console": []
-    },
-    {
-      "id": "hPYp",
-      "code_hash": null,
-      "outputs": [],
       "console": []
     }
   ]
