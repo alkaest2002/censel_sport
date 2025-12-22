@@ -37,7 +37,7 @@ def clean_data(
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Remove non-positive values and NaNs
-    valid_mask: NDArray[np.bool_] = (data > 0) & np.isfinite(data)
+    valid_mask: NDArray[np.bool_] = (data >= 0) & np.isfinite(data)
     clean_data: NDArray[np.number[Any]] = data[valid_mask]
 
     # Count invalid
