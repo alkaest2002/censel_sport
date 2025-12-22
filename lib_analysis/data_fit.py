@@ -148,14 +148,37 @@ class DistributionFitter:
             Best model information with 'name' and 'parameters' keys.
         """
         # Filter out distributions with invalid values for all criteria
-        valid_models: dict[str, Any] = {
-            name: data
-            for name, data in fitted_models.items()
-                if (all(data["goodness_of_fit"][crit] is not None and np.isfinite(data["goodness_of_fit"][crit])
-                    for crit in self.DISTRIBUTION_CRITERIA))
-        }
+        valid_models: dict[str, Any] = {}
 
-        # If there are no valid models
+        # Iterate over fitted models
+        for name, data in fitted_models.items():
+            # Initialiaze var
+            all_criteria_valid = True
+
+            # Iterate over fitting criteria
+            for crit in self.DISTRIBUTION_CRITERIA:
+
+                # If goodness_of_fit of current criterion is None
+                if not data.get("goodness_of_fit"):
+                    all_criteria_valid = False
+                    break
+
+                # If goodness_of_fit of current criterion is None
+                if not data["goodness_of_fit"].get(crit):
+                    all_criteria_valid = False
+                    break
+
+                # If goodness_of_fit of current criterion is not finite
+                if not np.isfinite(data["goodness_of_fit"][crit]):
+                    all_criteria_valid = False
+                    break
+
+            # if all fitting criteria are valid
+            if all_criteria_valid:
+                # Add current model to valied models
+                valid_models[name] = data
+
+         # If there are no valid models
         if not valid_models:
             return {
                 "name": None,
