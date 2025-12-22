@@ -8,7 +8,6 @@ def get_continuous_distributions() -> dict[str, type[stats.rv_continuous | stats
         dict: Mapping of distribution names to distribution classes.
     """
     return {
-        "exponential": stats.expon,
         "skew_normal": stats.skewnorm,
         "log_normal": stats.lognorm,
         "gamma": stats.gamma,
