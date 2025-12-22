@@ -2,6 +2,7 @@
 
 from base64 import b64encode
 import io
+import locale
 from typing import Any
 
 from matplotlib.figure import Figure
@@ -22,6 +23,9 @@ SECONDARY_COLOR = "#E23122"
 NEUTRAL_COLOR = "#888888"
 NEUTRAL_COLOR_LIGHT = "#CCCCCC"
 
+# Set locale to Italian for number formatting
+locale.setlocale(locale.LC_ALL, "it_IT.UTF-8")
+plt.rcParams["axes.formatter.use_locale"] = True
 
 def _validate_data_points(
         data: NDArray[np.number[Any]],
@@ -551,11 +555,6 @@ def plot_montecarlo_vs_bootstrap(
 
     # Position y-axis ticks on both sides following utils_plots
     ax.yaxis.set_ticks_position("both")
-
-    # replace dot with comma in ytick labels with list comprehension
-    ax.set_yticks(ax.get_yticks())
-    ytick_labels = [str(ytick_label).replace(".", ",") for ytick_label in ax.get_yticklabels()]
-    ax.set_yticklabels(ytick_labels)
     ax.set_ylabel("Valori", fontsize=BASE_FONTSIZE)
 
     # Create legend following utils_plots style (frameon=False)
