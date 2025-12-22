@@ -29,13 +29,14 @@ def compute_standard_scores(data_dict: dict[str, Any]) -> dict[str, Any]:
     metric_config: dict[str, Any] = data_dict.get("metric_config", {})
     clean: dict[str, Any] = data_dict.get("clean", {})
     data: NDArray[np.number[Any]] = clean.get("data", [])
+    query_from_db: list[dict[str, Any]] = data_dict.get("query_from_db", [])
     bootstrap: dict[str, Any] = data_dict.get("bootstrap", {})
     cutoffs: list[tuple[float, float]] = bootstrap.get("cutoffs", [])
     awarded_scores: list[float] = metric_config.get("awarded_scores", [])
     higher_is_better: bool = metric_config.get("higher_is_better", False)
 
     # Raise error if something crucial is missing
-    if any(map(is_falsy, (metric_config, clean, data, bootstrap, cutoffs, awarded_scores))):
+    if any(map(is_falsy, (metric_config, clean, data, query_from_db, bootstrap, cutoffs, awarded_scores))):
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
     # Compute standardization scores

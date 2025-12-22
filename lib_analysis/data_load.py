@@ -4,7 +4,7 @@ import numpy as np
 from numpy.typing import NDArray
 import pandas as pd
 
-from lib_analysis.utils_generic import query_from_db
+from lib_analysis.utils_generic import query_db
 from lib_analysis.utils_stats import generate_synthetic_data
 
 
@@ -37,7 +37,7 @@ def _load_from_db(metric_config: dict[str, Any]) -> dict[str, Any]:
 
     try:
         # Load data from database
-        db_df: pd.DataFrame = query_from_db(metric_config.get("stratification", {}))
+        db_df: pd.DataFrame = query_db(metric_config.get("stratification", {}))
 
         # Enforce value column to be numeric
         raw_data: np.ndarray = pd.to_numeric(db_df.loc[:, "value"], downcast="integer").to_numpy()

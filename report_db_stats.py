@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 import pandas as pd
 
 from lib_analysis import HD, MLLI
-from lib_analysis.utils_generic import query_from_db
+from lib_analysis.utils_generic import query_db
 from lib_parser.parser import create_parser
 from lib_report.utils_report import render_template
 
@@ -51,7 +51,7 @@ def main() -> int:
     args: argparse.Namespace = parser.parse_args()
 
     # Retriev db
-    db: pd.DataFrame = query_from_db({
+    db: pd.DataFrame = query_db({
         "recruitment_year": {
             "label": "Anni di reclutamento: 2022, 2023, 2024, 2025",
             "query": "recruitment_year.between(2022,2025)",

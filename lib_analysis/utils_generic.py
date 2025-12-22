@@ -6,7 +6,7 @@ from typing import Any, cast
 import pandas as pd
 
 
-def query_from_db(stratification: dict[str, Any] | None, db: pd.DataFrame | None = None) -> pd.DataFrame:
+def query_db(stratification: dict[str, Any] | None, db: pd.DataFrame | None = None) -> pd.DataFrame:
     """Query data from a CSV database file based on metric configuration.
 
     Args:
