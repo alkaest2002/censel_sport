@@ -31,7 +31,7 @@ def _apply_cutoffs(
 
     Returns:
         List of dictionaries containing statistical results for each sample size
-        and percentile step combination, including p10, p50, p90 values.
+        and percentile step combination, including p05, p50, p95 values.
     """
 
     # Initialize random generator
@@ -91,8 +91,8 @@ def _apply_cutoffs(
             .groupby(["sample_size", "perc_step"], as_index=False)
             .agg({
                 "observed_proportion": [
-                    ("p10", lambda x: round(x.quantile(0.10)*100,2)), # type: ignore[list-item]
-                    ("p90", lambda x: round(x.quantile(0.90)*100,2)), # type: ignore[list-item]
+                    ("p05", lambda x: round(x.quantile(0.05)*100,2)), # type: ignore[list-item]
+                    ("p95", lambda x: round(x.quantile(0.95)*100,2)), # type: ignore[list-item]
                     ("p50", lambda x: round(x.quantile(0.50)*100,2)), # type: ignore[list-item]
                 ],
             })
@@ -104,7 +104,7 @@ def _apply_cutoffs(
     results.columns=[ s if s else f for f,s in results.columns.to_flat_index() ]
 
 
-    return results.loc[:, ["sample_size", "perc_step", "expected_proportion", "p50", "p10", "p90"]]
+    return results.loc[:, ["sample_size", "perc_step", "expected_proportion", "p50", "p05", "p95"]]
 
 
 def bootstrap_test_cutoffs(
