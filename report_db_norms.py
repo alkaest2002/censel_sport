@@ -76,11 +76,16 @@ def main() -> int:
                     .add_prefix("step")
             )
 
+            # Create rif to identify the report section
+            rif: str = (
+                f"{metric_config['report']['header_letter']}3 (pag. {metric_config['report']['initial_page'] + 2})"
+            )
+
             # Add rif and store as dictionary
             results[key] = (
                 pd.concat([
                     standardized_stats,
-                    pd.Series({"rif": f"{metric_config['report']['header_letter']}3"}),
+                    pd.Series({ "rif": rif }),
                 ]).to_dict())
 
     # Convert results to DataFrame
