@@ -36,7 +36,7 @@ def clean_data(
     if any(map(is_falsy, (metric_config, load, data))):
         raise ValueError("---> The data dictionary does not contain all required parts.")
 
-    # Remove non-positive values and NaNs
+    # Remove invalid values (<= 0 or non-finite)
     valid_mask: NDArray[np.bool_] = (data >= 0) & np.isfinite(data)
     clean_data: NDArray[np.number[Any]] = data[valid_mask]
 
