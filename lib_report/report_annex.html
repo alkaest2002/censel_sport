@@ -344,10 +344,10 @@
                             <th class="text-center" style="width: 25%;">PERC.LE</th>
                             <th class="text-center" style="width: 25%;">BOOTSTRAP</th>
                             <th class="text-center" style="width: 25%;">
-                                {{ data.metric_config.bootstrap_ci_level * 100 | format_number_locale(precision=0) }}% LB
+                                {{ (data.metric_config.bootstrap_ci_level * 100) | format_number_locale(precision=0) }}% LB
                             </th>
                             <th class="text-center" style="width: 25%;">
-                                {{ data.metric_config.bootstrap_ci_level * 100 | format_number_locale(precision=0) }}% UB
+                                {{ (data.metric_config.bootstrap_ci_level * 100) | format_number_locale(precision=0) }}% UB
                             </th>
                         </thead>
                         <tbody>
@@ -366,9 +366,9 @@
                                     <div class="caption">
                                         <span>Tabella {{ header }}2.1</span>
                                         <span>
-                                            {{ data.metric_config.bootstrap_ci_level * 100 | format_number_locale(precision=0) }}% LB =
+                                            {{ (data.metric_config.bootstrap_ci_level * 100) | format_number_locale(precision=0) }}% LB =
                                             Limite di confidenza inferiore,
-                                            {{ data.metric_config.bootstrap_ci_level * 100 | format_number_locale(precision=0) }}% UB =
+                                            {{ (data.metric_config.bootstrap_ci_level * 100) | format_number_locale(precision=0) }}% UB =
                                             Limite di confidenza superiore.
                                         </span>
                                     </div>
