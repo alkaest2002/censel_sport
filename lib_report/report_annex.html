@@ -66,8 +66,7 @@
                             campionaria.
                         </p>
                         <p>
-                            Per percentili
-                            non estremi
+                            Per percentili non estremi
                             (10°&mdash;&nbsp;90°) una quantità di osservazioni nell'ordine delle centinaia garantisce
                             stime attendibili; per
                             percentili
@@ -133,25 +132,26 @@
                             <td class="text-center">{{ original_size | format_number_locale(precision=0) }}</td>
                         </tr>
                          <tr>
+                             {% set final_size = data.clean.metadata.final_size %}
                             <td class="text-left">Numerosità dopo rimozione outlier</td>
-                            {% set final_size = data.clean.metadata.final_size %}
                             <td class="text-center">{{ final_size | format_number_locale(precision=0) }}</td>
                         </tr>
                          <tr>
-                            <td class="text-left">Numero di dati esclausi</td>
-                            <td class="text-center">{{ (original_size - final_size) | format_number_locale(precision=0) }}</td>
+                            {% set excluded_data_size = original_size - final_size %}
+                            <td class="text-left">Numero di dati esclusi</td>
+                            <td class="text-center">{{ excluded_data_size | format_number_locale(precision=0) }}</td>
                         </tr>
                         {% if "gender" in data.metric_config.stratification %}
                             <tr>
-                                <td class="text-left">Genere</td>
                                 {% set gender = query_from_db.gender.unique() | join(", ") | upper %}
+                                <td class="text-left">Genere</td>
                                 <td class="text-center">{{ gender }}</td>
                             </tr>
                         {% endif %}
                         {% if "recruitment_type" in data.metric_config.stratification %}
                             <tr>
+                                {% set recruitment_type = query_from_db.recruitment_type.unique() | sort | map('recruitment_type_label') | map('title') | join(", ") %}
                                 <td class="text-left">Tipo di reclutamento</td>
-                                {% set recruitment_type = query_from_db.recruitment_type.unique() | sort | map('recruitment_type_label') | map('title') | map('test_label') | join(", ") %}
                                 <td class="text-center">{{ recruitment_type }}</td>
                             </tr>
                         {% endif %}
@@ -344,10 +344,10 @@
                             <th class="text-center" style="width: 25%;">PERC.LE</th>
                             <th class="text-center" style="width: 25%;">BOOTSTRAP</th>
                             <th class="text-center" style="width: 25%;">
-                                {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% LB
+                                {{ data.metric_config.bootstrap_ci_level * 100 | format_number_locale(precision=0) }}% LB
                             </th>
                             <th class="text-center" style="width: 25%;">
-                                {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% UB
+                                {{ data.metric_config.bootstrap_ci_level * 100 | format_number_locale(precision=0) }}% UB
                             </th>
                         </thead>
                         <tbody>
@@ -366,9 +366,9 @@
                                     <div class="caption">
                                         <span>Tabella {{ header }}2.1</span>
                                         <span>
-                                            {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% LB =
+                                            {{ data.metric_config.bootstrap_ci_level * 100 | format_number_locale(precision=0) }}% LB =
                                             Limite di confidenza inferiore,
-                                            {{ "%.0f" | format(data.metric_config.bootstrap_ci_level * 100) }}% UB =
+                                            {{ data.metric_config.bootstrap_ci_level * 100 | format_number_locale(precision=0) }}% UB =
                                             Limite di confidenza superiore.
                                         </span>
                                     </div>
@@ -451,7 +451,8 @@
             <div class="mb-xl text-small">
                 {% set strat = data.metric_config.stratification %}
                 {% if "recruitment_type" in strat %}
-                    <p>Tipo di reclutamento: {{ query_from_db.recruitment_type.unique() | sort | map('recruitment_type_label') | map('title') | join(", ") }}
+                    <p>
+                        Tipo di reclutamento: {{ query_from_db.recruitment_type.unique() | sort | map('recruitment_type_label') | map('title') | join(", ") }}
                     </p>
                 {% endif %}
                 {% if "recruitment_year" in strat %}
@@ -525,7 +526,7 @@
                                     <span>Tabella {{ header }}3.1</span>
                                     {% if data.metric_config.metric_subtype == "time" %}
                                         <span>
-                                            precisione = {{ data.metric_config.metric_precision_label }};
+                                            precisione = {{ data.metric_config.metric_precision_label }},
                                                 <span>
                                                     formato = ore:minuti:secondi,decimi.        
                                                 </span>
