@@ -117,10 +117,6 @@ def main() -> int:
         .sort_values(by=["test", "recruitment_type","gender","recruitment_year"])
     )
 
-    # Save report data to CSV
-    csv_output_path: Path = Path("./db/db_norms.csv")
-    data.to_csv(csv_output_path, index=False)
-
     # Initialize tables list
     tables: list[Styler] = []
 
