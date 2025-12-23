@@ -1,0 +1,126 @@
+{% extends "_base.html" %}
+
+{% block style %}
+<style>
+    table tr th {
+        padding: 6px;
+    }
+
+    tbody tbody td {
+        padding: 3px;
+    }
+
+    .separator:not(:first-of-type) td {
+        border-top: 1px solid var(--base-border-color);
+    }
+
+    .new-tables {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .new-table {
+        flex: 1 1 calc(50%);
+        box-sizing: border-box;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page">
+    <div class="content">
+        <div>
+            <div class="mb-xxl">
+                <div class="header">
+                    <h1 class="mb-xs">SINTESI DELLE NUOVE TAVOLE DI CONVERSIONE</h1>
+                    <p>Allegato {{ header }}</p>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <div class="mb-xxl new-tables">
+                {% for (key, table) in data %}
+                    <div class="new-table">
+                        <div class="mt-lg mb-xs text-bold">
+                            {% set test = (key.split("_"))[:-1] | join("_") %}
+                            {% set gender = key.split("_")[-1] %}
+                            {{ test | test_label }} &mdash; {{ gender | gender_label | title }}
+                        </div>
+                        <table class="table-bordered table-padded standardization-table">
+                            <thead>
+                                <th class="text-center">FASCIA</th>
+                                <th class="text-center">PUNTEGGIO</th>
+                                <th class="text-center">LIMITE INFERIORE</th>
+                                <th class="text-center">LIMITE SUPERIORE</th>
+                            </thead>
+                            <tbody>
+                                {% for _, row in table.iterrows() %}
+                                <tr>
+                                    <td class="text-center text-bold">
+                                        F{{ loop.index | int }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ row.awarded_score | format_number_locale(precision=2) }}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if loop.first %}
+                                            &mdash;
+                                        {% else %}
+                                            {% if row.metric_type == "continuous" %}
+                                                {% if row.metric_subtype == "time" %}
+                                                    da {{ (row.from + (1 / (10 ** row.metric_precision))) | format_seconds(row.metric_precision) }}
+                                                {% else %}
+                                                    da {{ (row.from + (1 / (10 ** row.metric_precision))) | round(row.metric_precision) }}
+                                                {% endif %}
+                                            {% else %}
+                                                da {{ (row.from + 1) | format_number_locale(precision=row.metric_precision)}}
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if loop.last %}
+                                        &mdash;
+                                        {% else %}
+                                            {% if row.metric_type == "continuous" %}
+                                                {% if row.metric_subtype == "time" %}
+                                                    fino a {{ row.to | format_seconds(row.metric_precision) }}
+                                                {% else %}
+                                                    fino a {{ row.to | format_number_locale(precision=row.metric_precision)}}
+                                                {% endif %}
+                                            {% else %}
+                                                fino a {{ row.to | format_number_locale(precision=row.metric_precision)}}
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4">
+                                        <div class="caption">
+                                            <span>Tabella {{ header }}3.{{ loop.index}}</span>
+                                            {% set row = table.iloc[0] %}
+                                            {% if row.metric_subtype == "time" %}
+                                                <span>
+                                                    precisione = {{ row.metric_precision_label }},
+                                                        <span>
+                                                            formato = minuti:secondi,decimi.        
+                                                        </span>
+                                                </span>
+                                            {% else %}
+                                                precisione = {{ row.metric_precision_label }}.
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="footer">{{ page }}</div>
+    </div>
+</div>
+{% endblock %}
