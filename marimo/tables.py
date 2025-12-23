@@ -6,105 +6,78 @@ app = marimo.App(width="full")
 
 @app.cell
 def _():
+    import locale
+    from itertools import product
     import marimo as mo
-    import polars as pl
-    import polars.selectors as cs
-    return cs, pl
+    import numpy as np
+    import pandas as pd
+    import matplotlib.pyplot as plt
+
+    locale.setlocale(locale.LC_ALL, "it_IT.UTF-8")
+    return pd, product
 
 
 @app.cell
-def _(pl):
-    tables = pl.read_csv("./bandi/*.csv")
+def _(pd):
+    sheet_name = "100m_M"
+    sheet_id = "1YM331ADxGwKQbC_d7FM35FPhoiImVV7x"
+    url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+    tables = pd.read_csv(url, usecols=range(8))
+    tables.head()
     return (tables,)
 
 
 @app.cell
-def _(cs, pl, tables):
-    clean1 = (tables
-        .with_columns(
-            cs.string().str.to_lowercase()   
+def _(pd, product):
+    def reshape_table(tables, is_time=False):
+        df = (
+            tables
+                .drop(["Nuova tabella FASCIA", "PUNTEGGIO.1"], axis=1)
+                .rename(columns={
+                    "Vecchia tabella FASCIA": "fascia",
+                    "LIMITE INFERIORE": "inf",
+                    "LIMITE INFERIORE.1": "inf",
+                    "LIMITE SUPERIORE": "sup", 
+                    "LIMITE SUPERIORE.1": "sup",
+                    "PUNTEGGIO": "awarded"
+                })
+                .assign(awarded=lambda df: df.awarded.str.replace(",", ".").astype(float))
+                .set_index("fascia")
         )
-        .filter(
-            ~ (pl.col("value").eq("///") & pl.col("awarded_score").eq("esito sfavorevole")),
+        c = pd.concat([df.iloc[:, [0,1,2]], df.iloc[:, [0,3,4]]])
+    
+        def parse_time_to_seconds(time_str):
+            """Convert MM:SS.T directly to total seconds"""
+            if pd.isna(time_str):
+                return None
+            if not isinstance(time_str, str):
+                return float(time_str)
+        
+            if ':' in time_str and '.' in time_str:
+                minutes, seconds_tenths = time_str.split(':')
+                seconds, tenths = seconds_tenths.split('.')
+                return int(minutes) * 60 + int(seconds) + int(tenths) / 10
+            return float(time_str)
+    
+        if is_time:
+            # Convert directly to seconds (no timedelta)
+            c.inf = c.inf.apply(parse_time_to_seconds)
+            c.sup = c.sup.apply(parse_time_to_seconds)
+   
+    
+        c.index = pd.MultiIndex.from_tuples(
+            product(("old", "new"), range(1,7)), 
+            names=["type_of_table", "band"]
         )
-        .filter(
-            ~ (pl.col("value").eq("esito sfavorevole") & pl.col("awarded_score").is_null())
-        )
-        .filter(
-            ~ pl.col("value").str.contains("^///?$")
-        )
-        .with_columns(
-            must_pass = pl.when(
-                pl.col("awarded_score").is_in(["esito sfavorevole", "non idoneo"])
-            ).then(True)
-        )
-        .with_columns(
-            pl.col("awarded_score")
-                .replace(["esito sfavorevole", "non idoneo"], 0)
-                .str.replace(r"\,", ".")
-                .cast(pl.Float64)
-        )
-    )
-    clean1
-    return (clean1,)
+        return c.reset_index(drop=False)
+
+    return (reshape_table,)
 
 
 @app.cell
-def _(clean1):
-    df = clean1.to_pandas()
-    df["value_from"] = None
-    df["value_to"] = None
-    return (df,)
-
-
-@app.cell
-def _(df):
-    df.loc[df.awarded_score.eq(0), "value_from"] = df.value
-
-    p1 = r"^da (.+) a "
-    c1 = df.value.str.contains(p1)
-    e1 = df.value.str.extract(p1, expand=False)
-    df.loc[c1, "value_from"] = e1
-
-    p2 = r"^(.+) –"
-    c2 = df.value.str.contains(p2)
-    e2 = df.value.str.extract(p2, expand=False)
-    df.loc[c2, "value_from"] = e2
-
-    # Review everything left that is not 1 or 2
-    df.loc[df.value_from.isna() & ~df.awarded_score.isin([1,2]), :]
-    return
-
-
-@app.cell
-def _(df):
-    p3 = r"^oltre (.+)"
-    c3 = df.value.str.contains(p3)
-    e3 = df.value.str.extract(p3, expand=False)
-    df.loc[c3, "value_from"] = e3
-
-    p4 = r"^>(.+)"
-    c4 = df.value.str.contains(p4)
-    e4 = df.value.str.extract(p4, expand=False)
-    df.loc[c4, "value_from"] = e4
-
-    p5 = r"^inferiore a (.+)"
-    c5 = df.value.str.contains(p5)
-    e5 = df.value.str.extract(p5, expand=False)
-    df.loc[c5, "value_to"] = e5
-
-    p6 = r"a (.+)$"
-    c6 = df.value.str.contains(p6)
-    e6 = df.value.str.extract(p6, expand=False)
-    df.loc[c6, "value_to"] = e6
-
-    p7 = r"– (.+)$"
-    c7 = df.value.str.contains(p7)
-    e7 = df.value.str.extract(p7, expand=False)
-    df.loc[c7, "value_to"] = e7
-
-
-    df
+def _(reshape_table, tables):
+    t = reshape_table(tables, True)
+    t.pivot_table(index=["band","awarded"], columns=["type_of_table"]).swaplevel(axis=1).sort_index(axis=1)
     return
 
 

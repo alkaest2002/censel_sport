@@ -6,7 +6,33 @@
   "cells": [
     {
       "id": "Hbol",
-      "code_hash": "5231e8c7711ca70b955d1ea728a276da",
+      "code_hash": "fc0d20f0e7aefc56c3437d6aca656f9a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<pre class='text-xs'>&#x27;it_IT.UTF-8&#x27;</pre>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "6df45631000632cceb7bea4933fd0b65",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='Xref-0' random-id='16485389-e23d-6676-8553-d46a762e948d'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Vecchia tabella FASCIA&#92;&quot;:&#92;&quot;F1 &#92;&quot;,&#92;&quot;PUNTEGGIO&#92;&quot;:&#92;&quot;1&#92;&quot;,&#92;&quot;LIMITE INFERIORE&#92;&quot;:NaN,&#92;&quot;LIMITE SUPERIORE&#92;&quot;:&#92;&quot;00:12.5&#92;&quot;,&#92;&quot;Nuova tabella FASCIA&#92;&quot;:&#92;&quot;F1 &#92;&quot;,&#92;&quot;PUNTEGGIO.1&#92;&quot;:&#92;&quot;1&#92;&quot;,&#92;&quot;LIMITE INFERIORE.1&#92;&quot;:NaN,&#92;&quot;LIMITE SUPERIORE.1&#92;&quot;:&#92;&quot;00:12.3&#92;&quot;},{&#92;&quot;Vecchia tabella FASCIA&#92;&quot;:&#92;&quot;F2 &#92;&quot;,&#92;&quot;PUNTEGGIO&#92;&quot;:&#92;&quot;0,8&#92;&quot;,&#92;&quot;LIMITE INFERIORE&#92;&quot;:&#92;&quot;00:12.6&#92;&quot;,&#92;&quot;LIMITE SUPERIORE&#92;&quot;:&#92;&quot;00:13.0&#92;&quot;,&#92;&quot;Nuova tabella FASCIA&#92;&quot;:&#92;&quot;F2 &#92;&quot;,&#92;&quot;PUNTEGGIO.1&#92;&quot;:&#92;&quot;0,8&#92;&quot;,&#92;&quot;LIMITE INFERIORE.1&#92;&quot;:&#92;&quot;00:12.4&#92;&quot;,&#92;&quot;LIMITE SUPERIORE.1&#92;&quot;:&#92;&quot;00:13.0&#92;&quot;},{&#92;&quot;Vecchia tabella FASCIA&#92;&quot;:&#92;&quot;F3 &#92;&quot;,&#92;&quot;PUNTEGGIO&#92;&quot;:&#92;&quot;0,6&#92;&quot;,&#92;&quot;LIMITE INFERIORE&#92;&quot;:&#92;&quot;00:13.1&#92;&quot;,&#92;&quot;LIMITE SUPERIORE&#92;&quot;:&#92;&quot;00:13.5&#92;&quot;,&#92;&quot;Nuova tabella FASCIA&#92;&quot;:&#92;&quot;F3 &#92;&quot;,&#92;&quot;PUNTEGGIO.1&#92;&quot;:&#92;&quot;0,6&#92;&quot;,&#92;&quot;LIMITE INFERIORE.1&#92;&quot;:&#92;&quot;00:13.1&#92;&quot;,&#92;&quot;LIMITE SUPERIORE.1&#92;&quot;:&#92;&quot;00:13.6&#92;&quot;},{&#92;&quot;Vecchia tabella FASCIA&#92;&quot;:&#92;&quot;F4 &#92;&quot;,&#92;&quot;PUNTEGGIO&#92;&quot;:&#92;&quot;0,4&#92;&quot;,&#92;&quot;LIMITE INFERIORE&#92;&quot;:&#92;&quot;00:13.6&#92;&quot;,&#92;&quot;LIMITE SUPERIORE&#92;&quot;:&#92;&quot;00:14.0&#92;&quot;,&#92;&quot;Nuova tabella FASCIA&#92;&quot;:&#92;&quot;F4 &#92;&quot;,&#92;&quot;PUNTEGGIO.1&#92;&quot;:&#92;&quot;0,4&#92;&quot;,&#92;&quot;LIMITE INFERIORE.1&#92;&quot;:&#92;&quot;00:13.7&#92;&quot;,&#92;&quot;LIMITE SUPERIORE.1&#92;&quot;:&#92;&quot;00:14.2&#92;&quot;},{&#92;&quot;Vecchia tabella FASCIA&#92;&quot;:&#92;&quot;F5 &#92;&quot;,&#92;&quot;PUNTEGGIO&#92;&quot;:&#92;&quot;0,2&#92;&quot;,&#92;&quot;LIMITE INFERIORE&#92;&quot;:&#92;&quot;00:14.1&#92;&quot;,&#92;&quot;LIMITE SUPERIORE&#92;&quot;:&#92;&quot;00:15.5&#92;&quot;,&#92;&quot;Nuova tabella FASCIA&#92;&quot;:&#92;&quot;F5 &#92;&quot;,&#92;&quot;PUNTEGGIO.1&#92;&quot;:&#92;&quot;0,2&#92;&quot;,&#92;&quot;LIMITE INFERIORE.1&#92;&quot;:&#92;&quot;00:14.3&#92;&quot;,&#92;&quot;LIMITE SUPERIORE.1&#92;&quot;:&#92;&quot;00:15.3&#92;&quot;}]&quot;' data-total-rows='5' data-total-columns='8' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;Vecchia tabella FASCIA&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;PUNTEGGIO&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;LIMITE INFERIORE&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;LIMITE SUPERIORE&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;Nuova tabella FASCIA&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;PUNTEGGIO.1&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;LIMITE INFERIORE.1&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;LIMITE SUPERIORE.1&quot;,[&quot;string&quot;,&quot;object&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "zqpn",
+      "code_hash": "b96a6eec100b069c150d3901b0db0256",
       "outputs": [
         {
           "type": "data",
@@ -18,86 +44,20 @@
       "console": []
     },
     {
-      "id": "MJUe",
-      "code_hash": "b85db3bae9c97512d823ae7ef166f384",
+      "id": "gclQ",
+      "code_hash": "ea285f29cfc09c2fcb0387f983195fb9",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/plain": ""
+            "text/html": "<marimo-ui-element object-id='gclQ-0' random-id='df5fde90-65bc-5d4a-8ffa-8683bf3e8351'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;band&#92;&quot;:1,&#92;&quot;awarded&#92;&quot;:1.0,&#92;&quot;new,inf&#92;&quot;:NaN,&#92;&quot;new,sup&#92;&quot;:12.3,&#92;&quot;old,inf&#92;&quot;:NaN,&#92;&quot;old,sup&#92;&quot;:12.5},{&#92;&quot;band&#92;&quot;:2,&#92;&quot;awarded&#92;&quot;:0.8,&#92;&quot;new,inf&#92;&quot;:12.4,&#92;&quot;new,sup&#92;&quot;:13.0,&#92;&quot;old,inf&#92;&quot;:12.6,&#92;&quot;old,sup&#92;&quot;:13.0},{&#92;&quot;band&#92;&quot;:3,&#92;&quot;awarded&#92;&quot;:0.6,&#92;&quot;new,inf&#92;&quot;:13.1,&#92;&quot;new,sup&#92;&quot;:13.6,&#92;&quot;old,inf&#92;&quot;:13.1,&#92;&quot;old,sup&#92;&quot;:13.5},{&#92;&quot;band&#92;&quot;:4,&#92;&quot;awarded&#92;&quot;:0.4,&#92;&quot;new,inf&#92;&quot;:13.7,&#92;&quot;new,sup&#92;&quot;:14.2,&#92;&quot;old,inf&#92;&quot;:13.6,&#92;&quot;old,sup&#92;&quot;:14.0},{&#92;&quot;band&#92;&quot;:5,&#92;&quot;awarded&#92;&quot;:0.2,&#92;&quot;new,inf&#92;&quot;:14.3,&#92;&quot;new,sup&#92;&quot;:15.3,&#92;&quot;old,inf&#92;&quot;:14.1,&#92;&quot;old,sup&#92;&quot;:15.5},{&#92;&quot;band&#92;&quot;:6,&#92;&quot;awarded&#92;&quot;:0.0,&#92;&quot;new,inf&#92;&quot;:15.4,&#92;&quot;new,sup&#92;&quot;:NaN,&#92;&quot;old,inf&#92;&quot;:15.6,&#92;&quot;old,sup&#92;&quot;:NaN}]&quot;' data-total-rows='6' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;new,inf&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;new,sup&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;old,inf&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;old,sup&quot;,[&quot;number&quot;,&quot;float64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[[&quot;band&quot;,[&quot;integer&quot;,&quot;int64&quot;]],[&quot;awarded&quot;,[&quot;number&quot;,&quot;float64&quot;]]]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
           }
         }
       ],
       "console": []
     },
     {
-      "id": "vblA",
-      "code_hash": "29dc26d3ce94a711f77063e2b9777659",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/html": "<marimo-ui-element object-id='vblA-0' random-id='238e074d-e22c-927c-5b51-af7a097b1c34'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;inferiore a 3&#92;&#92;u2019 e 30,1&#92;&#92;u201d&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:2.0,&#92;&quot;must_pass&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 3&#92;&#92;u2019 e 30,1&#92;&#92;u201d a 3&#92;&#92;u2019 e 40&#92;&#92;u201d&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:1.6,&#92;&quot;must_pass&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 3&#92;&#92;u2019 e 40,1&#92;&#92;u201d a 4&#92;&#92;u2019&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:1.2,&#92;&quot;must_pass&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 4&#92;&#92;u2019 e 0,1&#92;&#92;u201d a 4&#92;&#92;u2019 e 10&#92;&#92;u201d&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:0.8,&#92;&quot;must_pass&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 4&#92;&#92;u2019 e 10,1&#92;&#92;u201d a 4&#92;&#92;u2019 e 20&#92;&#92;u201d&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:0.4,&#92;&quot;must_pass&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;superiore a 4&#92;&#92;u2019 e 20&#92;&#92;u201d&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:0.0,&#92;&quot;must_pass&#92;&quot;:true},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;sit_ups&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;oltre 85 ripetizioni&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:2.0,&#92;&quot;must_pass&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;sit_ups&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 71 a 85 ripetizioni&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:1.6,&#92;&quot;must_pass&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;sit_ups&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 56 a 70 ripetizioni&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:1.2,&#92;&quot;must_pass&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;sit_ups&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 41 a 55 ripetizioni&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:0.8,&#92;&quot;must_pass&#92;&quot;:null}]&quot;' data-total-rows='528' data-total-columns='7' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;recrutiment_year&quot;,[&quot;integer&quot;,&quot;i64&quot;]],[&quot;recruitment_type&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;test&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;gender&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;value&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;awarded_score&quot;,[&quot;number&quot;,&quot;f64&quot;]],[&quot;must_pass&quot;,[&quot;boolean&quot;,&quot;bool&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='true' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
-          }
-        }
-      ],
-      "console": []
-    },
-    {
-      "id": "QizZ",
-      "code_hash": "0689a1bb9ad7c4c783af74d80a671c47",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
-      "console": []
-    },
-    {
-      "id": "bkHC",
-      "code_hash": "fb0ab39bbfe8c11ca9221f9f2906229f",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/html": "<marimo-ui-element object-id='bkHC-0' random-id='c7f1b4f8-358f-ee6f-df6b-88525302340b'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[]&quot;' data-total-rows='0' data-total-columns='9' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;recrutiment_year&quot;,[&quot;integer&quot;,&quot;int64&quot;]],[&quot;recruitment_type&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;test&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;gender&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;value&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;awarded_score&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;must_pass&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;value_from&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;value_to&quot;,[&quot;string&quot;,&quot;object&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[[&quot;&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
-          }
-        }
-      ],
-      "console": [
-        {
-          "type": "stream",
-          "name": "stderr",
-          "text": "/var/folders/14/r5fp76193sxbq4m_vbzss2lr0000gn/T/marimo_47870/__marimo__cell_bkHC_.py:4: UserWarning: This pattern is interpreted as a regular expression, and has match groups. To actually get the groups, use str.extract.\n  c1 = df.value.str.contains(p1)\n/var/folders/14/r5fp76193sxbq4m_vbzss2lr0000gn/T/marimo_47870/__marimo__cell_bkHC_.py:9: UserWarning: This pattern is interpreted as a regular expression, and has match groups. To actually get the groups, use str.extract.\n  c2 = df.value.str.contains(p2)\n",
-          "mimetype": "text/plain"
-        }
-      ]
-    },
-    {
-      "id": "lEQa",
-      "code_hash": "53787bc3ee1a79e228ed3fd69cfb946b",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/html": "<marimo-ui-element object-id='lEQa-0' random-id='af339801-880e-72df-f056-eaf77a950558'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;inferiore a 3&#92;&#92;u2019 e 30,1&#92;&#92;u201d&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:2.0,&#92;&quot;must_pass&#92;&quot;:null,&#92;&quot;value_from&#92;&quot;:null,&#92;&quot;value_to&#92;&quot;:&#92;&quot;3&#92;&#92;u2019 e 30,1&#92;&#92;u201d&#92;&quot;},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 3&#92;&#92;u2019 e 30,1&#92;&#92;u201d a 3&#92;&#92;u2019 e 40&#92;&#92;u201d&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:1.6,&#92;&quot;must_pass&#92;&quot;:null,&#92;&quot;value_from&#92;&quot;:&#92;&quot;3&#92;&#92;u2019 e 30,1&#92;&#92;u201d&#92;&quot;,&#92;&quot;value_to&#92;&quot;:&#92;&quot;3&#92;&#92;u2019 e 30,1&#92;&#92;u201d a 3&#92;&#92;u2019 e 40&#92;&#92;u201d&#92;&quot;},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 3&#92;&#92;u2019 e 40,1&#92;&#92;u201d a 4&#92;&#92;u2019&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:1.2,&#92;&quot;must_pass&#92;&quot;:null,&#92;&quot;value_from&#92;&quot;:&#92;&quot;3&#92;&#92;u2019 e 40,1&#92;&#92;u201d&#92;&quot;,&#92;&quot;value_to&#92;&quot;:&#92;&quot;3&#92;&#92;u2019 e 40,1&#92;&#92;u201d a 4&#92;&#92;u2019&#92;&quot;},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 4&#92;&#92;u2019 e 0,1&#92;&#92;u201d a 4&#92;&#92;u2019 e 10&#92;&#92;u201d&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:0.8,&#92;&quot;must_pass&#92;&quot;:null,&#92;&quot;value_from&#92;&quot;:&#92;&quot;4&#92;&#92;u2019 e 0,1&#92;&#92;u201d&#92;&quot;,&#92;&quot;value_to&#92;&quot;:&#92;&quot;4&#92;&#92;u2019 e 0,1&#92;&#92;u201d a 4&#92;&#92;u2019 e 10&#92;&#92;u201d&#92;&quot;},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 4&#92;&#92;u2019 e 10,1&#92;&#92;u201d a 4&#92;&#92;u2019 e 20&#92;&#92;u201d&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:0.4,&#92;&quot;must_pass&#92;&quot;:null,&#92;&quot;value_from&#92;&quot;:&#92;&quot;4&#92;&#92;u2019 e 10,1&#92;&#92;u201d&#92;&quot;,&#92;&quot;value_to&#92;&quot;:&#92;&quot;4&#92;&#92;u2019 e 10,1&#92;&#92;u201d a 4&#92;&#92;u2019 e 20&#92;&#92;u201d&#92;&quot;},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;1000mt_run&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;superiore a 4&#92;&#92;u2019 e 20&#92;&#92;u201d&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:0.0,&#92;&quot;must_pass&#92;&quot;:true,&#92;&quot;value_from&#92;&quot;:&#92;&quot;superiore a 4&#92;&#92;u2019 e 20&#92;&#92;u201d&#92;&quot;,&#92;&quot;value_to&#92;&quot;:&#92;&quot;4&#92;&#92;u2019 e 20&#92;&#92;u201d&#92;&quot;},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;sit_ups&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;oltre 85 ripetizioni&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:2.0,&#92;&quot;must_pass&#92;&quot;:null,&#92;&quot;value_from&#92;&quot;:&#92;&quot;85 ripetizioni&#92;&quot;,&#92;&quot;value_to&#92;&quot;:null},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;sit_ups&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 71 a 85 ripetizioni&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:1.6,&#92;&quot;must_pass&#92;&quot;:null,&#92;&quot;value_from&#92;&quot;:&#92;&quot;71&#92;&quot;,&#92;&quot;value_to&#92;&quot;:&#92;&quot;71 a 85 ripetizioni&#92;&quot;},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;sit_ups&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 56 a 70 ripetizioni&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:1.2,&#92;&quot;must_pass&#92;&quot;:null,&#92;&quot;value_from&#92;&quot;:&#92;&quot;56&#92;&quot;,&#92;&quot;value_to&#92;&quot;:&#92;&quot;56 a 70 ripetizioni&#92;&quot;},{&#92;&quot;recrutiment_year&#92;&quot;:2021,&#92;&quot;recruitment_type&#92;&quot;:&#92;&quot;hd&#92;&quot;,&#92;&quot;test&#92;&quot;:&#92;&quot;sit_ups&#92;&quot;,&#92;&quot;gender&#92;&quot;:&#92;&quot;m&#92;&quot;,&#92;&quot;value&#92;&quot;:&#92;&quot;da 41 a 55 ripetizioni&#92;&quot;,&#92;&quot;awarded_score&#92;&quot;:0.8,&#92;&quot;must_pass&#92;&quot;:null,&#92;&quot;value_from&#92;&quot;:&#92;&quot;41&#92;&quot;,&#92;&quot;value_to&#92;&quot;:&#92;&quot;41 a 55 ripetizioni&#92;&quot;}]&quot;' data-total-rows='528' data-total-columns='9' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;recrutiment_year&quot;,[&quot;integer&quot;,&quot;int64&quot;]],[&quot;recruitment_type&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;test&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;gender&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;value&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;awarded_score&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;must_pass&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;value_from&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;value_to&quot;,[&quot;string&quot;,&quot;object&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='true' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
-          }
-        }
-      ],
-      "console": [
-        {
-          "type": "stream",
-          "name": "stderr",
-          "text": "/var/folders/14/r5fp76193sxbq4m_vbzss2lr0000gn/T/marimo_47870/__marimo__cell_lEQa_.py:2: UserWarning: This pattern is interpreted as a regular expression, and has match groups. To actually get the groups, use str.extract.\n  c3 = df.value.str.contains(p3)\n/var/folders/14/r5fp76193sxbq4m_vbzss2lr0000gn/T/marimo_47870/__marimo__cell_lEQa_.py:7: UserWarning: This pattern is interpreted as a regular expression, and has match groups. To actually get the groups, use str.extract.\n  c4 = df.value.str.contains(p4)\n/var/folders/14/r5fp76193sxbq4m_vbzss2lr0000gn/T/marimo_47870/__marimo__cell_lEQa_.py:12: UserWarning: This pattern is interpreted as a regular expression, and has match groups. To actually get the groups, use str.extract.\n  c5 = df.value.str.contains(p5)\n/var/folders/14/r5fp76193sxbq4m_vbzss2lr0000gn/T/marimo_47870/__marimo__cell_lEQa_.py:17: UserWarning: This pattern is interpreted as a regular expression, and has match groups. To actually get the groups, use str.extract.\n  c6 = df.value.str.contains(p6)\n/var/folders/14/r5fp76193sxbq4m_vbzss2lr0000gn/T/marimo_47870/__marimo__cell_lEQa_.py:22: UserWarning: This pattern is interpreted as a regular expression, and has match groups. To actually get the groups, use str.extract.\n  c7 = df.value.str.contains(p7)\n",
-          "mimetype": "text/plain"
-        }
-      ]
-    },
-    {
-      "id": "UXxA",
+      "id": "aHuI",
       "code_hash": null,
       "outputs": [],
       "console": []

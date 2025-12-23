@@ -8,7 +8,8 @@ app = marimo.App(width="full")
 def _():
     import polars as pl
     import pandas as pd
-    return pd, pl
+    import numpy as np
+    return np, pd, pl
 
 
 @app.cell
@@ -19,11 +20,12 @@ def _(pd):
 
 
 @app.cell
-def _(db):
-    pushups_f_2022 = db.query("""
-        recruitment_year.eq(2022) & recruitment_type.eq('mlli') & test.eq('push_ups') & gender.eq('F')
-    """).sort_values(by="value")
-    pushups_f_2022.loc[:, ["value"]].eq(0).sum()/pushups_f_2022.shape[0]
+def _(db, np):
+    pushups= db.query("""
+    test.eq('push_ups')
+    """)
+    valid_mask = pushups.value.gt(0) & pushups.value.ne(np.isfinite)
+    pushups[~valid_mask]
     return
 
 
@@ -47,7 +49,7 @@ def _(dbl, pl):
     )
 
     # Calculate the proportion of zeros
-    (pushups_f_2022_pl["value"] == 0).sum() / pushups_f_2022_pl.height
+    pushups_f_2022_pl["value"].value_counts()
     return
 
 
