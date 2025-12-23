@@ -80,6 +80,10 @@ if [ "$RUN_RENDER" = true ]; then
     echo "Running report_db_norms.py..."
     python report_db_norms.py -l L -n 51
 
+    # Process DB recap
+    echo "Running report_db_recap.py..."
+    python report_db_recap.py -l M -n 53
+
     echo "All individual files processed!"
     echo ""
 fi
