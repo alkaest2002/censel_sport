@@ -115,3 +115,14 @@ def get_recruitment_type_label(x: dict[str, Any]) -> any:
         The corresponding label from the RECRUITMENT_TYPE mapping, or the input if not found.
     """
     return RECRUITMENT_TYPE.get(x, x)
+
+def get_gender_label(gender: str) -> str:
+    """Get the label for a recruitment type from the RECRUITMENT_TYPE mapping.
+
+    Args:
+        gender: The geder identifier.
+
+    Returns:
+        The corresponding label from the RECRUITMENT_TYPE mapping, or the input if not found.
+    """
+    return "maschi" if gender in ["M", "m", "males", "Males"] else "femmine"

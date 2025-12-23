@@ -6,6 +6,7 @@ from lib_report.utils_jinja import (
     format_number_locale,
     format_seconds,
     format_title,
+    get_gender_label,
     get_recruitment_type_label,
     get_test_label,
 )
@@ -48,6 +49,7 @@ jinja_env: Environment = _create_jinja_environment(templates_dir)
 # Register custom filters
 jinja_env.filters["format_seconds"] = format_seconds
 jinja_env.filters["format_title"] = format_title
+jinja_env.filters["gender_label"] = get_gender_label
 jinja_env.filters["test_label"] = get_test_label
 jinja_env.filters["recruitment_type_label"] = get_recruitment_type_label
 jinja_env.filters["format_number_locale"] = format_number_locale
