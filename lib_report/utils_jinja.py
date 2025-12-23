@@ -53,12 +53,13 @@ def format_number_locale(
         locale.setlocale(locale.LC_NUMERIC, current_locale)
 
 
-def format_seconds(seconds: float, precision: int) -> str:
+def format_seconds(seconds: float, precision: int, with_hours: bool = False) -> str:
     """Format seconds into a human-readable string (HH:MM:SS.sss).
 
     Args:
         seconds: The time in seconds to format.
         precision: Number of decimal places for fractional seconds.
+        with_hours: Whether to always include hours in the output.
 
     Returns:
         Formatted time string in HH:MM:SS.sss format.
@@ -71,10 +72,15 @@ def format_seconds(seconds: float, precision: int) -> str:
     # Format the result with proper width for seconds
     if precision > 0:
         width: int = 3 + precision  # 2 digits + decimal point + precision digits
-        return f"{hours:02d}:{minutes:02d}:{secs:0{width}.{precision}f}".replace(".", ",")
+        full: str = f"{hours:02d}:{minutes:02d}:{secs:0{width}.{precision}f}".replace(".", ",")
+    else:
+        full = f"{hours:02d}:{minutes:02d}:{int(secs):02d}"
 
-    return f"{hours:02d}:{minutes:02d}:{int(secs):02d}"
+    # Remove hours part if not needed
+    if not with_hours:
+        return full[3:]
 
+    return full
 
 def format_title(title: str) -> str:
     """Format a title string by capitalizing the first letter and lowercasing the rest.
