@@ -64,7 +64,7 @@ def main() -> int:
         return 1
 
     # Print success message
-    print("TOC was generated successfully.")
+    print("TOC generated successfully.")
 
     return 0
 
