@@ -129,7 +129,7 @@ def main() -> int:
         )
 
         # Print success message
-        print("Database statistics report generated successfully.")
+        print("Database statistics generated successfully.")
 
     # Handle exceptions
     except Exception as e:  # noqa: BLE001
