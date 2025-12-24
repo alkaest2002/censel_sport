@@ -10,9 +10,9 @@ MLLI = "mlli"
 TEST: dict[str, str] = {
     MT100: "Corsa piana 100 mt",
     MT1000: "Corsa piana 1000 mt",
-    SWIM25: "Nuoto 25 mt",
     PUSHUPS: "Piegamenti sulle braccia",
     SITUPS: "Addominali",
+    SWIM25: "Nuoto 25 mt",
 }
 
 RECRUITMENT_TYPE: dict[str, str] = {
