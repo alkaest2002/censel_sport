@@ -1,6 +1,6 @@
 from pathlib import Path
 import sys
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import pandas as pd
 
@@ -13,29 +13,6 @@ if TYPE_CHECKING:
     import argparse
 
 
-def _stringify_value_counts(x: pd.Series) -> str:
-    """Convert a dictionary to a string representation.
-
-    Args:
-        x: Series to convert.
-
-    Returns:
-        String representation of the dictionary.
-    """
-    # Collect value counts as dictionary
-    value_counts_dict: dict[Any, int] = x.value_counts().to_dict()
-
-    # Omit keys with values equal to zero
-    value_counts_dict = {k: v for k, v in value_counts_dict.items() if v != 0}
-
-    # Convert to string with custom formatting
-    return (
-        str(value_counts_dict)[1:-1]
-        .replace("'", "")
-        .replace(",", " | ")
-        .replace(":", " &rarr; ")
-    )
-
 def main() -> int:
     """Generate database statistics report.
 
@@ -45,7 +22,7 @@ def main() -> int:
             - 1: Rendering or PDF generation error
     """
     # Get parser
-    parser: argparse.ArgumentParser = create_parser(page_number=True)
+    parser: argparse.ArgumentParser = create_parser(page_number=True, header_letter=True)
 
     # Parse arguments
     args: argparse.Namespace = parser.parse_args()
@@ -121,10 +98,10 @@ def main() -> int:
         _: dict[str, Path] = render_template(
             jinja_template_name="report_db_stats.html",
             output_folder=Path("./data_out/_report"),
-            output_filename="A_db_stats",
+            output_filename=f"{args.header_letter}_db_stats",
             output_formats=["pdf"],
             data=tables_data,
-            header="A",
+            header=args.header_letter,
             page=args.page_number,
         )
 
