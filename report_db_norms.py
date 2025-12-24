@@ -76,17 +76,8 @@ def main() -> int:
                     .add_prefix("step")
             )
 
-            # Create rif to identify the report section
-            rif: str = (
-                f"{metric_config['report']['header_letter']}3 (pag. {metric_config['report']['initial_page'] + 2})"
-            )
-
-            # Add rif and store as dictionary
-            results[key] = (
-                pd.concat([
-                    standardized_stats,
-                    pd.Series({ "rif": rif }),
-                ]).to_dict())
+            # Store results as dictionary
+            results[key] = standardized_stats.to_dict()
 
     # Convert results to DataFrame
     results_df: pd.DataFrame = pd.DataFrame(results).fillna(0).T
@@ -111,7 +102,6 @@ def main() -> int:
                 "step4",
                 "step5",
                 "step6",
-                "rif",
             ],
         )
         .sort_values(by=["test", "recruitment_type","gender","recruitment_year"])
@@ -139,7 +129,7 @@ def main() -> int:
                     .format(precision=1, decimal=",")
                     .set_table_attributes('class="table-bordered full-width mb-xs"')
                     .relabel_index([(TEST[i[0]], i[1].upper()) for i in table_with_index.index], axis=0)
-                    .relabel_index(["Concorso", "F1", "F2", "F3", "F4", "F5", "F6", "T"], axis=1)
+                    .relabel_index(["Concorso", "F1", "F2", "F3", "F4", "F5", "F6"], axis=1)
         )
 
         # Add global styles
