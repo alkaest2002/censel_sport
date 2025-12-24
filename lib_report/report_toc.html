@@ -58,7 +58,7 @@
             <!-- Page Header -->
             <div class="mb-xxl">
                 <div class="header">
-                    <h1 class="mb-xs">ELENCO DEGLI ALLEGATI</h1>
+                    <h1 class="mb-xs">SOMMARIO DEGLI ALLEGATI</h1>
                 </div>
             </div>
 
@@ -67,7 +67,7 @@
                 <ul class="toc-list" role="list">
                     <li>
                         <a href="#link_to_heading">
-                            <span class="title">A. Dataset Centro di Selezione</span>
+                            <span class="title">A. Sinossi delle tavole di conversione</span>
                             <span class="leaders"></span>
                             <span class="toc-page">pag. {{ page + 1 }}</span>
                         </a>
@@ -81,20 +81,21 @@
                             </a>
                         </li>
                     {% endfor %}
-                    {% set letter = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[(data.toc|length) + 1] %}
+                    {% set letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
+                    {% set letter = letters[(data.toc|length) + 1] %}
                     <li>
                         <a href="#link_to_heading">
-                            <span class="title">{{ letter }}. Verifica delle nuove tavole di conversione</span>
+                            <span class="title">{{ letter }}. Dataset del Centro di Selezione</span>
                             <span class="leaders"></span>
                             <span class="toc-page">pag. {{ page + (data.toc|length)*4 + 2 }}</span>
                         </a>
                     </li>
-                    {% set letter = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[(data.toc|length) + 2] %}
+                    {% set letter = letters[(data.toc|length) + 2] %}
                     <li>
                         <a href="#link_to_heading">
-                            <span class="title">{{ letter }}. Elenco completo delle tabelle di conversione</span>
+                            <span class="title">{{ letter }}. Verifica delle nuove tavole di conversione</span>
                             <span class="leaders"></span>
-                            <span class="toc-page">pag. {{ page + (data.toc|length)*4 + 4 }}</span>
+                            <span class="toc-page">pag. {{ page + (data.toc|length)*4 + 3 }}</span>
                         </a>
                     </li>
                 </ul>
