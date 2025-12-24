@@ -58,6 +58,9 @@ def main() -> int:
     # Prepare data for the report
     tables_data: list[pd.DataFrame] = []
 
+    # Cache order of tests
+    ordered_tests: list[str] = list(TEST.keys())
+
     # Iterate over HD and Mlli groups
     for grouped in (hd_grouped, mlli_grouped):
 
@@ -89,16 +92,13 @@ def main() -> int:
             # Append
             grouped_stats.append(grouped_agg)
 
-        # Cache order of tests
-        ordered_tests: list[str] = list(TEST.keys())
-
         # Create table from grouped stats
         table: pd.DataFrame = (
             pd.concat(grouped_stats, axis=0, ignore_index=True)
-                # Sort by test according to predefined order
-                .sort_values(
-                    by=["test"], key=lambda x: x.map(lambda y, ordered_tests=ordered_tests: ordered_tests.index(y)),
-                )
+                # Sort tests according to predefined order
+                .set_index("test")
+                .loc[ordered_tests, :]
+                .reset_index(drop=False)
         )
         # Append table to data
         tables_data.append(table)
