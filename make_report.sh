@@ -69,20 +69,16 @@ if [ "$RUN_RENDER" = true ]; then
     done
 
     # Process TOC
-    echo "Running report_toc.py..."
     python report_toc.py -n 9
 
     # Process DB stats
-    echo "Running report_db.py..."
-    python report_db_stats.py -n 10
+    python report_db_recap.py -l A -n 10
+
+    # Process DB stats
+    python report_db_stats.py -l L -n 51
 
     # Process DB norms
-    echo "Running report_db_norms.py..."
-    python report_db_norms.py -l L -n 51
-
-    # Process DB recap
-    echo "Running report_db_recap.py..."
-    python report_db_recap.py -l M -n 53
+    python report_db_norms.py -l M -n 52
 
     echo "All individual files processed!"
     echo ""
