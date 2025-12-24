@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import pandas as pd
 
-from lib_analysis import HD, MLLI
+from lib_analysis import HD, MLLI, TEST
 from lib_analysis.utils_generic import query_db
 from lib_parser.parser import create_parser
 from lib_report.utils_report import render_template
@@ -89,8 +89,19 @@ def main() -> int:
             # Append
             grouped_stats.append(grouped_agg)
 
-        # Concatenate all grouped stats and append to data
-        tables_data.append(pd.concat(grouped_stats, axis=0, ignore_index=True))
+        # Cache order of tests
+        ordered_tests: list[str] = list(TEST.keys())
+
+        # Create table from grouped stats
+        table: pd.DataFrame = (
+            pd.concat(grouped_stats, axis=0, ignore_index=True)
+                # Sort by test according to predefined order
+                .sort_values(
+                    by=["test"], key=lambda x: x.map(lambda y, ordered_tests=ordered_tests: ordered_tests.index(y)),
+                )
+        )
+        # Append table to data
+        tables_data.append(table)
 
     try:
 

@@ -49,9 +49,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for test, test_data in table.to_dict('records') | groupby('test') %}
+                        {% for test, test_data in table.groupby('test', sort=False) %}
                             {% set parent_loop = loop %}
-                            {% for row in test_data %}
+                            {% for _, row in test_data.iterrows() %}
                                 <tr {% if loop.last and not parent_loop.last %}style="border-bottom:.5px solid #333"{% endif %}>
                                     {% if loop.first  %}
                                         <td class="text-center text-bold" rowspan="{{ test_data | length }}">
