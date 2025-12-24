@@ -24,8 +24,13 @@
         padding-right: 20px;
     }
 
-     .new-table:nth-child(even) {
+    .new-table:nth-child(even) {
         padding-left: 20px;
+    }
+
+    .new-table > div {
+        display: flex;
+        justify-content: space-between;
     }
 
 </style>
@@ -37,7 +42,7 @@
         <div>
             <div class="mb-xxl">
                 <div class="header">
-                    <h1 class="mb-xs">SINTESI DELLE NUOVE TAVOLE DI CONVERSIONE</h1>
+                    <h1 class="mb-xs">SINOSSI DELLE NUOVE TAVOLE DI CONVERSIONE</h1>
                     <p>Allegato {{ header }}</p>
                 </div>
             </div>
@@ -46,7 +51,7 @@
             <div class="mb-xxl new-tables">
                 {% for (key, table) in data %}
                     <div class="new-table">
-                        <div class="mt-xl mb-xs" style="display:flex;justify-content: space-between;">
+                        <div class="mt-xl mb-xs">
                             {% set test = (key.split("_"))[:-1] | join("_") %}
                             {% set gender = key.split("_")[-1] %}
                             {% set row = table.iloc[0] %}
@@ -110,7 +115,7 @@
                                 <tr>
                                     <td colspan="4">
                                         <div class="caption">
-                                            <span>Tabella {{ header }}3.{{ loop.index}}</span>
+                                            <span>Tabella {{ header }}.{{ loop.index}}</span>
                                             {% set row = table.iloc[0] %}
                                             {% if row.metric_subtype == "time" %}
                                                 <span>
