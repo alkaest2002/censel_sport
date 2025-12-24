@@ -25,8 +25,19 @@ def main() -> int:
     # Parse arguments
     args: argparse.Namespace = parser.parse_args()
 
-    # Globally find all analysis JSON files
-    json_files = list(Path("./data_out").glob("**/*_analysis.json"))
+    # Need to hardcode for sorting issue
+    json_files: list[Path] = [
+        Path("./data_out/100mt_run_males/100mt_run_males_analysis.json"),
+        Path("./data_out/100mt_run_females/100mt_run_females_analysis.json"),
+        Path("./data_out/1000mt_run_males/1000mt_run_males_analysis.json"),
+        Path("./data_out/1000mt_run_females/1000mt_run_females_analysis.json"),
+        Path("./data_out/push_ups_males/push_ups_males_analysis.json"),
+        Path("./data_out/push_ups_females/push_ups_females_analysis.json"),
+        Path("./data_out/sit_ups_males/sit_ups_males_analysis.json"),
+        Path("./data_out/sit_ups_females/sit_ups_females_analysis.json"),
+        Path("./data_out/25mt_swim_males/25mt_swim_males_analysis.json"),
+        Path("./data_out/25mt_swim_females/25mt_swim_females_analysis.json"),
+    ]
 
     # Initialize new_norms dictionary
     new_norms: list[tuple[str, pd.DataFrame]] = []
@@ -65,6 +76,12 @@ def main() -> int:
         # Store bootstrap cutoffs
         cutoffs: list[list[float, float]] = data["bootstrap"]["cutoffs"]
 
+        # Get letter header
+        header_letter: str = metric_config["report"]["header_letter"]
+
+        # Get page number
+        page_number: int = metric_config["report"]["initial_page"]
+
         # Append norms
         new_norms.append(
             (
@@ -78,6 +95,8 @@ def main() -> int:
                         "metric_precision": [metric_precision] * len(cutoffs),
                         "metric_precision_label": [metric_precision_label]* len(cutoffs),
                         "gender": [metric_id.split("_")[-1][0].upper()] * len(cutoffs),
+                        "header_letter": [f"{header_letter}3"] * len(cutoffs),
+                        "page_number": [page_number+2] * len(cutoffs),
                     }),
                     pd.DataFrame(cutoffs, columns=["from", "to"]),
                     pd.Series(awarded_scores, name="awarded_score"),
@@ -85,16 +104,13 @@ def main() -> int:
             ),
         )
 
-        # sort norms
-        sorted_norms: list[tuple[str, pd.DataFrame]] = sorted(new_norms, key=lambda x: x[0].split("_")[:-1])
-
     # Render template with data
     _: dict[str, Path] = render_template(
         jinja_template_name="report_db_recap.html",
         output_folder=Path("./data_out/_report"),
         output_filename=f"{args.header_letter}_db_recap",
         output_formats=["pdf"],
-        data=sorted_norms,
+        data=new_norms,
         header=args.header_letter,
         page=args.page_number,
     )

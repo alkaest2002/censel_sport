@@ -10,19 +10,24 @@
         padding: 3px;
     }
 
-    .separator:not(:first-of-type) td {
-        border-top: 1px solid var(--base-border-color);
-    }
-
     .new-tables {
         display: flex;
         flex-wrap: wrap;
     }
 
     .new-table {
-        flex: 1 1 calc(50%);
+        flex: 1 1 calc(50% - 40px);
         box-sizing: border-box;
     }
+
+    .new-table:nth-child(odd) {
+        padding-right: 20px;
+    }
+
+     .new-table:nth-child(even) {
+        padding-left: 20px;
+    }
+
 </style>
 {% endblock %}
 
@@ -41,12 +46,18 @@
             <div class="mb-xxl new-tables">
                 {% for (key, table) in data %}
                     <div class="new-table">
-                        <div class="mt-lg mb-xs text-bold">
+                        <div class="mt-xl mb-xs" style="display:flex;justify-content: space-between;">
                             {% set test = (key.split("_"))[:-1] | join("_") %}
                             {% set gender = key.split("_")[-1] %}
-                            {{ test | test_label }} &mdash; {{ gender | gender_label | title }}
+                            {% set row = table.iloc[0] %}
+                            <span class="text-bold">
+                                {{ test | test_label }} &mdash; {{ gender | gender_label | title }}
+                            </span>
+                            <span class="text-bold text-small">
+                                allegato {{ row.header_letter.upper() }}, pag. {{ row.page_number }}
+                            </span>
                         </div>
-                        <table class="table-bordered table-padded standardization-table">
+                        <table class="table-bordered full-width">
                             <thead>
                                 <th class="text-center">FASCIA</th>
                                 <th class="text-center">PUNTEGGIO</th>
