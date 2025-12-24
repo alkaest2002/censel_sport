@@ -107,6 +107,9 @@ def main() -> int:
         .sort_values(by=["test", "recruitment_type","gender","recruitment_year"])
     )
 
+    # Cache order of tests
+    ordered_tests: list[str] = list(TEST.keys())
+
     # Initialize tables list
     tables: list[Styler] = []
 
@@ -120,6 +123,10 @@ def main() -> int:
             table
                 .rename(columns={"test": "Prova sportiva", "gender": "Genere" })
                 .set_index(["Prova sportiva", "Genere"])
+                .loc[
+                    # Reorder tests
+                    pd.IndexSlice[pd.IndexSlice[ordered_tests, :], :]
+                ]
         )
 
         # Style table via Pandas (and not Jinja, due to complex layout)
